@@ -43,6 +43,22 @@ For developer:
 ]]):format("tman"))
 end
 
+
+--- Check that status exists.
+-- @param status status to check
+-- @treturn bool true if exists, otherwise false
+local function check_status(status)
+    local statuses = {"progress", "backlog", "testing", "done"}
+    local res = false
+    for _, st in pairs(statuses) do
+        if status == st then
+            res = true
+            break
+        end
+    end
+    return res
+end
+
 --- Class TaskMan
 -- type TaskMan
 
@@ -95,14 +111,32 @@ end
 -- @param status status to move task to
 -- @param id task ID. Default: current task ID
 function TaskMan:move(status, id)
+    id = id or self.taskid.curr
+
     if not status then
         log("missing status")
         os.exit(1)
     end
+    if not check_status(status) then
+        log("'%s': no such status", status)
+        os.exit(1)
+    end
+    if not id then
+        log("neither task ID passed nor current one exists")
+        os.exit(1)
+    end
+
+    if status == "progress" then
+        local oldcurr = self.taskid.curr
+        self.taskid:setcurr(id)
+        self.taskid:setprev(oldcurr)
+    elseif status == "done" then
+    end
+
+    --[[
     if id and id == self.taskid.curr then
         id = nil
     end
-
     if (id and self.taskid.curr) and status == "progress" then
         print("replace new task with current one (in progress)")
         local gitobj = git.new(id, self.taskunit:getunit(id, "branch"))
@@ -143,12 +177,28 @@ function TaskMan:move(status, id)
         log("no current task exists")
         os.exit(1)
     end
+    ]]
     return true
+end
+
+--- Show current task.
+function TaskMan:curr()
+    print(("* %s"):format(self.taskid.curr or "no current task"))
+    return 0
 end
 
 --- Switch to previous task.
 function TaskMan:prev()
     self:move("progress", self.taskid.prev)
+    if not self.taskid.prev then
+        os.exit(1)
+    end
+    return 0
+end
+
+--- Switch to previous task.
+function TaskMan:getprev()
+    print(self.taskid.prev)
 end
 
 --- List all task IDs.
@@ -212,8 +262,14 @@ function TaskMan:main(arg)
         self:list()
     elseif arg[1] == "show" then
         self:show(arg[2])
+    elseif arg[1] == "curr" then
+        self:curr()
+
     elseif arg[1] == "prev" then
         self:prev()
+    elseif arg[1] == "getprev" then
+        self:getprev()
+
     elseif arg[1] == "del" then
         self:del(arg[2])
     elseif arg[1] == "done" then
@@ -228,4 +284,4 @@ function TaskMan:main(arg)
 end
 
 local tman = TaskMan.init()
-tman:main(arg)
+return tman:main(arg)
