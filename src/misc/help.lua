@@ -26,7 +26,7 @@ Basic:
 Amend:
   add     - add new task
   del     - delete task
-  amend   - amend task units
+  set     - set task units
   config  - config for your workflow
   update  - update task struct, git branch, repos, etc
 
@@ -59,16 +59,16 @@ TASKID - default is current task.
 ]],
     },
     {
-        name = "amend",
+        name = "set",
         desc = [[
-Usage: tman amend OPTION [TASKID]
+Usage: tman set OPTION [TASKID]
 Amend task items.
 TASKID - default is current task.
 
 Options:
-    -i      amend task ID
-    -d      amend task description
-    -p      amend task priority. Values: [highest|high|mid|low|lowest]
+    -i      set task ID
+    -d      set task description
+    -p      set task priority. Values: [highest|high|mid|low|lowest]
 ]],
     },
     {

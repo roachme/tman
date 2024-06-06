@@ -104,7 +104,7 @@ function _tman_handle_commands()
         cd "$TASKS"
         wd -q -f add task
 
-    elif [ $retcode -eq 0 ] && [ "$command" = "amend" ] && [ "$3" = "-i" ]; then
+    elif [ $retcode -eq 0 ] && [ "$command" = "set" ] && [ "$3" = "-i" ]; then
         TASKID=$(eval $TMANCMD get curr)
         cd $TASKS/${TASKID}
         wd -q rm task

@@ -172,7 +172,7 @@ end
 --- Amend task unit.
 -- @param opt option
 -- @param id task ID
-local function tman_amend(opt, id)
+local function tman_set(opt, id)
     id = id or taskid.getcurr()
 
     if not _checkid(id) then
@@ -418,8 +418,8 @@ local function main()
         return core.init()
     elseif cmd == "add" then
         return tman_add(arg[1], arg[2], arg[3])
-    elseif cmd == "amend" then
-        return tman_amend(arg[1], arg[2])
+    elseif cmd == "set" then
+        return tman_set(arg[1], arg[2])
     elseif cmd == "use" then
         return tman_use(arg[1])
     elseif cmd == "cat" then
