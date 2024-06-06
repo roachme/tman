@@ -19,7 +19,7 @@ Basic:
   use     - mark a task as current
   get     - get parameters like curr, prev tasks, etc
   list    - list tasks
-  show    - show task info
+  cat     - cat task info
   prev    - switch to previous task
   done    - move task to completed status
 
@@ -135,9 +135,9 @@ Notes:
 ]],
     },
     {
-        name = "show",
+        name = "cat",
         desc = [[
-Usage: tman show [TASKID]
+Usage: tman cat [TASKID]
 Show task units (current task by default).
 TASKID - default is current task.
 ]],

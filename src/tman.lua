@@ -157,7 +157,7 @@ end
 
 --- Show task unit metadata.
 -- @param id task ID
-local function tman_show(id)
+local function tman_cat(id)
     id = id or taskid.getcurr()
 
     if not id then
@@ -422,8 +422,8 @@ local function main()
         return tman_amend(arg[1], arg[2])
     elseif cmd == "use" then
         return tman_use(arg[1])
-    elseif cmd == "show" then
-        return tman_show(arg[1])
+    elseif cmd == "cat" then
+        return tman_cat(arg[1])
     elseif cmd == "del" then
         return tman_del(arg[1])
     elseif cmd == "list" then
