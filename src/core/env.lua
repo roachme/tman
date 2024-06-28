@@ -1,9 +1,8 @@
 --- Module to edit and manipulate environment.
+-- Create default env, if none's presented.
 -- @module env
 
 local envdb = require("aux.envdb")
-local config = require("core.config")
-local utils = require("aux.utils")
 
 local env = {}
 
@@ -18,10 +17,6 @@ local status = {
 
 local function unset(name)
     envdb.set(name, status.ACTV)
-end
-
-local function update_config(name)
-    config.setsys("env", name)
 end
 
 local function load_spec_envs()
@@ -63,17 +58,13 @@ function env.add(name, desc)
         return false
     end
 
-    env.swap()
     envdb.add(name, desc)
-    update_config(name)
 
-    -- create env dir
-    local prefix = config.getsys("prefix")
-    local envname = config.getsys("env")
-    local envdir = prefix .. "/" .. envname
+    -- roachme: use env.swap()
+    local tmpcurr = curr
+    curr = name
+    prev = tmpcurr
 
-    utils.mkdir(envdir)
-    utils.mkdir(envdir .. "/.tman")
     return true
 end
 
@@ -131,19 +122,10 @@ function env.del(name)
         return false
     end
 
-    -- delete env dir
-    local prefix = config.getsys("prefix")
-    local envname = name
-    local envdir = prefix .. "/" .. envname
-    utils.rm(envdir)
-
     envdb.del(name)
     if name == curr then
         env.swap()
     end
-
-    -- roachme: might be a problem if the only env's deleted
-    update_config(curr)
     return true
 end
 
@@ -157,15 +139,16 @@ function env.setcurr(name)
 
     envdb.set(prev, status.PREV)
     envdb.set(curr, status.CURR)
-
-    -- update sys.conf
-    config.setsys("env", name)
     return true
 end
 
 function env.init(fenv)
     envdb.init(fenv)
     load_spec_envs()
+
+    if not curr then
+        env.add("work", "main work env")
+    end
 end
 
 return env

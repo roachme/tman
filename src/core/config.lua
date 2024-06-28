@@ -1,6 +1,7 @@
 --- Parse config file and provide env for the rest of the code.
 -- @module config
 
+local env = require("core.env")
 local utils = require("aux.utils")
 local sysconfig = require("aux.sysconfig")
 local userconfig = require("aux.userconfig")
@@ -19,7 +20,6 @@ end
 
 local fsysconf = find_config_file("sys.conf")
 local fusreconf = find_config_file("tman_conf.lua")
-local fenv = find_config_file("env.list")
 
 function config.check()
     if not fsysconf then
@@ -30,26 +30,18 @@ function config.check()
         io.stderr:write("tman: user.conf: user config missing\n")
         os.exit(1)
     end
-    if not fenv then
-        -- roachme: hotfix
-        fenv = os.getenv("HOME") .. "/.config/tman/env.list"
-
-        -- roachme: should be in prefix, cuz user might prefix.
-        -- If so then env.list get rewritten.
-        if not utils.touch(fenv) then
-            io.stderr:write("tman: env.list: couldn't create\n")
-            os.exit(1)
-        end
-    end
 end
 
 function config.load()
-    local prefix, env
+    local prefix
+    local envname
     sysconfig.init(fsysconf)
 
     -- get system config values
     prefix = sysconfig.get("prefix")
-    env = sysconfig.get("env")
+
+    env.init(prefix .. "/.tman/env.list")
+    envname = env.getcurr()
 
     -- load stuff from diff modules
     config.sys = sysconfig.getvars()
@@ -58,33 +50,20 @@ function config.load()
     -- roachme: maybe it's better to move it to struct.lua
     config.core = {
         name = ".tman",
-        ids = prefix .. "/" .. env .. "/.tman/ids", -- it's a file
-        units = prefix .. "/" .. env .. "/.tman/units/",
-        path = prefix .. "/" .. env .. "/.tman/",
+        ids = prefix .. "/.tman/" .. envname .. "/ids", -- it's a file
+        units = prefix .. "/.tman/" .. envname .. "/units/",
+        path = prefix .. "/.tman/" .. envname,
         prefix = prefix,
     }
 
     config.aux = {
-        code = prefix .. "/" .. env .. "/code/",
-        tasks = prefix .. "/" .. env .. "/tasks/",
+        code = prefix .. "/" .. envname .. "/code/",
+        tasks = prefix .. "/" .. envname .. "/tasks/",
     }
 
     -- roachme: hotfixes
-    config.sys.fenv = fenv
-    config.sys.env = env -- current env name
-end
-
----@param key string
----@return string|table
-function config.getsys(key)
-    return config.sys[key]
-end
-
----@param key string
----@param val string
-function config.setsys(key, val)
-    sysconfig.set(key, val)
-    config.load()
+    config.sys.fenv = prefix .. "/.tman/env.list" -- list of envs
+    config.sys.env = envname
 end
 
 config.load()

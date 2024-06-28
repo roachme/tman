@@ -4,7 +4,6 @@
 local utils = require("aux.utils")
 local config = require("core.config")
 local git = require("core.git")
-local env = require("core.env")
 
 local core = {}
 
@@ -22,18 +21,6 @@ function core.struct()
     utils.touch(config.sys.fenv)
 end
 
-function core.env()
-    local defenv = "work"
-
-    env.init(config.sys.fenv)
-    if not env.exists(defenv) then
-        if not env.add(defenv, "main tman env") then
-            io.stderr:write("couldn't add default env\n")
-            os.exit(1)
-        end
-    end
-end
-
 --- Check tman dir ain't corrupted and exists.
 -- @return true on success, otherwise false
 function core.check()
@@ -47,6 +34,11 @@ function core.check()
         config.aux.code,
         config.aux.tasks,
     }
+
+    -- check env file for default or current env.
+    if not utils.access(config.sys.env) then
+        return false
+    end
 
     -- check that prefix exists.
     if not utils.access(config.sys.prefix) then
@@ -71,18 +63,14 @@ function core.init()
     if core.check() == 0 then
         return
     end
+
     -- create tman structure
     core.struct()
-
-    -- add default env
-    core.env()
 
     -- download repos if needed
     git.repo_clone()
     return 1
 end
-
-function core.repair() end
 
 --- Backup data.
 -- @param fname archive filename (default extention is .tar)

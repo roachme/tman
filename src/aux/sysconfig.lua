@@ -89,7 +89,7 @@ end
 
 function sysconfig.getvars()
     return {
-        env = sysconfig.get("env") or default_env,
+        --env = sysconfig.get("env") or default_env,
         prefix = sysconfig.get("prefix"),
         install = sysconfig.get("install"),
     }
