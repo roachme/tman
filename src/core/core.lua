@@ -52,6 +52,11 @@ function core.check()
         config.aux.tasks,
     }
 
+    -- check that prefix exists.
+    if not utils.access(config.sys.prefix) then
+        return false
+    end
+
     for _, dir in pairs(dirs) do
         if not utils.access(dir) then
             return false

@@ -84,6 +84,7 @@ function config.load()
         ids = prefix .. "/" .. env .. "/.tman/ids", -- it's a file
         units = prefix .. "/" .. env .. "/.tman/units/",
         path = prefix .. "/" .. env .. "/.tman/",
+        prefix = prefix,
     }
 
     config.aux = {
