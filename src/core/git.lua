@@ -107,7 +107,7 @@ local function _branch_exists(repopath, branchname)
     local cmd_branch_exists = gitcmd .. "show-ref --quiet refs/heads/%s"
     local cmd = cmd_branch_exists:format(repopath, branchname)
     local retcode = utils.exec(cmd)
-    if retcode ~= 0 then
+    if not retcode then
         return false
     end
     return true
@@ -124,7 +124,7 @@ local function isuncommited(reponame)
     cmd = string.format(cmd, repopath)
     local ret = utils.exec(cmd)
     --print("cmd", ret, cmd)
-    return ret ~= 0
+    return not ret
 end
 
 local function git_branch_isuncommited()
@@ -155,7 +155,6 @@ end
 -- @treturn bool true on success, otherwise false
 local function git_branch_switch(id)
     local branch = taskunit.get(id, "branch")
-
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
         utils.exec(gcheckout:format(repopath, branch))
@@ -298,7 +297,7 @@ end
 -- @return on failure - false
 local function git_check(id)
     local branch = taskunit.get(id, "branch")
-
+    -- print("EMIL", branch, id)
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
         local reponame = repo.name
@@ -372,7 +371,8 @@ local function git_repo_clone()
                     repo.link,
                     repopath
                 )
-                if utils.exec(cmd) ~= 0 then
+		local code = utils.exec(cmd)
+                if not code then
                     local errfmt =
                         "tman: %s: couldn't download repo. Check link\n"
                     io.stderr:write(errfmt:format(repo.name))
