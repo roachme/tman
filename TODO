@@ -1,3 +1,9 @@
+Deps issues:
+    1.   `os.execute()'. Do something with it.
+         Lua5.1 - returns status code
+         Lua5.4 - returns boolean
+
+
 In progress:
     6.   Add file lock to task units.
     9.   Add task and command suggestions.
