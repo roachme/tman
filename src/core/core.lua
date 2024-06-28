@@ -54,15 +54,15 @@ function core.check()
 
     for _, dir in pairs(dirs) do
         if not utils.access(dir) then
-            return 1
+            return false
         end
     end
     for _, file in pairs(files) do
         if not utils.access(file) then
-            return 1
+            return false
         end
     end
-    return 0
+    return true
 end
 
 --- Init system to use a util.
