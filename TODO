@@ -2,6 +2,7 @@ Deps issues:
     1.   `os.execute()'. Do something with it.
          Lua5.1 - returns status code
          Lua5.4 - returns boolean
+    2.   Should I use ~/.tman and ~/.config/tman. Or just XDG vars.
 
 
 In progress:
