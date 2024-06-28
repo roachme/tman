@@ -42,7 +42,7 @@ function core.check()
     -- retrun 2: tman base stuff are corrupted
     -- NOT dirs / files
     local files = {
-        config.ids,
+        config.core.ids,
         --config.tmanconf,
     }
     local dirs = {
