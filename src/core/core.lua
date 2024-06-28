@@ -37,15 +37,11 @@ end
 --- Check tman dir ain't corrupted and exists.
 -- @return true on success, otherwise false
 function core.check()
-    -- roachme:
-    -- return 1: tman core stuff are corrupted
-    -- retrun 2: tman base stuff are corrupted
-    -- NOT dirs / files
     local files = {
         config.core.ids,
-        --config.tmanconf,
     }
     local dirs = {
+        -- roachme: these values actually depend on env.
         config.core.units,
         config.core.path,
         config.aux.code,

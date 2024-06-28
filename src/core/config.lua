@@ -9,14 +9,10 @@ local config = {}
 
 local function find_config_file(fname)
     local userhome = os.getenv("HOME")
-    local confpathes = {
-        userhome .. "/" .. ".tman/" .. fname,
-        userhome .. "/" .. ".config/tman/" .. fname,
-    }
-    for _, conf in pairs(confpathes) do
-        if utils.access(conf) then
-            return conf
-        end
+    local configpath = userhome .. "/.config/tman/" .. fname
+
+    if utils.access(configpath) then
+        return configpath
     end
     return nil
 end
@@ -35,6 +31,9 @@ function config.check()
         os.exit(1)
     end
     if not fenv then
+        -- roachme: hotfix
+        fenv = os.getenv("HOME") .. "/.config/tman/env.list"
+
         -- roachme: should be in prefix, cuz user might prefix.
         -- If so then env.list get rewritten.
         if not utils.touch(fenv) then
@@ -110,7 +109,6 @@ function config.setsys(key, val)
     config.load()
 end
 
-config.check() -- roachme: should be done in core.lua or setup.lua
 config.load()
 
 return config

@@ -6,8 +6,11 @@ TMAN_CWD=
 
 # config vars
 TMAN_ENV=
+
+# roachme: gotta let a user to choose a place.
+#          gotta talk to Emil L. to where's better to save it.
 TMAN_PREFIX=
-TMAN_INSTALL=
+TMAN_INSTALL="$HOME/.local/bin/tman/" # default place to install util
 
 TMAN_TMANCONF=
 
@@ -27,7 +30,7 @@ function _tman_get_sys_config_vars()
     _tman_get_tmanconf
     TMAN_ENV="$(grep env "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     TMAN_PREFIX="$(grep prefix "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
-    TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
+    #TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
 }
 
 function _tman_handle_command()
