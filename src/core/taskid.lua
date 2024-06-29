@@ -129,6 +129,9 @@ function taskid.swap()
 
     setprev(curr)
     setcurr(tmpprev)
+
+    -- set stuff for shell part of the util.
+    shell.setcurr(tmpprev)
     return ids.save()
 end
 
@@ -205,6 +208,9 @@ function taskid.setcurr(id)
 
     setprev(curr)
     setcurr(id)
+
+    -- set stuff for shell part of the util.
+    shell.setcurr(id)
     return ids.save()
 end
 
