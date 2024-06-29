@@ -123,16 +123,33 @@ function taskid.getcurr()
     return curr
 end
 
+--- Move current task to completed status.
+function taskid.unsetcurr()
+    -- roachme: maybe it should be ACTV?
+    unsetcurr(status.COMP)
+    return taskid.swap()
+end
+
+--- Set task ID as current.
+-- Set previous task ID if needed.
+function taskid.setcurr(id)
+    -- don't do unnecessary work.
+    if not id or id == curr then
+        return false
+    end
+
+    setprev(curr)
+    setcurr(id)
+
+    -- set stuff for shell part of the util.
+    shell.setcurr(id)
+    return ids.save()
+end
+
 --- Swap current and previous task IDs.
 function taskid.swap()
     local tmpprev = taskid.getprev()
-
-    setprev(curr)
-    setcurr(tmpprev)
-
-    -- set stuff for shell part of the util.
-    shell.setcurr(tmpprev)
-    return ids.save()
+    return taskid.setcurr(tmpprev)
 end
 
 --- Add a new task ID.
@@ -145,14 +162,7 @@ function taskid.add(id)
     if ids.add(id, status.CURR) == false then
         return false
     end
-
-    setprev(curr)
-    setcurr(id)
-
-    -- set stuff for shell part of the util.
-    shell.setcurr(id)
-
-    return ids.save()
+    return taskid.setcurr(id)
 end
 
 --- Delete a task ID.
@@ -188,29 +198,6 @@ function taskid.move(id, taskstatus)
     else
         ids.set(id, taskstatus)
     end
-    return ids.save()
-end
-
---- Move current task to completed status.
-function taskid.unsetcurr()
-    -- roachme: maybe it should be ACTV?
-    unsetcurr(status.COMP)
-    return taskid.swap()
-end
-
---- Set task ID as current.
--- Set previous task ID if needed.
-function taskid.setcurr(id)
-    -- don't do unnecessary work.
-    if not id or id == curr then
-        return false
-    end
-
-    setprev(curr)
-    setcurr(id)
-
-    -- set stuff for shell part of the util.
-    shell.setcurr(id)
     return ids.save()
 end
 
