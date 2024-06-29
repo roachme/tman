@@ -3,6 +3,8 @@
 -- @module env
 
 local envdb = require("aux.envdb")
+local shell = require("aux.shell")
+local config = require("core.config")
 
 local env = {}
 
@@ -53,19 +55,29 @@ function env.swap()
     return true
 end
 
+function env.setcurr(name)
+    if not envdb.exists(name) then
+        return false
+    end
+
+    prev = curr
+    curr = name
+
+    envdb.set(prev, status.PREV)
+    envdb.set(curr, status.CURR)
+
+    -- update file for shell part of util.
+    shell.setenv(name)
+    return true
+end
+
 function env.add(name, desc)
     if envdb.exists(name) then
         return false
     end
 
     envdb.add(name, desc)
-
-    -- roachme: use env.swap()
-    local tmpcurr = curr
-    curr = name
-    prev = tmpcurr
-
-    return true
+    return env.setcurr(name)
 end
 
 function env.get(name)
@@ -97,6 +109,18 @@ function env.set(name, stat)
     return false
 end
 
+function env.del(name)
+    if not envdb.exists(name) then
+        return false
+    end
+
+    envdb.del(name)
+    if name == curr then
+        env.swap()
+    end
+    return true
+end
+
 function env.list()
     if curr then
         local item = envdb.get(curr)
@@ -117,38 +141,8 @@ function env.list()
     return true
 end
 
-function env.del(name)
-    if not envdb.exists(name) then
-        return false
-    end
-
-    envdb.del(name)
-    if name == curr then
-        env.swap()
-    end
-    return true
-end
-
-function env.setcurr(name)
-    if not envdb.exists(name) then
-        return false
-    end
-
-    prev = curr
-    curr = name
-
-    envdb.set(prev, status.PREV)
-    envdb.set(curr, status.CURR)
-    return true
-end
-
-function env.init(fenv)
-    envdb.init(fenv)
-    load_spec_envs()
-
-    if not curr then
-        env.add("work", "main work env")
-    end
-end
+envdb.init(config.core.envs)
+shell.init(config.core.base)
+load_spec_envs()
 
 return env

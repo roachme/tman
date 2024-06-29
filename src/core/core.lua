@@ -1,50 +1,42 @@
 --- Tman core module to to init, check and repair itself.
 -- @module core
 
+local env = require("core.env")
+local git = require("core.git")
 local utils = require("aux.utils")
 local config = require("core.config")
-local git = require("core.git")
 
 local core = {}
 
+local dirs = {
+    config.aux.code,
+    config.aux.tasks,
+    config.core.base,
+    config.core.units,
+}
+
+local files = {
+    config.core.ids,
+    config.core.env,
+    config.core.envs,
+    config.core.curr,
+}
+
 function core.struct()
-    -- tman core structure
-    utils.mkdir(config.core.path)
-    utils.touch(config.core.ids)
-    utils.mkdir(config.core.units)
+    utils.mkdir(config.core.base)
 
-    -- tman aux structure
-    utils.mkdir(config.aux.code)
-    utils.mkdir(config.aux.tasks)
+    for _, dir in pairs(dirs) do
+        utils.mkdir(dir)
+    end
 
-    -- env file
-    utils.touch(config.sys.fenv)
+    for _, file in pairs(files) do
+        utils.touch(file)
+    end
 end
 
 --- Check tman dir ain't corrupted and exists.
 -- @return true on success, otherwise false
 function core.check()
-    local files = {
-        config.core.ids,
-    }
-    local dirs = {
-        -- roachme: these values actually depend on env.
-        config.core.units,
-        config.core.path,
-        config.aux.code,
-        config.aux.tasks,
-    }
-
-    -- check env file for default or current env.
-    if not utils.access(config.sys.env) then
-        return false
-    end
-
-    -- check that prefix exists.
-    if not utils.access(config.sys.prefix) then
-        return false
-    end
-
     for _, dir in pairs(dirs) do
         if not utils.access(dir) then
             return false
@@ -60,12 +52,17 @@ end
 
 --- Init system to use a util.
 function core.init()
+    local def_envname = "work"
+
     if core.check() == 0 then
         return
     end
 
     -- create tman structure
     core.struct()
+
+    -- add default env name
+    env.add(def_envname, "main tman env")
 
     -- download repos if needed
     git.repo_clone()

@@ -28,7 +28,6 @@ function _tman_get_tmanconf()
 function _tman_get_sys_config_vars()
 {
     _tman_get_tmanconf
-    TMAN_ENV="$(grep env "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     TMAN_PREFIX="$(grep prefix "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     #TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
 }
@@ -42,9 +41,12 @@ function _tman_handle_command()
     # roachme:TODO: it's a big permormance issue, it executes tman command twice
     # roachme: should've used TMAN_ENV
 
+    # get env from the file
+    TMAN_ENV="$(cat "${TMAN_PREFIX}/.tman/env")"
+    TMAN_CURR="$(cat "${TMAN_PREFIX}/.tman/curr")"
+
     if [ "$cmd" = "add" ]; then
-        taskid="${*: -1}" # get last argument
-        local taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         wd add -q -f task
 
@@ -64,14 +66,13 @@ function _tman_handle_command()
         cd "$taskdir" || return 1
         wd add -q -f task
 
-    #elif [ "$cmd" = "env" ] && [ "$2" = "prev" ]; then
     elif [ "$cmd" = "env" ]; then
         # load updated sys.conf values
         _tman_get_sys_config_vars
         _tman_form_full_command
 
         taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         wd add -q -f task
 

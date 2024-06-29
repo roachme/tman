@@ -1,11 +1,6 @@
 local env = require("core.env")
 local core = require("core.core")
 local common = require("core.common")
-local config = require("core.config")
---local help = require("core.help")
---local getopt = require("posix.unistd").getopt
-
-env.init(config.sys.fenv)
 
 --- Define or display task environments.
 local function builtin_env()
@@ -20,7 +15,7 @@ local function builtin_env()
             common.die(1, "such env name already exists\n", envname)
         end
         env.add(envname, "auto generated description " .. envname)
-        core.init()
+        --core.init()
     elseif cmd == "curr" then
         print(env.getcurr())
     elseif cmd == "del" then

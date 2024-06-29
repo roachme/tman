@@ -1,7 +1,7 @@
 --- Parse config file and provide env for the rest of the code.
 -- @module config
 
-local env = require("core.env")
+local shell = require("aux.shell")
 local utils = require("aux.utils")
 local sysconfig = require("aux.sysconfig")
 local userconfig = require("aux.userconfig")
@@ -35,35 +35,39 @@ end
 function config.load()
     local prefix
     local envname
-    sysconfig.init(fsysconf)
 
     -- get system config values
+    sysconfig.init(fsysconf)
     prefix = sysconfig.get("prefix")
 
-    env.init(prefix .. "/.tman/env.list")
-    envname = env.getcurr()
+    -- get env name
+
+    shell.init(prefix .. "/.tman")
+    envname = shell.getenv()
+    print("core.config: envname", envname)
 
     -- load stuff from diff modules
     config.sys = sysconfig.getvars()
     config.user = userconfig.getvars()
 
     -- roachme: maybe it's better to move it to struct.lua
+    print("------------- prefix", prefix)
     config.core = {
-        name = ".tman",
+        prefix = prefix .. "/",
         ids = prefix .. "/.tman/" .. envname .. "/ids", -- it's a file
         units = prefix .. "/.tman/" .. envname .. "/units/",
-        path = prefix .. "/.tman/" .. envname,
-        prefix = prefix,
+
+        -- shell stuff
+        env = prefix .. "/.tman/env",
+        envs = prefix .. "/.tman/envs",
+        curr = prefix .. "/.tman/curr",
+        base = prefix .. "/.tman/",
     }
 
     config.aux = {
-        code = prefix .. "/" .. envname .. "/code/",
-        tasks = prefix .. "/" .. envname .. "/tasks/",
+        code = config.core.prefix .. envname .. "/code/",
+        tasks = config.core.prefix .. envname .. "/tasks/",
     }
-
-    -- roachme: hotfixes
-    config.sys.fenv = prefix .. "/.tman/env.list" -- list of envs
-    config.sys.env = envname
 end
 
 config.load()

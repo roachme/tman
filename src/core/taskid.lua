@@ -2,11 +2,16 @@
 -- Like add, delete, list task IDs and so on.
 -- @module TaskID
 
+local ids = require("aux.iddb")
+local shell = require("aux.shell")
 local taskunit = require("core.taskunit")
 local config = require("core.config")
-local ids = require("aux.iddb")
 
 local taskid = {}
+
+
+shell.init(config.core.base)
+
 
 -- Hold special task IDs: curr and prev. To minimize lookup.
 local curr, prev
@@ -140,6 +145,10 @@ function taskid.add(id)
 
     setprev(curr)
     setcurr(id)
+
+    -- set stuff for shell part of the util.
+    shell.setcurr(id)
+
     return ids.save()
 end
 
