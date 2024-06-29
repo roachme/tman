@@ -30,7 +30,6 @@ local function builtin_env()
         end
         env.del(envname)
     elseif not cmd or cmd == "list" then
-        print("env: list env names")
         env.list()
     elseif cmd == "prev" then
         local prev = env.getprev()
