@@ -12,21 +12,17 @@ function shell.getenv()
     end
     res = f:read("*a")
     if res == "" then
-        print("------- error ---------")
         res = def_envname
     end
     f:close()
-    io.stderr:write("aux.shell:getenv: " .. res .. "\n")
     return res
 end
 
 function shell.setenv(val)
     local fname = prefix .. "/env"
-    print("aux.shell:setenv: fname", fname)
     local f = io.open(fname, "w")
 
     if not f then
-        print("soeuhoesuo u-ou- eo-oeuo-euoeuoetu")
         return false
     end
     f:write(val)

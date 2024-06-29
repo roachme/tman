@@ -44,14 +44,12 @@ function config.load()
 
     shell.init(prefix .. "/.tman")
     envname = shell.getenv()
-    print("core.config: envname", envname)
 
     -- load stuff from diff modules
     config.sys = sysconfig.getvars()
     config.user = userconfig.getvars()
 
     -- roachme: maybe it's better to move it to struct.lua
-    print("------------- prefix", prefix)
     config.core = {
         prefix = prefix .. "/",
         ids = prefix .. "/.tman/" .. envname .. "/ids", -- it's a file
