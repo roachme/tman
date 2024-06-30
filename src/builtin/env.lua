@@ -1,6 +1,6 @@
 local env = require("core.env")
-local core = require("core.core")
 local common = require("core.common")
+local taskid = require("core.taskid")
 
 --- Define or display task environments.
 local function builtin_env()
@@ -15,6 +15,7 @@ local function builtin_env()
             common.die(1, "such env name already exists\n", envname)
         end
         env.add(envname, "auto generated description " .. envname)
+        taskid.init()
         --core.init()
     elseif cmd == "curr" then
         print(env.getcurr())
@@ -29,16 +30,21 @@ local function builtin_env()
             os.exit(1)
         end
         env.del(envname)
+        taskid.init()
     elseif not cmd or cmd == "list" then
         env.list()
+
     elseif cmd == "prev" then
         local prev = env.getprev()
         env.setcurr(prev)
+        taskid.init()
+
     elseif cmd == "use" then
         if not env.exists(envname) then
             common.die(1, "no such env name\n", envname)
         end
         env.setcurr(envname)
+        taskid.init()
     else
         common.die(1, "no such env command\n", cmd)
     end

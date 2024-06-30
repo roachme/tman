@@ -83,6 +83,8 @@ end
 
 --- Load curr & prev IDs into local variables to minimize lookup.
 local function _load_special_ids()
+    curr = nil
+    prev = nil
     local size = ids.size()
 
     for i = 1, size do
@@ -234,9 +236,18 @@ function taskid.list(active, completed)
     return size
 end
 
+function taskid.init(fname)
+    config.load()
+    fname = fname or config.core.ids
+    ids.init(fname)
+    _load_special_ids()
+
+    -- shell: update files
+    shell.setcurr(curr or "")
+end
+
 -- Public functions: end --
 
-ids.init(config.core.ids)
-_load_special_ids()
+taskid.init()
 
 return taskid
