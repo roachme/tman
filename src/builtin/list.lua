@@ -1,9 +1,9 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
 local common = require("core.common")
-local help = require("core.help")
+local help = require("secondary.help")
 local getopt = require("posix.unistd").getopt
-local config = require("core.config")
+local config = require("secondary.config")
 
 --- List all task IDs.
 -- Default: show only active task IDs.

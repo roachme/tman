@@ -1,7 +1,7 @@
 local ids = require("aux.iddb")
 local utils = require("aux.utils")
 local units = require("aux.unitdb")
-local config = require("core.config")
+local config = require("secondary.config")
 local common = require("core.common")
 
 local setup = {}

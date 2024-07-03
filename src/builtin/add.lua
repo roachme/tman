@@ -1,12 +1,12 @@
 local env = require("core.env")
-local git = require("core.git")
+local git = require("secondary.git")
 local taskid = require("core.taskid")
-local struct = require("core.struct")
+local struct = require("secondary.struct")
 local taskunit = require("core.taskunit")
 local common = require("core.common")
-local help = require("core.help")
+local help = require("secondary.help")
 local getopt = require("posix.unistd").getopt
-local config = require("core.config")
+local config = require("secondary.config")
 
 --- Add a new task.
 -- Fill the rest with default values.

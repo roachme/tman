@@ -1,5 +1,5 @@
 local common = require("core.common")
-local help = require("core.help")
+local help = require("secondary.help")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
 

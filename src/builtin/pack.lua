@@ -1,4 +1,4 @@
-local git = require("core.git")
+local git = require("secondary.git")
 local taskid = require("core.taskid")
 local common = require("core.common")
 local getopt = require("posix.unistd").getopt

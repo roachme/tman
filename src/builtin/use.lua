@@ -1,8 +1,8 @@
 local env = require("core.env")
-local git = require("core.git")
+local git = require("secondary.git")
 local taskid = require("core.taskid")
 local common = require("core.common")
-local config = require("core.config")
+local config = require("secondary.config")
 
 --- Switch to task.
 local function tman_use()

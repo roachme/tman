@@ -1,3 +1,0 @@
-local cache = {}
-
-return cache

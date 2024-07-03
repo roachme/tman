@@ -3,8 +3,8 @@ local core = require("core.core")
 local shell = require("aux.shell")
 local common = require("core.common")
 local taskid = require("core.taskid")
-local config = require("core.config")
---local help = require("core.help")
+local config = require("secondary.config")
+--local help = require("secondary.help")
 --local getopt = require("posix.unistd").getopt
 
 env.init(config.sys.fenv)

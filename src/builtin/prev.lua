@@ -1,9 +1,9 @@
 local env = require("core.env")
-local git = require("core.git")
+local git = require("secondary.git")
 local taskid = require("core.taskid")
 local common = require("core.common")
-local help = require("core.help")
-local config = require("core.config")
+local help = require("secondary.help")
+local config = require("secondary.config")
 local getopt = require("posix.unistd").getopt
 
 --- Switch to previous task.

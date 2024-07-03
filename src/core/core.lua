@@ -2,8 +2,8 @@
 -- @module core
 
 local utils = require("aux.utils")
-local config = require("core.config")
-local git = require("core.git")
+local config = require("secondary.config")
+local git = require("secondary.git")
 local env = require("core.env")
 
 local core = {}
