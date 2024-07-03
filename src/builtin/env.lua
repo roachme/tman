@@ -23,6 +23,17 @@ local function builtin_env()
         end
         env.add(envname, "auto generated description " .. envname)
         core.init()
+
+
+        taskid.init(config.core.ids)
+        local curr_id = taskid.getcurr(envname)
+        if curr_id then
+            shell.setcurr(envname .. ":" .. curr_id)
+        else
+            shell.setcurr("")
+        end
+
+
     elseif cmd == "curr" then
         print(env.getcurr())
     elseif cmd == "del" then
@@ -48,7 +59,11 @@ local function builtin_env()
         taskid.init(config.core.ids)
         local curr_id = taskid.getcurr(prev)
         if curr_id then
+            print("if: curr_id", curr_id)
             shell.setcurr(prev .. ":" .. curr_id)
+        else
+            print("else: curr_id", curr_id)
+            shell.setcurr("")
         end
     elseif cmd == "use" then
         if not env.exists(envname) then
