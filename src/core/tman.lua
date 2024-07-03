@@ -18,7 +18,7 @@ local function main()
     core.init()
 
     -- setup tasks structure before use.
-    setup.setup()
+    --setup.setup()
 
     -- Call command.
     for name, func in pairs(builtin) do

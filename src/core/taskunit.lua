@@ -240,12 +240,12 @@ end
 -- @param id task id
 -- @param tasktype task type: bugfix, hotfix, feature
 -- @param prio task priority
-function taskunit.add(id, tasktype, prio)
+function taskunit.add(envname, id, tasktype, prio)
     local desc = get_input("Desc")
     prio = prio or unit.prios.mid
 
     -- Set values.
-    unit.init(config.core.units .. id)
+    unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("id", id)
     unit.set("prio", prio)
     unit.set("type", tasktype)

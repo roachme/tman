@@ -1,240 +1,188 @@
---- Operate on task units in database.
+--- Operate on task ids in database.
 -- Like add, delete, list task IDs and so on.
--- @module TaskID
+-- @module taskid
 
-local taskunit = require("core.taskunit")
-local config = require("core.config")
 local ids = require("aux.iddb")
+local shell = require("aux.shell")
+
+---@alias Status
+---| 0   # Current task
+---| 1   # Previous task
+---| 2   # Active task
+---| 3   # Completed task
 
 local taskid = {}
-
--- Hold special task IDs: curr and prev. To minimize lookup.
-local curr, prev
+local fids
 
 --- Types of task IDs.
 local status = {
-    CURR = 0, -- current task
-    PREV = 1, -- previous task
-    ACTV = 2, -- active task
-    COMP = 3, -- complete task
+    CURR = 0,
+    PREV = 1,
+    ACTV = 2,
+    COMP = 3,
 }
 
--- Private functions: start --
+---Check task id exists in specified environment.
+---@param envname string
+---@param id string
+---@return boolean
+function taskid.exists(envname, id)
+    return ids.exist(envname, id)
+end
 
---- Unset previous task ID.
--- Assumes that ID exists in database.
--- @param taskstatus task status to move a previous ID to
--- @return true on success, otherwise false
-local function unsetprev(taskstatus)
-    -- roachme: use `ids.get()' to unset specific ID and optimize code.
-    local size = ids.size()
-    taskstatus = taskstatus or status.ACTV
-
-    for i = 1, size do
-        local entry = ids.getidx(i)
-        if entry.status == status.PREV then
-            return ids.set(entry.id, taskstatus)
+---Get environment's current task id.
+---@param envname string
+---@return string|nil
+function taskid.getcurr(envname)
+    for i = 1, ids.size() do
+        local item = ids.getidx(envname, i)
+        if item.envname == envname and item.status == status.CURR then
+            return item.id
         end
+    end
+    return nil
+end
+
+---Get environment's previous task id.
+---@param envname string
+---@return string|nil
+function taskid.getprev(envname)
+    for i = 1, ids.size() do
+        local item = ids.getidx(envname, i)
+        if item.envname == envname and item.status == status.PREV then
+            return item.id
+        end
+    end
+    return nil
+end
+
+---Unset environment's current task id.
+---@param envname string
+---@return boolean
+function taskid.unsetcurr(envname)
+    local curr = taskid.getcurr(envname)
+
+    if not curr then
+        return false
+    end
+
+    ids.set(envname, curr, status.ACTV)
+    ids.save()
+    shell.setcurr("")
+    return true
+end
+
+---Set environment's current task id.
+---Also update previous one.
+---@param envname string
+---@param id string
+---@return boolean
+function taskid.setcurr(envname, id)
+    local prev = taskid.getprev(envname)
+    local curr = taskid.getcurr(envname)
+
+    if not ids.exist(envname, id) then
+        return false
+    end
+    -- sentinel guard: don't mark the same id as current
+    if id == curr then
+        return true
+    end
+
+    -- if theree's previous task then unmark it
+    if prev then
+        ids.set(envname, prev, status.ACTV)
+    end
+
+    if curr then
+        ids.set(envname, curr, status.PREV)
+    end
+    ids.set(envname, id, status.CURR)
+    ids.save()
+    shell.setcurr(id)
+    return true
+end
+
+---Swap current and previous task ids.
+---Only if both current and previous exist.
+---@param envname string
+function taskid.swap(envname)
+    local newcurr = taskid.getprev(envname)
+
+    if newcurr then
+        return taskid.setcurr(envname, newcurr)
     end
     return false
 end
 
---- Set previous task ID.
--- Unset old previous task ID.
--- @param id task ID
--- @treturn bool true if previous task is set, otherwise false
-local function setprev(id)
-    unsetprev()
-    prev = id
-    return ids.set(id, status.PREV)
-end
+---Add new current task id into environment.
+---@param envname string
+---@param id string
+---@param stat Status
+---@return boolean
+function taskid.add(envname, id, stat)
+    -- roachme: not used...
+    stat = stat or status.CURR
 
---- Unset current task ID.
--- Assumes that ID exists in database.
--- @param taskstatus task status to move a current ID to
--- @return true on success, otherwise false
-local function unsetcurr(taskstatus)
-    -- roachme: use `ids.get()' to unset specific ID and optimize code.
-    local size = ids.size()
-    taskstatus = taskstatus or status.ACTV
-
-    for i = 1, size do
-        local entry = ids.getidx(i)
-        if entry.status == status.CURR then
-            return ids.set(entry.id, taskstatus)
-        end
+    if not ids.add(envname, id, status.ACTV) then
+        return false
     end
-    return false
+    return taskid.setcurr(envname, id)
 end
 
---- Set current task ID.
--- @param id task ID
--- @treturn bool true if previous task is set, otherwise false
-local function setcurr(id)
-    unsetcurr()
-    curr = id
-    return ids.set(id, status.CURR)
-end
+---Delete a task id from environment.
+---@param envname string
+---@param id string
+---@return boolean
+function taskid.del(envname, id)
+    local prev = taskid.getprev(envname)
+    local curr = taskid.getcurr(envname)
 
---- Load curr & prev IDs into local variables to minimize lookup.
-local function _load_special_ids()
-    local size = ids.size()
-
-    for i = 1, size do
-        local entry = ids.getidx(i)
-
-        if entry.status == status.CURR then
-            curr = entry.id
-        elseif entry.status == status.PREV then
-            prev = entry.id
-        end
-    end
-end
-
--- Private functions: end --
-
--- Public functions: start --
-
---- Check that task ID exist.
--- @param id task ID to look up
--- @treturn bool true if task ID exist, otherwise false
-function taskid.exist(id)
-    return ids.exist(id)
-end
-
---- Get previous task ID from database.
--- @return previous task ID
--- @return on success - previous task ID
--- @return on failure - nil
-function taskid.getprev()
-    return prev
-end
-
---- Get current task ID from database.
--- @return current task ID
--- @return on success - current task ID
--- @return on failure - nil
-function taskid.getcurr()
-    return curr
-end
-
---- Swap current and previous task IDs.
-function taskid.swap()
-    local tmpprev = taskid.getprev()
-
-    setprev(curr)
-    setcurr(tmpprev)
-    return ids.save()
-end
-
---- Add a new task ID.
--- @param id task ID to add to database
--- @treturn bool true on success, otherwise false
-function taskid.add(id)
-    -- roacme: Don't make it current.
-    --         Add it to database with status: ACTV
-    --         There's setcurr() for it.
-    if ids.add(id, status.CURR) == false then
+    if not taskid.exists(envname, id) then
         return false
     end
 
-    setprev(curr)
-    setcurr(id)
-    return ids.save()
-end
+    ids.del(envname, id)
 
---- Delete a task ID.
--- @param id task ID
--- @treturn bool true on success, otherwise false
-function taskid.del(id)
-    if not taskid.exist(id) then
-        return false
-    end
-
-    ids.del(id)
-
-    -- update special IDs.
+    -- if current task id gets deleted then mark previous task id as current
     if id == curr then
-        return taskid.swap()
+        taskid.unsetcurr(envname)
+    elseif id == curr and prev then
+        taskid.setcurr(envname, prev)
     end
 
     return ids.save()
 end
 
---- Move task ID to new status.
--- roachme: Under development.
--- @param id task ID
--- @param taskstatus task new status (default: active)
--- @return true on success, otherwise false
-function taskid.move(id, taskstatus)
-    if id == curr then
-        unsetprev(status.ACTV)
-        ids.set(prev, status.CURR)
-        ids.set(curr, taskstatus)
-    elseif id == prev then
-        ids.set(prev, status.COMP)
-    else
-        ids.set(id, taskstatus)
-    end
-    return ids.save()
+function taskid.init(fname)
+    fids = fname
+    ids.init(fids)
 end
 
---- Move current task to completed status.
-function taskid.unsetcurr()
-    -- roachme: maybe it should be ACTV?
-    unsetcurr(status.COMP)
-    return taskid.swap()
-end
+---List environment's task ids.
+---@param envname string
+function taskid.list(envname, active, completed)
+    local prev = taskid.getprev(envname)
+    local curr = taskid.getcurr(envname)
 
---- Set task ID as current.
--- Set previous task ID if needed.
-function taskid.setcurr(id)
-    -- don't do unnecessary work.
-    if not id or id == curr then
-        return false
+    if (active or (not active and not completed)) and curr then
+        print(("* %s"):format(curr))
+    end
+    if (active or (not active and not completed)) and prev then
+        print(("* %s"):format(prev))
     end
 
-    setprev(curr)
-    setcurr(id)
-    return ids.save()
-end
+    for i = 1, ids.size() do
+        local item = ids.getidx(envname, i)
 
---- List task IDs.
--- There are 4 statuses: current, previous, active and completed. Default: active
--- @param active list only active task IDs
--- @param completed list only completed task IDs
--- @return count of task IDs
-function taskid.list(active, completed)
-    local desc
-    local size = ids.size()
-
-    if active and curr then
-        desc = taskunit.get(curr, "desc")
-        print(("* %-10s %s"):format(curr, desc))
-    end
-    if active and prev then
-        desc = taskunit.get(prev, "desc")
-        print(("- %-10s %s"):format(prev, desc))
-    end
-
-    for idx = 1, size do
-        local entry = ids.getidx(idx)
-        if entry.id ~= curr and entry.id ~= prev then
-            if entry.status == status.ACTV and active then
-                desc = taskunit.get(entry.id, "desc")
-                print(("  %-10s %s"):format(entry.id, desc))
-            elseif entry.status == status.COMP and completed then
-                desc = taskunit.get(entry.id, "desc")
-                print(("  %-10s %s"):format(entry.id, desc))
+        if item.id ~= curr and item.id ~= prev then
+            if item.status == status.ACTV and active then
+                print(("a %s"):format(item.id))
+            elseif item.status == status.COMP and completed then
+                print(("c %s"):format(item.id))
             end
         end
     end
-    return size
 end
-
--- Public functions: end --
-
-ids.init(config.core.ids)
-_load_special_ids()
 
 return taskid

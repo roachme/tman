@@ -5,6 +5,7 @@ local taskunit = require("core.taskunit")
 local common = require("core.common")
 local help = require("core.help")
 local getopt = require("posix.unistd").getopt
+local config = require("core.config")
 
 --- Add a new task.
 -- Fill the rest with default values.
@@ -20,6 +21,7 @@ local function builtin_add()
     local optstr = "hp:t:"
     local last_index = 1
     local keyhelp
+    local envname = "work"
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -54,19 +56,24 @@ local function builtin_add()
         os.exit(1)
     end
 
-    if not taskid.add(id) then
+    taskid.init(config.core.ids)
+
+    if not taskid.add(envname, id, 0) then
         -- don't use common.die_atomic() cuz it'll delete existing task ID.
         common.die(1, "task ID already exists\n", id)
     end
-    if not taskunit.add(id, tasktype, prio) then
+    if not taskunit.add(envname, id, tasktype, prio) then
         common.die_atomic(id, "could not create new task unit\n", id)
     end
+
+    --[[
     if not struct.create(id) then
         common.die_atomic(id, "could not create new task structure\n", id)
     end
     if not git.branch_create(id) then
         common.die_atomic(id, "could not create new task branch\n", id)
     end
+    ]]
     return 0
 end
 

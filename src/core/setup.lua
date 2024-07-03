@@ -55,7 +55,7 @@ function setup.setup_units()
     -- check that each task IDs has a file
     -- and its structure's ok
     for i = 1, ids.size() do
-        local item = ids.getidx(i)
+        local item = ids.getidx_generic(i)
         local fname = dirunit .. item.id
 
         if not units.init(fname) then
