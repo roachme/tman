@@ -23,6 +23,14 @@ local status = {
     COMP = 3,
 }
 
+---Generate unit filename.
+---@param envname string
+---@param id string
+---@return string
+local function genname(envname, id)
+    return envname .. ":" .. id
+end
+
 ---Check task id exists in specified environment.
 ---@param envname string
 ---@param id string
@@ -100,7 +108,7 @@ function taskid.setcurr(envname, id)
     end
     ids.set(envname, id, status.CURR)
     ids.save()
-    shell.setcurr(id)
+    shell.setcurr(genname(envname, id))
     return true
 end
 
@@ -178,13 +186,15 @@ function taskid.list(envname, active, completed)
 
     for i = 1, ids.size() do
         local item = ids.getidx(envname, i)
-        desc = taskunit.get(envname, item.id, "desc")
 
-        if item.id ~= curr and item.id ~= prev then
-            if item.status == status.ACTV and active then
-                print(("a %-10s %s"):format(curr, desc))
-            elseif item.status == status.COMP and completed then
-                print(("c %-10s %s"):format(curr, desc))
+        if item.envname == envname then
+            desc = taskunit.get(envname, item.id, "desc")
+            if item.id ~= curr and item.id ~= prev then
+                if item.status == status.ACTV and active then
+                    print(("a %-10s %s"):format(curr, desc))
+                elseif item.status == status.COMP and completed then
+                    print(("c %-10s %s"):format(curr, desc))
+                end
             end
         end
     end

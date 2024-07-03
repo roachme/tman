@@ -19,7 +19,10 @@ local function _db_load()
 
     for line in f:lines() do
         local envname, id, idstatus = string.match(line, idregex)
-        table.insert(db, { envname = envname, id = id, status = tonumber(idstatus) })
+        table.insert(
+            db,
+            { envname = envname, id = id, status = tonumber(idstatus) }
+        )
     end
     return f:close() and true or false
 end
@@ -35,7 +38,11 @@ end
 ---@return boolean
 function ids.check()
     for _, item in pairs(db) do
-        if type(item.id) ~= "string" or type(item.id) ~= "string" or type(item.status) ~= "number" then
+        if
+            type(item.id) ~= "string"
+            or type(item.id) ~= "string"
+            or type(item.status) ~= "number"
+        then
             return false
         end
     end

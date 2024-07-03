@@ -36,18 +36,17 @@ function _tman_handle_command()
     local taskid=
     local taskdir=
 
-    # roachme:TODO: it's a big permormance issue, it executes tman command twice
-    # roachme: should've used TMAN_ENV
+    # get env from the file
+    #TMAN_ENV="$(cat "${TMAN_PREFIX}/.tman/env")"
+    TMAN_CURR="$(cat "${TMAN_PREFIX}/.tman/curr" 2>/dev/null)"
 
     if [ "$cmd" = "add" ]; then
-        taskid="${*: -1}" # get last argument
-        local taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         wd add -q -f task
 
     elif [ "$cmd" = "del" ]; then
-        taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         if [ -n "$taskid" ]; then
             wd add -q -f task
@@ -56,8 +55,7 @@ function _tman_handle_command()
         fi
 
     elif [ "$cmd" = "prev" ]; then
-        taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         wd add -q -f task
 
@@ -67,8 +65,7 @@ function _tman_handle_command()
         _tman_get_sys_config_vars
         _tman_form_full_command
 
-        taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         wd add -q -f task
 

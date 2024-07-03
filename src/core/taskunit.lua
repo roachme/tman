@@ -143,6 +143,7 @@ end
 ---@param newid string
 ---@return boolean
 local function _set_id(envname, id, newid)
+    -- rocahme: outta use struct.lua
     local old_taskdir = config.aux.tasks .. id
     local new_taskdir = config.aux.tasks .. newid
 

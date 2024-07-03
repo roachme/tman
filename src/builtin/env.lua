@@ -19,6 +19,7 @@ local function builtin_env()
         if env.exists(envname) then
             common.die(1, "such env name already exists\n", envname)
         end
+        print("--")
         env.add(envname, "auto generated description " .. envname)
         core.init()
     elseif cmd == "curr" then
@@ -39,7 +40,9 @@ local function builtin_env()
         env.list()
     elseif cmd == "prev" then
         local prev = env.getprev()
-        env.setcurr(prev)
+        if prev then
+            env.setcurr(prev)
+        end
     elseif cmd == "use" then
         if not env.exists(envname) then
             common.die(1, "no such env name\n", envname)

@@ -1,3 +1,4 @@
+local env = require("core.env")
 local git = require("core.git")
 local taskid = require("core.taskid")
 local struct = require("core.struct")
@@ -21,7 +22,8 @@ local function builtin_add()
     local optstr = "hp:t:"
     local last_index = 1
     local keyhelp
-    local envname = "work"
+    local envname = env.getcurr()
+    --envname = "test"
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -66,10 +68,9 @@ local function builtin_add()
     if not taskunit.add(envname, id, tasktype, prio) then
         common.die_atomic(id, "could not create new task unit\n", id)
     end
-    if not struct.create(id) then
+    if not struct.create(common.genname(envname, id)) then
         common.die_atomic(id, "could not create new task structure\n", id)
     end
-
     --[[
     if not git.branch_create(id) then
         common.die_atomic(id, "could not create new task branch\n", id)

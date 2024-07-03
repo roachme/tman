@@ -1,15 +1,17 @@
+local env = require("core.env")
 local git = require("core.git")
 local taskid = require("core.taskid")
 local common = require("core.common")
 local help = require("core.help")
+local config = require("core.config")
 local getopt = require("posix.unistd").getopt
 
 --- Switch to previous task.
 local function tman_prev()
     local keyhelp
-    local prev = taskid.getprev()
-    local envname = arg[1]
-    local optstr = "e:h" -- roachme:API: should option be used?
+    local prev
+    local envname = env.getcurr()
+    local optstr = ":h" -- roachme:API: should option be used?
     local cmdname = "prev"
 
     for optopt, _, optind in getopt(arg, optstr) do
@@ -27,6 +29,9 @@ local function tman_prev()
         return 0
     end
 
+    taskid.init(config.core.ids)
+    prev = taskid.getprev(envname)
+
     if not prev then
         common.die(1, "no previous task\n", "")
     end
@@ -34,13 +39,8 @@ local function tman_prev()
         common.die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
     end
 
-    if envname then
-        io.stderr:write("tman: env not supported yet. under development\n")
-        os.exit(1)
-    end
-
     git.branch_switch(prev)
-    taskid.swap()
+    taskid.swap(envname)
     return 0
 end
 

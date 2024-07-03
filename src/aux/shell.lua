@@ -25,12 +25,33 @@ local function setval(fname, val)
     return true
 end
 
+---Get current task id to use from shell.
+---@return string | nil
+function shell.getcurr()
+    local fname = config.core.path .. "curr"
+    return getval(fname)
+end
+
 ---Set current task id to use from shell.
 ---@param val string
+---@return boolean
 function shell.setcurr(val)
     local fname = config.core.path .. "curr"
     return setval(fname, val)
 end
 
+---Get current environment to use from shell.
+---@return string | nil
+function shell.getenv()
+    local fname = config.core.path .. "env"
+    return getval(fname)
+end
+
+---Get current environment to use from shell.
+---@return boolean
+function shell.setenv(val)
+    local fname = config.core.path .. "env"
+    return setval(fname, val)
+end
 
 return shell

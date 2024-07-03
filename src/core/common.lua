@@ -23,4 +23,12 @@ function common.die_atomic(id, errfmt, ...)
     common.die(1, errfmt, ...)
 end
 
+---Generate unit filename.
+---@param envname string
+---@param id string
+---@return string
+function common.genname(envname, id)
+    return envname .. ":" .. id
+end
+
 return common
