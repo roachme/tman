@@ -124,14 +124,12 @@ local function is_repo_clean(reponame)
     local cmd = "git -C %s diff --quiet --exit-code"
     cmd = string.format(cmd, repopath)
     local ret = utils.exec(cmd)
-    print("cmd", ret, cmd)
     return ret == 0 or ret == true
 end
 
 local function git_branch_isuncommited()
     for _, repo in pairs(repos) do
         local ret = is_repo_clean(repo.name)
-        print("repo", repo.name, ret)
         if ret then
             return false
         end
@@ -263,7 +261,6 @@ local function git_branch_merged(id)
         -- update list of local branches with remote one
         utils.exec(gbranchprune:format(repopath))
         if not utils.exec(cmd) then
-            print(" repo:", repo.name)
             retcode = false
         end
     end
