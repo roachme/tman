@@ -61,6 +61,7 @@ function _tman_handle_command()
 
     #elif [ "$cmd" = "env" ] && [ "$2" = "prev" ]; then
     elif [ "$cmd" = "env" ]; then
+        echo "tman.sh: handle env"
         # load updated sys.conf values
         _tman_get_sys_config_vars
         _tman_form_full_command

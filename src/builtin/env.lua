@@ -1,6 +1,8 @@
 local env = require("core.env")
 local core = require("core.core")
+local shell = require("aux.shell")
 local common = require("core.common")
+local taskid = require("core.taskid")
 local config = require("core.config")
 --local help = require("core.help")
 --local getopt = require("posix.unistd").getopt
@@ -43,6 +45,12 @@ local function builtin_env()
         if prev then
             env.setcurr(prev)
         end
+
+        -- roachme: gotta structure it.
+        -- update task as well
+        taskid.init(config.core.ids)
+        local curr_id = taskid.getcurr(prev)
+        shell.setcurr(prev .. ":" .. curr_id)
     elseif cmd == "use" then
         if not env.exists(envname) then
             common.die(1, "no such env name\n", envname)
