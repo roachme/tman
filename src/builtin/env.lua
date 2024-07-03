@@ -50,10 +50,12 @@ local function builtin_env()
         env.list()
     elseif cmd == "prev" then
         local prev = env.getprev()
-        if prev then
-            env.setcurr(prev)
+
+        if not prev then
+            return common.die(1, "no previous env\n", "env")
         end
 
+        env.setcurr(prev)
         -- roachme: gotta structure it.
         -- update task as well
         taskid.init(config.core.ids)
@@ -68,6 +70,10 @@ local function builtin_env()
             common.die(1, "no such env name\n", envname)
         end
         env.setcurr(envname)
+
+        taskid.init(config.core.ids)
+        local curr_id = taskid.getcurr(envname)
+        shell.setcurr(envname .. ":" .. curr_id)
     else
         common.die(1, "no such env command\n", cmd)
     end

@@ -1,7 +1,6 @@
 local env = require("core.env")
 local git = require("core.git")
 local taskid = require("core.taskid")
-local shell = require("aux.shell")
 local common = require("core.common")
 local config = require("core.config")
 
