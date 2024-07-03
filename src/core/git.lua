@@ -1,6 +1,7 @@
 --- Git wrapper.
 -- @module Git
 
+local env = require("core.env")
 local config = require("core.config")
 local taskunit = require("core.taskunit")
 local utils = require("aux.utils")
@@ -154,7 +155,7 @@ end
 -- @param id task ID
 -- @treturn bool true on success, otherwise false
 local function git_branch_switch(id)
-    local branch = taskunit.get(id, "branch")
+    local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
@@ -195,7 +196,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function git_branch_create(id)
-    local branch = taskunit.get(id, "branch")
+    local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
@@ -228,7 +229,7 @@ end
 -- @param id task ID
 -- @return true on success, otherwise false
 local function git_branch_delete(id)
-    local branch = taskunit.get(id, "branch")
+    local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
@@ -248,7 +249,7 @@ end
 -- @return task branch's not merged - false
 local function git_branch_merged(id)
     local retcode = true
-    local branch = taskunit.get(id, "branch")
+    local branch = taskunit.get(env.getcurr(), id, "branch")
 
     --  roachme: doesn't work if merge conflic with default branch.
     --  which happens quite often.
@@ -274,7 +275,7 @@ local function git_branch_ahead(id)
     -- roachme:FIXME: it checks diff between task branch and defaul branch.
     -- it should check uncommited changes instead.
     local res = {}
-    local branch = taskunit.get(id, "branch")
+    local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
@@ -297,7 +298,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function git_check(id)
-    local branch = taskunit.get(id, "branch")
+    local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
@@ -386,7 +387,7 @@ end
 
 --- Check that task branch exists.
 local function git_branch_exists(id)
-    local branch = taskunit.get(id, "branch")
+    local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name

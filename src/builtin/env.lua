@@ -21,14 +21,12 @@ local function builtin_env()
         if env.exists(envname) then
             common.die(1, "such env name already exists\n", envname)
         end
-        print("--")
         env.add(envname, "auto generated description " .. envname)
         core.init()
     elseif cmd == "curr" then
         print(env.getcurr())
     elseif cmd == "del" then
         envname = envname or env.getcurr()
-        print("env: del env", envname)
 
         io.write("Do you want to continue? [Yes/No] ")
         local confirm = io.read("*line")
@@ -38,7 +36,6 @@ local function builtin_env()
         end
         env.del(envname)
     elseif not cmd or cmd == "list" then
-        print("env: list env names")
         env.list()
     elseif cmd == "prev" then
         local prev = env.getprev()
@@ -50,7 +47,9 @@ local function builtin_env()
         -- update task as well
         taskid.init(config.core.ids)
         local curr_id = taskid.getcurr(prev)
-        shell.setcurr(prev .. ":" .. curr_id)
+        if curr_id then
+            shell.setcurr(prev .. ":" .. curr_id)
+        end
     elseif cmd == "use" then
         if not env.exists(envname) then
             common.die(1, "no such env name\n", envname)

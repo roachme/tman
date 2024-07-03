@@ -48,7 +48,7 @@ local function builtin_add()
 
     id = arg[last_index]
 
-    if not git.branch_isuncommited() then
+    if git.branch_isuncommited() then
         -- roachme: would be nice to know what repo.
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
@@ -71,11 +71,9 @@ local function builtin_add()
     if not struct.create(common.genname(envname, id)) then
         common.die_atomic(id, "could not create new task structure\n", id)
     end
-    --[[
     if not git.branch_create(id) then
         common.die_atomic(id, "could not create new task branch\n", id)
     end
-    ]]
     return 0
 end
 
