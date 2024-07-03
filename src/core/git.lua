@@ -107,7 +107,7 @@ local function _branch_exists(repopath, branchname)
     local cmd_branch_exists = gitcmd .. "show-ref --quiet refs/heads/%s"
     local cmd = cmd_branch_exists:format(repopath, branchname)
     local retcode = utils.exec(cmd)
-    if retcode ~= 0 then
+    if not retcode then
         return false
     end
     return true
@@ -124,7 +124,7 @@ local function isuncommited(reponame)
     cmd = string.format(cmd, repopath)
     local ret = utils.exec(cmd)
     --print("cmd", ret, cmd)
-    return ret ~= 0
+    return ret
 end
 
 local function git_branch_isuncommited()
@@ -259,7 +259,7 @@ local function git_branch_merged(id)
 
         -- update list of local branches with remote one
         utils.exec(gbranchprune:format(repopath))
-        if utils.exec(cmd) ~= 0 then
+        if not utils.exec(cmd) then
             print(" repo:", repo.name)
             retcode = false
         end
@@ -283,7 +283,7 @@ local function git_branch_ahead(id)
         if isuncommited(repo.name) then
             -- has uncommited changes
             table.insert(res, repo.name)
-        elseif utils.exec(cmd) ~= 0 then
+        elseif not utils.exec(cmd) then
             --print("exec", cmd)
             -- has uncommited changes
             -- has commits ahead
@@ -372,7 +372,7 @@ local function git_repo_clone()
                     repo.link,
                     repopath
                 )
-                if utils.exec(cmd) ~= 0 then
+                if not utils.exec(cmd) then
                     local errfmt =
                         "tman: %s: couldn't download repo. Check link\n"
                     io.stderr:write(errfmt:format(repo.name))
