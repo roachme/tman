@@ -163,25 +163,28 @@ end
 ---List environment's task ids.
 ---@param envname string
 function taskid.list(envname, active, completed)
+    local desc
     local prev = taskid.getprev(envname)
     local curr = taskid.getcurr(envname)
 
     if (active or (not active and not completed)) and curr then
-        print("*", taskunit.get(envname, curr, "desc"))
-        print(("* %s"):format(curr))
+        desc = taskunit.get(envname, curr, "desc")
+        print(("* %-10s %s"):format(curr, desc))
     end
     if (active or (not active and not completed)) and prev then
-        print(("* %s"):format(prev))
+        desc = taskunit.get(envname, prev, "desc")
+        print(("- %-10s %s"):format(curr, desc))
     end
 
     for i = 1, ids.size() do
         local item = ids.getidx(envname, i)
+        desc = taskunit.get(envname, item.id, "desc")
 
         if item.id ~= curr and item.id ~= prev then
             if item.status == status.ACTV and active then
-                print(("a %s"):format(item.id))
+                print(("a %-10s %s"):format(curr, desc))
             elseif item.status == status.COMP and completed then
-                print(("c %s"):format(item.id))
+                print(("c %-10s %s"):format(curr, desc))
             end
         end
     end
