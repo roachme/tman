@@ -118,19 +118,21 @@ end
 -- @param reponame repo name
 -- @return has uncommited changes - true
 -- @return no uncommited changes -  false
-local function isuncommited(reponame)
+local function is_repo_clean(reponame)
     -- roachme: gotta take argument for task branch, right?
     local repopath = config.aux.code .. reponame
     local cmd = "git -C %s diff --quiet --exit-code"
     cmd = string.format(cmd, repopath)
     local ret = utils.exec(cmd)
-    --print("cmd", ret, cmd)
-    return ret
+    print("cmd", ret, cmd)
+    return ret == 0 or ret == true
 end
 
 local function git_branch_isuncommited()
     for _, repo in pairs(repos) do
-        if isuncommited(repo.name) then
+        local ret = is_repo_clean(repo.name)
+        print("repo", repo.name, ret)
+        if ret then
             return false
         end
     end
@@ -281,7 +283,7 @@ local function git_branch_ahead(id)
         local repopath = config.aux.code .. repo.name
         local cmd = gdiff_commits:format(repopath, repo.branch, branch)
 
-        if isuncommited(repo.name) then
+        if not is_repo_clean(repo.name) then
             -- has uncommited changes
             table.insert(res, repo.name)
         elseif not utils.exec(cmd) then
@@ -311,7 +313,7 @@ local function git_check(id)
         end
 
         -- Second off, check that branch has no uncommited changes.
-        if isuncommited(reponame) then
+        if not is_repo_clean(reponame) then
             local errmsg = ("repo '%s' uncommited changes\n"):format(reponame)
             io.stderr:write(errmsg)
             return false
@@ -334,7 +336,7 @@ local function git_commit_create(id)
     -- if not tryna switch to task branch.
 
     for _, repo in pairs(repos) do
-        if isuncommited(repo.name) then
+        if not is_repo_clean(repo.name) then
             --print("repo", repo.name)
             local repopath = config.aux.code .. repo.name
 

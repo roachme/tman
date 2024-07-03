@@ -59,10 +59,8 @@ local function builtin_env()
         taskid.init(config.core.ids)
         local curr_id = taskid.getcurr(prev)
         if curr_id then
-            print("if: curr_id", curr_id)
             shell.setcurr(prev .. ":" .. curr_id)
         else
-            print("else: curr_id", curr_id)
             shell.setcurr("")
         end
     elseif cmd == "use" then
