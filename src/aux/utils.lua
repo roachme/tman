@@ -7,8 +7,7 @@ local posix = require("posix")
 ---@param dirname string
 ---@return boolean
 local function create_dir(dirname)
-    local res
-    os.execute(("mkdir -p %s"):format(dirname))
+    local res = os.execute(("mkdir -p %s"):format(dirname))
     if res == 0 or res == true then
         return true
     end

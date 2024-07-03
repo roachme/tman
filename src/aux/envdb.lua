@@ -19,7 +19,10 @@ local function load()
     end
     for line in f:lines() do
         local stat, name, desc = string.match(line, eregex)
-        table.insert( envs, { status = tonumber(stat), name = name, desc = desc })
+        table.insert(
+            envs,
+            { status = tonumber(stat), name = name, desc = desc }
+        )
     end
     return f:close() == true
 end

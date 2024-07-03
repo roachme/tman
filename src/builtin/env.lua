@@ -24,7 +24,6 @@ local function builtin_env()
         env.add(envname, "auto generated description " .. envname)
         core.init()
 
-
         taskid.init(config.core.ids)
         local curr_id = taskid.getcurr(envname)
         if curr_id then
@@ -32,8 +31,6 @@ local function builtin_env()
         else
             shell.setcurr("")
         end
-
-
     elseif cmd == "curr" then
         print(env.getcurr())
     elseif cmd == "del" then

@@ -133,7 +133,7 @@ function taskid.add(envname, id, stat)
     -- roachme: not used...
     stat = stat or status.CURR
 
-    if not ids.add(envname, id, status.ACTV) then
+    if not ids.add(envname, id, stat) then
         return false
     end
     return taskid.setcurr(envname, id)

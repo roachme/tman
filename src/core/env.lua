@@ -10,7 +10,6 @@ local status = {
     ACTV = 2,
 }
 
-
 ---Init env.
 ---@param fname string
 function env.init(fname)

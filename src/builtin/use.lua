@@ -10,7 +10,7 @@ local function tman_use()
     local id = arg[1]
     -- roachme: can't use help option cuz tman.sh fails.
 
-    if not envname  then
+    if not envname then
         return
     end
 
