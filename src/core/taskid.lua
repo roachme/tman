@@ -181,7 +181,7 @@ function taskid.list(envname, active, completed)
     end
     if (active or (not active and not completed)) and prev then
         desc = taskunit.get(envname, prev, "desc")
-        print(("- %-10s %s"):format(curr, desc))
+        print(("- %-10s %s"):format(prev, desc))
     end
 
     for i = 1, ids.size() do
@@ -191,9 +191,9 @@ function taskid.list(envname, active, completed)
             desc = taskunit.get(envname, item.id, "desc")
             if item.id ~= curr and item.id ~= prev then
                 if item.status == status.ACTV and active then
-                    print(("a %-10s %s"):format(curr, desc))
+                    print(("a %-10s %s"):format(item.id, desc))
                 elseif item.status == status.COMP and completed then
-                    print(("c %-10s %s"):format(curr, desc))
+                    print(("c %-10s %s"):format(item.id, desc))
                 end
             end
         end
