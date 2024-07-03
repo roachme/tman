@@ -1,3 +1,5 @@
+local config = require("core.config")
+
 local shell = {}
 
 local function getval(fname)
@@ -26,7 +28,7 @@ end
 ---Set current task id to use from shell.
 ---@param val string
 function shell.setcurr(val)
-    local fname = "curr"
+    local fname = config.core.path .. "curr"
     return setval(fname, val)
 end
 

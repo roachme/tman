@@ -1,8 +1,10 @@
+local env = require("core.env")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local common = require("core.common")
 local help = require("core.help")
 local getopt = require("posix.unistd").getopt
+local config = require("core.config")
 
 --- Show task unit metadata.
 local function builtin_cat()
@@ -11,6 +13,7 @@ local function builtin_cat()
     local optstr = "hk:"
     local key, keyhelp
     local cmdname = "cat"
+    local envname = env.getcurr()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -29,14 +32,16 @@ local function builtin_cat()
         return 0
     end
 
-    id = arg[last_index] or taskid.getcurr()
+    taskid.init(config.core.ids)
+
+    id = arg[last_index] or taskid.getcurr(envname)
     if not id then
         common.die(1, "no current task ID\n", "")
-    elseif not taskid.exist(id) then
+    elseif not taskid.exists(envname, id) then
         common.die(1, "no such task ID\n", id)
     end
 
-    if not taskunit.cat(id, key) then
+    if not taskunit.cat(envname, id, key) then
         if key then
             common.die(1, "no such key\n", key)
         end

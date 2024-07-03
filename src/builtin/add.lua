@@ -57,6 +57,7 @@ local function builtin_add()
     end
 
     taskid.init(config.core.ids)
+    --taskunit.init(config.core.units)
 
     if not taskid.add(envname, id, 0) then
         -- don't use common.die_atomic() cuz it'll delete existing task ID.
@@ -65,11 +66,11 @@ local function builtin_add()
     if not taskunit.add(envname, id, tasktype, prio) then
         common.die_atomic(id, "could not create new task unit\n", id)
     end
-
-    --[[
     if not struct.create(id) then
         common.die_atomic(id, "could not create new task structure\n", id)
     end
+
+    --[[
     if not git.branch_create(id) then
         common.die_atomic(id, "could not create new task branch\n", id)
     end

@@ -15,6 +15,15 @@ local function get_input(prompt)
     return io.read("*line")
 end
 
+---Generate unit filename.
+---@param base string
+---@param envname string
+---@param id string
+---@return string
+local function genname(base, envname, id)
+    return base .. "/" .. envname .. ":" .. id
+end
+
 --- String separator.
 -- @param inputstr input string
 -- @param sep separator
@@ -122,23 +131,22 @@ end
 -- @param newdesc new description
 -- @return on success - true
 -- @return on failure - false
-local function _set_desc(id, newdesc)
-    unit.init(config.core.units .. id)
+local function _set_desc(envname, id, newdesc)
+    unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("desc", newdesc)
     unit.set("branch", format_branch())
     return unit.save()
 end
 
---- Change task ID.
--- @param id current task ID
--- @param newid new ID
--- @return on success - true
--- @return on failure - false
-local function _set_id(id, newid)
+---Change task ID.
+---@param id string
+---@param newid string
+---@return boolean
+local function _set_id(envname, id, newid)
     local old_taskdir = config.aux.tasks .. id
     local new_taskdir = config.aux.tasks .. newid
 
-    unit.init(config.core.units .. id)
+    unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("id", newid)
     unit.set("branch", format_branch())
     unit.save()
@@ -150,8 +158,8 @@ end
 --- Change task type.
 -- @return on success - true
 -- @return on failure - false
-local function _set_type(id, newtype)
-    unit.init(config.core.units .. id)
+local function _set_type(envname, id, newtype)
+    unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("type", newtype)
     unit.set("branch", format_branch())
     return unit.save()
@@ -162,8 +170,8 @@ end
 -- @param newprio new task priority
 -- @return on success - true
 -- @return on failure - false
-local function _set_prio(id, newprio)
-    unit.init(config.core.units .. id)
+local function _set_prio(envname, id, newprio)
+    unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("prio", newprio)
     return unit.save()
 end
@@ -171,8 +179,8 @@ end
 --- Change task link to work task manager.
 -- @return on success - true
 -- @return on failure - false
-local function _set_link(id, newlink)
-    unit.init(config.core.units .. id)
+local function _set_link(envname, id, newlink)
+    unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("link", newlink)
     return unit.save()
 end
@@ -182,10 +190,10 @@ end
 -- @param taskrepos table of active repos
 -- @return on success - true
 -- @return on failure - false
-local function _set_repo(id, taskrepos)
+local function _set_repo(envname, id, taskrepos)
     local repos = table.concat(taskrepos, " ")
 
-    unit.init(config.core.units .. id)
+    unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("repos", repos)
     return unit.save()
 end
@@ -215,6 +223,9 @@ function taskunit.check(key, value)
         date = function(val)
             return not (val == nil or val == "")
         end,
+        envname = function(val)
+            return not (val == nil or val == "")
+        end,
 
         -- roachme: under development.
         time = function()
@@ -236,16 +247,17 @@ function taskunit.check(key, value)
     return false
 end
 
---- Add a new unit for a task.
--- @param id task id
--- @param tasktype task type: bugfix, hotfix, feature
--- @param prio task priority
+---Add a new unit for a task.
+---@param id string
+---@param tasktype string
+---@param prio string
+---@return boolean
 function taskunit.add(envname, id, tasktype, prio)
     local desc = get_input("Desc")
     prio = prio or unit.prios.mid
 
     -- Set values.
-    unit.init(config.core.units .. envname .. ":" .. id)
+    unit.init(genname(config.core.units, envname, id))
     unit.set("id", id)
     unit.set("prio", prio)
     unit.set("type", tasktype)
@@ -255,6 +267,7 @@ function taskunit.add(envname, id, tasktype, prio)
     --unit.set("repos", "N/A")
     unit.set("date", os.date("%Y%m%d"))
     unit.set("status", "progress")
+    unit.set("envname", envname)
     unit.set("branch", format_branch())
 
     -- Check input values for validity.
@@ -269,54 +282,53 @@ function taskunit.add(envname, id, tasktype, prio)
     return unit.save()
 end
 
---- Set unit key value.
--- Update related units as well.
--- @param id task ID
--- @param key key to look up
--- @param value new value to set
--- @return on success - true
--- @return on failure - false
-function taskunit.set(id, key, value)
+---Set unit key value.
+--Update related units as well.
+---@param id string
+---@param key string
+---@param value string
+---@return boolean
+function taskunit.set(envname, id, key, value)
     if key == "desc" then
-        return _set_desc(id, value)
+        return _set_desc(envname, id, value)
     elseif key == "id" then
-        return _set_id(id, value)
+        return _set_id(envname, id, value)
     elseif key == "link" then
-        return _set_link(id, value)
+        return _set_link(envname, id, value)
     elseif key == "prio" then
-        return _set_prio(id, value)
+        return _set_prio(envname, id, value)
     elseif key == "repos" then
-        return _set_repo(id, value)
+        return _set_repo(envname, id, value)
     elseif key == "type" then
-        return _set_type(id, value)
+        return _set_type(envname, id, value)
     end
     return false
 end
 
 --- Delete task unit.
+---@param envname string
 ---@param id string
 ---@return boolean
-function taskunit.del(id)
-    local unitfile = config.core.units .. id
+function taskunit.del(envname, id)
+    local unitfile = genname(config.core.units, envname, id)
     return utils.rm(unitfile)
 end
 
---- Get unit from task metadata.
--- @param id task ID
--- @param key unit key
--- @return on success - value
--- @return on failure - nil
-function taskunit.get(id, key)
-    unit.init(config.core.units .. id)
+---Get unit from task metadata.
+---@param id string
+---@param key string
+---@return string | nil
+function taskunit.get(envname, id, key)
+    unit.init(genname(config.core.units, envname, id))
     return unit.get(key)
 end
 
---- Show task unit metadata.
--- @param id task ID
--- @param key show only that key
--- @return true on success
-function taskunit.cat(id, key)
-    unit.init(config.core.units .. id)
+---Show task unit metadata.
+---@param id string
+---@param key string
+---@return boolean
+function taskunit.cat(envname, id, key)
+    unit.init(genname(config.core.units, envname, id))
 
     -- output only key value
     if key then

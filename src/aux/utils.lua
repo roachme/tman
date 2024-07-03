@@ -3,45 +3,52 @@
 
 local posix = require("posix")
 
---- Create directory.
--- @param dirname directory name
--- @return on success - 0
--- @return on failure - error code
+---Create directory.
+---@param dirname string
+---@return boolean
 local function create_dir(dirname)
-    return os.execute(("mkdir -p %s"):format(dirname))
+    local res os.execute(("mkdir -p %s"):format(dirname))
+    if res == 0 or res == true then
+        return true
+    end
+    return false
 end
 
---- Create file/directory.
--- @param dirname directory name
--- @return on success - 0
--- @return on failure - error code
-local function remove_dir(dirname)
-    return os.execute(("rm -rf %s"):format(dirname))
+---Remove file or directory.
+---@param name string
+---@return boolean
+local function remove_dir(name)
+    local res = os.execute(("rm -rf %s"):format(name))
+    if res == 0 or res == true then
+        return true
+    end
+    return false
 end
 
---- Create file.
--- @param fname file name
--- @return on success - 0
--- @return on failure - error code
+---Create file.
+---@param fname string
+---@return boolean
 local function create_file(fname)
-    return os.execute(("touch %s"):format(fname))
+    local res = os.execute(("touch %s"):format(fname))
+    if res == 0 or res == true then
+        return true
+    end
+    return false
 end
 
---- Create symlink.
--- @param target target
--- @param linkname link name
--- @param soft true - soft link, false - hard link (default: true)
--- @return on success - 0
--- @return on failure - error code
+---Create symlink.
+---@param target string
+---@param linkname string
+---@param soft boolean
+---@return boolean
 local function create_symlink(target, linkname, soft)
     soft = soft or true
     return posix.link(target, linkname, soft)
 end
 
---- Check that file/directory exists.
--- @param fname file name
--- @return on success - true
--- @return on failure - false
+---Check that file or directory exists.
+---@param fname string
+---@return boolean
 local function file_exists(fname)
     if posix.access(fname) then
         return true
@@ -49,29 +56,35 @@ local function file_exists(fname)
     return false
 end
 
---- Rename file/directory.
--- @param oldname old name
--- @param newname new name
--- @return on success - 0
--- @return on failure - error code
+---Rename file/directory.
+---@param oldname string
+---@param newname string
+---@return boolean
 local function util_rename(oldname, newname)
     if not oldname then
         print("util:rename:error: no oldname")
-        return 1
+        return false
     end
     if not newname then
         print("util:rename:error: no newname")
-        return 1
+        return false
     end
-    return os.execute(("mv %s %s"):format(oldname, newname))
+    local res = os.execute(("mv %s %s"):format(oldname, newname))
+    if res == 0 or res == true then
+        return true
+    end
+    return false
 end
 
---- Execute system command.
--- @param cmd command to execute
--- @return on success - 0
--- @return on failure - error code
+---Execute system command.
+---@param cmd string
+---@return boolean
 local function util_exec(cmd)
-    return os.execute(cmd)
+    local res = os.execute(cmd)
+    if res == 0 or res == true then
+        return true
+    end
+    return false
 end
 
 return {

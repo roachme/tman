@@ -4,6 +4,7 @@
 
 local ids = require("aux.iddb")
 local shell = require("aux.shell")
+local taskunit = require("core.taskunit")
 
 ---@alias Status
 ---| 0   # Current task
@@ -166,6 +167,7 @@ function taskid.list(envname, active, completed)
     local curr = taskid.getcurr(envname)
 
     if (active or (not active and not completed)) and curr then
+        print("*", taskunit.get(envname, curr, "desc"))
         print(("* %s"):format(curr))
     end
     if (active or (not active and not completed)) and prev then
