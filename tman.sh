@@ -105,8 +105,7 @@ function _tman_handle_command()
         wd add -q -f task
 
     elif [ "$cmd" = "use" ]; then
-        taskid="$2"
-        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         wd add -q -f task
     fi
