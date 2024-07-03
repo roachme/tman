@@ -127,13 +127,9 @@ end
 ---Add new current task id into environment.
 ---@param envname string
 ---@param id string
----@param stat Status
 ---@return boolean
-function taskid.add(envname, id, stat)
-    -- roachme: not used...
-    stat = stat or status.CURR
-
-    if not ids.add(envname, id, stat) then
+function taskid.add(envname, id)
+    if not ids.add(envname, id, status.ACTV) then
         return false
     end
     return taskid.setcurr(envname, id)

@@ -61,7 +61,7 @@ local function builtin_add()
     taskid.init(config.core.ids)
     --taskunit.init(config.core.units)
 
-    if not taskid.add(envname, id, 0) then
+    if not taskid.add(envname, id) then
         -- don't use common.die_atomic() cuz it'll delete existing task ID.
         common.die(1, "task ID already exists\n", id)
     end
