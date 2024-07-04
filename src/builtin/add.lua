@@ -58,6 +58,12 @@ local function builtin_add()
         os.exit(1)
     end
 
+    if not envname then
+        return common.die(1, "no current env\n", "envname")
+    elseif not env.exists(envname) then
+        return common.die(1, "no such env\n", envname)
+    end
+
     taskid.init(config.core.ids)
     --taskunit.init(config.core.units)
 
@@ -71,8 +77,17 @@ local function builtin_add()
     if not struct.create(common.genname(envname, id)) then
         common.die_atomic(id, "could not create new task structure\n", id)
     end
-    if not git.branch_create(id) then
-        common.die_atomic(id, "could not create new task branch\n", id)
+
+    local dir = config.aux.code
+    local branch = taskunit.get(envname, id, "branch")
+    if not branch then
+        return common.die_atomic(id, "task unit file missing branch\n", id)
+    end
+    for _, repo in pairs(config.user.repos) do
+        if not git.branch_create(dir, repo.name, branch) then
+            common.die_atomic(id, "could not create new task branch\n", id)
+        end
+        git.branch_switch(dir, repo.name, branch)
     end
     return 0
 end

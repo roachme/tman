@@ -153,19 +153,6 @@ function git.branch_default()
     return true
 end
 
---- Switch branch.
--- @param id task ID
--- @treturn bool true on success, otherwise false
-function git.branch_switch(id)
-    local branch = taskunit.get(env.getcurr(), id, "branch")
-
-    for _, repo in pairs(repos) do
-        local repopath = config.aux.code .. repo.name
-        utils.exec(gcheckout:format(repopath, branch))
-    end
-    return true
-end
-
 --- Git pull command.
 -- @param all true pull all branches, otherwise only default branch
 function git.branch_update(all)
@@ -192,26 +179,26 @@ function git.branch_rebase()
     end
 end
 
---- Create a branch for task.
--- Also symlinks repos for a task.
--- @param id task ID
--- @return on success - true
--- @return on failure - false
-function git.branch_create(id)
-    local branch = taskunit.get(env.getcurr(), id, "branch")
+---Create branch.
+---@param dir string
+---@param reponame string
+---@param branch string
+---@return boolean
+function git.branch_create(dir, reponame, branch)
+    local fmt = "git -C %s/%s branch %s"
+    local cmd = string.format(fmt, dir, reponame, branch)
+    return utils.exec(cmd)
+end
 
-    for _, repo in pairs(repos) do
-        local repopath = config.aux.code .. repo.name
-        -- TODO: check if branch already exists. If so don't create it again.
-        -- code goes here...
-
-        -- switch to repo's default branch.
-        utils.exec(gcheckout:format(repopath, repo.branch))
-
-        -- create task branch.
-        utils.exec(gcheckoutb:format(repopath, branch))
-    end
-    return true
+---Switch to branch.
+---@param dir string
+---@param reponame string
+---@param branch string
+---@return boolean
+function git.branch_switch(dir, reponame, branch)
+    local fmt = "git -C %s/%s checkout -q %s"
+    local cmd = string.format(fmt, dir, reponame, branch)
+    return utils.exec(cmd)
 end
 
 --- Rename task branch.

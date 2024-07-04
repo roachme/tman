@@ -17,6 +17,9 @@ local function tman_sync()
     local last_index = 1
     local envname = env.getcurr()
 
+    print("git's updare refactoring")
+    os.exit(1)
+
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
             common.die(1, "unrecognized option\n", arg[optind - 1])

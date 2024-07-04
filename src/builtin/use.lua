@@ -1,6 +1,7 @@
 local env = require("core.env")
 local git = require("secondary.git")
 local taskid = require("core.taskid")
+local taskunit = require("core.taskunit")
 local common = require("core.common")
 local config = require("secondary.config")
 
@@ -35,7 +36,16 @@ local function tman_use()
         common.die(1, "one of the repos has uncommited changes", "REPONAME")
     end
 
-    git.branch_switch(id)
+
+    local dir = config.aux.code
+    local branch = taskunit.get(envname, id, "branch")
+    if not branch then
+        return common.die(1, "task unit file missing branch\n", id)
+    end
+    for _, repo in pairs(config.user.repos) do
+        git.branch_switch(dir, repo.name, branch)
+    end
+
     taskid.setcurr(envname, id)
     return 0
 end
