@@ -8,10 +8,10 @@ local getopt = require("posix.unistd").getopt
 --- Pack commits in repos for review.
 local function builtin_pack()
     local id
-    local optstr = "cmp"
+    local optstr = "cm"
     local last_index = 1
     local fcommit = true -- default option
-    local fmake, fpush
+    local fmake
     local envname = env.getcurr()
 
     for optopt, _, optind in getopt(arg, optstr) do
@@ -24,8 +24,6 @@ local function builtin_pack()
             fcommit = true
         elseif optopt == "m" then
             fmake = true
-        elseif optopt == "p" then
-            fpush = true
         end
     end
 
@@ -46,9 +44,7 @@ local function builtin_pack()
         common.die(1, "task branch doesn't exist\n", "REPONAME")
     end
 
-    if fpush then
-        print("push branch to remote repo: under development")
-    elseif fmake then
+    if fmake then
         print("run commands from the Makefile: under development")
     elseif fcommit then
         print("create commits")

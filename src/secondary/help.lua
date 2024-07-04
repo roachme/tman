@@ -134,6 +134,7 @@ Options:
     -s      - synchronize task structure
     -r      - git pull from remote repo
     -t      - synchronize task status (active, completed)
+    -p      - push branch to remote repo
 ]],
     },
 
@@ -198,7 +199,6 @@ Pack commits in repos for review.
 Options:
     -c      - create commit (default)
     -m      - run commands from the Makefile
-    -p      - push branch to remote repo
 ]],
     },
     {
