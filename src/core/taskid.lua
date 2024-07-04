@@ -143,16 +143,11 @@ function taskid.del(envname, id)
     local prev = taskid.getprev(envname)
     local curr = taskid.getcurr(envname)
 
-    if not taskid.exists(envname, id) then
+    if not ids.del(envname, id) then
         return false
     end
 
-    ids.del(envname, id)
-
-    -- if current task id gets deleted then mark previous task id as current
-    if id == curr then
-        taskid.unsetcurr(envname)
-    end
+    -- if current gets deleted, mark previous one as current
     if id == curr and prev then
         taskid.setcurr(envname, prev)
     end
