@@ -10,6 +10,9 @@ local taskunit = {}
 
 -- Private functions: end --
 
+---Get user input.
+---@param prompt string
+---@return string
 local function get_input(prompt)
     io.write(prompt, ": ")
     return io.read("*line")
@@ -24,10 +27,10 @@ local function genname(base, envname, id)
     return base .. "/" .. envname .. ":" .. id
 end
 
---- String separator.
--- @param inputstr input string
--- @param sep separator
--- @return table op tokens
+---String separator.
+---@param inputstr string
+---@param sep string | nil
+---@return table
 local function pattsplit(inputstr, sep)
     local res = {}
 
@@ -40,9 +43,8 @@ local function pattsplit(inputstr, sep)
     return res
 end
 
---- Form branch according to pattern.
--- @return branch name if branch pattern is valid
--- @return nil if branch pattern isn't valid
+---Form branch according to pattern.
+---@return string | nil
 local function format_branch()
     local separators = "/_-"
     local sepcomponents = pattsplit(config.user.branchpatt, separators)
@@ -66,10 +68,9 @@ local function format_branch()
     return branch
 end
 
---- Check that task ID has no illegal symbols.
--- @param id task ID
--- @return on success - true
--- @return on failure - false
+---Check task id.
+---@param id string
+---@return boolean
 local function _check_id(id)
     local descregex = "[a-zA-Z0-9_%s-]*"
     if string.match(id, descregex) == id then
@@ -78,10 +79,9 @@ local function _check_id(id)
     return false
 end
 
---- Check that description has no illegal symbols.
--- @param desc description
--- @return on success - true
--- @return on failure - false
+---Check description.
+---@param desc string
+---@return boolean
 local function _check_desc(desc)
     local descregex = "[a-zA-Z0-9_%s-]*"
     if string.match(desc, descregex) == desc then
@@ -90,6 +90,9 @@ local function _check_desc(desc)
     return false
 end
 
+---Check link.
+---@param link string
+---@return boolean
 local function _check_link(link)
     local linkregex = "[a-zA-Z0-9_%s-:/.]*"
     link = link or "" -- roachme: find a better way.
@@ -100,9 +103,9 @@ local function _check_link(link)
     return false
 end
 
---- Check that priority exists.
--- @param priority priority to check
--- @return true on success, otherwise false
+---Check priority.
+---@param priority string
+---@return boolean
 local function _check_prio(priority)
     for _, prio in pairs(unit.prios) do
         if prio == priority then
@@ -112,9 +115,9 @@ local function _check_prio(priority)
     return false
 end
 
---- Check that user specified task type exists.
--- @tparam string type user specified type
--- @treturn bool true if exists, otherwise false
+---Check task type.
+---@param type string
+---@return boolean
 local function _check_type(type)
     local tasktypes = { "bugfix", "feature", "hotfix" }
 
@@ -126,11 +129,11 @@ local function _check_type(type)
     return false
 end
 
---- Amend task description.
--- @param id task ID
--- @param newdesc new description
--- @return on success - true
--- @return on failure - false
+---Amend task description.
+---@param envname string
+---@param id string
+---@param newdesc string
+---@return boolean
 local function _set_desc(envname, id, newdesc)
     unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("desc", newdesc)
@@ -176,6 +179,9 @@ local function _set_prio(envname, id, newprio)
 end
 
 ---Set link to work task manager.
+---@param envname string
+---@param id string
+---@param newlink string
 ---@return boolean
 local function _set_link(envname, id, newlink)
     unit.init(config.core.units .. envname .. ":" .. id)
