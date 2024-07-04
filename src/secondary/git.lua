@@ -359,31 +359,15 @@ function git.commit_create(id)
     return true
 end
 
---- Clone repos from user config.
--- @return on success - true
--- @return on failure - false
-function git.repo_clone()
-    for _, repo in pairs(config.user.repos) do
-        if not _repo_exists(repo.name) then
-            local repopath = config.aux.code .. repo.name
-
-            if not repo.link then
-                io.stderr:write("no repo link in config: ", repo.name, "\n")
-            else
-                local cmd = ("git clone %s %s 2> /dev/null"):format(
-                    repo.link,
-                    repopath
-                )
-                if not utils.exec(cmd) then
-                    local errfmt =
-                        "tman: %s: couldn't download repo. Check link\n"
-                    io.stderr:write(errfmt:format(repo.name))
-                    return false
-                end
-                print(("%s: repo downloaded"):format(repo.name))
-            end
-        end
-    end
+---Clone a repo.
+---@param dir string
+---@param link string
+---@param reponame string
+---@return boolean
+function git.repo_clone(dir, link, reponame)
+    local fmt = "git -C %s clone --quiet %s %s 2>/dev/null"
+    local cmd = string.format(fmt, dir, link, reponame)
+    return utils.exec(cmd)
 end
 
 --- Check that task branch exists.

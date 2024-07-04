@@ -62,13 +62,20 @@ function core.check()
             return 1
         end
     end
+
+    local dir = config.aux.code
+    for _, repo in pairs(config.user.repos) do
+        if not utils.access(dir .. repo.name) then
+            return 1
+        end
+    end
     return 0
 end
 
---- Init system to use a util.
+---Init system to use a util.
 function core.init()
     if core.check() == 0 then
-        return
+        return 0
     end
     -- create tman structure
     core.struct()
@@ -76,9 +83,19 @@ function core.init()
     -- add default env
     core.env()
 
-    -- download repos if needed
-    git.repo_clone()
-    return 1
+    -- download repos
+    local dir = config.aux.code
+    local errfmt = "tman: %s: couldn't download repo\n"
+    for _, repo in pairs(config.user.repos) do
+        if not utils.access(dir .. repo.name) then
+            if not git.repo_clone(dir, repo.link, repo.name) then
+                io.stderr:write(errfmt:format(repo.name))
+                os.exit(1)
+            end
+            print(("%s: repo downloaded"):format(repo.name))
+        end
+    end
+    return 0
 end
 
 function core.repair() end
