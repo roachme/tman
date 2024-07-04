@@ -156,9 +156,8 @@ local function _set_id(envname, id, newid)
     return utils.rename(old_taskdir, new_taskdir)
 end
 
---- Change task type.
--- @return on success - true
--- @return on failure - false
+---Change task type.
+---@return boolean
 local function _set_type(envname, id, newtype)
     unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("type", newtype)
@@ -166,31 +165,28 @@ local function _set_type(envname, id, newtype)
     return unit.save()
 end
 
---- Change task priority.
--- @param id task ID
--- @param newprio new task priority
--- @return on success - true
--- @return on failure - false
+---Change priority.
+---@param id string
+---@param newprio string
+---@return boolean
 local function _set_prio(envname, id, newprio)
     unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("prio", newprio)
     return unit.save()
 end
 
---- Change task link to work task manager.
--- @return on success - true
--- @return on failure - false
+---Set link to work task manager.
+---@return boolean
 local function _set_link(envname, id, newlink)
     unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("link", newlink)
     return unit.save()
 end
 
---- Change list of repos with task commits.
--- @param id task ID
--- @param taskrepos table of active repos
--- @return on success - true
--- @return on failure - false
+---Set list of active repos.
+---@param id string
+---@param taskrepos table
+---@return boolean
 local function _set_repo(envname, id, taskrepos)
     local repos = table.concat(taskrepos, " ")
 
@@ -203,11 +199,10 @@ end
 
 -- Public functions: start --
 
---- Check task units.
--- @param key unit key
--- @param value unit value to check
--- @return on success - true
--- @return on failure - false
+---Check task units.
+---@param key string
+---@param value string
+---@return boolean
 function taskunit.check(key, value)
     local params = {
         id = _check_id,

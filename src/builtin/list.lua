@@ -41,6 +41,7 @@ local function builtin_list()
         return 0
     end
     if not envname then
+        common.die(1, "no current env\n", "env")
         return
     end
 
