@@ -216,7 +216,7 @@ end
 -- @param id task ID
 -- @return true on success, otherwise false
 local function git_branch_rename(id)
-    local newbranch = taskunit.get(id, "branch")
+    local newbranch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
@@ -327,7 +327,7 @@ end
 -- @return on success - false
 local function git_commit_create(id)
     local cmd
-    local desc = taskunit.get(id, "desc")
+    local desc = taskunit.get(env.getcurr(), id, "desc")
 
     -- roach: check that repo's branch is task branch.
     -- if not tryna switch to task branch.

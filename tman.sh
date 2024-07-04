@@ -86,8 +86,7 @@ function _tman_handle_command()
         done
 
         if [ "$flag" = true ]; then
-            taskid="$(eval "$TMAN" get curr)"
-            taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+            local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
 
             cd "$taskdir" || return 1
             wd add -q -f task
@@ -99,8 +98,7 @@ function _tman_handle_command()
         fi
 
     elif [ "$cmd" = "sync" ]; then
-        taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
+        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         wd add -q -f task
 

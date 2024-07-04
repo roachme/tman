@@ -144,8 +144,8 @@ end
 ---@return boolean
 local function _set_id(envname, id, newid)
     -- rocahme: outta use struct.lua
-    local old_taskdir = config.aux.tasks .. id
-    local new_taskdir = config.aux.tasks .. newid
+    local old_taskdir = config.aux.tasks .. envname .. ":" .. id
+    local new_taskdir = config.aux.tasks .. envname .. ":" .. newid
 
     unit.init(config.core.units .. envname .. ":" .. id)
     unit.set("id", newid)
@@ -285,6 +285,7 @@ end
 
 ---Set unit key value.
 --Update related units as well.
+---@param envname string
 ---@param id string
 ---@param key string
 ---@param value string

@@ -1,9 +1,13 @@
+local env = require("core.env")
 local git = require("secondary.git")
 local taskid = require("core.taskid")
 local struct = require("secondary.struct")
 local taskunit = require("core.taskunit")
 local common = require("core.common")
 local getopt = require("posix.unistd").getopt
+local config = require("secondary.config")
+
+local envname
 
 --- Set task description.
 -- @param id task ID
@@ -17,7 +21,7 @@ local function _set_desc(id, newdesc)
     -- 2. Has no permition.
     -- 3. Hardware isssue.
     -- core.lua gotta check that out, so we ain't gotta check, just do it.
-    if not taskunit.set(id, "desc", newdesc) then
+    if not taskunit.set(envname, id, "desc", newdesc) then
         return 1
     end
     git.branch_rename(id)
@@ -30,29 +34,29 @@ end
 -- @return on success - 0
 -- @return on failure - error code
 local function _set_id(id, newid)
-    local curr = taskid.getcurr()
+    local curr = taskid.getcurr(envname)
 
     if id == newid then
         common.die(1, "the same task ID\n", newid)
-    elseif taskid.exist(newid) then
+    elseif taskid.exists(envname, newid) then
         common.die(1, "task ID already exists\n", newid)
     end
 
     git.branch_switch(id)
-    if not taskunit.set(id, "id", newid) then
+    if not taskunit.set(envname, id, "id", newid) then
         return 1
     end
     -- roachme: FIXME: you can't change this order.
     -- It's ok, but not obvious.
-    taskid.del(id)
-    taskid.add(newid)
+    taskid.del(envname, id)
+    taskid.add(envname, newid)
 
     -- mark current task as current back again.
-    if curr ~= id then
-        taskid.setcurr(curr)
+    if curr and curr ~= id then
+        taskid.setcurr(envname, curr)
     end
 
-    struct.rename(id, newid)
+    struct.rename(common.genname(envname, id), common.genname(envname, newid))
     git.branch_rename(newid)
     return 0
 end
@@ -61,7 +65,7 @@ end
 -- @param id task ID
 -- @param newlink new task link
 local function _set_link(id, newlink)
-    taskunit.set(id, "link", newlink)
+    taskunit.set(envname, id, "link", newlink)
     return 0
 end
 
@@ -69,12 +73,12 @@ end
 -- @param id task ID
 -- @param newprio new priority
 local function _set_prio(id, newprio)
-    local prio = taskunit.get(id, "prio")
+    local prio = taskunit.get(envname, id, "prio")
 
     if newprio == prio then
         common.die(1, "the same priority\n", newprio)
     end
-    if not taskunit.set(id, "prio", newprio) then
+    if not taskunit.set(envname, id, "prio", newprio) then
         return 1
     end
     return 0
@@ -84,7 +88,7 @@ end
 -- @param id task ID
 -- @param newtype new type
 local function _set_type(id, newtype)
-    taskunit.set(id, "type", newtype)
+    taskunit.set(envname, id, "type", newtype)
     git.branch_rename(id)
     return 0
 end
@@ -103,6 +107,7 @@ local function tman_set()
         newprio = { arg = nil, func = _set_prio },
         newtype = { arg = nil, func = _set_type },
     }
+    envname = env.getcurr()
 
     -- roachme: It'd be better to show what task ID's changing. Maybe?
 
@@ -140,11 +145,17 @@ local function tman_set()
         end
     end
 
-    id = arg[last_index] or taskid.getcurr()
+    if not envname then
+        common.die(1, "no such env\n", envname or "no envname")
+        return
+    end
+
+    taskid.init(config.core.ids)
+    id = arg[last_index] or taskid.getcurr(envname)
     if not id then
         common.die(1, "no current task ID\n", "")
     end
-    if not taskid.exist(id) then
+    if not taskid.exists(envname, id) then
         common.die(1, "no such task ID\n", id)
     end
     if not git.check(id) then
