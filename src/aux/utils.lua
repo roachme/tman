@@ -3,10 +3,12 @@
 
 local posix = require("posix")
 
+local utils = {}
+
 ---Create directory.
 ---@param dirname string
 ---@return boolean
-local function create_dir(dirname)
+function utils.mkdir(dirname)
     local res = os.execute(("mkdir -p %s"):format(dirname))
     if res == 0 or res == true then
         return true
@@ -17,7 +19,7 @@ end
 ---Remove file or directory.
 ---@param name string
 ---@return boolean
-local function remove_dir(name)
+function utils.rm(name)
     local res = os.execute(("rm -rf %s"):format(name))
     if res == 0 or res == true then
         return true
@@ -28,7 +30,7 @@ end
 ---Create file.
 ---@param fname string
 ---@return boolean
-local function create_file(fname)
+function utils.touch(fname)
     local res = os.execute(("touch %s"):format(fname))
     if res == 0 or res == true then
         return true
@@ -41,7 +43,7 @@ end
 ---@param linkname string
 ---@param soft boolean
 ---@return boolean
-local function create_symlink(target, linkname, soft)
+function utils.link(target, linkname, soft)
     soft = soft or true
     return posix.link(target, linkname, soft)
 end
@@ -49,7 +51,7 @@ end
 ---Check that file or directory exists.
 ---@param fname string
 ---@return boolean
-local function file_exists(fname)
+function utils.access(fname)
     if posix.access(fname) then
         return true
     end
@@ -60,7 +62,7 @@ end
 ---@param oldname string
 ---@param newname string
 ---@return boolean
-local function util_rename(oldname, newname)
+function utils.rename(oldname, newname)
     if not oldname then
         print("util:rename:error: no oldname")
         return false
@@ -79,7 +81,7 @@ end
 ---Execute system command.
 ---@param cmd string
 ---@return boolean
-local function util_exec(cmd)
+function utils.exec(cmd)
     local res = os.execute(cmd)
     if res == 0 or res == true then
         return true
@@ -87,12 +89,4 @@ local function util_exec(cmd)
     return false
 end
 
-return {
-    rm = remove_dir,
-    link = create_symlink,
-    exec = util_exec,
-    mkdir = create_dir,
-    touch = create_file,
-    access = file_exists,
-    rename = util_rename,
-}
+return utils
