@@ -19,7 +19,7 @@ System:
 Basic:
   cat     - cat task info
   env     - define or display environments
-  list    - list tasks
+  list    - list environment tasks
   prev    - switch to previous task
   use     - mark a task as current
 
@@ -204,7 +204,7 @@ Options:
     {
         name = "list",
         desc = [[
-Usage: tman list [OPTION]
+Usage: tman list [OPTION] [ENVNAME]
 List task IDs with description.
 
 Options:

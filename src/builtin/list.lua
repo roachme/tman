@@ -11,15 +11,17 @@ local function builtin_list()
     local cmdname = "list"
     local active = false
     local completed = false
-    local optstring = "Aace:h"
+    local optstring = "Aach"
     local keyhelp
-    local envname = env.getcurr()
+    local envname
+    local last_index = 1
 
-    for optopt, optarg, optind in getopt(arg, optstring) do
+    for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
             common.die(1, "unrecognized option\n", arg[optind - 1])
         end
 
+        last_index = optind
         if optopt == "A" then
             active = true
             completed = true
@@ -29,8 +31,6 @@ local function builtin_list()
         elseif optopt == "c" then
             active = false
             completed = true
-        elseif optopt == "e" then
-            envname = optarg
         elseif optopt == "h" then
             keyhelp = true
         end
@@ -40,14 +40,12 @@ local function builtin_list()
         help.usage(cmdname)
         return 0
     end
-    if not envname then
-        common.die(1, "no current env\n", "env")
-        return
-    end
 
-    -- check that envname exists.
-    if not env.exists(envname) then
-        common.die(1, "no such environment name\n", envname)
+    envname = arg[last_index] or env.getcurr()
+    if not envname then
+        return common.die(1, "no current env\n", "env")
+    elseif not env.exists(envname) then
+        return common.die(1, "no such environment name\n", envname)
     end
 
     taskid.init(config.core.ids)
