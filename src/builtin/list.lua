@@ -9,7 +9,7 @@ local config = require("secondary.config")
 -- Default: show only active task IDs.
 local function builtin_list()
     local cmdname = "list"
-    local active = false
+    local active = true
     local completed = false
     local optstring = "Aach"
     local keyhelp
