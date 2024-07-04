@@ -6,6 +6,8 @@ local config = require("secondary.config")
 local taskunit = require("core.taskunit")
 local utils = require("aux.utils")
 
+local git = {}
+
 local repos = config.user.repos
 
 -- local git = "git -C %s " -- roachme: how to use it in here
@@ -127,7 +129,7 @@ local function is_repo_clean(reponame)
     return ret == 0 or ret == true
 end
 
-local function git_branch_isuncommited()
+function git.branch_isuncommited()
     for _, repo in pairs(repos) do
         local ret = is_repo_clean(repo.name)
         if ret then
@@ -143,7 +145,7 @@ end
 
 --- Switch to repo default branch.
 -- @treturn bool true on success, otherwise false
-local function git_branch_default()
+function git.branch_default()
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
@@ -154,7 +156,7 @@ end
 --- Switch branch.
 -- @param id task ID
 -- @treturn bool true on success, otherwise false
-local function git_branch_switch(id)
+function git.branch_switch(id)
     local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
@@ -166,7 +168,7 @@ end
 
 --- Git pull command.
 -- @param all true pull all branches, otherwise only default branch
-local function git_branch_update(all)
+function git.branch_update(all)
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
@@ -179,7 +181,7 @@ local function git_branch_update(all)
 end
 
 --- Rebase task branch against default.
-local function git_branch_rebase()
+function git.branch_rebase()
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
         if not utils.exec(grebase:format(repopath, repo.branch)) then
@@ -195,7 +197,7 @@ end
 -- @param id task ID
 -- @return on success - true
 -- @return on failure - false
-local function git_branch_create(id)
+function git.branch_create(id)
     local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
@@ -215,7 +217,7 @@ end
 --- Rename task branch.
 -- @param id task ID
 -- @return true on success, otherwise false
-local function git_branch_rename(id)
+function git.branch_rename(id)
     local newbranch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
@@ -228,7 +230,7 @@ end
 --- Delete task branch.
 -- @param id task ID
 -- @return true on success, otherwise false
-local function git_branch_delete(id)
+function git.branch_delete(id)
     local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
@@ -247,7 +249,7 @@ end
 -- roachme: let a user know if no task commits presented.
 -- @return task branch's merged - true
 -- @return task branch's not merged - false
-local function git_branch_merged(id)
+function git.branch_merged(id)
     local retcode = true
     local branch = taskunit.get(env.getcurr(), id, "branch")
 
@@ -270,7 +272,7 @@ end
 --- Get repos having taks commits.
 -- roachme: Refactor it.
 -- @return table of repos
-local function git_branch_ahead(id)
+function git.branch_ahead(id)
     -- roachme:FIXME: it checks diff between task branch and defaul branch.
     -- it should check uncommited changes instead.
     local res = {}
@@ -296,7 +298,7 @@ end
 --- Check that task branch exists and its has no uncommited changes.
 -- @return on success - true
 -- @return on failure - false
-local function git_check(id)
+function git.check(id)
     local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
@@ -325,7 +327,7 @@ end
 -- @param id task ID
 -- @return on success - true
 -- @return on success - false
-local function git_commit_create(id)
+function git.commit_create(id)
     local cmd
     local desc = taskunit.get(env.getcurr(), id, "desc")
 
@@ -360,7 +362,7 @@ end
 --- Clone repos from user config.
 -- @return on success - true
 -- @return on failure - false
-local function git_repo_clone()
+function git.repo_clone()
     for _, repo in pairs(config.user.repos) do
         if not _repo_exists(repo.name) then
             local repopath = config.aux.code .. repo.name
@@ -385,7 +387,7 @@ local function git_repo_clone()
 end
 
 --- Check that task branch exists.
-local function git_branch_exists(id)
+function git.branch_exists(id)
     local branch = taskunit.get(env.getcurr(), id, "branch")
 
     for _, repo in pairs(repos) do
@@ -399,26 +401,4 @@ end
 
 -- Public functions: end --
 
-return {
-    check = git_check, -- general check
-
-    --branch_prune = git_branch_prune,
-    branch_create = git_branch_create,
-    branch_delete = git_branch_delete,
-    branch_switch = git_branch_switch,
-    branch_update = git_branch_update,
-    branch_rename = git_branch_rename,
-    branch_rebase = git_branch_rebase,
-    branch_merged = git_branch_merged,
-    branch_default = git_branch_default,
-
-    branch_isuncommited = git_branch_isuncommited,
-    branch_exists = git_branch_exists,
-
-    repo_clone = git_repo_clone,
-
-    commit_create = git_commit_create,
-
-    -- under development
-    branch_ahead = git_branch_ahead,
-}
+return git
