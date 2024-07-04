@@ -14,6 +14,10 @@ local function tman_use()
         return
     end
 
+    if not envname then
+        return common.die(1, "no current env\n", "env")
+    end
+
     taskid.init(config.core.ids)
 
     if not id then
