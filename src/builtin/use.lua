@@ -22,13 +22,15 @@ local function tman_use()
 
     if not id then
         common.die(1, "task ID required\n", "")
-    end
-    if not taskid.exists(envname, id) then
+    elseif not taskid.exists(envname, id) then
         common.die(1, "task ID doesn't exist\n", id)
     end
+
+    -- it's the same id. Do nothing.
     if taskid.getcurr(envname) == id then
-        common.die(1, "already in use\n", id)
+        return 0
     end
+
     if not git.check(id) then
         common.die(1, "one of the repos has uncommited changes", "REPONAME")
     end
