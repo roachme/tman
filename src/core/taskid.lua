@@ -152,7 +152,8 @@ function taskid.del(envname, id)
     -- if current task id gets deleted then mark previous task id as current
     if id == curr then
         taskid.unsetcurr(envname)
-    elseif id == curr and prev then
+    end
+    if id == curr and prev then
         taskid.setcurr(envname, prev)
     end
 
