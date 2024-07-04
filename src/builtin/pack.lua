@@ -1,5 +1,7 @@
+local env = require("core.env")
 local git = require("secondary.git")
 local taskid = require("core.taskid")
+local config = require("secondary.config")
 local common = require("core.common")
 local getopt = require("posix.unistd").getopt
 
@@ -10,6 +12,7 @@ local function builtin_pack()
     local last_index = 1
     local fcommit = true -- default option
     local fmake, fpush
+    local envname = env.getcurr()
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -26,12 +29,17 @@ local function builtin_pack()
         end
     end
 
-    id = arg[last_index] or taskid.getcurr()
+    if not envname then
+        return common.die(1, "no current env", "env")
+    end
+
+    taskid.init(config.core.ids)
+    id = arg[last_index] or taskid.getcurr(envname)
 
     if not id then
         common.die(1, "no current task\n", "")
     end
-    if not taskid.exist(id) then
+    if not taskid.exists(envname, id) then
         common.die(1, "no such task ID\n", id)
     end
     if not git.branch_exists(id) then
