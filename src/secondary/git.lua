@@ -182,7 +182,7 @@ end
 local function git_branch_rebase()
     for _, repo in pairs(repos) do
         local repopath = config.aux.code .. repo.name
-        if utils.exec(grebase:format(repopath, repo.branch)) ~= 0 then
+        if not utils.exec(grebase:format(repopath, repo.branch)) then
             local errmsg = "repo '%s': rebase conflic. Resolve it manually.\n"
             io.stderr:write((errmsg):format(repo.name))
             utils.exec(grebaseabort:format(repopath))

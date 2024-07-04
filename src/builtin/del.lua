@@ -26,7 +26,6 @@ local function tman_del()
         common.die(1, "no such task ID\n", id)
     end
 
-
     io.write("Task: ")
     taskunit.cat(envname, id, "desc")
     io.write("Do you want to continue? [Yes/No] ")

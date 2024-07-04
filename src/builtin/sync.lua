@@ -1,4 +1,6 @@
+local env = require("core.env")
 local git = require("secondary.git")
+local config = require("secondary.config")
 local taskid = require("core.taskid")
 local struct = require("secondary.struct")
 local taskunit = require("core.taskunit")
@@ -13,6 +15,7 @@ local function tman_sync()
     local optstr = "rst"
     local fremote, fstruct, ftask
     local last_index = 1
+    local envname = env.getcurr()
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -29,11 +32,17 @@ local function tman_sync()
         end
     end
 
-    id = arg[last_index] or taskid.getcurr()
+    if not envname then
+        return common.die(1, "no current env", "env")
+    end
+
+    taskid.init(config.core.ids)
+
+    id = arg[last_index] or taskid.getcurr(envname)
     if not id then
         common.die(1, "no current task ID\n", "")
     end
-    if not taskid.exist(id) then
+    if not taskid.exists(envname, id) then
         common.die(1, "no such task ID\n", id)
     end
 
@@ -51,7 +60,7 @@ local function tman_sync()
         struct.create(id)
         git.branch_create(id)
         git.branch_switch(id)
-        taskunit.set(id, "repos", git.branch_ahead(id))
+        taskunit.set(envname, id, "repos", git.branch_ahead(id))
     end
     if fremote then
         print("sync: remote")
