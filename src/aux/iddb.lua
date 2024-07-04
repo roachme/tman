@@ -3,7 +3,7 @@
 
 local db = {}
 local idfile = ""
-local idregex = "(%w*) (%w*) (%d)"
+local idregex = "(%w*) ([%w-]*) (%d)"
 local idfmt = "%s %s %d\n"
 local ids = {}
 
