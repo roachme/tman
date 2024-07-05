@@ -23,6 +23,7 @@ local function builtin_add()
     local last_index = 1
     local keyhelp
     local envname = env.getcurr()
+    local path = config.aux.code
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -41,52 +42,49 @@ local function builtin_add()
 
     if keyhelp then
         help.usage(cmdname)
-        -- roachme:hotfix: so tman.sh doesn't jump to any task directory.
-        return 1
+        return 0
     end
 
     id = arg[last_index]
-    local path = config.aux.code
+    taskid.init(config.core.ids)
 
-    if not id then
-        return common.die(1, "task id required\n", "id")
-    end
     if not envname then
         return common.die(1, "no current env\n", "envname")
     elseif not env.exists(envname) then
         return common.die(1, "no such env\n", envname)
+    elseif not id then
+        return common.die(1, "task id required\n", "id")
+    elseif taskid.exists(envname, id) then
+        return common.die(1, "task id exists\n", id)
     end
 
-    taskid.init(config.core.ids)
+    -- check that repos are ready to create task branch.
+    for _, repo in pairs(config.user.repos) do
+        if git.repo_isuncommited(repo.name, path) then
+            return common.die(1, "repo has uncommited changes\n", repo.name)
+        end
+    end
 
+    -- create all necessary stuff for new task.
     if not taskid.add(envname, id) then
-        -- don't use common.die_atomic() cuz it'll delete existing task ID.
         common.die(1, "task ID already exists\n", id)
-    end
-    if not taskunit.add(envname, id, tasktype, prio) then
-        common.die(1, "could not create new task unit\n", id)
-    end
-    if not struct.create(common.genname(envname, id)) then
+    elseif not taskunit.add(envname, id, tasktype, prio) then
         taskid.del(envname, id)
+        common.die(1, "could not create new task unit\n", id)
+    elseif not struct.create(common.genname(envname, id)) then
+        taskid.del(envname, id)
+        taskunit.del(envname, id)
         common.die(id, "could not create new task structure\n", id)
     end
 
+    -- create task branch in repos.
     local branch = taskunit.get(envname, id, "branch")
-    if not branch then
-        print("----- branch")
-        return common.die_atomic(id, "task unit file missing branch\n", id)
-    end
-
-    for _, repo in pairs(config.user.repos) do
-        if git.repo_isuncommited(repo.name, path) then
-            print("----- repo_isuncommited")
-            return common.die_atomic(1, "repo has uncommited changes\n", repo.name)
-        end
-    end
     for _, repo in pairs(config.user.repos) do
         if not git.branch_create(repo.name, branch, path) then
-            print("----- branch_create")
-            common.die_atomic(id, "could not create new task branch\n", id)
+            taskid.del(envname, id)
+            taskunit.del(envname, id)
+            struct.delete(id)
+            common.die(1, "could not create new task branch\n", id)
         end
         git.branch_switch(repo.name, branch, path)
     end

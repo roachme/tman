@@ -255,6 +255,7 @@ end
 ---@param prio string
 ---@return boolean
 function taskunit.add(envname, id, tasktype, prio)
+    local branch
     local desc = get_input("Desc")
     prio = prio or unit.prios.mid
 
@@ -264,13 +265,19 @@ function taskunit.add(envname, id, tasktype, prio)
     unit.set("prio", prio)
     unit.set("type", tasktype)
     unit.set("desc", desc)
-    --unit.set("time", "N/A")
-    --unit.set("link", "N/A")
-    --unit.set("repos", "N/A")
-    unit.set("date", os.date("%Y%m%d"))
+    unit.set("time", "")
+    unit.set("link", "")
+    unit.set("repos", "")
+    unit.set("date", tostring(os.date("%Y%m%d")))
     unit.set("status", "progress")
     unit.set("envname", envname)
-    unit.set("branch", format_branch())
+
+    branch = format_branch()
+    if not branch then
+        return false
+    end
+
+    unit.set("branch", branch)
 
     -- Check input values for validity.
     for _, ukey in pairs(unit.keys) do
@@ -320,7 +327,7 @@ end
 ---Get unit from task metadata.
 ---@param id string
 ---@param key string
----@return string | nil
+---@return string
 function taskunit.get(envname, id, key)
     unit.init(genname(config.core.units, envname, id))
     return unit.get(key)
@@ -338,7 +345,8 @@ function taskunit.cat(envname, id, key)
         for _, ukey in pairs(unit.keys) do
             if ukey == key then
                 local uval = unit.get(key)
-                io.write(("%s"):format(uval and uval .. "\n" or ""))
+                uval = uval and uval ~= "" and uval .. "\n" or ""
+                io.write(("%s"):format(uval))
                 return true
             end
         end

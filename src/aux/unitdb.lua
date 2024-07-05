@@ -70,7 +70,7 @@ end
 
 ----Get unit key.
 ---@param key string
----@return string | nil
+---@return string
 function unit.get(key)
     return units[key]
 end
