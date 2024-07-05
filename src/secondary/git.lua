@@ -145,7 +145,10 @@ function git.repo_isuncommited(reponame, repopath)
     end
     local out = f:read("*a")
     f:close()
-    return out == "" and true or false
+    if out == "" then
+        return false
+    end
+    return true
 end
 function git.branch_isuncommited()
     -- roachme: depricated.

@@ -36,14 +36,13 @@ local function tman_use()
         common.die(1, "one of the repos has uncommited changes", "REPONAME")
     end
 
-
-    local dir = config.aux.code
+    local path = config.aux.code
     local branch = taskunit.get(envname, id, "branch")
     if not branch then
         return common.die(1, "task unit file missing branch\n", id)
     end
     for _, repo in pairs(config.user.repos) do
-        git.branch_switch(dir, repo.name, branch)
+        git.branch_switch(repo.name, branch, path)
     end
 
     taskid.setcurr(envname, id)
