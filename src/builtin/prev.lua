@@ -1,6 +1,7 @@
 local env = require("core.env")
 local git = require("secondary.git")
 local taskid = require("core.taskid")
+local taskunit = require("core.taskunit")
 local common = require("core.common")
 local help = require("secondary.help")
 local config = require("secondary.config")
@@ -29,17 +30,37 @@ local function tman_prev()
         return 0
     end
 
+    if not envname then
+        return common.die(1, "no current env\n", "env")
+    elseif not env.exists(envname) then
+        return common.die(1, "no such env\n", "env")
+    end
+
     taskid.init(config.core.ids)
     prev = taskid.getprev(envname)
 
     if not prev then
-        common.die(1, "no previous task\n", "")
-    end
-    if not git.check(prev) then
-        common.die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+        return common.die(1, "no previous task\n", "prev")
     end
 
-    git.branch_switch(prev)
+    local path = config.aux.code
+    local branch = taskunit.get(envname, prev, "branch")
+    if not branch then
+        return common.die_atomic(prev, "task unit file missing branch\n", prev)
+    end
+
+    for _, repo in pairs(config.user.repos) do
+        if not git.repo_isuncommited(repo.name, path) then
+            return common.die(1, "repo has uncommited changes\n", repo.name)
+        end
+    end
+    for _, repo in pairs(config.user.repos) do
+        if not git.branch_switch(repo.name, branch, path) then
+            common.die(prev, "could not create new task branch\n", prev)
+        end
+        git.branch_switch(repo.name, branch, path)
+    end
+
     taskid.swap(envname)
     return 0
 end
