@@ -191,13 +191,11 @@ end
 
 ---Set list of active repos.
 ---@param id string
----@param taskrepos table
+---@param taskrepos string
 ---@return boolean
 local function _set_repo(envname, id, taskrepos)
-    local repos = table.concat(taskrepos, " ")
-
     unit.init(config.core.units .. envname .. ":" .. id)
-    unit.set("repos", repos)
+    unit.set("repos", taskrepos)
     return unit.save()
 end
 

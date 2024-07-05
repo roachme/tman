@@ -24,7 +24,7 @@ end
 ---@return boolean
 function git.branch_create(reponame, branch, path)
     path = path or "."
-    local fmt = "git -C %s/%s branch %s"
+    local fmt = "git -C %s/%s branch %s 2>/dev/null"
     local cmd = string.format(fmt, path, reponame, branch)
     return utils.exec(cmd)
 end
@@ -73,7 +73,7 @@ end
 ---@return boolean
 function git.branch_rebase(reponame, branch, path)
     path = path or "."
-    local fmt = "git -C %s/%s rebase %s"
+    local fmt = "git -C %s/%s rebase -q %s"
     local cmd = string.format(fmt, path, reponame, branch)
     return utils.exec(cmd)
 end
@@ -98,8 +98,19 @@ end
 ---@return boolean
 function git.branch_pull(reponame, remote, branch, path)
     path = path or "."
-    local fmt = "git -C %s/%s pull %s %s"
+    local fmt = "git -C %s/%s pull -q %s %s"
     local cmd = string.format(fmt, path, reponame, remote, branch)
+    return utils.exec(cmd)
+end
+
+---Pull branch.
+---@param reponame string
+---@param path string | nil
+---@return boolean
+function git.branch_pullall(reponame, path)
+    path = path or "."
+    local fmt = "git -C %s/%s pull -q"
+    local cmd = string.format(fmt, path, reponame)
     return utils.exec(cmd)
 end
 
@@ -126,6 +137,28 @@ function git.branch_exist(reponame, branch, path)
     local fmt = "git -C %s/%s show-ref --quiet refs/heads/%s"
     local cmd = string.format(fmt, path, reponame, branch)
     return utils.exec(cmd)
+end
+
+---Check that on needed branch.
+---@param reponame string
+---@param branch string
+---@param path string | nil
+---@return boolean
+function git.branch_on(reponame, branch, path)
+    local fmt = "git -C %s/%s rev-parse --abbrev-ref HEAD"
+    local cmd = string.format(fmt, path, reponame)
+    local f = io.popen(cmd)
+    if not f then
+        return false
+    end
+    local out = f:read("*a")
+    f:close()
+
+    out = string.gsub(out, "%s", "") -- trim newline
+    if out == branch then
+        return true
+    end
+    return false
 end
 
 ---Clone a repo.

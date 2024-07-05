@@ -16,9 +16,7 @@ local function tman_sync()
     local fremote, fstruct, ftask
     local last_index = 1
     local envname = env.getcurr()
-
-    print("git's updare refactoring")
-    os.exit(1)
+    local path = config.aux.code
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -43,41 +41,59 @@ local function tman_sync()
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        common.die(1, "no current task ID\n", "")
+        common.die(1, "no current task id\n", "")
+    elseif not taskid.exists(envname, id) then
+        common.die(1, "no such task id\n", id)
     end
-    if not taskid.exists(envname, id) then
-        common.die(1, "no such task ID\n", id)
-    end
+
+    local branch = taskunit.get(envname, id, "branch")
 
     if fstruct then
         print("sync: struct")
+        local active_repos = {}
+        local errfmt = "repo not no task branch tho has uncommited changes\n"
+
         -- roach:BUG: It's gotta update list of active repos, but can't if
         -- they have uncommited changes. BUT it should be able.
-        if not git.check(id) then
-            common.die(
-                1,
-                "errors in repo. Put meaningful desc here\n",
-                "REPONAME"
-            )
+        for _, repo in pairs(config.user.repos) do
+            if git.branch_on(repo.name, branch, path) then
+                if git.repo_isuncommited(repo.name, path) then
+                    table.insert(active_repos, repo.name)
+                end
+            else
+                if git.repo_isuncommited(repo.name, path) then
+                    return common.die(1, errfmt, repo.name)
+                else
+                    git.branch_switch(repo.name, branch, path)
+                end
+            end
         end
+
+        local repos = table.concat(active_repos, " ")
+
+        -- create task branch if needed.
+        for _, repo in pairs(config.user.repos) do
+            git.branch_create(repo.name, branch, path)
+            git.branch_switch(repo.name, branch, path)
+        end
+
         struct.create(id)
-        git.branch_create(id)
-        git.branch_switch(id)
-        taskunit.set(envname, id, "repos", git.branch_ahead(id))
+        taskunit.set(envname, id, "repos", repos)
     end
     if fremote then
         print("sync: remote")
-        if not git.check(id) then
-            common.die(
-                1,
-                "errors in repo. Put meaningful desc here\n",
-                "REPONAME"
-            )
+        -- check that repos are ready to create task branch.
+        for _, repo in pairs(config.user.repos) do
+            if git.repo_isuncommited(repo.name, path) then
+                return common.die(1, "repo has uncommited changes\n", repo.name)
+            end
         end
-        git.branch_default()
-        git.branch_update(true)
-        git.branch_switch(id)
-        git.branch_rebase()
+        for _, repo in pairs(config.user.repos) do
+            git.branch_switch(repo.name, repo.branch, path)
+            git.branch_pullall(repo.name, path)
+            git.branch_switch(repo.name, branch, path)
+            git.branch_rebase(repo.name, branch, path)
+        end
     end
     if ftask then
         print("sync: task status: under development")
