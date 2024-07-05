@@ -236,22 +236,16 @@ function git.branch_rename(id)
     return 0
 end
 
---- Delete task branch.
--- @param id task ID
--- @return true on success, otherwise false
-function git.branch_delete(id)
-    local branch = taskunit.get(env.getcurr(), id, "branch")
-
-    for _, repo in pairs(repos) do
-        local repopath = config.aux.code .. repo.name
-        utils.exec(gcheckout:format(repopath, repo.branch))
-
-        -- if there's branch in task unit file then delete it.
-        if branch then
-            utils.exec(gbranchD:format(repopath, branch))
-        end
-    end
-    return true
+---Delete branch.
+---@param reponame string
+---@param branch string
+---@param path string | nil
+---@return boolean
+function git.branch_delete(reponame, branch, path)
+    path = path or "."
+    local fmt = "git -C %s/%s branch -q -D %s"
+    local cmd = string.format(fmt, path, reponame, branch)
+    return utils.exec(cmd)
 end
 
 --- Check that all task's repo branches are merged into the default one.

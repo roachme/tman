@@ -5,7 +5,6 @@ TMAN_WD=
 TMAN_CWD=
 
 # config vars
-TMAN_ENV=
 TMAN_PREFIX=
 TMAN_INSTALL=
 
@@ -25,7 +24,6 @@ function _tman_get_tmanconf()
 function _tman_get_sys_config_vars()
 {
     _tman_get_tmanconf
-    TMAN_ENV="$(grep env "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     TMAN_PREFIX="$(grep prefix "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
 }
@@ -37,7 +35,6 @@ function _tman_handle_command()
     local taskdir=
 
     # get env from the file
-    #TMAN_ENV="$(cat "${TMAN_PREFIX}/.tman/env")"
     TMAN_CURR="$(cat "${TMAN_PREFIX}/.tman/curr" 2>/dev/null)"
 
     if [ "$cmd" = "add" ]; then

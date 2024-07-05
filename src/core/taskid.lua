@@ -150,6 +150,9 @@ function taskid.del(envname, id)
     -- if current gets deleted, mark previous one as current
     if id == curr and prev then
         taskid.setcurr(envname, prev)
+    else
+        -- unmark current task if there's nothing to switch back
+        shell.setcurr("")
     end
 
     return ids.save()

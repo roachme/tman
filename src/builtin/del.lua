@@ -35,21 +35,39 @@ local function tman_del()
         os.exit(1)
     end
 
-    if git.branch_isuncommited() then
-        common.die(1, "repo has uncommited changes", "")
+    local path = config.aux.code
+    local branch = taskunit.get(envname, id, "branch")
+    if not branch then
+        return common.die_atomic(id, "task unit file missing branch\n", id)
     end
-    git.branch_delete(id)
 
-    taskunit.del(envname, id)
+    -- delete task id's branches.
+    for _, repo in pairs(config.user.repos) do
+        if not git.repo_isuncommited(repo.name, path) then
+            return common.die(1, "repo has uncommited changes\n", repo.name)
+        end
+    end
+    for _, repo in pairs(config.user.repos) do
+        git.branch_switch(repo.name, repo.branch, path)
+        git.branch_delete(repo.name, branch, path)
+    end
+
     taskid.del(envname, id)
+    taskunit.del(envname, id)
 
-    -- roachme: make it pretty and easire to read.
-    -- switch back to current task (if exists)
+    -- switch to new current task if exists.
     local curr = taskid.getcurr(envname)
     if curr then
-        git.branch_switch(curr)
+        branch = taskunit.get(envname, curr, "branch")
+        if not branch then
+            return common.die(1, "task unit file missing branch\n", curr)
+        end
+        for _, repo in pairs(config.user.repos) do
+            git.branch_switch(repo.name, branch, path)
+        end
     end
 
+    -- if you delete current task, and are in current directory.
     -- delete task dir at the end, cuz it causes error for tman.sh
     struct.delete(common.genname(envname, id))
     return 0
