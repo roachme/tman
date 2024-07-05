@@ -11,6 +11,7 @@ local getopt = require("posix.unistd").getopt
 local function tman_prev()
     local keyhelp
     local prev
+    local path = config.aux.code
     local envname = env.getcurr()
     local optstr = ":h" -- roachme:API: should option be used?
     local cmdname = "prev"
@@ -43,20 +44,15 @@ local function tman_prev()
         return common.die(1, "no previous task\n", "prev")
     end
 
-    local path = config.aux.code
     local branch = taskunit.get(envname, prev, "branch")
-    if not branch then
-        return common.die_atomic(prev, "task unit file missing branch\n", prev)
-    end
-
     for _, repo in pairs(config.user.repos) do
-        if not git.repo_isuncommited(repo.name, path) then
+        if git.repo_isuncommited(repo.name, path) then
             return common.die(1, "repo has uncommited changes\n", repo.name)
         end
     end
     for _, repo in pairs(config.user.repos) do
         if not git.branch_switch(repo.name, branch, path) then
-            common.die(prev, "could not create new task branch\n", prev)
+            return common.die(1, "could not switch to task branch\n", repo.name)
         end
         git.branch_switch(repo.name, branch, path)
     end

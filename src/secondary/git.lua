@@ -48,7 +48,7 @@ end
 ---@return boolean
 function git.branch_switch(reponame, branch, path)
     path = path or "."
-    local fmt = "git -C %s/%s checkout -q %s"
+    local fmt = "git -C %s/%s checkout -q %s 2>/dev/null"
     local cmd = string.format(fmt, path, reponame, branch)
     return utils.exec(cmd)
 end
