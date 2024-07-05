@@ -1,0 +1,40 @@
+Title: GNU coding standards (to design the project)
+Link:  https://www.gnu.org/prep/standards/standards.html#Program-Behavior
+
+
+4.2 Writing Robust Programs
+    1. Check every system call for an error return, unless you know you wish
+       to ignore errors.
+    2. Check every call to malloc or realloc to see if it returned NULL.
+    3. If malloc fails in a noninteractive program, make that a fatal error.
+       In an interactive program (one that reads commands from the user),
+       it is better to abort the command and return to the command reader loop
+    4. In error checks that detect “impossible” conditions, just abort.
+       There is usually no point in printing any message.
+       These checks indicate the existence of bugs
+
+
+4.3 Library Behavior
+    1. External symbols that are not documented entry points for the user
+    should have names beginning with ‘_’.
+    (roach: maybe i gotta use it for local functions)
+
+
+4.4 Formatting Error Messages
+    1. Error messages from other noninteractive programs should look like this:
+        > 'program:sourcefile:lineno: message'
+       when there is an appropriate source file, or like this:
+        > 'program: message'
+
+4.8 Standards for Command Line Interfaces
+4.8.1 --version
+    1. The first line is meant to be easy for a program to parse;
+       the version number proper starts after the last space
+       > 'GNU Emacs 19.30'
+    2. The program’s name should be a constant string; don’t compute it
+       from argv[0]. The idea is to state the standard or canonical name for
+       the program, not its file name.
+    3. If the program is a subsidiary part of a larger package,
+       mention the package name in parentheses, like this:
+       > 'emacsserver (GNU Emacs) 19.30'
+
