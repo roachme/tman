@@ -129,7 +129,26 @@ local function is_repo_clean(reponame)
     return ret == 0 or ret == true
 end
 
+
+---Check that repo has uncommited changes.
+---@param reponame string
+---@param repopath string | nil
+---@return boolean
+function git.repo_isuncommited(reponame, repopath)
+    repopath = repopath or "."
+    -- roachme: find a better command for this not to use popen()
+    local fmt = "git -C %s/%s status --untracked-files --short"
+    local cmd = string.format(fmt, repopath, reponame)
+    local f = io.popen(cmd)
+    if not f then
+        return false
+    end
+    local out = f:read("*a")
+    f:close()
+    return out == "" and true or false
+end
 function git.branch_isuncommited()
+    -- roachme: depricated.
     for _, repo in pairs(repos) do
         local ret = is_repo_clean(repo.name)
         if ret then
@@ -138,6 +157,7 @@ function git.branch_isuncommited()
     end
     return true
 end
+
 
 -- Private functions: end --
 
@@ -180,24 +200,26 @@ function git.branch_rebase()
 end
 
 ---Create branch.
----@param dir string
 ---@param reponame string
 ---@param branch string
+---@param path string | nil
 ---@return boolean
-function git.branch_create(dir, reponame, branch)
+function git.branch_create(reponame, branch, path)
+    path = path or "."
     local fmt = "git -C %s/%s branch %s"
-    local cmd = string.format(fmt, dir, reponame, branch)
+    local cmd = string.format(fmt, path, reponame, branch)
     return utils.exec(cmd)
 end
 
 ---Switch to branch.
----@param dir string
 ---@param reponame string
 ---@param branch string
+---@param path string | nil
 ---@return boolean
-function git.branch_switch(dir, reponame, branch)
+function git.branch_switch(reponame, branch, path)
+    path = path or "."
     local fmt = "git -C %s/%s checkout -q %s"
-    local cmd = string.format(fmt, dir, reponame, branch)
+    local cmd = string.format(fmt, path, reponame, branch)
     return utils.exec(cmd)
 end
 
@@ -349,12 +371,12 @@ end
 ---Clone a repo.
 ---@param link string
 ---@param reponame string
----@param repopath string | nil
+---@param path string | nil
 ---@return boolean
-function git.repo_clone(link, reponame, repopath)
-    repopath = repopath or "."
+function git.repo_clone(link, reponame, path)
+    path = path or "."
     local fmt = "git -C %s clone --quiet %s %s"
-    local cmd = string.format(fmt, repopath, link, reponame)
+    local cmd = string.format(fmt, path, link, reponame)
     return utils.exec(cmd)
 end
 

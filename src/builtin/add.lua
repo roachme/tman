@@ -18,16 +18,15 @@ local function builtin_add()
     local cmdname = "add"
     local prio = "mid"
     local tasktype = "bugfix"
-    -- roachme: move `-d' option from taskunit.lua to here.
+    -- roachme: move `-d' option (description) from taskunit.lua to here.
     local optstr = "hp:t:"
     local last_index = 1
     local keyhelp
     local envname = env.getcurr()
-    --envname = "test"
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            common.die(1, "unrecognized option\n", arg[optind - 1])
+            return common.die(1, "unrecognized option\n", arg[optind - 1])
         end
 
         last_index = optind
@@ -47,17 +46,11 @@ local function builtin_add()
     end
 
     id = arg[last_index]
+    local path = config.aux.code
 
-    if git.branch_isuncommited() then
-        -- roachme: would be nice to know what repo.
-        io.stderr:write("repo has uncommited changes\n")
-        os.exit(1)
-    end
     if not id then
-        io.stderr:write("task ID required\n")
-        os.exit(1)
+        return common.die(1, "task id required\n", "id")
     end
-
     if not envname then
         return common.die(1, "no current env\n", "envname")
     elseif not env.exists(envname) then
@@ -65,7 +58,6 @@ local function builtin_add()
     end
 
     taskid.init(config.core.ids)
-    --taskunit.init(config.core.units)
 
     if not taskid.add(envname, id) then
         -- don't use common.die_atomic() cuz it'll delete existing task ID.
@@ -78,16 +70,21 @@ local function builtin_add()
         common.die_atomic(id, "could not create new task structure\n", id)
     end
 
-    local dir = config.aux.code
     local branch = taskunit.get(envname, id, "branch")
     if not branch then
         return common.die_atomic(id, "task unit file missing branch\n", id)
     end
+
     for _, repo in pairs(config.user.repos) do
-        if not git.branch_create(dir, repo.name, branch) then
+        if not git.repo_isuncommited(repo.name, path) then
+            return common.die_atomic(1, "repo has uncommited changes\n", repo.name)
+        end
+    end
+    for _, repo in pairs(config.user.repos) do
+        if not git.branch_create(repo.name, branch, path) then
             common.die_atomic(id, "could not create new task branch\n", id)
         end
-        git.branch_switch(dir, repo.name, branch)
+        git.branch_switch(repo.name, branch, path)
     end
     return 0
 end
