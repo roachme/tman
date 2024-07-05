@@ -61,7 +61,7 @@ end
 ---@return boolean
 function git.branch_rename(reponame, oldbranch, newbranch, path)
     path = path or "."
-    local fmt = "git -C %s/%s branch %s %s"
+    local fmt = "git -C %s/%s branch -m %s %s"
     local cmd = string.format(fmt, path, reponame, oldbranch, newbranch)
     return utils.exec(cmd)
 end

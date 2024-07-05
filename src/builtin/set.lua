@@ -9,93 +9,132 @@ local config = require("secondary.config")
 
 local envname
 
---- Set task description.
--- @param id task ID
--- @param newdesc new description
--- @return on success - 0
--- @return on failure - error code
+---Set task description.
+---@param id string
+---@param newdesc string
+---@return boolean
 local function _set_desc(id, newdesc)
-    git.branch_switch(id)
+    local path = config.aux.code
+    local olddesc = taskunit.get(envname, id, "desc")
+    local oldbranch = taskunit.get(envname, id, "branch")
+    local newbranch
+
+    if olddesc == newdesc then
+        common.die(1, "the same task description\n", newdesc)
+    end
+
     -- roachme: the only reasons why it might fail
     -- 1. Dir doesn't exist.
     -- 2. Has no permition.
     -- 3. Hardware isssue.
     -- core.lua gotta check that out, so we ain't gotta check, just do it.
     if not taskunit.set(envname, id, "desc", newdesc) then
-        return 1
+        common.die(1, "could not set new task description\n", "desc")
     end
-    git.branch_rename(id)
-    return 0
+
+    newbranch = taskunit.get(envname, id, "branch")
+    for _, repo in pairs(config.user.repos) do
+        if not git.branch_switch(repo.name, oldbranch, path) then
+            common.die(1, "could not switch to task branch\n", repo.name)
+        end
+        if not git.branch_rename(repo.name, oldbranch, newbranch, path) then
+            common.die(1, "could not rename task branch\n", repo.name)
+        end
+    end
+    return true
 end
 
---- Set task ID.
--- @param id task ID
--- @param newid new task ID
--- @return on success - 0
--- @return on failure - error code
+---Set task ID.
+---@param id string
+---@param newid string
+---@return boolean
 local function _set_id(id, newid)
-    local curr = taskid.getcurr(envname)
+    local path = config.aux.code
+    local newbranch
+    local currbranch = taskunit.get(envname, id, "branch")
+
+    for _, repo in pairs(config.user.repos) do
+        if git.repo_isuncommited(repo.name, path) then
+            common.die(1, "repo has uncommited changes\n", repo.name)
+        end
+    end
 
     if id == newid then
         common.die(1, "the same task ID\n", newid)
     elseif taskid.exists(envname, newid) then
-        common.die(1, "task ID already exists\n", newid)
+        common.die(1, "task id exists\n", newid)
+    elseif not taskunit.set(envname, id, "id", newid) then
+        common.die(1, "could not set new task id\n", newid)
     end
 
-    git.branch_switch(id)
-    if not taskunit.set(envname, id, "id", newid) then
-        return 1
-    end
-    -- roachme: FIXME: you can't change this order.
-    -- It's ok, but not obvious.
+    newbranch = taskunit.get(envname, id, "branch")
+
+    -- rename task id and its directory.
     taskid.del(envname, id)
     taskid.add(envname, newid)
-
-    -- mark current task as current back again.
-    if curr and curr ~= id then
-        taskid.setcurr(envname, curr)
-    end
-
     struct.rename(common.genname(envname, id), common.genname(envname, newid))
-    git.branch_rename(newid)
-    return 0
+
+    for _, repo in pairs(config.user.repos) do
+        git.branch_rename(repo.name, currbranch, newbranch, path)
+    end
+    return true
 end
 
---- Set task link.
--- @param id task ID
--- @param newlink new task link
+---Set task link.
+---@param id string
+---@param newlink string
+---@return boolean
 local function _set_link(id, newlink)
     taskunit.set(envname, id, "link", newlink)
-    return 0
+    return true
 end
 
---- Set task priority.
--- @param id task ID
--- @param newprio new priority
+---Set task priority.
+---@param id string
+---@param newprio string
+---@return boolean
 local function _set_prio(id, newprio)
     local prio = taskunit.get(envname, id, "prio")
 
     if newprio == prio then
-        common.die(1, "the same priority\n", newprio)
+        local errfmt = "'%s' and '%s' are the same task priority\n"
+        common.die(1, errfmt, "set", prio, newprio)
+    elseif not taskunit.set(envname, id, "prio", newprio) then
+        common.die(1, "could not set new priority", newprio)
     end
-    if not taskunit.set(envname, id, "prio", newprio) then
-        return 1
-    end
-    return 0
+    return true
 end
 
---- Set task type.
--- @param id task ID
--- @param newtype new type
+---Set task type.
+---@param id string
+---@param newtype string
+---@return boolean
 local function _set_type(id, newtype)
+    local path = config.aux.code
+    local oldbranch = taskunit.get(envname, id, "branch")
+    local currtype = taskunit.get(envname, id, "type")
     taskunit.set(envname, id, "type", newtype)
-    git.branch_rename(id)
-    return 0
+    local newbranch = taskunit.get(envname, id, "branch")
+
+    if currtype == newtype then
+        local errfmt = "'%s' and '%s' are the same task type\n"
+        common.die(1, errfmt, "set", currtype, newtype)
+        return true
+    end
+
+    for _, repo in pairs(config.user.repos) do
+        if not git.branch_switch(repo.name, oldbranch, path) then
+            common.die(1, "could not switch to task branch\n", repo.name)
+        end
+        if not git.branch_rename(repo.name, oldbranch, newbranch, path) then
+            common.die(1, "could not rename task branch\n", repo.name)
+        end
+    end
+    return true
 end
 
---- Amend task unit.
--- roachme:FIXME: switches task even when I change random task's unit.
-local function tman_set()
+---Set task unit value.
+local function builtin_set()
     local id
     local last_index = 1
     local optstr = "di:l:p:t:"
@@ -158,8 +197,12 @@ local function tman_set()
     if not taskid.exists(envname, id) then
         common.die(1, "no such task ID\n", id)
     end
-    if not git.check(id) then
-        common.die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+
+    local path = config.aux.code
+    for _, repo in pairs(config.user.repos) do
+        if git.repo_isuncommited(repo.name, path) then
+            return common.die(1, "repo has uncommited changes\n", repo.name)
+        end
     end
 
     -- roachme: error if no arguments're passed
@@ -179,4 +222,4 @@ local function tman_set()
     return 0
 end
 
-return tman_set
+return builtin_set
