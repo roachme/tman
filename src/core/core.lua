@@ -88,7 +88,7 @@ function core.init()
     local errfmt = "tman: %s: couldn't download repo\n"
     for _, repo in pairs(config.user.repos) do
         if not utils.access(dir .. repo.name) then
-            if not git.repo_clone(dir, repo.link, repo.name) then
+            if not git.repo_clone(repo.link, repo.name, dir) then
                 io.stderr:write(errfmt:format(repo.name))
                 os.exit(1)
             end

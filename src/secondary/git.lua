@@ -347,13 +347,14 @@ function git.commit_create(id)
 end
 
 ---Clone a repo.
----@param dir string
 ---@param link string
 ---@param reponame string
+---@param repopath string | nil
 ---@return boolean
-function git.repo_clone(dir, link, reponame)
-    local fmt = "git -C %s clone --quiet %s %s 2>/dev/null"
-    local cmd = string.format(fmt, dir, link, reponame)
+function git.repo_clone(link, reponame, repopath)
+    repopath = repopath or "."
+    local fmt = "git -C %s clone --quiet %s %s"
+    local cmd = string.format(fmt, repopath, link, reponame)
     return utils.exec(cmd)
 end
 
