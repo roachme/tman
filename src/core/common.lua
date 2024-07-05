@@ -1,8 +1,10 @@
 --- Common module for the rest of commands.
 -- @module common
 
+local env = require("core.env")
 local git = require("secondary.git")
 local help = require("secondary.help")
+local config = require("secondary.config")
 local struct = require("secondary.struct")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
@@ -16,9 +18,26 @@ function common.die(exit_code, errfmt, ...)
 end
 
 function common.die_atomic(id, errfmt, ...)
-    taskid.del(id)
-    taskunit.del(id)
-    git.branch_delete(id)
+    local envname = env.getcurr()
+
+    if not envname then
+        return common.die(1, "no current env\n", "env")
+    end
+
+    taskid.init(config.core.ids)
+    local branch = taskunit.get(envname, id, "branch")
+
+    if not branch then
+        return common.die(1, "no branch\n", id)
+    end
+
+    local path = config.aux.code
+    for _, repo in pairs(config.user.repos) do
+        git.branch_delete(repo.name, branch, path)
+    end
+
+    taskid.del(envname, id)
+    taskunit.del(envname, id)
     struct.delete(id)
     common.die(1, errfmt, ...)
 end

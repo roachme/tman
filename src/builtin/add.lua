@@ -64,24 +64,28 @@ local function builtin_add()
         common.die(1, "task ID already exists\n", id)
     end
     if not taskunit.add(envname, id, tasktype, prio) then
-        common.die_atomic(id, "could not create new task unit\n", id)
+        common.die(1, "could not create new task unit\n", id)
     end
     if not struct.create(common.genname(envname, id)) then
-        common.die_atomic(id, "could not create new task structure\n", id)
+        taskid.del(envname, id)
+        common.die(id, "could not create new task structure\n", id)
     end
 
     local branch = taskunit.get(envname, id, "branch")
     if not branch then
+        print("----- branch")
         return common.die_atomic(id, "task unit file missing branch\n", id)
     end
 
     for _, repo in pairs(config.user.repos) do
-        if not git.repo_isuncommited(repo.name, path) then
+        if git.repo_isuncommited(repo.name, path) then
+            print("----- repo_isuncommited")
             return common.die_atomic(1, "repo has uncommited changes\n", repo.name)
         end
     end
     for _, repo in pairs(config.user.repos) do
         if not git.branch_create(repo.name, branch, path) then
+            print("----- branch_create")
             common.die_atomic(id, "could not create new task branch\n", id)
         end
         git.branch_switch(repo.name, branch, path)
