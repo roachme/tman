@@ -1,5 +1,5 @@
 all: release
-.PHONY: lua_fmt lua_lint lua_docs lua_tests
+.PHONY: lua_fmt lua_lint lua_tests
 
 all: release
 
@@ -8,11 +8,6 @@ all: release
 lua_fmt:
 	@echo "===> Formatting"
 	stylua -f .configs/stylua.toml src
-	@echo
-
-lua_docs:
-	@echo "===> Docs"
-	ldoc -q -c .configs/ldoc.ld src
 	@echo
 
 lua_lint:
@@ -25,4 +20,4 @@ lua_tests:
 	#@lua tests/unit/tests.lua
 	@echo
 
-release: lua_fmt lua_docs lua_lint lua_tests
+release: lua_fmt lua_lint lua_tests
