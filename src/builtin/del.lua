@@ -43,7 +43,7 @@ local function tman_del()
 
     -- delete task id's branches.
     for _, repo in pairs(config.user.repos) do
-        if not git.repo_isuncommited(repo.name, path) then
+        if git.repo_isuncommited(repo.name, path) then
             return common.die(1, "repo has uncommited changes\n", repo.name)
         end
     end

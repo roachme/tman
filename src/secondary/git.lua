@@ -3,6 +3,7 @@ local utils = require("utils")
 
 local git = {}
 
+--[[
 ---Create commit.
 ---@param reponame string
 ---@param path string | nil
@@ -16,6 +17,7 @@ end
 function git.commit_squash(reponame, path)
     path = path or "."
 end
+]]
 
 ---Create branch.
 ---@param reponame string
@@ -36,7 +38,7 @@ end
 ---@return boolean
 function git.branch_delete(reponame, branch, path)
     path = path or "."
-    local fmt = "git -C %s/%s branch -D %s"
+    local fmt = "git -C %s/%s branch -q -D %s"
     local cmd = string.format(fmt, path, reponame, branch)
     return utils.exec(cmd)
 end
