@@ -1,16 +1,20 @@
 local utils = require("utils")
---local commit = require("commit")
+local commit = require("commit")
 
 local git = {}
 
---[[
 ---Create commit.
 ---@param reponame string
 ---@param path string | nil
 function git.commit_create(reponame, path)
     path = path or "."
+    local fmt = "git -C %s/%s git add ."
+    local cmd = string.format(fmt, path, reponame)
+    utils.exec(cmd)
+    return commit.create()
 end
 
+--[[
 ---Squash task commits.
 ---@param reponame string
 ---@param path string | nil

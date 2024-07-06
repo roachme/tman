@@ -31,6 +31,9 @@ local function builtin_pack()
         return common.die(1, "no current env", "env")
     end
 
+    print("under development")
+    os.exit(1)
+
     taskid.init(config.core.ids)
     id = arg[last_index] or taskid.getcurr(envname)
 
@@ -40,7 +43,7 @@ local function builtin_pack()
     if not taskid.exists(envname, id) then
         common.die(1, "no such task ID\n", id)
     end
-    if not git.branch_exists(id) then
+    if not git.branch_exist(id) then
         common.die(1, "task branch doesn't exist\n", "REPONAME")
     end
 
