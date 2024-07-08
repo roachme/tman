@@ -117,7 +117,7 @@ function envdb.add(name, desc, status)
     if envdb.exists(name) then
         return false
     end
-    envs[name] = { name = name, desc = desc, status = status }
+    table.insert(envs, { name = name, desc = desc, status = status })
     return save()
 end
 

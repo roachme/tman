@@ -48,12 +48,12 @@ function env.setcurr(name)
     local curr = env.getcurr()
     local prev = env.getprev()
 
-    -- do nothing
-    if curr == name then
-        return false
-    end
     if not envdb.exists(name) then
         return false
+    end
+    -- sentinel guard: don't mark the same id as current
+    if curr == name then
+        return true
     end
 
     -- if theree's previous task then unmark it
@@ -93,10 +93,9 @@ end
 ---@param desc string
 ---@return boolean
 function env.add(name, desc)
-    if envdb.exists(name) then
+    if not envdb.add(name, desc, status.CURR) then
         return false
     end
-    envdb.add(name, desc, status.CURR)
     return env.setcurr(name)
 end
 
