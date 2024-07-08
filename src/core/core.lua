@@ -23,7 +23,7 @@ function core.struct()
 end
 
 function core.env()
-    local defenv = "work"
+    local defenv = "pers"
 
     env.init(config.sys.fenv)
     if not env.exists(defenv) then
