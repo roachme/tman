@@ -1,5 +1,4 @@
 local envdb = require("aux.envdb")
-local shell = require("aux.shell")
 
 local env = {}
 local fenv
@@ -65,7 +64,6 @@ function env.setcurr(name)
         envdb.set(curr, status.PREV)
     end
     envdb.set(name, status.CURR)
-    shell.setenv(name)
     return true
 end
 
