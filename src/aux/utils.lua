@@ -41,7 +41,7 @@ end
 ---Create symlink.
 ---@param target string
 ---@param linkname string
----@param soft boolean
+---@param soft boolean?
 ---@return boolean
 function utils.link(target, linkname, soft)
     soft = soft or true

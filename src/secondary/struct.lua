@@ -27,17 +27,10 @@ end
 
 --- Create symlinks to repos.
 -- @param id task ID
-local function link_repos(id)
+local function link_repos(repobase, taskbase)
     for _, repo in pairs(config.user.repos) do
-        local reponame = repo.name
-        local target = config.aux.code .. reponame
-        local linkname = config.aux.tasks .. id .. "/repos/" .. reponame
-
-        -- check if there's invalid link, if so then delete it.
-        if not utils.access(linkname) then
-            -- use module os cuz it might delete repo itself.
-            os.remove(linkname)
-        end
+        local target = repobase .. repo.name
+        local linkname = taskbase .. repo.name
         utils.link(target, linkname)
     end
 end
@@ -63,7 +56,7 @@ function struct.create(envname, id)
 
     create_dirs(taskdir)
     create_files(notedir)
-    link_repos(id)
+    link_repos(config.aux.code, repodir)
     return true
 end
 
