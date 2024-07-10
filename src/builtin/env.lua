@@ -3,6 +3,7 @@ local core = require("core.core")
 local shell = require("aux.shell")
 local common = require("core.common")
 local taskid = require("core.taskid")
+local utils = require("aux.utils")
 local config = require("secondary.config")
 --local help = require("secondary.help")
 --local getopt = require("posix.unistd").getopt
@@ -27,7 +28,7 @@ local function builtin_env()
         taskid.init(config.core.refs.ids)
         local curr_id = taskid.getcurr(envname)
         if curr_id then
-            shell.setcurr(envname .. ":" .. curr_id)
+            shell.setcurr(utils.genname(envname, curr_id))
         else
             shell.setcurr("")
         end
@@ -58,19 +59,19 @@ local function builtin_env()
         taskid.init(config.core.refs.ids)
         local curr_id = taskid.getcurr(prev)
         if curr_id then
-            shell.setcurr(prev .. ":" .. curr_id)
+            shell.setcurr(utils.genname(prev, curr_id))
         else
             shell.setcurr("")
         end
     elseif cmd == "use" then
         if not env.exists(envname) then
-            common.die(1, "no such env name\n", envname)
+            return common.die(1, "no such env name\n", envname)
         end
         env.setcurr(envname)
 
         taskid.init(config.core.refs.ids)
-        local curr_id = taskid.getcurr(envname)
-        shell.setcurr(envname .. ":" .. curr_id)
+        local curr_id = taskid.getcurr(envname) or ""
+        shell.setcurr(utils.genname(envname, curr_id))
     else
         common.die(1, "no such env command\n", cmd)
     end
