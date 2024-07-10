@@ -7,6 +7,7 @@ local config = require("secondary.config")
 
 --- Switch to task.
 local function tman_use()
+    local path = config.aux.code
     local envname = env.getcurr()
     local id = arg[1]
     -- roachme: can't use help option cuz tman.sh fails.
@@ -32,11 +33,13 @@ local function tman_use()
         return 0
     end
 
-    if not git.check(id) then
-        common.die(1, "one of the repos has uncommited changes", "REPONAME")
+    -- check that repos are ready to create task branch.
+    for _, repo in pairs(config.user.repos) do
+        if git.repo_isuncommited(repo.name, path) then
+            return common.die(1, "repo has uncommited changes\n", repo.name)
+        end
     end
 
-    local path = config.aux.code
     local branch = taskunit.get(envname, id, "branch")
     if not branch then
         return common.die(1, "task unit file missing branch\n", id)
