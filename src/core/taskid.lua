@@ -156,9 +156,12 @@ function taskid.del(envname, id)
     return ids.save()
 end
 
+---Init task id database.
+---@param fname string
+---@return boolean
 function taskid.init(fname)
     fids = fname
-    ids.init(fids)
+    return ids.init(fids)
 end
 
 ---Get task id by index.
