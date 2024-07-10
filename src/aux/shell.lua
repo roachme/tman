@@ -41,18 +41,4 @@ function shell.setcurr(val)
     return setval(fname, val)
 end
 
----Get current environment to use from shell.
----@return string | nil
-function shell.getenv()
-    local fname = config.core.basedir .. "env"
-    return getval(fname)
-end
-
----Get current environment to use from shell.
----@return boolean
-function shell.setenv(val)
-    local fname = config.core.basedir .. "env"
-    return setval(fname, val)
-end
-
 return shell
