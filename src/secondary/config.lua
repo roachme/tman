@@ -70,6 +70,7 @@ function config.load()
 
     -- roachme: maybe it's better to move it to struct.lua
     config.core = {
+        basedir = prefix .. "/.tman/",
         refs = {
             base = prefix .. "/.tman/refs/",
             ids = prefix .. "/.tman/refs/ids",
@@ -77,7 +78,6 @@ function config.load()
         },
         units = prefix .. "/.tman/units/",
         curr = prefix .. "/.tman/curr",
-        path = prefix .. "/.tman/",
     }
     config.aux = {
         code = prefix .. "/code/",

@@ -10,7 +10,7 @@ local core = {}
 
 function core.struct()
     -- tman core structure
-    utils.mkdir(config.core.path)
+    utils.mkdir(config.core.basedir)
     utils.mkdir(config.core.refs.base)
     utils.mkdir(config.core.units)
 

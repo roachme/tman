@@ -29,7 +29,7 @@ end
 ---Get current task id to use from shell.
 ---@return string | nil
 function shell.getcurr()
-    local fname = config.core.path .. "curr"
+    local fname = config.core.basedir .. "curr"
     return getval(fname)
 end
 
@@ -37,21 +37,21 @@ end
 ---@param val string
 ---@return boolean
 function shell.setcurr(val)
-    local fname = config.core.path .. "curr"
+    local fname = config.core.basedir .. "curr"
     return setval(fname, val)
 end
 
 ---Get current environment to use from shell.
 ---@return string | nil
 function shell.getenv()
-    local fname = config.core.path .. "env"
+    local fname = config.core.basedir .. "env"
     return getval(fname)
 end
 
 ---Get current environment to use from shell.
 ---@return boolean
 function shell.setenv(val)
-    local fname = config.core.path .. "env"
+    local fname = config.core.basedir .. "env"
     return setval(fname, val)
 end
 
