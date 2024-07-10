@@ -72,7 +72,7 @@ local function _set_id(id, newid)
     -- rename task id and its directory.
     taskid.del(envname, id)
     taskid.add(envname, newid)
-    struct.rename(common.genname(envname, id), common.genname(envname, newid))
+    struct.rename(envname, id, newid)
 
     for _, repo in pairs(config.user.repos) do
         git.branch_rename(repo.name, currbranch, newbranch, path)

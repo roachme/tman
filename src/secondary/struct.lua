@@ -50,11 +50,13 @@ end
 -- @param id task ID
 -- @return on success - true
 -- @return on failure - false
-function struct.create(id)
-    local taskdir = config.aux.tasks .. id
-    local notedir = config.aux.tasks .. id .. "/notes/"
-    local repodir = config.aux.tasks .. id .. "/repos/"
+function struct.create(envname, id)
+    local dirname = utils.genname(envname, id)
+    local taskdir = config.aux.tasks .. dirname
+    local notedir = config.aux.tasks .. dirname .. "/notes/"
+    local repodir = config.aux.tasks .. dirname .. "/repos/"
 
+    utils.mkdir(dirname)
     utils.mkdir(notedir)
     utils.mkdir(taskdir)
     utils.mkdir(repodir)
@@ -69,8 +71,9 @@ end
 -- @param id task ID
 -- @return on success - true
 -- @return on failure - false
-function struct.delete(id)
-    local taskdir = config.aux.tasks .. "/" .. id
+function struct.delete(envname, id)
+    local dirname = utils.genname(envname, id)
+    local taskdir = config.aux.tasks .. "/" .. dirname
     return utils.rm(taskdir)
 end
 
@@ -79,9 +82,9 @@ end
 -- @param newid new task ID
 -- @return on success - true
 -- @return on failure - false
-function struct.rename(oldid, newid)
-    local old_dir = config.core.units .. oldid
-    local new_dir = config.core.units .. newid
+function struct.rename(envname, oldid, newid)
+    local old_dir = config.core.units .. utils.genname(envname, oldid)
+    local new_dir = config.core.units .. utils.genname(envname, newid)
     return utils.rename(old_dir, new_dir) == 0
 end
 

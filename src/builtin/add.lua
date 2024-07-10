@@ -71,7 +71,7 @@ local function builtin_add()
     elseif not taskunit.add(envname, id, tasktype, prio) then
         taskid.del(envname, id)
         common.die(1, "could not create new task unit\n", id)
-    elseif not struct.create(common.genname(envname, id)) then
+    elseif not struct.create(envname, id) then
         taskid.del(envname, id)
         taskunit.del(envname, id)
         common.die(id, "could not create new task structure\n", id)

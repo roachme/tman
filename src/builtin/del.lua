@@ -69,7 +69,7 @@ local function tman_del()
 
     -- if you delete current task, and are in current directory.
     -- delete task dir at the end, cuz it causes error for tman.sh
-    struct.delete(common.genname(envname, id))
+    struct.delete(envname, id)
     return 0
 end
 
