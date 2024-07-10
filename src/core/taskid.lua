@@ -3,7 +3,6 @@
 -- @module taskid
 
 local ids = require("aux.iddb")
-local taskunit = require("core.taskunit")
 
 ---@alias Status
 ---| 0   # Current task
@@ -14,8 +13,8 @@ local taskunit = require("core.taskunit")
 local taskid = {}
 local fids
 
---- Types of task IDs.
-local status = {
+---Types of task IDs.
+taskid.status = {
     CURR = 0,
     PREV = 1,
     ACTV = 2,
@@ -36,7 +35,7 @@ end
 function taskid.getcurr(envname)
     for i = 1, ids.size() do
         local item = ids.getidx(envname, i)
-        if item.envname == envname and item.status == status.CURR then
+        if item.envname == envname and item.status == taskid.status.CURR then
             return item.id
         end
     end
@@ -49,7 +48,7 @@ end
 function taskid.getprev(envname)
     for i = 1, ids.size() do
         local item = ids.getidx(envname, i)
-        if item.envname == envname and item.status == status.PREV then
+        if item.envname == envname and item.status == taskid.status.PREV then
             return item.id
         end
     end
@@ -66,7 +65,7 @@ function taskid.unsetcurr(envname)
         return false
     end
 
-    ids.set(envname, curr, status.ACTV)
+    ids.set(envname, curr, taskid.status.ACTV)
     ids.save()
     return true
 end
@@ -90,13 +89,13 @@ function taskid.setcurr(envname, id)
 
     -- if theree's previous task then unmark it
     if prev then
-        ids.set(envname, prev, status.ACTV)
+        ids.set(envname, prev, taskid.status.ACTV)
     end
 
     if curr then
-        ids.set(envname, curr, status.PREV)
+        ids.set(envname, curr, taskid.status.PREV)
     end
-    ids.set(envname, id, status.CURR)
+    ids.set(envname, id, taskid.status.CURR)
     ids.save()
     return true
 end
@@ -133,7 +132,7 @@ end
 ---@param id string
 ---@return boolean
 function taskid.add(envname, id)
-    if not ids.add(envname, id, status.ACTV) then
+    if not ids.add(envname, id, taskid.status.ACTV) then
         return false
     end
     return taskid.setcurr(envname, id)
@@ -162,36 +161,18 @@ function taskid.init(fname)
     ids.init(fids)
 end
 
----List environment's task ids.
+---Get task id by index.
 ---@param envname string
-function taskid.list(envname, active, completed)
-    local desc
-    local prev = taskid.getprev(envname)
-    local curr = taskid.getcurr(envname)
+---@param idx number
+---@return table
+function taskid.getidx(envname, idx)
+    return ids.getidx(envname, idx)
+end
 
-    if (active or (not active and not completed)) and curr then
-        desc = taskunit.get(envname, curr, "desc")
-        print(("* %-10s %s"):format(curr, desc))
-    end
-    if (active or (not active and not completed)) and prev then
-        desc = taskunit.get(envname, prev, "desc")
-        print(("- %-10s %s"):format(prev, desc))
-    end
-
-    for i = 1, ids.size() do
-        local item = ids.getidx(envname, i)
-
-        if item.envname == envname then
-            desc = taskunit.get(envname, item.id, "desc")
-            if item.id ~= curr and item.id ~= prev then
-                if item.status == status.ACTV and active then
-                    print(("a %-10s %s"):format(item.id, desc))
-                elseif item.status == status.COMP and completed then
-                    print(("c %-10s %s"):format(item.id, desc))
-                end
-            end
-        end
-    end
+---Get number of task ids.
+---@return number
+function taskid.size()
+    return ids.size()
 end
 
 return taskid

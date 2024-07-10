@@ -6,10 +6,8 @@ local config = require("secondary.config")
 local utils = require("aux.utils")
 local unit = require("aux.unitdb")
 
-
 -- roachme: gotta make sure that branch is correct.
 -- so the rest of the code shouldn't check branch for nil.
-
 
 local taskunit = {}
 
