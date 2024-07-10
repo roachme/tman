@@ -16,16 +16,18 @@ System:
   get     - get parameters like curr, prev tasks, size, etc
   init    - init util structure
 
-Basic:
-  cat     - cat task info
+Manipulate:
+  add     - add new task
+  del     - delete task
   env     - define or display environments
-  list    - list environment tasks
   prev    - switch to previous task
   use     - mark a task as current
 
+Info:
+  cat     - cat task info
+  list    - list environment tasks
+
 Change:
-  add     - add new task
-  del     - delete task
   pack    - pack commits in repos for review.
   set     - set task units
   sync    - synchronize task struct, git branch, repos, etc
