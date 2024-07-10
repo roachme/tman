@@ -140,7 +140,7 @@ end
 ---@param newdesc string
 ---@return boolean
 local function _set_desc(envname, id, newdesc)
-    unit.init(config.core.units .. envname .. ":" .. id)
+    unit.init(genname(config.core.units, envname, id))
     unit.set("desc", newdesc)
     unit.set("branch", format_branch())
     return unit.save()
@@ -155,7 +155,7 @@ local function _set_id(envname, id, newid)
     local old_taskdir = config.aux.tasks .. envname .. ":" .. id
     local new_taskdir = config.aux.tasks .. envname .. ":" .. newid
 
-    unit.init(config.core.units .. envname .. ":" .. id)
+    unit.init(genname(config.core.units, envname, id))
     unit.set("id", newid)
     unit.set("branch", format_branch())
     unit.save()
@@ -167,7 +167,7 @@ end
 ---Change task type.
 ---@return boolean
 local function _set_type(envname, id, newtype)
-    unit.init(config.core.units .. envname .. ":" .. id)
+    unit.init(genname(config.core.units, envname, id))
     unit.set("type", newtype)
     unit.set("branch", format_branch())
     return unit.save()
@@ -178,7 +178,7 @@ end
 ---@param newprio string
 ---@return boolean
 local function _set_prio(envname, id, newprio)
-    unit.init(config.core.units .. envname .. ":" .. id)
+    unit.init(genname(config.core.units, envname, id))
     unit.set("prio", newprio)
     return unit.save()
 end
@@ -189,7 +189,7 @@ end
 ---@param newlink string
 ---@return boolean
 local function _set_link(envname, id, newlink)
-    unit.init(config.core.units .. envname .. ":" .. id)
+    unit.init(genname(config.core.units, envname, id))
     unit.set("link", newlink)
     return unit.save()
 end
@@ -199,7 +199,7 @@ end
 ---@param taskrepos string
 ---@return boolean
 local function _set_repo(envname, id, taskrepos)
-    unit.init(config.core.units .. envname .. ":" .. id)
+    unit.init(genname(config.core.units, envname, id))
     unit.set("repos", taskrepos)
     return unit.save()
 end
