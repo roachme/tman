@@ -56,7 +56,6 @@ local function tman_prev()
         if not git.branch_switch(repo.name, branch, path) then
             return common.die(1, "could not switch to task branch\n", repo.name)
         end
-        git.branch_switch(repo.name, branch, path)
     end
 
     taskid.swap(envname)
