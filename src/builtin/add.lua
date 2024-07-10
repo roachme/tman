@@ -7,6 +7,8 @@ local common = require("core.common")
 local help = require("secondary.help")
 local getopt = require("posix.unistd").getopt
 local config = require("secondary.config")
+local shell = require("aux.shell")
+local utils = require("aux.utils")
 
 --- Add a new task.
 -- Fill the rest with default values.
@@ -88,6 +90,10 @@ local function builtin_add()
         end
         git.branch_switch(repo.name, branch, path)
     end
+
+    -- cache current task id
+    shell.setcurr(utils.genname(envname, id))
+
     return 0
 end
 

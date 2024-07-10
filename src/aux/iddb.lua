@@ -136,6 +136,19 @@ function ids.getidx(envname, idx)
     return {}
 end
 
+---Get an item from database by name.
+---@param id string
+---@return table
+function ids.get(envname, id)
+    for i = 1, ids.size() do
+        local item = db[i]
+        if item.envname == envname and item.id == id then
+            return { envname = item.envname, id = item.id, status = item.status }
+        end
+    end
+    return {}
+end
+
 ---Set a status to task ID.
 ---@param id string
 ---@param status Status

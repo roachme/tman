@@ -6,6 +6,8 @@ local common = require("core.common")
 local help = require("secondary.help")
 local config = require("secondary.config")
 local getopt = require("posix.unistd").getopt
+local shell = require("aux.shell")
+local utils = require("aux.utils")
 
 --- Switch to previous task.
 local function tman_prev()
@@ -58,6 +60,7 @@ local function tman_prev()
     end
 
     taskid.swap(envname)
+    shell.setcurr(utils.genname(envname, prev))
     return 0
 end
 

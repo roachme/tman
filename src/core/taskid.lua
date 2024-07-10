@@ -3,8 +3,6 @@
 -- @module taskid
 
 local ids = require("aux.iddb")
-local utils = require("aux.utils")
-local shell = require("aux.shell")
 local taskunit = require("core.taskunit")
 
 ---@alias Status
@@ -70,7 +68,6 @@ function taskid.unsetcurr(envname)
 
     ids.set(envname, curr, status.ACTV)
     ids.save()
-    shell.setcurr("")
     return true
 end
 
@@ -101,7 +98,6 @@ function taskid.setcurr(envname, id)
     end
     ids.set(envname, id, status.CURR)
     ids.save()
-    shell.setcurr(utils.genname(envname, id))
     return true
 end
 
@@ -115,6 +111,21 @@ function taskid.swap(envname)
         return taskid.setcurr(envname, newcurr)
     end
     return false
+end
+
+---Rename task id.
+---@param oldid string
+---@param newid string
+---@return boolean
+function taskid.rename(envname, oldid, newid)
+    if not ids.exist(envname, oldid) then
+        return false
+    end
+
+    local item = ids.get(envname, oldid)
+    ids.del(envname, oldid)
+    ids.add(envname, newid, item.status)
+    return ids.save()
 end
 
 ---Add new current task id into environment.
@@ -142,10 +153,7 @@ function taskid.del(envname, id)
 
     if id == curr and prev then
         taskid.setcurr(envname, prev)
-    elseif id == curr and not prev then
-        shell.setcurr("")
     end
-
     return ids.save()
 end
 

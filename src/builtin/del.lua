@@ -5,6 +5,8 @@ local struct = require("secondary.struct")
 local config = require("secondary.config")
 local taskunit = require("core.taskunit")
 local common = require("core.common")
+local shell = require("aux.shell")
+local utils = require("aux.utils")
 
 --- Delete task.
 local function tman_del()
@@ -65,6 +67,9 @@ local function tman_del()
         for _, repo in pairs(config.user.repos) do
             git.branch_switch(repo.name, branch, path)
         end
+
+        -- cache current task id
+        shell.setcurr(utils.genname(envname, curr or ""))
     end
 
     -- if you delete current task, and are in current directory.

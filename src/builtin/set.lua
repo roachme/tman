@@ -6,6 +6,8 @@ local taskunit = require("core.taskunit")
 local common = require("core.common")
 local getopt = require("posix.unistd").getopt
 local config = require("secondary.config")
+local shell = require("aux.shell")
+local utils = require("aux.utils")
 
 local envname
 
@@ -68,15 +70,17 @@ local function _set_id(id, newid)
     end
 
     newbranch = taskunit.get(envname, id, "branch")
-
-    -- rename task id and its directory.
-    taskid.del(envname, id)
-    taskid.add(envname, newid)
+    taskid.rename(envname, id, newid)
     struct.rename(envname, id, newid)
 
     for _, repo in pairs(config.user.repos) do
         git.branch_rename(repo.name, currbranch, newbranch, path)
     end
+
+    -- cache current task id
+    local curr = taskid.getcurr(envname)
+    shell.setcurr(utils.genname(envname, curr or ""))
+
     return true
 end
 
