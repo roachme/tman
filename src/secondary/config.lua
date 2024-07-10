@@ -58,12 +58,11 @@ function config.show()
 end
 
 function config.load()
-    local prefix, env
+    local prefix
     sysconfig.init(fsysconf)
 
     -- get system config values
     prefix = sysconfig.get("prefix")
-    env = sysconfig.get("env")
 
     -- load stuff from diff modules
     config.sys = sysconfig.getvars()
@@ -71,20 +70,19 @@ function config.load()
 
     -- roachme: maybe it's better to move it to struct.lua
     config.core = {
-        name = ".tman",
-        ids = prefix .. "/.tman/ids",
+        refs = {
+            base = prefix .. "/.tman/refs/",
+            ids = prefix .. "/.tman/refs/ids",
+            envs = prefix .. "/.tman/refs/envs",
+        },
         units = prefix .. "/.tman/units/",
+        curr = prefix .. "/.tman/curr",
         path = prefix .. "/.tman/",
     }
-
     config.aux = {
         code = prefix .. "/code/",
         tasks = prefix .. "/tasks/",
     }
-
-    -- roachme: hotfixes
-    config.sys.fenv = config.core.path .. "envs"
-    config.sys.env = env -- current env name
 end
 
 ---@param key string

@@ -7,7 +7,7 @@ local config = require("secondary.config")
 --local help = require("secondary.help")
 --local getopt = require("posix.unistd").getopt
 
-env.init(config.sys.fenv)
+env.init(config.core.refs.envs)
 
 --- Define or display task environments.
 local function builtin_env()
@@ -24,7 +24,7 @@ local function builtin_env()
         env.add(envname, "auto generated description " .. envname)
         core.init()
 
-        taskid.init(config.core.ids)
+        taskid.init(config.core.refs.ids)
         local curr_id = taskid.getcurr(envname)
         if curr_id then
             shell.setcurr(envname .. ":" .. curr_id)
@@ -55,7 +55,7 @@ local function builtin_env()
         env.setcurr(prev)
         -- roachme: gotta structure it.
         -- update task as well
-        taskid.init(config.core.ids)
+        taskid.init(config.core.refs.ids)
         local curr_id = taskid.getcurr(prev)
         if curr_id then
             shell.setcurr(prev .. ":" .. curr_id)
@@ -68,7 +68,7 @@ local function builtin_env()
         end
         env.setcurr(envname)
 
-        taskid.init(config.core.ids)
+        taskid.init(config.core.refs.ids)
         local curr_id = taskid.getcurr(envname)
         shell.setcurr(envname .. ":" .. curr_id)
     else

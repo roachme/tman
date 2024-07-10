@@ -37,7 +37,7 @@ local function tman_sync()
         return common.die(1, "no current env", "env")
     end
 
-    taskid.init(config.core.ids)
+    taskid.init(config.core.refs.ids)
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then

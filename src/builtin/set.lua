@@ -189,7 +189,7 @@ local function builtin_set()
         return
     end
 
-    taskid.init(config.core.ids)
+    taskid.init(config.core.refs.ids)
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
         common.die(1, "no current task ID\n", "")

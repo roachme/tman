@@ -48,7 +48,7 @@ local function builtin_list()
         return common.die(1, "no such environment name\n", envname)
     end
 
-    taskid.init(config.core.ids)
+    taskid.init(config.core.refs.ids)
     taskid.list(envname, active, completed)
     return 0
 end

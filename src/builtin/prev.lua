@@ -37,7 +37,7 @@ local function tman_prev()
         return common.die(1, "no such env\n", "env")
     end
 
-    taskid.init(config.core.ids)
+    taskid.init(config.core.refs.ids)
     prev = taskid.getprev(envname)
 
     if not prev then

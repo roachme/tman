@@ -46,7 +46,7 @@ local function builtin_add()
     end
 
     id = arg[last_index]
-    taskid.init(config.core.ids)
+    taskid.init(config.core.refs.ids)
 
     if not envname then
         return common.die(1, "no current env\n", "envname")

@@ -32,7 +32,7 @@ local function ids_repair() end
 ]]
 
 function setup.setup_ids()
-    local fids = config.core.ids
+    local fids = config.core.refs.ids
 
     if not ids.init(fids) then
         common.die(1, "couldn't find file ids\n", "setup")

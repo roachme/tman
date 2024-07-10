@@ -11,21 +11,22 @@ local core = {}
 function core.struct()
     -- tman core structure
     utils.mkdir(config.core.path)
-    utils.touch(config.core.ids)
+    utils.mkdir(config.core.refs.base)
     utils.mkdir(config.core.units)
+
+    utils.touch(config.core.curr)
+    utils.touch(config.core.refs.ids)
+    utils.touch(config.core.refs.envs)
 
     -- tman aux structure
     utils.mkdir(config.aux.code)
     utils.mkdir(config.aux.tasks)
-
-    -- env file
-    utils.touch(config.sys.fenv)
 end
 
 function core.env()
-    local defenv = "pers"
+    local defenv = "tman"
 
-    env.init(config.sys.fenv)
+    env.init(config.core.refs.envs)
     if not env.exists(defenv) then
         if not env.add(defenv, "main tman env") then
             io.stderr:write("couldn't add default env\n")

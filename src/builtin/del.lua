@@ -17,7 +17,7 @@ local function tman_del()
         return common.die(1, "no such env", envname)
     end
 
-    taskid.init(config.core.ids)
+    taskid.init(config.core.refs.ids)
     id = id or taskid.getcurr(envname)
 
     if not id then

@@ -24,7 +24,7 @@ function common.die_atomic(id, errfmt, ...)
         return common.die(1, "no current env\n", "env")
     end
 
-    taskid.init(config.core.ids)
+    taskid.init(config.core.refs.ids)
     local branch = taskunit.get(envname, id, "branch")
 
     if not branch then

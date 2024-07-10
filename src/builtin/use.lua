@@ -20,7 +20,7 @@ local function tman_use()
         return common.die(1, "no current env\n", "env")
     end
 
-    taskid.init(config.core.ids)
+    taskid.init(config.core.refs.ids)
 
     if not id then
         common.die(1, "task ID required\n", "")
