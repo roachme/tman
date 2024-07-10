@@ -253,6 +253,9 @@ function taskunit.add(envname, id, tasktype, prio)
     local desc = get_input("Desc")
     prio = prio or unit.prios.mid
 
+    -- create envname directory
+    utils.mkdir(config.core.units .. envname)
+
     -- Set values.
     unit.init(config.core.units .. utils.genname(envname, id))
     unit.set("id", id)

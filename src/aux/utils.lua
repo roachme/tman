@@ -94,7 +94,7 @@ end
 ---@param id string
 ---@return string
 function utils.genname(envname, id)
-    return envname .. ":" .. id
+    return envname .. "/" .. id
 end
 
 return utils

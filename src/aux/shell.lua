@@ -10,6 +10,7 @@ local function getval(fname)
         return nil
     end
     res = f:read("*a")
+    res = string.match(res, "/(.*)")
     f:close()
     return res
 end

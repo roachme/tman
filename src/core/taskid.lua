@@ -3,6 +3,7 @@
 -- @module taskid
 
 local ids = require("aux.iddb")
+local utils = require("aux.utils")
 local shell = require("aux.shell")
 local taskunit = require("core.taskunit")
 
@@ -22,14 +23,6 @@ local status = {
     ACTV = 2,
     COMP = 3,
 }
-
----Generate unit filename.
----@param envname string
----@param id string
----@return string
-local function genname(envname, id)
-    return envname .. ":" .. id
-end
 
 ---Check task id exists in specified environment.
 ---@param envname string
@@ -108,7 +101,7 @@ function taskid.setcurr(envname, id)
     end
     ids.set(envname, id, status.CURR)
     ids.save()
-    shell.setcurr(genname(envname, id))
+    shell.setcurr(utils.genname(envname, id))
     return true
 end
 
