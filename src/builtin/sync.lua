@@ -92,7 +92,7 @@ local function tman_sync()
             git.branch_switch(repo.name, repo.branch, path)
             git.branch_pullall(repo.name, path)
             git.branch_switch(repo.name, branch, path)
-            git.branch_rebase(repo.name, branch, path)
+            git.branch_rebase(repo.name, repo.branch, path)
         end
     end
     if ftask then
