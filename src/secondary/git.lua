@@ -168,6 +168,12 @@ function git.branch_on(reponame, branch, path)
     return false
 end
 
+---Check if branch has commits ahead default.
+---@param reponame string
+---@param defbranch string
+---@param taskbranch string
+---@param path string | nil
+---@return boolean
 function git.branch_ahead(reponame, defbranch, taskbranch, path)
     path = path or "."
     local fmt = "git -C %s/%s rev-list --count --right-only %s..%s"
