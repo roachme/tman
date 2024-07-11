@@ -77,7 +77,7 @@ local function tman_sync()
             git.branch_switch(repo.name, branch, path)
         end
 
-        struct.create(id)
+        struct.create(envname, id)
         taskunit.set(envname, id, "repos", repos)
     end
     if fremote then
