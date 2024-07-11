@@ -133,8 +133,8 @@ Notes: Add support for other task cuz another task might be broken so
       repair's need (if task branch's deleted)
 
 Options:
-    -s      - synchronize task structure
-    -r      - git pull from remote repo
+    -s      - synchronize task structure (git branch, symlink, dir, files)
+    -r      - git pull from remote repo and rebase against task branch
     -t      - synchronize task status (active, completed)
     -p      - push branch to remote repo
 ]],
