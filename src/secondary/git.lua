@@ -151,6 +151,7 @@ end
 ---@param path string | nil
 ---@return boolean
 function git.branch_on(reponame, branch, path)
+    --local fmt = "git -C %s/%s branch --show-current"
     local fmt = "git -C %s/%s rev-parse --abbrev-ref HEAD"
     local cmd = string.format(fmt, path, reponame)
     local f = io.popen(cmd)
