@@ -13,14 +13,6 @@ local taskunit = {}
 
 -- Private functions: end --
 
----Get user input.
----@param prompt string
----@return string
-local function get_input(prompt)
-    io.write(prompt, ": ")
-    return io.read("*line")
-end
-
 ---String separator.
 ---@param inputstr string
 ---@param sep string | nil
@@ -243,12 +235,12 @@ end
 
 ---Add a new unit for a task.
 ---@param id string
+---@param desc string
 ---@param tasktype string
 ---@param prio string
 ---@return boolean
-function taskunit.add(envname, id, tasktype, prio)
+function taskunit.add(envname, id, desc, tasktype, prio)
     local branch
-    local desc = get_input("Desc")
     prio = prio or unit.prios.mid
 
     -- create envname directory

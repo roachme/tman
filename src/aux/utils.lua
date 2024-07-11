@@ -97,4 +97,12 @@ function utils.genname(envname, id)
     return envname .. "/" .. id
 end
 
+---Get user input.
+---@param prompt string
+---@return string
+function utils.get_input(prompt)
+    io.write(prompt, ": ")
+    return io.read("*line")
+end
+
 return utils

@@ -67,10 +67,13 @@ local function builtin_add()
         end
     end
 
+    -- read task description.
+    local desc = utils.get_input("Desc")
+
     -- create all necessary stuff for new task.
     if not taskid.add(envname, id) then
         common.die(1, "task ID already exists\n", id)
-    elseif not taskunit.add(envname, id, tasktype, prio) then
+    elseif not taskunit.add(envname, id, desc, tasktype, prio) then
         taskid.del(envname, id)
         common.die(1, "could not create new task unit\n", id)
     elseif not struct.create(envname, id) then
