@@ -1,7 +1,6 @@
 #!/bin/bash
 
 TMAN=""
-TMAN_WD=
 TMAN_CWD=
 
 # config vars
@@ -14,7 +13,26 @@ TMAN_TMANCONF=
 # tman -b basepath -c configpath CMD OPTIONS arg
 
 
-# TODO: switch to current task ID when change env
+function _tman_wd_add()
+{
+    local wpoint="$1"
+    command -v wd &>/dev/null
+    local ret="$?"
+    if [ "$ret" -eq 0 ]; then
+        wd add -q -f "$wpoint"
+    fi
+}
+
+function _tman_wd_rm()
+{
+    local wpoint="$1"
+    command -v wd &>/dev/null
+    local ret="$?"
+    if [ "$ret" -eq 0 ]; then
+        wd rm -q "$wpoint"
+    fi
+}
+
 
 function _tman_get_tmanconf()
 {
@@ -40,21 +58,21 @@ function _tman_handle_command()
     if [ "$cmd" = "add" ]; then
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
-        wd add -q -f task
+        _tman_wd_add task
 
     elif [ "$cmd" = "del" ]; then
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         if [ -n "$taskid" ]; then
-            wd add -q -f task
+            _tman_wd_add task
         else
-            wd rm -q task
+            _tman_wd_rm task
         fi
 
     elif [ "$cmd" = "prev" ]; then
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
-        wd add -q -f task
+        _tman_wd_add task
 
     #elif [ "$cmd" = "env" ] && [ "$2" = "prev" ]; then
     elif [ "$cmd" = "env" ]; then
@@ -64,7 +82,7 @@ function _tman_handle_command()
 
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
-        wd add -q -f task
+        _tman_wd_add task
 
     elif [ "$cmd" = "set" ]; then
         # raach: Refactor it. Too complicated.
@@ -86,7 +104,7 @@ function _tman_handle_command()
             local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
 
             cd "$taskdir" || return 1
-            wd add -q -f task
+            _tman_wd_add task
 
             # switch back if CWD is not the task ID changed.
             if [ -d "$TMAN_CWD" ]; then
@@ -97,12 +115,12 @@ function _tman_handle_command()
     elif [ "$cmd" = "sync" ]; then
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
-        wd add -q -f task
+        _tman_wd_add task
 
     elif [ "$cmd" = "use" ]; then
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
-        wd add -q -f task
+        _tman_wd_add task
     fi
 }
 
