@@ -53,8 +53,6 @@ local function tman_sync()
         local active_repos = {}
         local errfmt = "repo not on task branch tho has uncommited changes\n"
 
-        -- roach:BUG: It's gotta update list of active repos, but can't if
-        -- they have uncommited changes. BUT it should be able.
         for _, repo in pairs(config.user.repos) do
             if git.branch_on(repo.name, branch, path) then
                 if git.repo_isuncommited(repo.name, path) then
@@ -62,10 +60,8 @@ local function tman_sync()
                 elseif git.branch_ahead(repo.name, repo.branch, branch, path) then
                     table.insert(active_repos, repo.name)
                 end
-            else
-                if git.repo_isuncommited(repo.name, path) then
-                    return common.die(1, errfmt, repo.name)
-                end
+            elseif git.repo_isuncommited(repo.name, path) then
+                return common.die(1, errfmt, repo.name)
             end
         end
 
