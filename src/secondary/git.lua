@@ -168,6 +168,19 @@ function git.branch_on(reponame, branch, path)
     return false
 end
 
+function git.branch_ahead(reponame, defbranch, taskbranch, path)
+    path = path or "."
+    local fmt = "git -C %s/%s rev-list --count --right-only %s..%s"
+    local cmd = string.format(fmt, path, reponame, defbranch, taskbranch)
+    local f = io.popen(cmd)
+    if not f then
+        return false
+    end
+    local count = tonumber(f:read("*a"))
+    f:close()
+    return count > 0 and true or false
+end
+
 ---Clone a repo.
 ---@param link string
 ---@param reponame string
