@@ -69,15 +69,13 @@ local function tman_sync()
             end
         end
 
-        local repos = table.concat(active_repos, " ")
-
-        -- create task branch if needed.
         for _, repo in pairs(config.user.repos) do
             git.branch_create(repo.name, branch, path)
             git.branch_switch(repo.name, branch, path)
         end
 
         struct.create(envname, id)
+        local repos = table.concat(active_repos, " ")
         taskunit.set(envname, id, "repos", repos)
     end
     if fremote then
