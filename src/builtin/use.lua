@@ -25,9 +25,9 @@ local function tman_use()
     taskid.init(config.core.refs.ids)
 
     if not id then
-        core.die(1, "task ID required", "")
+        core.die(1, "task id required", "")
     elseif not taskid.exists(envname, id) then
-        core.die(1, "task ID doesn't exist", id)
+        core.die(1, "task id doesn't exist", id)
     end
 
     -- it's the same id. Do nothing.

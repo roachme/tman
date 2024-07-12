@@ -72,7 +72,7 @@ local function builtin_add()
 
     -- create all necessary stuff for new task.
     if not taskid.add(envname, id) then
-        core.die(1, "task ID already exists", id)
+        core.die(1, "task id already exists", id)
     elseif not taskunit.add(envname, id, desc, tasktype, prio) then
         taskid.del(envname, id)
         core.die(1, "could not create new task unit", id)

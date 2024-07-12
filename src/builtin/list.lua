@@ -6,8 +6,8 @@ local help = require("secondary.help")
 local getopt = require("posix.unistd").getopt
 local config = require("secondary.config")
 
---- List all task IDs.
--- Default: show only active task IDs.
+--- List all task ids.
+-- Default: show only active task ids.
 local function builtin_list()
     local cmdname = "list"
     local active = true

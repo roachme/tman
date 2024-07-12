@@ -96,7 +96,7 @@ local function changed_part(reponame)
     return dirname
 end
 --- Create commit according to pattern for repos.
--- @param id task ID
+-- @param id task id
 -- @return on success - true
 -- @return on success - false
 function git.commit_create(id)

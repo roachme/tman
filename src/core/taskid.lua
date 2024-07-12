@@ -1,5 +1,5 @@
 --- Operate on task ids in database.
--- Like add, delete, list task IDs and so on.
+-- Like add, delete, list task ids and so on.
 -- @module taskid
 
 local ids = require("aux.iddb")
@@ -13,7 +13,7 @@ local ids = require("aux.iddb")
 local taskid = {}
 local fids
 
----Types of task IDs.
+---Types of task ids.
 taskid.status = {
     CURR = 0,
     PREV = 1,

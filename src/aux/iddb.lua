@@ -1,4 +1,4 @@
---- Simple database for task IDs.
+--- Simple database for task ids.
 -- @module db
 
 local db = {}
@@ -7,7 +7,7 @@ local idregex = "(%w*) ([%w-]*) (%d)"
 local idfmt = "%s %s %d\n"
 local ids = {}
 
----Load task IDs from database.
+---Load task ids from database.
 ---@return boolean
 local function _db_load()
     db = {} -- reset database.
@@ -27,7 +27,7 @@ local function _db_load()
     return f:close() and true or false
 end
 
----Init database (load task IDs from the file).
+---Init database (load task ids from the file).
 ---@param fname string
 function ids.init(fname)
     idfile = fname
@@ -49,7 +49,7 @@ function ids.check()
     return true
 end
 
----Check that task ID exist in database.
+---Check that task id exist in database.
 ---@param envname string
 ---@param id string
 ---@return boolean
@@ -62,7 +62,7 @@ function ids.exist(envname, id)
     return false
 end
 
----Save task IDs to file.
+---Save task ids to file.
 ---@return boolean
 function ids.save()
     local f = io.open(idfile, "w")
@@ -80,7 +80,7 @@ function ids.save()
     return f:close() and true or false
 end
 
----Add new task ID into database.
+---Add new task id into database.
 ---@param envname string
 ---@param id string
 ---@param status number
@@ -93,7 +93,7 @@ function ids.add(envname, id, status)
     return true
 end
 
----Delete task ID from database.
+---Delete task id from database.
 ---@param id string
 ---@return boolean
 function ids.del(envname, id)
@@ -149,7 +149,7 @@ function ids.get(envname, id)
     return {}
 end
 
----Set a status to task ID.
+---Set a status to task id.
 ---@param id string
 ---@param status Status
 ---@return boolean

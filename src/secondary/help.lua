@@ -45,7 +45,7 @@ local cmds = {
 tman - terminal task manager.
 
 Util to switch between tasks, git branches and make the workflow easy and
-less confusing. You no longer need to memerize task IDs, branche names,
+less confusing. You no longer need to memerize task ids, branche names,
 cd between directories, lose task notes, but instead look
 for 'em in nice structured way.
 ]],
@@ -112,7 +112,7 @@ Amend task items.
 ID - default is current task.
 
 Options:
-    -i      set task ID
+    -i      set task id
     -d      set task description
     -l      set task link
     -p      set task priority. Values: [highest|high|mid|low|lowest]
@@ -156,8 +156,8 @@ Get parameters like curr, prev tasks, current env, etc
 Notes:
 PARAM can have one of the next values
     env     - current env
-    curr    - current task ID
-    prev    - previous task ID
+    curr    - current task id
+    prev    - previous task id
 ]],
     },
     {
@@ -204,7 +204,7 @@ Options:
         name = "list",
         desc = [[
 Usage: tman list [OPTION] [ENVNAME]
-List task IDs with description.
+List task ids with description.
 
 Options:
     -c   List only complete tasks.
@@ -222,7 +222,7 @@ Notes:
         desc = [[
 Usage: tman cat [OPTION] [ID]
 Show task units.
-ID - task ID (default is current task).
+ID - task id (default is current task).
 
 Options:
     -k   cat specific task unit

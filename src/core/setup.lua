@@ -17,7 +17,7 @@ Found the logic in git project. File name setup.c:
 
 --[[
 
-    1. Check that every task ID has corresponding. Yeah, all. It shouldn't take
+    1. Check that every task id has corresponding. Yeah, all. It shouldn't take
        that much time is it seems. Tho the rest of the code'll run no error.
        If it slows down performance, rewrite it in C. Sounds good?
         a) unit file
@@ -53,7 +53,7 @@ function setup.setup_units()
         core.die(1, "couldn't find directory units", "setup")
     end
 
-    -- check that each task IDs has a file
+    -- check that each task ids has a file
     -- and its structure's ok
     for i = 1, ids.size() do
         local item = ids.getidx_generic(i)

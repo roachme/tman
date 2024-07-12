@@ -41,7 +41,7 @@ local function builtin_pack()
         core.die(1, "no current task", "")
     end
     if not taskid.exists(envname, id) then
-        core.die(1, "no such task ID", id)
+        core.die(1, "no such task id", id)
     end
     if not git.branch_exist(id) then
         core.die(1, "task branch doesn't exist", "REPONAME")

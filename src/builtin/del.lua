@@ -25,7 +25,7 @@ local function tman_del()
     if not id then
         core.die(1, "no current task", "")
     elseif not taskid.exists(envname, id) then
-        core.die(1, "no such task ID", id)
+        core.die(1, "no such task id", id)
     end
 
     io.write("Task: ")

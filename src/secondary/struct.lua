@@ -26,7 +26,7 @@ local function create_files(base)
 end
 
 --- Create symlinks to repos.
--- @param id task ID
+-- @param id task id
 local function link_repos(repobase, taskbase)
     for _, repo in pairs(config.user.repos) do
         local target = repobase .. repo.name
@@ -40,7 +40,7 @@ end
 -- Public functions: start --
 
 --- Create task filesystem structure.
--- @param id task ID
+-- @param id task id
 -- @return on success - true
 -- @return on failure - false
 function struct.create(envname, id)
@@ -61,7 +61,7 @@ function struct.create(envname, id)
 end
 
 --- Delete task filesystem structure.
--- @param id task ID
+-- @param id task id
 -- @return on success - true
 -- @return on failure - false
 function struct.delete(envname, id)
@@ -71,8 +71,8 @@ function struct.delete(envname, id)
 end
 
 --- Rename task dir.
--- @param oldid old task ID
--- @param newid new task ID
+-- @param oldid old task id
+-- @param newid new task id
 -- @return on success - true
 -- @return on failure - false
 function struct.rename(envname, oldid, newid)

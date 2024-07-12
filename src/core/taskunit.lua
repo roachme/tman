@@ -127,7 +127,7 @@ local function _set_desc(envname, id, newdesc)
     return unit.save()
 end
 
----Change task ID.
+---Change task id.
 ---@param id string
 ---@param newid string
 ---@return boolean
@@ -141,7 +141,7 @@ local function _set_id(envname, id, newid)
     unit.set("branch", format_branch())
     unit.save()
 
-    -- gotta update curr & prev task IDs.
+    -- gotta update curr & prev task ids.
     return utils.rename(old_taskdir, new_taskdir)
 end
 

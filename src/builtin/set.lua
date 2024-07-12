@@ -46,7 +46,7 @@ local function _set_desc(id, newdesc)
     return true
 end
 
----Set task ID.
+---Set task id.
 ---@param id string
 ---@param newid string
 ---@return boolean
@@ -62,7 +62,7 @@ local function _set_id(id, newid)
     end
 
     if id == newid then
-        core.die(1, "the same task ID", newid)
+        core.die(1, "the same task id", newid)
     elseif taskid.exists(envname, newid) then
         core.die(1, "task id exists", newid)
     elseif not taskunit.set(envname, id, "id", newid) then
@@ -152,7 +152,7 @@ local function builtin_set()
     }
     envname = env.getcurr()
 
-    -- roachme: It'd be better to show what task ID's changing. Maybe?
+    -- roachme: It'd be better to show what task id's changing. Maybe?
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -196,10 +196,10 @@ local function builtin_set()
     taskid.init(config.core.refs.ids)
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        core.die(1, "no current task ID", "")
+        core.die(1, "no current task id", "")
     end
     if not taskid.exists(envname, id) then
-        core.die(1, "no such task ID", id)
+        core.die(1, "no such task id", id)
     end
 
     local path = config.aux.code

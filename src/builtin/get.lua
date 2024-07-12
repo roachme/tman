@@ -4,7 +4,7 @@ local taskid = require("core.taskid")
 local core = require("core.core")
 
 --- Get tman items.
--- Like prev/ curr task ID, etc.
+-- Like prev/ curr task id, etc.
 local function builtin_get()
     local item = arg[1] or "curr"
     local envname = env.getcurr()

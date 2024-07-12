@@ -36,9 +36,9 @@ local function builtin_cat()
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        core.die(1, "no current task ID", "")
+        core.die(1, "no current task id", "")
     elseif not taskid.exists(envname, id) then
-        core.die(1, "no such task ID", id)
+        core.die(1, "no such task id", id)
     end
 
     if not taskunit.cat(envname, id, key) then
