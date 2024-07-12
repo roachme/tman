@@ -12,7 +12,7 @@ local function tman_archive()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            core.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option", arg[optind - 1])
         end
 
         if optopt == "R" then
@@ -35,7 +35,7 @@ local function tman_archive()
     end
 
     if backup_file and restore_file then
-        core.die(1, "backup and restore options can't be used together\n", "")
+        core.die(1, "backup and restore options can't be used together", "")
     end
 
     if backup_file then

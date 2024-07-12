@@ -20,7 +20,7 @@ local function tman_prev()
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            core.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option", arg[optind - 1])
         end
 
         if optopt == "h" then
@@ -34,27 +34,27 @@ local function tman_prev()
     end
 
     if not envname then
-        return core.die(1, "no current env\n", "env")
+        return core.die(1, "no current env", "env")
     elseif not env.exists(envname) then
-        return core.die(1, "no such env\n", "env")
+        return core.die(1, "no such env", "env")
     end
 
     taskid.init(config.core.refs.ids)
     prev = taskid.getprev(envname)
 
     if not prev then
-        return core.die(1, "no previous task\n", "prev")
+        return core.die(1, "no previous task", "prev")
     end
 
     local branch = taskunit.get(envname, prev, "branch")
     for _, repo in pairs(config.user.repos) do
         if git.repo_isuncommited(repo.name, path) then
-            return core.die(1, "repo has uncommited changes\n", repo.name)
+            return core.die(1, "repo has uncommited changes", repo.name)
         end
     end
     for _, repo in pairs(config.user.repos) do
         if not git.branch_switch(repo.name, branch, path) then
-            return core.die(1, "could not switch to task branch\n", repo.name)
+            return core.die(1, "could not switch to task branch", repo.name)
         end
     end
 

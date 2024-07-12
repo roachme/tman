@@ -36,11 +36,11 @@ function setup.setup_ids()
     local fids = config.core.refs.ids
 
     if not ids.init(fids) then
-        core.die(1, "couldn't find file ids\n", "setup")
+        core.die(1, "couldn't find file ids", "setup")
     end
 
     if not ids.check() then
-        core.die(1, "file ids corrupted\n", "setup")
+        core.die(1, "file ids corrupted", "setup")
     end
 end
 
@@ -50,7 +50,7 @@ function setup.setup_units()
     local dirunit = config.core.units
 
     if not utils.access(dirunit) then
-        core.die(1, "couldn't find directory units\n", "setup")
+        core.die(1, "couldn't find directory units", "setup")
     end
 
     -- check that each task IDs has a file
@@ -67,7 +67,7 @@ function setup.setup_units()
                 item.id
             )
         elseif not units.check() then
-            core.die(1, "%s: unit file ids corrupted\n", "setup", item.id)
+            core.die(1, "%s: unit file ids corrupted", "setup", item.id)
         end
     end
 end
@@ -111,7 +111,7 @@ function setup.gentle()
     local path = config.aux.code
 
     if not core.check() then
-        return core.die(1, "tman not inited\n", "setup")
+        return core.die(1, "tman not inited", "setup")
     end
 
     -- roachme: maybe gotta move it to setup.full()
@@ -119,7 +119,7 @@ function setup.gentle()
     for _, repo in pairs(config.user.repos) do
         if not utils.access(path .. "/" .. repo.name) then
             if not git.repo_clone(repo.link, repo.name, path) then
-                local errfmt = "could not download repo '%s'\n"
+                local errfmt = "could not download repo '%s'"
                 return core.die(1, errfmt, "setup", repo.name)
             end
         end

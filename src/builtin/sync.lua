@@ -20,7 +20,7 @@ local function tman_sync()
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            core.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option", arg[optind - 1])
         end
 
         last_index = optind
@@ -41,9 +41,9 @@ local function tman_sync()
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        core.die(1, "no current task id\n", "")
+        core.die(1, "no current task id", "")
     elseif not taskid.exists(envname, id) then
-        core.die(1, "no such task id\n", id)
+        core.die(1, "no such task id", id)
     end
 
     local branch = taskunit.get(envname, id, "branch")
@@ -53,7 +53,7 @@ local function tman_sync()
         -- check that repos are ready to create task branch.
         for _, repo in pairs(config.user.repos) do
             if git.repo_isuncommited(repo.name, path) then
-                return core.die(1, "repo has uncommited changes\n", repo.name)
+                return core.die(1, "repo has uncommited changes", repo.name)
             end
         end
         for _, repo in pairs(config.user.repos) do
@@ -66,7 +66,7 @@ local function tman_sync()
     if fstruct then
         print("sync: struct")
         local active_repos = {}
-        local errfmt = "repo not on task branch tho has uncommited changes\n"
+        local errfmt = "repo not on task branch tho has uncommited changes"
 
         for _, repo in pairs(config.user.repos) do
             if git.branch_on(repo.name, branch, path) then

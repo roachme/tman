@@ -10,7 +10,7 @@ local function builtin_get()
     local envname = env.getcurr()
 
     if not envname then
-        return core.die(1, "no current env\n", "env")
+        return core.die(1, "no current env", "env")
     end
 
     taskid.init(config.core.refs.ids)
@@ -27,7 +27,7 @@ local function builtin_get()
     end
 
     -- error handling
-    core.die(1, "no such task item\n", item)
+    core.die(1, "no such task item", item)
 end
 
 return builtin_get

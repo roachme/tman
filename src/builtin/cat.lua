@@ -17,7 +17,7 @@ local function builtin_cat()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            core.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option", arg[optind - 1])
         end
         last_index = optind
         if optopt == "k" then
@@ -36,14 +36,14 @@ local function builtin_cat()
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        core.die(1, "no current task ID\n", "")
+        core.die(1, "no current task ID", "")
     elseif not taskid.exists(envname, id) then
-        core.die(1, "no such task ID\n", id)
+        core.die(1, "no such task ID", id)
     end
 
     if not taskunit.cat(envname, id, key) then
         if key then
-            core.die(1, "no such key\n", key)
+            core.die(1, "no such key", key)
         end
     end
     return 0

@@ -23,9 +23,9 @@ local function tman_del()
     id = id or taskid.getcurr(envname)
 
     if not id then
-        core.die(1, "no current task\n", "")
+        core.die(1, "no current task", "")
     elseif not taskid.exists(envname, id) then
-        core.die(1, "no such task ID\n", id)
+        core.die(1, "no such task ID", id)
     end
 
     io.write("Task: ")
@@ -40,13 +40,13 @@ local function tman_del()
     local path = config.aux.code
     local branch = taskunit.get(envname, id, "branch")
     if not branch then
-        return core.die(id, "task unit file missing branch\n", id)
+        return core.die(id, "task unit file missing branch", id)
     end
 
     -- delete task id's branches.
     for _, repo in pairs(config.user.repos) do
         if git.repo_isuncommited(repo.name, path) then
-            return core.die(1, "repo has uncommited changes\n", repo.name)
+            return core.die(1, "repo has uncommited changes", repo.name)
         end
     end
     for _, repo in pairs(config.user.repos) do
@@ -62,7 +62,7 @@ local function tman_del()
     if curr then
         branch = taskunit.get(envname, curr, "branch")
         if not branch then
-            return core.die(1, "task unit file missing branch\n", curr)
+            return core.die(1, "task unit file missing branch", curr)
         end
         for _, repo in pairs(config.user.repos) do
             git.branch_switch(repo.name, branch, path)

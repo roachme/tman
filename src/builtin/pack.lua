@@ -16,7 +16,7 @@ local function builtin_pack()
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            core.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option", arg[optind - 1])
         end
 
         last_index = optind
@@ -38,13 +38,13 @@ local function builtin_pack()
     id = arg[last_index] or taskid.getcurr(envname)
 
     if not id then
-        core.die(1, "no current task\n", "")
+        core.die(1, "no current task", "")
     end
     if not taskid.exists(envname, id) then
-        core.die(1, "no such task ID\n", id)
+        core.die(1, "no such task ID", id)
     end
     if not git.branch_exist(id) then
-        core.die(1, "task branch doesn't exist\n", "REPONAME")
+        core.die(1, "task branch doesn't exist", "REPONAME")
     end
 
     if fmake then

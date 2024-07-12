@@ -10,7 +10,7 @@ local function tman_config()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            core.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option", arg[optind - 1])
         end
         if optopt == "b" then
             fbase = true

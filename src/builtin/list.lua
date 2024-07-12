@@ -19,7 +19,7 @@ local function builtin_list()
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
-            core.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option", arg[optind - 1])
         end
 
         last_index = optind
@@ -47,7 +47,7 @@ local function builtin_list()
         -- nothing to show, terminate here.
         return 0
     elseif not env.exists(envname) then
-        return core.die(1, "no such environment name\n", envname)
+        return core.die(1, "no such environment name", envname)
     end
 
     taskid.init(config.core.refs.ids)
