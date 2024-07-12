@@ -25,6 +25,8 @@ In progress:
     42.  Add option `-h' support into commands.
     43.  Add support to work wih git submodules as well.
     44.  Add support for fucking env.
+    45.  Finish module setup having diff levels of check.
+    46.  Finish module core to find a good place to put core pathes.
 
 
 Gotta work on (still):
