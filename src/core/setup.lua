@@ -130,8 +130,6 @@ end
 
 function setup.full()
     setup.gentle()
-
-    core.die(1, "full setup failed\n", "setup")
 end
 
 return setup
