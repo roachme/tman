@@ -4,7 +4,7 @@ local git = require("secondary.git")
 local utils = require("aux.utils")
 local units = require("aux.unitdb")
 local config = require("secondary.config")
-local common = require("core.common")
+local core = require("core.core")
 
 local setup = {}
 
@@ -37,11 +37,11 @@ function setup.setup_ids()
     local fids = config.core.refs.ids
 
     if not ids.init(fids) then
-        common.die(1, "couldn't find file ids\n", "setup")
+        core.die(1, "couldn't find file ids\n", "setup")
     end
 
     if not ids.check() then
-        common.die(1, "file ids corrupted\n", "setup")
+        core.die(1, "file ids corrupted\n", "setup")
     end
 end
 
@@ -51,7 +51,7 @@ function setup.setup_units()
     local dirunit = config.core.units
 
     if not utils.access(dirunit) then
-        common.die(1, "couldn't find directory units\n", "setup")
+        core.die(1, "couldn't find directory units\n", "setup")
     end
 
     -- check that each task IDs has a file
@@ -61,14 +61,14 @@ function setup.setup_units()
         local fname = dirunit .. item.id
 
         if not units.init(fname) then
-            common.die(
+            core.die(
                 1,
                 "couldn't find unit file for task id '%s'\n",
                 "setup",
                 item.id
             )
         elseif not units.check() then
-            common.die(1, "%s: unit file ids corrupted\n", "setup", item.id)
+            core.die(1, "%s: unit file ids corrupted\n", "setup", item.id)
         end
     end
 end
@@ -85,7 +85,7 @@ end
 function setup.setup()
     -- make sure tman structure is created and ok
     if not core.check() then
-        common.die(1, "tman not inited", "tman")
+        core.die(1, "tman not inited", "tman")
     end
 
     -- download all need repos.
@@ -112,7 +112,7 @@ function setup.gentle()
     local path = config.aux.code
 
     if not core.check() then
-        return common.die(1, "tman not inited\n", "setup")
+        return core.die(1, "tman not inited\n", "setup")
     end
 
     -- roachme: maybe gotta move it to setup.full()
@@ -121,7 +121,7 @@ function setup.gentle()
         if not utils.access(path .. "/" .. repo.name) then
             if not git.repo_clone(repo.link, repo.name, path) then
                 local errfmt = "could not download repo '%s'\n"
-                return common.die(1, errfmt, "setup", repo.name)
+                return core.die(1, errfmt, "setup", repo.name)
             end
         end
     end
@@ -132,7 +132,7 @@ end
 function setup.full()
     setup.gentle()
 
-    common.die(1, "full setup failed\n", "setup")
+    core.die(1, "full setup failed\n", "setup")
 end
 
 return setup

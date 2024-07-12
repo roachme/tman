@@ -4,7 +4,7 @@ local config = require("secondary.config")
 local taskid = require("core.taskid")
 local struct = require("secondary.struct")
 local taskunit = require("core.taskunit")
-local common = require("core.common")
+local core = require("core.core")
 local getopt = require("posix.unistd").getopt
 
 --- Synchronize task dir: structure, task status, remote repo.
@@ -20,7 +20,7 @@ local function tman_sync()
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            common.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option\n", arg[optind - 1])
         end
 
         last_index = optind
@@ -34,16 +34,16 @@ local function tman_sync()
     end
 
     if not envname then
-        return common.die(1, "no current env", "env")
+        return core.die(1, "no current env", "env")
     end
 
     taskid.init(config.core.refs.ids)
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        common.die(1, "no current task id\n", "")
+        core.die(1, "no current task id\n", "")
     elseif not taskid.exists(envname, id) then
-        common.die(1, "no such task id\n", id)
+        core.die(1, "no such task id\n", id)
     end
 
     local branch = taskunit.get(envname, id, "branch")
@@ -53,7 +53,7 @@ local function tman_sync()
         -- check that repos are ready to create task branch.
         for _, repo in pairs(config.user.repos) do
             if git.repo_isuncommited(repo.name, path) then
-                return common.die(1, "repo has uncommited changes\n", repo.name)
+                return core.die(1, "repo has uncommited changes\n", repo.name)
             end
         end
         for _, repo in pairs(config.user.repos) do
@@ -78,7 +78,7 @@ local function tman_sync()
                     table.insert(active_repos, repo.name)
                 end
             elseif git.repo_isuncommited(repo.name, path) then
-                return common.die(1, errfmt, repo.name)
+                return core.die(1, errfmt, repo.name)
             end
         end
 

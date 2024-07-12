@@ -2,7 +2,7 @@ local env = require("core.env")
 local git = require("secondary.git")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
-local common = require("core.common")
+local core = require("core.core")
 local config = require("secondary.config")
 local shell = require("aux.shell")
 local utils = require("aux.utils")
@@ -19,15 +19,15 @@ local function tman_use()
     end
 
     if not envname then
-        return common.die(1, "no current env\n", "env")
+        return core.die(1, "no current env\n", "env")
     end
 
     taskid.init(config.core.refs.ids)
 
     if not id then
-        common.die(1, "task ID required\n", "")
+        core.die(1, "task ID required\n", "")
     elseif not taskid.exists(envname, id) then
-        common.die(1, "task ID doesn't exist\n", id)
+        core.die(1, "task ID doesn't exist\n", id)
     end
 
     -- it's the same id. Do nothing.
@@ -38,13 +38,13 @@ local function tman_use()
     -- check that repos are ready to create task branch.
     for _, repo in pairs(config.user.repos) do
         if git.repo_isuncommited(repo.name, path) then
-            return common.die(1, "repo has uncommited changes\n", repo.name)
+            return core.die(1, "repo has uncommited changes\n", repo.name)
         end
     end
 
     local branch = taskunit.get(envname, id, "branch")
     if not branch then
-        return common.die(1, "task unit file missing branch\n", id)
+        return core.die(1, "task unit file missing branch\n", id)
     end
     for _, repo in pairs(config.user.repos) do
         git.branch_switch(repo.name, branch, path)

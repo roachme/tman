@@ -3,7 +3,7 @@ local git = require("secondary.git")
 local taskid = require("core.taskid")
 local struct = require("secondary.struct")
 local taskunit = require("core.taskunit")
-local common = require("core.common")
+local core = require("core.core")
 local getopt = require("posix.unistd").getopt
 local config = require("secondary.config")
 local shell = require("aux.shell")
@@ -22,7 +22,7 @@ local function _set_desc(id, newdesc)
     local newbranch
 
     if olddesc == newdesc then
-        common.die(1, "the same task description\n", newdesc)
+        core.die(1, "the same task description\n", newdesc)
     end
 
     -- roachme: the only reasons why it might fail
@@ -31,16 +31,16 @@ local function _set_desc(id, newdesc)
     -- 3. Hardware isssue.
     -- core.lua gotta check that out, so we ain't gotta check, just do it.
     if not taskunit.set(envname, id, "desc", newdesc) then
-        common.die(1, "could not set new task description\n", "desc")
+        core.die(1, "could not set new task description\n", "desc")
     end
 
     newbranch = taskunit.get(envname, id, "branch")
     for _, repo in pairs(config.user.repos) do
         if not git.branch_switch(repo.name, oldbranch, path) then
-            common.die(1, "could not switch to task branch\n", repo.name)
+            core.die(1, "could not switch to task branch\n", repo.name)
         end
         if not git.branch_rename(repo.name, oldbranch, newbranch, path) then
-            common.die(1, "could not rename task branch\n", repo.name)
+            core.die(1, "could not rename task branch\n", repo.name)
         end
     end
     return true
@@ -57,16 +57,16 @@ local function _set_id(id, newid)
 
     for _, repo in pairs(config.user.repos) do
         if git.repo_isuncommited(repo.name, path) then
-            common.die(1, "repo has uncommited changes\n", repo.name)
+            core.die(1, "repo has uncommited changes\n", repo.name)
         end
     end
 
     if id == newid then
-        common.die(1, "the same task ID\n", newid)
+        core.die(1, "the same task ID\n", newid)
     elseif taskid.exists(envname, newid) then
-        common.die(1, "task id exists\n", newid)
+        core.die(1, "task id exists\n", newid)
     elseif not taskunit.set(envname, id, "id", newid) then
-        common.die(1, "could not set new task id\n", newid)
+        core.die(1, "could not set new task id\n", newid)
     end
 
     newbranch = taskunit.get(envname, id, "branch")
@@ -102,9 +102,9 @@ local function _set_prio(id, newprio)
 
     if newprio == prio then
         local errfmt = "'%s' and '%s' are the same task priority\n"
-        common.die(1, errfmt, "set", prio, newprio)
+        core.die(1, errfmt, "set", prio, newprio)
     elseif not taskunit.set(envname, id, "prio", newprio) then
-        common.die(1, "could not set new priority", newprio)
+        core.die(1, "could not set new priority", newprio)
     end
     return true
 end
@@ -122,16 +122,16 @@ local function _set_type(id, newtype)
 
     if currtype == newtype then
         local errfmt = "'%s' and '%s' are the same task type\n"
-        common.die(1, errfmt, "set", currtype, newtype)
+        core.die(1, errfmt, "set", currtype, newtype)
         return true
     end
 
     for _, repo in pairs(config.user.repos) do
         if not git.branch_switch(repo.name, oldbranch, path) then
-            common.die(1, "could not switch to task branch\n", repo.name)
+            core.die(1, "could not switch to task branch\n", repo.name)
         end
         if not git.branch_rename(repo.name, oldbranch, newbranch, path) then
-            common.die(1, "could not rename task branch\n", repo.name)
+            core.die(1, "could not rename task branch\n", repo.name)
         end
     end
     return true
@@ -156,7 +156,7 @@ local function builtin_set()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            common.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option\n", arg[optind - 1])
         end
 
         last_index = optind
@@ -164,48 +164,48 @@ local function builtin_set()
             io.write(("New description (%s): "):format(""))
             newdesc = io.read("*l")
             if not taskunit.check("desc", newdesc) then
-                common.die(1, "description has illegal symbols\n", "")
+                core.die(1, "description has illegal symbols\n", "")
             end
             -- roachme: be careful when delete newdesc variable.
             options.newdesc.arg = newdesc
         elseif optopt == "i" then
             if not taskunit.check("id", optarg) then
-                common.die(1, "invalid id\n", optarg)
+                core.die(1, "invalid id\n", optarg)
             end
             options.newid.arg = optarg
         elseif optopt == "l" then
             options.newlink.arg = optarg
         elseif optopt == "p" then
             if not taskunit.check("prio", optarg) then
-                common.die(1, "invalid priority\n", optarg)
+                core.die(1, "invalid priority\n", optarg)
             end
             options.newprio.arg = optarg
         elseif optopt == "t" then
             if not taskunit.check("type", optarg) then
-                common.die(1, "invalid task type\n", optarg)
+                core.die(1, "invalid task type\n", optarg)
             end
             options.newtype.arg = optarg
         end
     end
 
     if not envname then
-        common.die(1, "no such env\n", envname or "no envname")
+        core.die(1, "no such env\n", envname or "no envname")
         return
     end
 
     taskid.init(config.core.refs.ids)
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        common.die(1, "no current task ID\n", "")
+        core.die(1, "no current task ID\n", "")
     end
     if not taskid.exists(envname, id) then
-        common.die(1, "no such task ID\n", id)
+        core.die(1, "no such task ID\n", id)
     end
 
     local path = config.aux.code
     for _, repo in pairs(config.user.repos) do
         if git.repo_isuncommited(repo.name, path) then
-            return common.die(1, "repo has uncommited changes\n", repo.name)
+            return core.die(1, "repo has uncommited changes\n", repo.name)
         end
     end
 

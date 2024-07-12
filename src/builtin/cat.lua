@@ -1,7 +1,7 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
-local common = require("core.common")
+local core = require("core.core")
 local help = require("secondary.help")
 local getopt = require("posix.unistd").getopt
 local config = require("secondary.config")
@@ -17,7 +17,7 @@ local function builtin_cat()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            common.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option\n", arg[optind - 1])
         end
         last_index = optind
         if optopt == "k" then
@@ -36,14 +36,14 @@ local function builtin_cat()
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        common.die(1, "no current task ID\n", "")
+        core.die(1, "no current task ID\n", "")
     elseif not taskid.exists(envname, id) then
-        common.die(1, "no such task ID\n", id)
+        core.die(1, "no such task ID\n", id)
     end
 
     if not taskunit.cat(envname, id, key) then
         if key then
-            common.die(1, "no such key\n", key)
+            core.die(1, "no such key\n", key)
         end
     end
     return 0

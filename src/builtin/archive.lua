@@ -1,4 +1,4 @@
-local common = require("core.common")
+local core = require("core.core")
 local help = require("secondary.help")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
@@ -13,7 +13,7 @@ local function tman_archive()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            common.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option\n", arg[optind - 1])
         end
 
         if optopt == "R" then
@@ -36,7 +36,7 @@ local function tman_archive()
     end
 
     if backup_file and restore_file then
-        common.die(1, "backup and restore options can't be used together\n", "")
+        core.die(1, "backup and restore options can't be used together\n", "")
     end
 
     if backup_file then

@@ -1,6 +1,6 @@
 local env = require("core.env")
 local shell = require("aux.shell")
-local common = require("core.common")
+local core = require("core.core")
 local taskid = require("core.taskid")
 local utils = require("aux.utils")
 local config = require("secondary.config")
@@ -11,10 +11,10 @@ env.init(config.core.refs.envs)
 ---@param envname string
 local function _env_add(envname)
     if not envname then
-        return common.die(1, "env name is required\n", "no envname")
+        return core.die(1, "env name is required\n", "no envname")
     end
     if env.exists(envname) then
-        return common.die(1, "such env name already exists\n", envname)
+        return core.die(1, "such env name already exists\n", envname)
     end
     env.add(envname, utils.get_input("description"))
     shell.setcurr("")
@@ -24,9 +24,9 @@ end
 ---@param envname string
 local function _env_del(envname)
     if not envname then
-        common.die(1, "no current environment\n", "env")
+        core.die(1, "no current environment\n", "env")
     elseif not env.exist(envname) then
-        common.die(1, "no such environment\n", "env")
+        core.die(1, "no such environment\n", "env")
     end
 
     io.write("Do you want to continue? [Yes/No] ")
@@ -44,7 +44,7 @@ end
 ---@param prevenv string?
 local function _env_prev(prevenv)
     if not prevenv then
-        return common.die(1, "no previous env\n", "env")
+        return core.die(1, "no previous env\n", "env")
     end
 
     env.setcurr(prevenv)
@@ -63,7 +63,7 @@ end
 ---@param envname string
 local function _env_use(envname)
     if not env.exists(envname) then
-        return common.die(1, "no such env name\n", envname)
+        return core.die(1, "no such env name\n", envname)
     end
     env.setcurr(envname)
 
@@ -88,7 +88,7 @@ local function builtin_env()
     elseif cmd == "use" then
         _env_use(envname)
     else
-        common.die(1, "no such env command\n", cmd)
+        core.die(1, "no such env command\n", cmd)
     end
     return 0
 end

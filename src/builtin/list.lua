@@ -1,7 +1,7 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
-local common = require("core.common")
+local core = require("core.core")
 local help = require("secondary.help")
 local getopt = require("posix.unistd").getopt
 local config = require("secondary.config")
@@ -19,7 +19,7 @@ local function builtin_list()
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
-            common.die(1, "unrecognized option\n", arg[optind - 1])
+            core.die(1, "unrecognized option\n", arg[optind - 1])
         end
 
         last_index = optind
@@ -47,7 +47,7 @@ local function builtin_list()
         -- nothing to show, terminate here.
         return 0
     elseif not env.exists(envname) then
-        return common.die(1, "no such environment name\n", envname)
+        return core.die(1, "no such environment name\n", envname)
     end
 
     taskid.init(config.core.refs.ids)

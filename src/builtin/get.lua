@@ -1,7 +1,7 @@
 local env = require("core.env")
 local config = require("secondary.config")
 local taskid = require("core.taskid")
-local common = require("core.common")
+local core = require("core.core")
 
 --- Get tman items.
 -- Like prev/ curr task ID, etc.
@@ -10,7 +10,7 @@ local function builtin_get()
     local envname = env.getcurr()
 
     if not envname then
-        return common.die(1, "no current env\n", "env")
+        return core.die(1, "no current env\n", "env")
     end
 
     taskid.init(config.core.refs.ids)
@@ -27,7 +27,7 @@ local function builtin_get()
     end
 
     -- error handling
-    common.die(1, "no such task item\n", item)
+    core.die(1, "no such task item\n", item)
 end
 
 return builtin_get

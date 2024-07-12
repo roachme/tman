@@ -4,7 +4,7 @@ local taskid = require("core.taskid")
 local struct = require("secondary.struct")
 local config = require("secondary.config")
 local taskunit = require("core.taskunit")
-local common = require("core.common")
+local core = require("core.core")
 local shell = require("aux.shell")
 local utils = require("aux.utils")
 
@@ -14,18 +14,18 @@ local function tman_del()
     local envname = env.getcurr()
 
     if not envname then
-        return common.die(1, "no current env", "env")
+        return core.die(1, "no current env", "env")
     elseif not env.exists(envname) then
-        return common.die(1, "no such env", envname)
+        return core.die(1, "no such env", envname)
     end
 
     taskid.init(config.core.refs.ids)
     id = id or taskid.getcurr(envname)
 
     if not id then
-        common.die(1, "no current task\n", "")
+        core.die(1, "no current task\n", "")
     elseif not taskid.exists(envname, id) then
-        common.die(1, "no such task ID\n", id)
+        core.die(1, "no such task ID\n", id)
     end
 
     io.write("Task: ")
@@ -40,13 +40,13 @@ local function tman_del()
     local path = config.aux.code
     local branch = taskunit.get(envname, id, "branch")
     if not branch then
-        return common.die_atomic(id, "task unit file missing branch\n", id)
+        return core.die(id, "task unit file missing branch\n", id)
     end
 
     -- delete task id's branches.
     for _, repo in pairs(config.user.repos) do
         if git.repo_isuncommited(repo.name, path) then
-            return common.die(1, "repo has uncommited changes\n", repo.name)
+            return core.die(1, "repo has uncommited changes\n", repo.name)
         end
     end
     for _, repo in pairs(config.user.repos) do
@@ -62,7 +62,7 @@ local function tman_del()
     if curr then
         branch = taskunit.get(envname, curr, "branch")
         if not branch then
-            return common.die(1, "task unit file missing branch\n", curr)
+            return core.die(1, "task unit file missing branch\n", curr)
         end
         for _, repo in pairs(config.user.repos) do
             git.branch_switch(repo.name, branch, path)

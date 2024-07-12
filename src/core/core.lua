@@ -17,6 +17,12 @@ local tman_struct = {
     { isdir = true, core = false, name = "tasks" },
 }
 
+function core.die(exit_code, errfmt, ...)
+    local errmsg = ("%s: %s: " .. errfmt .. "\n"):format(progname, ...)
+    io.stderr:write(errmsg)
+    os.exit(exit_code)
+end
+
 ---Check tman core and base directories ain't corrupted and exist.
 ---@return boolean
 function core.check()
