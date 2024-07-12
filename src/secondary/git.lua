@@ -175,6 +175,15 @@ end
 ---@param path string | nil
 ---@return boolean
 function git.branch_ahead(reponame, defbranch, taskbranch, path)
+    --[[
+    roachme:FIXME
+        if a user has never switched to default branch, then command below
+        causes problem.
+    Error message:
+        fatal: ambiguous argument 'develop..bugfix/test2_Test_task_2_20240712': unknown revision or path not in the working tree.
+        Use '--' to separate paths from revisions, like this:
+        'git <command> [<revision>...] -- [<file>...]'
+    ]]
     path = path or "."
     local fmt = "git -C %s/%s rev-list --count --right-only %s..%s"
     local cmd = string.format(fmt, path, reponame, defbranch, taskbranch)
