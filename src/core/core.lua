@@ -11,7 +11,7 @@ local tman_struct = {
     { isdir = true, core = true, name = ".tman/units" },
     { isdir = true, core = true, name = ".tman/refs" },
     { isdir = false, core = true, name = ".tman/refs/envs" },
-    { isdir = false, core = true, name = ".tman/refs/envs" },
+    { isdir = false, core = true, name = ".tman/refs/ids" },
     { isdir = true, core = false, name = "code" },
     { isdir = true, core = false, name = "tasks" },
 }
