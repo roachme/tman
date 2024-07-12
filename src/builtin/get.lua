@@ -13,7 +13,7 @@ local function builtin_get()
         return core.die(1, "no current env", "env")
     end
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
 
     if item == "curr" then
         print(taskid.getcurr(envname) or "")

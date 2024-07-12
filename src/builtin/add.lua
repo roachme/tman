@@ -25,7 +25,7 @@ local function builtin_add()
     local last_index = 1
     local keyhelp
     local envname = env.getcurr()
-    local path = config.aux.code
+    local path = core.struct.code.path
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -48,7 +48,7 @@ local function builtin_add()
     end
 
     id = arg[last_index]
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
 
     if not envname then
         return core.die(1, "no current env", "envname")

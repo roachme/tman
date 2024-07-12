@@ -19,7 +19,7 @@ local function tman_del()
         return core.die(1, "no such env", envname)
     end
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
     id = id or taskid.getcurr(envname)
 
     if not id then
@@ -37,7 +37,7 @@ local function tman_del()
         os.exit(1)
     end
 
-    local path = config.aux.code
+    local path = core.struct.code.path
     local branch = taskunit.get(envname, id, "branch")
     if not branch then
         return core.die(id, "task unit file missing branch", id)

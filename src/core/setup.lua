@@ -88,7 +88,7 @@ function setup.setup()
     end
 
     -- download all need repos.
-    local path = config.aux.code
+    local path = core.struct.code.path
     for _, repo in pairs(config.user.repos) do
         git.repo_clone(repo.link, repo.name, path)
     end
@@ -109,7 +109,7 @@ setup levels
 
 ---Basic system check (level: 1).
 function setup.basic()
-    local path = config.aux.code
+    local path = core.struct.code.path
 
     if not core.check() then
         return core.die(1, "tman not inited", "setup")

@@ -1,4 +1,4 @@
-local config = require("secondary.config")
+local core = require("core.core")
 
 local shell = {}
 
@@ -29,7 +29,7 @@ end
 ---Get current task id to use from shell.
 ---@return string | nil
 function shell.getcurr()
-    local fname = config.core.basedir .. "curr"
+    local fname = core.struct.curr.path
     return getval(fname)
 end
 
@@ -37,7 +37,7 @@ end
 ---@param val string
 ---@return boolean
 function shell.setcurr(val)
-    local fname = config.core.basedir .. "curr"
+    local fname = core.struct.curr.path
     return setval(fname, val)
 end
 

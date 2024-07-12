@@ -50,7 +50,7 @@ local function builtin_list()
         return core.die(1, "no such environment name", envname)
     end
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
     local curr = taskid.getcurr(envname)
     local prev = taskid.getprev(envname)
 

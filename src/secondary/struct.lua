@@ -4,6 +4,7 @@
 
 local utils = require("aux.utils")
 local config = require("secondary.config")
+local core = require("core.core")
 
 local struct = {}
 
@@ -45,9 +46,9 @@ end
 -- @return on failure - false
 function struct.create(envname, id)
     local dirname = utils.genname(envname, id)
-    local taskdir = config.aux.tasks .. dirname
-    local notedir = config.aux.tasks .. dirname .. "/notes/"
-    local repodir = config.aux.tasks .. dirname .. "/repos/"
+    local taskdir = core.struct.tasks.path .. dirname
+    local notedir = core.struct.tasks.path .. dirname .. "/notes/"
+    local repodir = core.struct.tasks.path .. dirname .. "/repos/"
 
     utils.mkdir(dirname)
     utils.mkdir(notedir)
@@ -56,7 +57,7 @@ function struct.create(envname, id)
 
     create_dirs(taskdir)
     create_files(notedir)
-    link_repos(config.aux.code, repodir)
+    link_repos(core.struct.code.path, repodir)
     return true
 end
 
@@ -66,7 +67,7 @@ end
 -- @return on failure - false
 function struct.delete(envname, id)
     local dirname = utils.genname(envname, id)
-    local taskdir = config.aux.tasks .. "/" .. dirname
+    local taskdir = core.struct.tasks.path .. "/" .. dirname
     return utils.rm(taskdir)
 end
 
@@ -76,8 +77,8 @@ end
 -- @return on success - true
 -- @return on failure - false
 function struct.rename(envname, oldid, newid)
-    local old_dir = config.core.units .. utils.genname(envname, oldid)
-    local new_dir = config.core.units .. utils.genname(envname, newid)
+    local old_dir = core.struct.units.path .. utils.genname(envname, oldid)
+    local new_dir = core.struct.units.path .. utils.genname(envname, newid)
     return utils.rename(old_dir, new_dir) == 0
 end
 

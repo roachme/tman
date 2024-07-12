@@ -3,6 +3,7 @@
 -- @module TaskUnit
 
 local config = require("secondary.config")
+local core = require("core.core")
 local utils = require("aux.utils")
 local unit = require("aux.unitdb")
 
@@ -121,7 +122,8 @@ end
 ---@param newdesc string
 ---@return boolean
 local function _set_desc(envname, id, newdesc)
-    unit.init(config.core.units .. utils.genname(envname, id))
+    --unit.init(core.struct.units.path .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("desc", newdesc)
     unit.set("branch", format_branch())
     return unit.save()
@@ -136,7 +138,7 @@ local function _set_id(envname, id, newid)
     local old_taskdir = config.aux.tasks .. utils.genname(envname, id)
     local new_taskdir = config.aux.tasks .. utils.genname(envname, newid)
 
-    unit.init(config.core.units .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("id", newid)
     unit.set("branch", format_branch())
     unit.save()
@@ -148,7 +150,7 @@ end
 ---Change task type.
 ---@return boolean
 local function _set_type(envname, id, newtype)
-    unit.init(config.core.units .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("type", newtype)
     unit.set("branch", format_branch())
     return unit.save()
@@ -159,7 +161,7 @@ end
 ---@param newprio string
 ---@return boolean
 local function _set_prio(envname, id, newprio)
-    unit.init(config.core.units .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("prio", newprio)
     return unit.save()
 end
@@ -170,7 +172,7 @@ end
 ---@param newlink string
 ---@return boolean
 local function _set_link(envname, id, newlink)
-    unit.init(config.core.units .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("link", newlink)
     return unit.save()
 end
@@ -180,7 +182,7 @@ end
 ---@param taskrepos string
 ---@return boolean
 local function _set_repo(envname, id, taskrepos)
-    unit.init(config.core.units .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("repos", taskrepos)
     return unit.save()
 end
@@ -244,10 +246,10 @@ function taskunit.add(envname, id, desc, tasktype, prio)
     prio = prio or unit.prios.mid
 
     -- create envname directory
-    utils.mkdir(config.core.units .. envname)
+    utils.mkdir(core.struct.units.path .. envname)
 
     -- Set values.
-    unit.init(config.core.units .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("id", id)
     unit.set("prio", prio)
     unit.set("type", tasktype)
@@ -307,7 +309,7 @@ end
 ---@param id string
 ---@return boolean
 function taskunit.del(envname, id)
-    local unitfile = config.core.units .. utils.genname(envname, id)
+    local unitfile = core.struct.units.path .. utils.genname(envname, id)
     return utils.rm(unitfile)
 end
 
@@ -316,7 +318,7 @@ end
 ---@param key string
 ---@return string
 function taskunit.get(envname, id, key)
-    unit.init(config.core.units .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
     return unit.get(key)
 end
 
@@ -325,7 +327,7 @@ end
 ---@param key string
 ---@return boolean
 function taskunit.cat(envname, id, key)
-    unit.init(config.core.units .. utils.genname(envname, id))
+    unit.init(core.struct.units.path .. utils.genname(envname, id))
 
     -- output only key value
     if key then

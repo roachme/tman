@@ -16,7 +16,7 @@ local function tman_sync()
     local fremote, fstruct, ftask
     local last_index = 1
     local envname = env.getcurr()
-    local path = config.aux.code
+    local path = core.struct.code.path
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -37,7 +37,7 @@ local function tman_sync()
         return core.die(1, "no current env", "env")
     end
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then

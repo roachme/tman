@@ -32,7 +32,7 @@ local function builtin_cat()
         return 0
     end
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then

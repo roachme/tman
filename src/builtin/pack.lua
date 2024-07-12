@@ -34,7 +34,7 @@ local function builtin_pack()
     print("under development")
     os.exit(1)
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
     id = arg[last_index] or taskid.getcurr(envname)
 
     if not id then

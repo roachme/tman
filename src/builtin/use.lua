@@ -9,7 +9,7 @@ local utils = require("aux.utils")
 
 --- Switch to task.
 local function tman_use()
-    local path = config.aux.code
+    local path = core.struct.code.path
     local envname = env.getcurr()
     local id = arg[1]
     -- roachme: can't use help option cuz tman.sh fails.
@@ -22,7 +22,7 @@ local function tman_use()
         return core.die(1, "no current env", "env")
     end
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
 
     if not id then
         core.die(1, "task id required", "")

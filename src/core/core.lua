@@ -6,14 +6,18 @@ local config = require("secondary.config")
 
 local core = {}
 
-local tman_struct = {
-    { isdir = false, core = true, name = ".tman/curr" },
-    { isdir = true, core = true, name = ".tman/units" },
-    { isdir = true, core = true, name = ".tman/refs" },
-    { isdir = false, core = true, name = ".tman/refs/envs" },
-    { isdir = false, core = true, name = ".tman/refs/ids" },
-    { isdir = true, core = false, name = "code" },
-    { isdir = true, core = false, name = "tasks" },
+local prefix = config.prefix .. "/"
+
+core.struct = {
+    prefix = { isdir = false, core = true, path = prefix },
+    dbdir = { isdir = false, core = true, path = prefix .. ".tman/" },
+    curr = { isdir = false, core = true, path = prefix .. ".tman/curr" },
+    units = { isdir = true, core = true, path = prefix .. ".tman/units/" },
+    refs = { isdir = true, core = true, path = prefix .. ".tman/refs/" },
+    envs = { isdir = false, core = true, path = prefix .. ".tman/refs/envs" },
+    ids = { isdir = false, core = true, path = prefix .. ".tman/refs/ids" },
+    code = { isdir = true, core = false, path = prefix .. "code/" },
+    tasks = { isdir = true, core = false, path = prefix .. "tasks/" },
 }
 
 function core.die(exit_code, errfmt, ...)
@@ -25,8 +29,8 @@ end
 ---Check tman core and base directories ain't corrupted and exist.
 ---@return boolean
 function core.check()
-    for _, file in pairs(tman_struct) do
-        local path = config.prefix .. "/" .. file.name
+    for _, file in pairs(core.struct) do
+        local path = file.path
         if not utils.access(path) then
             return false
         end
@@ -37,21 +41,18 @@ end
 ---Create tman core and base directories.
 ---@return boolean
 function core.create()
-    -- create base and aux directories.
-    if not utils.mkdir(config.prefix) then
-        return false
-    end
-    if not utils.mkdir(config.prefix .. "/.tman") then
-        return false
-    end
-
-    for _, file in pairs(tman_struct) do
-        local path = config.prefix .. "/" .. file.name
+    for _, file in pairs(core.struct) do
+        local path = file.path
         if file.isdir then
             if not utils.mkdir(path) then
                 return false
             end
-        else
+        end
+    end
+
+    for _, file in pairs(core.struct) do
+        local path = file.path
+        if not file.isdir then
             if not utils.touch(path) then
                 return false
             end

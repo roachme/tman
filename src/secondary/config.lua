@@ -58,32 +58,13 @@ function config.show()
 end
 
 function config.load()
-    local prefix
     sysconfig.init(fsysconf)
-
-    -- get system config values
-    prefix = sysconfig.get("prefix")
+    --userconfig.init(fusreconf)
 
     -- load stuff from diff modules
     config.sys = sysconfig.getvars()
     config.user = userconfig.getvars()
-
-    -- roachme: maybe it's better to move it to struct.lua
-    config.core = {
-        basedir = prefix .. "/.tman/",
-        refs = {
-            base = prefix .. "/.tman/refs/",
-            ids = prefix .. "/.tman/refs/ids",
-            envs = prefix .. "/.tman/refs/envs",
-        },
-        units = prefix .. "/.tman/units/",
-        curr = prefix .. "/.tman/curr",
-    }
-    config.aux = {
-        code = prefix .. "/code/",
-        tasks = prefix .. "/tasks/",
-    }
-    config.prefix = prefix
+    config.prefix = sysconfig.get("prefix")
 end
 
 ---@param key string

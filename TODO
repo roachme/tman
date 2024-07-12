@@ -26,7 +26,6 @@ In progress:
     43.  Add support to work wih git submodules as well.
     44.  Add support for fucking env.
     45.  Finish module setup having diff levels of check.
-    46.  Finish module core to find a good place to put core pathes.
 
 
 Gotta work on (still):
@@ -56,3 +55,4 @@ Done:
     31.  Function die() should be used only in tman.lua.
     33.  `tman del' add task ID with description.
     34.  Find a place to store progname and version. There're in core.lua and help.lua now.
+    46.  Finish module core to find a good place to put core pathes.

@@ -16,7 +16,7 @@ local envname
 ---@param newdesc string
 ---@return boolean
 local function _set_desc(id, newdesc)
-    local path = config.aux.code
+    local path = core.struct.code.path
     local olddesc = taskunit.get(envname, id, "desc")
     local oldbranch = taskunit.get(envname, id, "branch")
     local newbranch
@@ -51,7 +51,7 @@ end
 ---@param newid string
 ---@return boolean
 local function _set_id(id, newid)
-    local path = config.aux.code
+    local path = core.struct.code.path
     local newbranch
     local currbranch = taskunit.get(envname, id, "branch")
 
@@ -114,7 +114,7 @@ end
 ---@param newtype string
 ---@return boolean
 local function _set_type(id, newtype)
-    local path = config.aux.code
+    local path = core.struct.code.path
     local oldbranch = taskunit.get(envname, id, "branch")
     local currtype = taskunit.get(envname, id, "type")
     taskunit.set(envname, id, "type", newtype)
@@ -193,7 +193,7 @@ local function builtin_set()
         return
     end
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
         core.die(1, "no current task id", "")
@@ -202,7 +202,7 @@ local function builtin_set()
         core.die(1, "no such task id", id)
     end
 
-    local path = config.aux.code
+    local path = core.struct.code.path
     for _, repo in pairs(config.user.repos) do
         if git.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)

@@ -13,7 +13,7 @@ local utils = require("aux.utils")
 local function tman_prev()
     local keyhelp
     local prev
-    local path = config.aux.code
+    local path = core.struct.code.path
     local envname = env.getcurr()
     local optstr = ":h" -- roachme:API: should option be used?
     local cmdname = "prev"
@@ -39,7 +39,7 @@ local function tman_prev()
         return core.die(1, "no such env", "env")
     end
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
     prev = taskid.getprev(envname)
 
     if not prev then

@@ -3,9 +3,8 @@ local shell = require("aux.shell")
 local core = require("core.core")
 local taskid = require("core.taskid")
 local utils = require("aux.utils")
-local config = require("secondary.config")
 
-env.init(config.core.refs.envs)
+env.init(core.struct.envs.path)
 
 ---Add new environment.
 ---@param envname string
@@ -50,7 +49,7 @@ local function _env_prev(prevenv)
     env.setcurr(prevenv)
     -- roachme: gotta structure it.
     -- update task as well
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
     local curr_id = taskid.getcurr(prevenv)
     if curr_id then
         shell.setcurr(utils.genname(prevenv, curr_id))
@@ -67,7 +66,7 @@ local function _env_use(envname)
     end
     env.setcurr(envname)
 
-    taskid.init(config.core.refs.ids)
+    taskid.init(core.struct.ids.path)
     local curr_id = taskid.getcurr(envname) or ""
     shell.setcurr(utils.genname(envname, curr_id))
 end
