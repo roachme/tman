@@ -3,103 +3,57 @@
 
 local utils = require("aux.utils")
 local config = require("secondary.config")
-local git = require("secondary.git")
 local env = require("core.env")
 
 local core = {}
 
-function core.struct()
-    -- tman core structure
-    utils.mkdir(config.core.basedir)
-    utils.mkdir(config.core.refs.base)
-    utils.mkdir(config.core.units)
+local tman_struct = {
+    { isdir = false, core = true, name = ".tman/curr" },
+    { isdir = true, core = true, name = ".tman/units" },
+    { isdir = true, core = true, name = ".tman/refs" },
+    { isdir = false, core = true, name = ".tman/refs/envs" },
+    { isdir = false, core = true, name = ".tman/refs/envs" },
+    { isdir = true, core = false, name = "code" },
+    { isdir = true, core = false, name = "tasks" },
+}
 
-    utils.touch(config.core.curr)
-    utils.touch(config.core.refs.ids)
-    utils.touch(config.core.refs.envs)
-
-    -- tman aux structure
-    utils.mkdir(config.aux.code)
-    utils.mkdir(config.aux.tasks)
-end
-
-function core.env()
-    local defenv = "tman"
-
-    env.init(config.core.refs.envs)
-    if not env.exists(defenv) then
-        if not env.add(defenv, "main tman env") then
-            io.stderr:write("couldn't add default env\n")
-            os.exit(1)
-        end
-    end
-end
-
---- Check tman dir ain't corrupted and exists.
--- @return true on success, otherwise false
+---Check tman core and base directories ain't corrupted and exist.
+---@return boolean
 function core.check()
-    -- roachme:
-    -- return 1: tman core stuff are corrupted
-    -- retrun 2: tman base stuff are corrupted
-    -- NOT dirs / files
-    local files = {
-        config.ids,
-        --config.tmanconf,
-    }
-    local dirs = {
-        config.core.units,
-        config.core.path,
-        config.aux.code,
-        config.aux.tasks,
-    }
-
-    for _, dir in pairs(dirs) do
-        if not utils.access(dir) then
-            return 1
+    for _, file in pairs(tman_struct) do
+        local path = config.prefix .. "/" .. file.name
+        if not utils.access(path) then
+            return false
         end
     end
-    for _, file in pairs(files) do
-        if not utils.access(file) then
-            return 1
-        end
-    end
-
-    local dir = config.aux.code
-    for _, repo in pairs(config.user.repos) do
-        if not utils.access(dir .. repo.name) then
-            return 1
-        end
-    end
-    return 0
+    return true
 end
 
----Init system to use a util.
-function core.init()
-    if core.check() == 0 then
-        return 0
+---Create tman core and base directories.
+---@return boolean
+function core.create()
+    -- create base and aux directories.
+    if not utils.mkdir(config.prefix) then
+        return false
     end
-    -- create tman structure
-    core.struct()
+    if not utils.mkdir(config.prefix .. "/.tman") then
+        return false
+    end
 
-    -- add default env
-    core.env()
-
-    -- download repos
-    local dir = config.aux.code
-    local errfmt = "tman: %s: couldn't download repo\n"
-    for _, repo in pairs(config.user.repos) do
-        if not utils.access(dir .. repo.name) then
-            if not git.repo_clone(repo.link, repo.name, dir) then
-                io.stderr:write(errfmt:format(repo.name))
-                os.exit(1)
+    for _, file in pairs(tman_struct) do
+        local path = config.prefix .. "/" .. file.name
+        if file.isdir then
+            if not utils.mkdir(path) then
+                return false
             end
-            print(("%s: repo downloaded"):format(repo.name))
+        else
+            if not utils.touch(path) then
+                return false
+            end
         end
     end
-    return 0
+    return true
 end
-
-function core.repair() end
 
 --- Backup data.
 -- @param fname archive filename (default extention is .tar)

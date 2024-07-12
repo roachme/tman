@@ -194,7 +194,7 @@ end
 ---@return boolean
 function git.repo_clone(link, reponame, path)
     path = path or "."
-    local fmt = "git -C %s clone --quiet %s %s"
+    local fmt = "git -C %s clone --quiet %s %s 2>/dev/null"
     local cmd = string.format(fmt, path, link, reponame)
     return utils.exec(cmd)
 end

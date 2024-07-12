@@ -44,7 +44,8 @@ local function builtin_list()
 
     envname = arg[last_index] or env.getcurr()
     if not envname then
-        return common.die(1, "no current env\n", "env")
+        -- nothing to show, terminate here.
+        return 0
     elseif not env.exists(envname) then
         return common.die(1, "no such environment name\n", envname)
     end

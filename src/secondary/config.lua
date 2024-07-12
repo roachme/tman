@@ -83,6 +83,7 @@ function config.load()
         code = prefix .. "/code/",
         tasks = prefix .. "/tasks/",
     }
+    config.prefix = prefix
 end
 
 ---@param key string

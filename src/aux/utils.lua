@@ -104,7 +104,7 @@ function utils.get_input(prompt)
     io.write(prompt, ": ")
     local res = io.read("*line")
     res = string.gsub(res, "^%l", string.upper) -- capitalize first letter
-    res = string.gsub(res, "%s+$", "")          -- remove trailing whitespace
+    res = string.gsub(res, "%s+$", "") -- remove trailing whitespace
     return res
 end
 

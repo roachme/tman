@@ -72,7 +72,9 @@ local function tman_sync()
             if git.branch_on(repo.name, branch, path) then
                 if git.repo_isuncommited(repo.name, path) then
                     table.insert(active_repos, repo.name)
-                elseif git.branch_ahead(repo.name, repo.branch, branch, path) then
+                elseif
+                    git.branch_ahead(repo.name, repo.branch, branch, path)
+                then
                     table.insert(active_repos, repo.name)
                 end
             elseif git.repo_isuncommited(repo.name, path) then

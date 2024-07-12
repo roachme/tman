@@ -1,4 +1,6 @@
 local ids = require("aux.iddb")
+local core = require("core.core")
+local git = require("secondary.git")
 local utils = require("aux.utils")
 local units = require("aux.unitdb")
 local config = require("secondary.config")
@@ -81,8 +83,56 @@ function setup.setup_config()
 end
 
 function setup.setup()
+    -- make sure tman structure is created and ok
+    if not core.check() then
+        common.die(1, "tman not inited", "tman")
+    end
+
+    -- download all need repos.
+    local path = config.aux.code
+    for _, repo in pairs(config.user.repos) do
+        git.repo_clone(repo.link, repo.name, path)
+    end
+
+    --[[
     setup.setup_ids()
     setup.setup_units()
+    ]]
+end
+
+--[[
+setup levels
+0 - no setup. Command `init' need, to create tman structure.
+1 - gentle setup. Jost make sure tman structure is created and ok.
+2 - gentle setup and database's ok.
+3 - all above and config files ok.
+]]
+
+function setup.gentle()
+    local path = config.aux.code
+
+    if not core.check() then
+        return common.die(1, "tman not inited\n", "setup")
+    end
+
+    -- roachme: maybe gotta move it to setup.full()
+    -- make sure all user repos are downloaded.
+    for _, repo in pairs(config.user.repos) do
+        if not utils.access(path .. "/" .. repo.name) then
+            if not git.repo_clone(repo.link, repo.name, path) then
+                local errfmt = "could not download repo '%s'\n"
+                return common.die(1, errfmt, "setup", repo.name)
+            end
+        end
+    end
+
+    return 0
+end
+
+function setup.full()
+    setup.gentle()
+
+    common.die(1, "full setup failed\n", "setup")
 end
 
 return setup
