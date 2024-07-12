@@ -135,8 +135,8 @@ end
 ---@return boolean
 local function _set_id(envname, id, newid)
     -- rocahme: outta use struct.lua
-    local old_taskdir = config.aux.tasks .. utils.genname(envname, id)
-    local new_taskdir = config.aux.tasks .. utils.genname(envname, newid)
+    local old_taskdir = core.struct.tasks.path .. utils.genname(envname, id)
+    local new_taskdir = core.struct.tasks.path .. utils.genname(envname, newid)
 
     unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("id", newid)

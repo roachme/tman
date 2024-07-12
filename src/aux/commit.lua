@@ -46,7 +46,7 @@ end
 --- Get changed part of the code.
 local function changed_files(reponame)
     local files = {}
-    local repopath = config.aux.code .. reponame
+    local repopath = core.struct.code.path .. reponame
     local cmd = ("git -C %s diff --name-only"):format(repopath)
     local fprog = io.popen(cmd)
 
@@ -108,7 +108,7 @@ function git.commit_create(id)
 
     for _, repo in pairs(repos) do
         --print("repo", repo.name)
-        local repopath = config.aux.code .. repo.name
+        local repopath = core.struct.code.path .. repo.name
 
         local part = changed_part(repo.name)
         local msg = ("[%s] %s: %s"):format(id, part, desc)
