@@ -48,6 +48,21 @@ local function tman_sync()
 
     local branch = taskunit.get(envname, id, "branch")
 
+    if fremote then
+        print("sync: remote")
+        -- check that repos are ready to create task branch.
+        for _, repo in pairs(config.user.repos) do
+            if git.repo_isuncommited(repo.name, path) then
+                return common.die(1, "repo has uncommited changes\n", repo.name)
+            end
+        end
+        for _, repo in pairs(config.user.repos) do
+            git.branch_switch(repo.name, repo.branch, path)
+            git.branch_pullall(repo.name, path)
+            git.branch_switch(repo.name, branch, path)
+            git.branch_rebase(repo.name, repo.branch, path)
+        end
+    end
     if fstruct then
         print("sync: struct")
         local active_repos = {}
@@ -73,21 +88,6 @@ local function tman_sync()
         struct.create(envname, id)
         local repos = table.concat(active_repos, " ")
         taskunit.set(envname, id, "repos", repos)
-    end
-    if fremote then
-        print("sync: remote")
-        -- check that repos are ready to create task branch.
-        for _, repo in pairs(config.user.repos) do
-            if git.repo_isuncommited(repo.name, path) then
-                return common.die(1, "repo has uncommited changes\n", repo.name)
-            end
-        end
-        for _, repo in pairs(config.user.repos) do
-            git.branch_switch(repo.name, repo.branch, path)
-            git.branch_pullall(repo.name, path)
-            git.branch_switch(repo.name, branch, path)
-            git.branch_rebase(repo.name, repo.branch, path)
-        end
     end
     if ftask then
         print("sync: task status: under development")
