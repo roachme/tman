@@ -80,9 +80,12 @@ local function tman_sync()
             end
         end
 
+        -- create task branch if needed
         for _, repo in pairs(config.user.repos) do
-            git.branch_create(repo.name, branch, path)
-            git.branch_switch(repo.name, branch, path)
+            if not git.branch_exist(repo.name, branch, path) then
+                git.branch_create(repo.name, branch, path)
+                git.branch_switch(repo.name, branch, path)
+            end
         end
 
         struct.create(envname, id)
