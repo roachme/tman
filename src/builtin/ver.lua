@@ -1,7 +1,5 @@
-local help = require("secondary.help")
-
 local function builtin_ver()
-    print(("%s version %s"):format(help.progname, help.version))
+    print(("%s version %s"):format(progname, version))
 end
 
 return builtin_ver

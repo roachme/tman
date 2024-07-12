@@ -1,9 +1,6 @@
 --- Provide help on commands and general usage.
 -- @module help
 
-local version = "0.1.14"
-local progname = "tman"
-
 local function show_usage()
     io.stdout:write(([[
 Usage: %s COMMAND [OPTION] [ID]
@@ -271,6 +268,4 @@ end
 
 return {
     usage = help_usage,
-    version = version,
-    progname = progname,
 }

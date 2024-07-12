@@ -3,7 +3,6 @@
 
 local env = require("core.env")
 local git = require("secondary.git")
-local help = require("secondary.help")
 local config = require("secondary.config")
 local struct = require("secondary.struct")
 local taskid = require("core.taskid")
@@ -12,7 +11,7 @@ local taskunit = require("core.taskunit")
 local common = {}
 
 function common.die(exit_code, errfmt, ...)
-    local errmsg = ("%s: %s: " .. errfmt):format(help.progname, ...)
+    local errmsg = ("%s: %s: " .. errfmt):format(progname, ...)
     io.stderr:write(errmsg)
     os.exit(exit_code)
 end
