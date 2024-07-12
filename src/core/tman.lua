@@ -19,8 +19,10 @@ local function main()
     for _, builtin in pairs(builtins) do
         if cmd == builtin.name then
             if builtin.setup_level == 1 then
-                setup.gentle()
+                setup.basic()
             elseif builtin.setup_level == 2 then
+                setup.strict()
+            elseif builtin.setup_level == 3 then
                 setup.full()
             end
             return builtin.command()

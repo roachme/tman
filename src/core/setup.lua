@@ -107,7 +107,8 @@ setup levels
 3 - all above and config files ok.
 ]]
 
-function setup.gentle()
+---Basic system check (level: 1).
+function setup.basic()
     local path = config.aux.code
 
     if not core.check() then
@@ -128,8 +129,19 @@ function setup.gentle()
     return 0
 end
 
+---Strict system check (level: 2).
+function setup.strict()
+    setup.basic()
+
+    -- TODO: make sure database ain't corrupted.
+end
+
+---Full system and user lands check (level: 3).
 function setup.full()
-    setup.gentle()
+    setup.strict()
+
+    -- TODO: make sure (user) config stuff are valid
+    -- user custom stuff make sense like brachpatt, etc.
 end
 
 return setup
