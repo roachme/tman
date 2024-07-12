@@ -4,7 +4,6 @@ local git = require("secondary.git")
 local utils = require("aux.utils")
 local units = require("aux.unitdb")
 local config = require("secondary.config")
-local core = require("core.core")
 
 local setup = {}
 

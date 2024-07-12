@@ -3,7 +3,6 @@
 
 local utils = require("aux.utils")
 local config = require("secondary.config")
-local env = require("core.env")
 
 local core = {}
 

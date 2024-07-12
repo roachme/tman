@@ -12,7 +12,7 @@ lua_fmt:
 
 lua_lint:
 	@echo "===> Linting"
-	luacheck src
+	luacheck src --globals progname version
 	@echo
 
 lua_tests:

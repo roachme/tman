@@ -180,7 +180,8 @@ function git.branch_ahead(reponame, defbranch, taskbranch, path)
         if a user has never switched to default branch, then command below
         causes problem.
     Error message:
-        fatal: ambiguous argument 'develop..bugfix/test2_Test_task_2_20240712': unknown revision or path not in the working tree.
+        fatal: ambiguous argument 'develop..bugfix/test2_Test_task_2_20240712':
+        unknown revision or path not in the working tree.
         Use '--' to separate paths from revisions, like this:
         'git <command> [<revision>...] -- [<file>...]'
     ]]
