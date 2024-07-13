@@ -22,39 +22,12 @@ local function find_config_file(fname)
 end
 
 local fsysconf = find_config_file("sys.conf")
-local fuserconf = find_config_file("tman_conf.lua")
 
 function config.check()
     if not fsysconf then
         io.stderr:write("tman: sys.conf: system tmanconf missing\n")
         os.exit(1)
     end
-    if not fuserconf then
-        io.stderr:write("tman: user.conf: user config missing\n")
-        os.exit(1)
-    end
-end
-
-function config.show()
-    print("base", config.base)
-    print("install", config.install)
-    print("brpanchpatt", config.branchpatt)
-    io.write("struct dirs: { ")
-    for _, dir in pairs(config.struct.dirs) do
-        io.write(dir, " ")
-    end
-    print("}")
-    io.write("struct files: { ")
-    for _, file in pairs(config.struct.files) do
-        io.write(file, " ")
-    end
-    print("}")
-
-    print("repos: {")
-    for _, item in pairs(config.repos) do
-        print("  {", item.name, item.branch, item.path or "", "}")
-    end
-    print("}")
 end
 
 function config.load()
@@ -63,7 +36,7 @@ function config.load()
 
     -- load stuff from diff modules
     config.sys = sysconfig.getvars()
-    config.user = userconfig.getvars()
+    config.user = userconfig
     config.prefix = sysconfig.get("prefix")
 end
 

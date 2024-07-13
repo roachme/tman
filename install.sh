@@ -73,7 +73,7 @@ check_system_utils()
 
 check_lua_rocks()
 {
-    local lua_rocks=("luaposix")
+    local lua_rocks=("luaposix" "cjson")
     for lutil in ${lua_rocks[@]}; do
         luarocks list | grep -q "$lutil"
         if [ $? -ne 0 ]; then
@@ -85,7 +85,7 @@ check_lua_rocks()
 
 install_lua_rocks()
 {
-    local lua_rocks=("luaposix")
+    local lua_rocks=("luaposix" "cjson")
     for lutil in ${lua_rocks[@]}; do
         echo "- install Lua rock: $lutil"
         luarocks install $lutil
