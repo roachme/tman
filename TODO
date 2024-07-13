@@ -5,26 +5,20 @@ In progress:
     12.  Keep an eye on the Cargo's stylua. It's good but heavy.
     13.  install.sh: separate user and developer tool installation.
     16.  `getopt' vs `getops'. Which one to use?
-    18.  Get rid of os.exit() in tman.lua. There's a better way.
     19.  Add module for default values so util doesn't break if no config is preesented.
-    20.  `tman update' doesn't work if no current task. Fix it.
     22.  taskunit status - fix it or get rid of it.
     25.  Find a good way to delete unused and that no longer on remote repo.
-    26.  Add support to work on different environments: work, personal, test.
     27.  Optimize db.lua: use task ID as table index.
     30.  core.lua gotta check config file as well.
     31.  Delete CUI from `tman set -d' command.
     32.  Diet repos over time.
     35.  tman.sh can't handle args with quotes `tman set -d "test task 2"'.
-    36.  `tman set' always switch to task dir.
     37.  Move repos into directory cuz their number's getting bigger.
     38.  System and user config variable names might collide with each othre. Fix config.lua. Use diff namespaces.
     39.  Change checker in core.lua to check tman core, not tman base.
-    40.  `tman sync' add `wd' util features. And maybe get rid of wd commmand dependency.
     41.  Need rubost API. It's discombobulated now.
     42.  Add option `-h' support into commands.
     43.  Add support to work wih git submodules as well.
-    44.  Add support for fucking env.
     45.  Finish module setup having diff levels of check.
 
 
@@ -47,12 +41,18 @@ Done:
     14.  Make all commands alike so they can be put in array and called in main().
     15.  Refactor git module. Getting bigger and messier.
     17.  Command `del': switch to previous task branch if it exists
+    18.  Get rid of os.exit() in tman.lua. There's a better way.
+    20.  `tman update' doesn't work if no current task. Fix it.
     21.  `tman del' doesn't show task ID. Fix it.
     23.  Add unit for actvite repos.
     24.  git: Add support to download repos.
+    26.  Add support to work on different environments: work, personal, test.
     28.  Delete sort() from db.lua, it shouldn't know about it.
     29.  taskunit.lua can't change task type.
     31.  Function die() should be used only in tman.lua.
     33.  `tman del' add task ID with description.
     34.  Find a place to store progname and version. There're in core.lua and help.lua now.
+    36.  `tman set' always switch to task dir.
+    40.  `tman sync' add `wd' util features. And maybe get rid of wd commmand dependency.
+    44.  Add support for fucking env.
     46.  Finish module core to find a good place to put core pathes.
