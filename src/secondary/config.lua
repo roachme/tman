@@ -22,14 +22,14 @@ local function find_config_file(fname)
 end
 
 local fsysconf = find_config_file("sys.conf")
-local fusreconf = find_config_file("tman_conf.lua")
+local fuserconf = find_config_file("tman_conf.lua")
 
 function config.check()
     if not fsysconf then
         io.stderr:write("tman: sys.conf: system tmanconf missing\n")
         os.exit(1)
     end
-    if not fusreconf then
+    if not fuserconf then
         io.stderr:write("tman: user.conf: user config missing\n")
         os.exit(1)
     end
