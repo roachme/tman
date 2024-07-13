@@ -14,11 +14,11 @@ System:
   init    - init util structure
 
 Manipulate:
-  add     - add new task
-  del     - delete task
+  add     - add a new task
+  del     - delete a task
   env     - define or display environments
   prev    - switch to previous task
-  use     - mark a task as current
+  use     - switch to specific task
 
 Info:
   cat     - cat task info
@@ -26,7 +26,7 @@ Info:
 
 Change:
   pack    - pack commits in repos for review.
-  set     - set task units
+  set     - set task units like description, branch, etc
   sync    - synchronize task struct, git branch, repos, etc
 
 Info:
@@ -42,7 +42,7 @@ local cmds = {
     {
         name = progname,
         desc = [[
-tman - terminal task manager.
+tman - Terminal task manager.
 
 Util to switch between tasks, git branches and make the workflow easy and
 less confusing. You no longer need to memerize task ids, branche names,
