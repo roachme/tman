@@ -4,7 +4,6 @@ local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("secondary.help")
 local getopt = require("posix.unistd").getopt
-local config = require("secondary.config")
 
 --- List all task ids.
 -- Default: show only active task ids.

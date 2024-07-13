@@ -4,7 +4,6 @@ local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("secondary.help")
 local getopt = require("posix.unistd").getopt
-local config = require("secondary.config")
 
 --- Show task unit metadata.
 local function builtin_cat()
@@ -33,6 +32,12 @@ local function builtin_cat()
     end
 
     taskid.init(core.struct.ids.path)
+
+    if not envname then
+        return core.die(1, "no current environment", "cat")
+    elseif not env.exists(envname) then
+        return core.die(1, "no such environment", "cat")
+    end
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then

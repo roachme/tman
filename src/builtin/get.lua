@@ -1,5 +1,4 @@
 local env = require("core.env")
-local config = require("secondary.config")
 local taskid = require("core.taskid")
 local core = require("core.core")
 
