@@ -1,9 +1,9 @@
 local env = require("core.env")
-local git = require("secondary.git")
+local git = require("plugin.git")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
-local config = require("secondary.config")
+local config = require("struct.config")
 local shell = require("aux.shell")
 local utils = require("aux.utils")
 

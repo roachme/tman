@@ -1,5 +1,5 @@
 local env = require("core.env")
-local git = require("secondary.git")
+local git = require("plugin.git")
 local taskid = require("core.taskid")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt

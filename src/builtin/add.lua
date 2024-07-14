@@ -1,12 +1,12 @@
 local env = require("core.env")
-local git = require("secondary.git")
+local git = require("plugin.git")
 local taskid = require("core.taskid")
-local struct = require("secondary.struct")
+local struct = require("struct.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
-local help = require("secondary.help")
+local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
-local config = require("secondary.config")
+local config = require("struct.config")
 local shell = require("aux.shell")
 local utils = require("aux.utils")
 

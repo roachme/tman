@@ -2,7 +2,7 @@
 -- @module core
 
 local utils = require("aux.utils")
-local config = require("secondary.config")
+local config = require("struct.config")
 
 local core = {}
 

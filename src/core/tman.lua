@@ -6,7 +6,7 @@ _G.version = "v0.1.15"
 
 local setup = require("core.setup")
 local builtins = require("core.builtin")
-local help = require("secondary.help")
+local help = require("aux.help")
 
 ---Tman interface.
 local function main()

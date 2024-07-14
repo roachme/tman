@@ -3,7 +3,7 @@
 -- @module struct
 
 local utils = require("aux.utils")
-local config = require("secondary.config")
+local config = require("struct.config")
 local core = require("core.core")
 
 local struct = {}

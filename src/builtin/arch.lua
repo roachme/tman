@@ -1,4 +1,4 @@
-local help = require("secondary.help")
+local help = require("aux.help")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
 

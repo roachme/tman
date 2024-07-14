@@ -1,4 +1,4 @@
-local help = require("secondary.help")
+local help = require("aux.help")
 
 local function tman_help()
     return help.usage(arg[1])

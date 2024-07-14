@@ -1,5 +1,5 @@
-local config = require("secondary.config")
-local git = require("secondary.git")
+local config = require("struct.config")
+local git = require("plugin.git")
 local env = require("core.env")
 local shell = require("aux.shell")
 local core = require("core.core")
