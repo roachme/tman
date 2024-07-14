@@ -61,8 +61,10 @@ local function config_load()
         config[envname].struct.dirs = config[envname].struct.dirs or {}
         config[envname].struct.files = config[envname].struct.files or {}
 
-        config[envname].branchpatt = config[envname].branchpatt or default_branchpatt
-        config[envname].commitpatt = config[envname].commitpatt or default_commitpatt
+        config[envname].branchpatt = config[envname].branchpatt
+            or default_branchpatt
+        config[envname].commitpatt = config[envname].commitpatt
+            or default_commitpatt
     end
 end
 

@@ -1,3 +1,5 @@
+local config = require("secondary.config")
+local git = require("secondary.git")
 local env = require("core.env")
 local shell = require("aux.shell")
 local core = require("core.core")
@@ -9,14 +11,27 @@ env.init(core.struct.envs.path)
 ---Add new environment.
 ---@param envname string
 local function _env_add(envname)
+    local uconfig
+    local path = core.struct.code.path
+
     if not envname then
         return core.die(1, "env name is required", "no envname")
-    end
-    if env.exists(envname) then
-        return core.die(1, "such env name already exists", envname)
+    elseif env.exists(envname) then
+        return core.die(1, "env name already exists", envname)
     end
     env.add(envname, utils.get_input("description"))
     shell.setcurr("")
+
+    -- download repos.
+    uconfig = config.uget(envname)
+    for _, repo in pairs(uconfig.repos) do
+        if not utils.access(path .. "/" .. repo.name) then
+            if not git.repo_clone(repo.link, repo.name, path) then
+                core.die(1, "could not download repo '%s'", "init", repo.name)
+            end
+        end
+    end
+    return 0
 end
 
 ---Delete an environment.
