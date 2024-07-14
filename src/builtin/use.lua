@@ -4,7 +4,7 @@ local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local config = require("struct.config")
-local shell = require("aux.shell")
+local shell = require("core.shell")
 local utils = require("aux.utils")
 
 --- Switch to task.

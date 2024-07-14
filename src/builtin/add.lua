@@ -7,7 +7,7 @@ local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 local config = require("struct.config")
-local shell = require("aux.shell")
+local shell = require("core.shell")
 local utils = require("aux.utils")
 
 --- Add a new task.

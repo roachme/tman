@@ -6,7 +6,7 @@ local taskunit = require("core.taskunit")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
 local config = require("struct.config")
-local shell = require("aux.shell")
+local shell = require("core.shell")
 local utils = require("aux.utils")
 
 local envname

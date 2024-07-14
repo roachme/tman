@@ -5,7 +5,7 @@ local struct = require("struct.struct")
 local config = require("struct.config")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
-local shell = require("aux.shell")
+local shell = require("core.shell")
 local utils = require("aux.utils")
 
 --- Delete task.
