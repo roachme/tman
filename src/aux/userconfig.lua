@@ -4,12 +4,23 @@
 local json = require("cjson")
 local utils = require("aux.utils")
 
+local uconfig = {}
+
 local default_repos = {}
 local default_branchpatt = "TYPE/ID_DESC_DATE"
 local default_commitpatt = "[ID] PART: MSG"
 local default_struct = {
     dirs = {},
     files = {},
+}
+local default_env = {
+    repos = default_repos,
+    struct = {
+        dirs = {},
+        files = {},
+    },
+    branchpatt = default_branchpatt,
+    commitpatt = default_commitpatt,
 }
 
 local function find_config_file(fname)
@@ -40,20 +51,33 @@ local function read_file(fname)
 end
 
 local fconf = find_config_file("user.json")
-local userconf = json.decode(read_file(fconf))
+local config = json.decode(read_file(fconf))
 
-userconf.repos = userconf.repos or default_repos
+local function config_load()
+    for envname, _ in pairs(config) do
+        config[envname].repos = config[envname].repos or default_repos
 
-userconf.struct = userconf.struct or default_struct
-userconf.struct.dirs = userconf.struct.dirs or {}
-userconf.struct.files = userconf.struct.files or {}
+        config[envname].struct = config[envname].struct or default_struct
+        config[envname].struct.dirs = config[envname].struct.dirs or {}
+        config[envname].struct.files = config[envname].struct.files or {}
 
-userconf.branchpatt = userconf.branchpatt or default_branchpatt
-userconf.commitpatt = userconf.commitpatt or default_commitpatt
+        config[envname].branchpatt = config[envname].branchpatt or default_branchpatt
+        config[envname].commitpatt = config[envname].commitpatt or default_commitpatt
+    end
+end
+
+function uconfig.get(envname)
+    if not envname or not config[envname] then
+        return default_env
+    end
+    return config[envname]
+end
 
 -- TODO: do some checks
 -- code goes here...
 -- 1. check that struct has members: dirs and files
 -- 2. check that repos has members: link, name, etc.
 
-return userconf
+config_load()
+
+return uconfig

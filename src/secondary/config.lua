@@ -2,8 +2,8 @@
 -- @module config
 
 local utils = require("aux.utils")
-local sysconfig = require("aux.sysconfig")
-local userconfig = require("aux.userconfig")
+local sconfig = require("aux.sysconfig")
+local uconfig = require("aux.userconfig")
 
 local config = {}
 
@@ -31,26 +31,34 @@ function config.check()
 end
 
 function config.load()
-    sysconfig.init(fsysconf)
+    sconfig.init(fsysconf)
     --userconfig.init(fusreconf)
 
     -- load stuff from diff modules
-    config.sys = sysconfig.getvars()
-    config.user = userconfig
-    config.prefix = sysconfig.get("prefix")
+    config.sys = sconfig.getvars()
+    config.user = uconfig
+    config.prefix = sconfig.get("prefix")
 end
 
 ---@param key string
 ---@return string|table
-function config.getsys(key)
+function config.sget(key)
     return config.sys[key]
 end
 
 ---@param key string
 ---@param val string
-function config.setsys(key, val)
-    sysconfig.set(key, val)
+function config.sset(key, val)
+    sconfig.set(key, val)
     config.load()
+end
+
+function config.uget(envname)
+    return uconfig.get(envname)
+end
+
+function config.uset(envname, key, val)
+    return uconfig.set(envname, key, val)
 end
 
 config.check() -- roachme: should be done in core.lua or setup.lua

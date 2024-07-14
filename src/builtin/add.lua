@@ -17,6 +17,7 @@ local utils = require("aux.utils")
 -- @return on failrue - false
 local function builtin_add()
     local id
+    local uconfig
     local cmdname = "add"
     local prio = "mid"
     local tasktype = "bugfix"
@@ -60,8 +61,9 @@ local function builtin_add()
         return core.die(1, "task id exists", id)
     end
 
+    uconfig = config.uget(envname)
     -- check that repos are ready to create task branch.
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if git.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
@@ -84,7 +86,7 @@ local function builtin_add()
 
     -- create task branch in repos.
     local branch = taskunit.get(envname, id, "branch")
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if not git.branch_create(repo.name, branch, path) then
             taskid.del(envname, id)
             taskunit.del(envname, id)

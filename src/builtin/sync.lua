@@ -12,6 +12,7 @@ local getopt = require("posix.unistd").getopt
 -- TODO: if wd util not supported then add its features here. Optioon `-w'.
 local function tman_sync()
     local id
+    local uconfig
     local optstr = "rst"
     local fremote, fstruct, ftask
     local last_index = 1
@@ -37,6 +38,7 @@ local function tman_sync()
         return core.die(1, "no current env", "env")
     end
 
+    uconfig = config.uget(envname)
     taskid.init(core.struct.ids.path)
 
     id = arg[last_index] or taskid.getcurr(envname)
@@ -51,12 +53,12 @@ local function tman_sync()
     if fremote then
         print("sync: remote")
         -- check that repos are ready to create task branch.
-        for _, repo in pairs(config.user.repos) do
+        for _, repo in pairs(uconfig.repos) do
             if git.repo_isuncommited(repo.name, path) then
                 return core.die(1, "repo has uncommited changes", repo.name)
             end
         end
-        for _, repo in pairs(config.user.repos) do
+        for _, repo in pairs(uconfig.repos) do
             git.branch_switch(repo.name, repo.branch, path)
             git.branch_pullall(repo.name, path)
             git.branch_switch(repo.name, branch, path)
@@ -68,7 +70,7 @@ local function tman_sync()
         local active_repos = {}
         local errfmt = "repo not on task branch tho has uncommited changes"
 
-        for _, repo in pairs(config.user.repos) do
+        for _, repo in pairs(uconfig.repos) do
             if git.branch_on(repo.name, branch, path) then
                 if git.repo_isuncommited(repo.name, path) then
                     table.insert(active_repos, repo.name)
@@ -83,7 +85,7 @@ local function tman_sync()
         end
 
         -- create task branch if needed
-        for _, repo in pairs(config.user.repos) do
+        for _, repo in pairs(uconfig.repos) do
             if not git.branch_exist(repo.name, branch, path) then
                 git.branch_create(repo.name, branch, path)
                 git.branch_switch(repo.name, branch, path)

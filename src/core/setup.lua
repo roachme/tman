@@ -1,4 +1,5 @@
 local ids = require("aux.iddb")
+local env = require("core.env")
 local core = require("core.core")
 local git = require("secondary.git")
 local utils = require("aux.utils")
@@ -109,15 +110,18 @@ setup levels
 
 ---Basic system check (level: 1).
 function setup.basic()
+    local uconfig
+    local envname = env.getcurr()
     local path = core.struct.code.path
 
     if not core.check() then
         return core.die(1, "tman not inited", "setup")
     end
 
+    uconfig = config.uget(envname)
     -- roachme: maybe gotta move it to setup.full()
     -- make sure all user repos are downloaded.
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if not utils.access(path .. "/" .. repo.name) then
             if not git.repo_clone(repo.link, repo.name, path) then
                 local errfmt = "could not download repo '%s'"

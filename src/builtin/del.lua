@@ -11,6 +11,7 @@ local utils = require("aux.utils")
 --- Delete task.
 local function tman_del()
     local id = arg[1]
+    local uconfig
     local envname = env.getcurr()
 
     if not envname then
@@ -19,6 +20,7 @@ local function tman_del()
         return core.die(1, "no such env", envname)
     end
 
+    uconfig = config.uget(envname)
     taskid.init(core.struct.ids.path)
     id = id or taskid.getcurr(envname)
 
@@ -44,12 +46,12 @@ local function tman_del()
     end
 
     -- delete task id's branches.
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if git.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
     end
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         git.branch_switch(repo.name, repo.branch, path)
         git.branch_delete(repo.name, branch, path)
     end
@@ -64,7 +66,7 @@ local function tman_del()
         if not branch then
             return core.die(1, "task unit file missing branch", curr)
         end
-        for _, repo in pairs(config.user.repos) do
+        for _, repo in pairs(uconfig.repos) do
             git.branch_switch(repo.name, branch, path)
         end
 

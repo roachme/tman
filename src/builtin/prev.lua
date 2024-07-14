@@ -13,6 +13,7 @@ local utils = require("aux.utils")
 local function tman_prev()
     local keyhelp
     local prev
+    local uconfig
     local path = core.struct.code.path
     local envname = env.getcurr()
     local optstr = ":h" -- roachme:API: should option be used?
@@ -39,6 +40,7 @@ local function tman_prev()
         return core.die(1, "no such env", "env")
     end
 
+    uconfig = config.uget(envname)
     taskid.init(core.struct.ids.path)
     prev = taskid.getprev(envname)
 
@@ -47,12 +49,12 @@ local function tman_prev()
     end
 
     local branch = taskunit.get(envname, prev, "branch")
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if git.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
     end
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if not git.branch_switch(repo.name, branch, path) then
             return core.die(1, "could not switch to task branch", repo.name)
         end

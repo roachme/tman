@@ -10,6 +10,7 @@ local shell = require("aux.shell")
 local utils = require("aux.utils")
 
 local envname
+local uconfig
 
 ---Set task description.
 ---@param id string
@@ -35,7 +36,7 @@ local function _set_desc(id, newdesc)
     end
 
     newbranch = taskunit.get(envname, id, "branch")
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if not git.branch_switch(repo.name, oldbranch, path) then
             core.die(1, "could not switch to task branch", repo.name)
         end
@@ -55,7 +56,7 @@ local function _set_id(id, newid)
     local newbranch
     local currbranch = taskunit.get(envname, id, "branch")
 
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if git.repo_isuncommited(repo.name, path) then
             core.die(1, "repo has uncommited changes", repo.name)
         end
@@ -73,7 +74,7 @@ local function _set_id(id, newid)
     taskid.rename(envname, id, newid)
     struct.rename(envname, id, newid)
 
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         git.branch_rename(repo.name, currbranch, newbranch, path)
     end
 
@@ -126,7 +127,7 @@ local function _set_type(id, newtype)
         return true
     end
 
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if not git.branch_switch(repo.name, oldbranch, path) then
             core.die(1, "could not switch to task branch", repo.name)
         end
@@ -193,6 +194,7 @@ local function builtin_set()
         return
     end
 
+    uconfig = config.uget(envname)
     taskid.init(core.struct.ids.path)
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
@@ -203,7 +205,7 @@ local function builtin_set()
     end
 
     local path = core.struct.code.path
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if git.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end

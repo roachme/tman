@@ -9,6 +9,7 @@ local utils = require("aux.utils")
 
 --- Switch to task.
 local function tman_use()
+    local uconfig
     local path = core.struct.code.path
     local envname = env.getcurr()
     local id = arg[1]
@@ -22,6 +23,7 @@ local function tman_use()
         return core.die(1, "no current env", "env")
     end
 
+    uconfig = config.uget(envname)
     taskid.init(core.struct.ids.path)
 
     if not id then
@@ -36,7 +38,7 @@ local function tman_use()
     end
 
     -- check that repos are ready to create task branch.
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         if git.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
@@ -46,7 +48,7 @@ local function tman_use()
     if not branch then
         return core.die(1, "task unit file missing branch", id)
     end
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         git.branch_switch(repo.name, branch, path)
     end
 

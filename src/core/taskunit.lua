@@ -32,10 +32,11 @@ end
 
 ---Form branch according to pattern.
 ---@return string | nil
-local function format_branch()
+local function format_branch(envname)
     local separators = "/_-"
-    local sepcomponents = pattsplit(config.user.branchpatt, separators)
-    local branch = config.user.branchpatt
+    local uconfig = config.uget(envname)
+    local sepcomponents = pattsplit(uconfig.branchpatt, separators)
+    local branch = uconfig.branchpatt
 
     for _, item in pairs(sepcomponents) do
         local uitem = unit.get(string.lower(item))
@@ -125,7 +126,7 @@ local function _set_desc(envname, id, newdesc)
     --unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("desc", newdesc)
-    unit.set("branch", format_branch())
+    unit.set("branch", format_branch(envname))
     return unit.save()
 end
 
@@ -140,7 +141,7 @@ local function _set_id(envname, id, newid)
 
     unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("id", newid)
-    unit.set("branch", format_branch())
+    unit.set("branch", format_branch(envname))
     unit.save()
 
     -- gotta update curr & prev task ids.
@@ -152,7 +153,7 @@ end
 local function _set_type(envname, id, newtype)
     unit.init(core.struct.units.path .. utils.genname(envname, id))
     unit.set("type", newtype)
-    unit.set("branch", format_branch())
+    unit.set("branch", format_branch(envname))
     return unit.save()
 end
 
@@ -261,7 +262,7 @@ function taskunit.add(envname, id, desc, tasktype, prio)
     unit.set("status", "progress")
     unit.set("envname", envname)
 
-    branch = format_branch()
+    branch = format_branch(envname)
     if not branch then
         return false
     end

@@ -8,12 +8,14 @@ local core = require("core.core")
 
 local struct = {}
 
+local uconfig
+
 -- Private functions: end --
 
 --- Create dirs.
 -- @param base directry structure base
 local function create_dirs(base)
-    for _, dir in pairs(config.user.struct.dirs) do
+    for _, dir in pairs(uconfig.struct.dirs) do
         utils.mkdir(base .. "/" .. dir)
     end
 end
@@ -21,7 +23,7 @@ end
 --- Create files.
 -- @param base file structure base
 local function create_files(base)
-    for _, file in pairs(config.user.struct.files) do
+    for _, file in pairs(uconfig.struct.files) do
         utils.touch(base .. file)
     end
 end
@@ -29,7 +31,7 @@ end
 --- Create symlinks to repos.
 -- @param id task id
 local function link_repos(repobase, taskbase)
-    for _, repo in pairs(config.user.repos) do
+    for _, repo in pairs(uconfig.repos) do
         local target = repobase .. repo.name
         local linkname = taskbase .. repo.name
         utils.link(target, linkname)
@@ -45,6 +47,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 function struct.create(envname, id)
+    uconfig = config.uget(envname)
     local dirname = utils.genname(envname, id)
     local taskdir = core.struct.tasks.path .. dirname
     local notedir = core.struct.tasks.path .. dirname .. "/notes/"
