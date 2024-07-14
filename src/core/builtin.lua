@@ -3,9 +3,9 @@
 
 local builtin = {
     { name = "add", command = require("builtin.add"), setup_level = 1 },
-    { name = "archive", command = require("builtin.archive"), setup_level = 1 },
+    { name = "arch", command = require("builtin.arch"), setup_level = 1 },
     { name = "cat", command = require("builtin.cat"), setup_level = 1 },
-    { name = "config", command = require("builtin.config"), setup_level = 1 },
+    { name = "cfg", command = require("builtin.cfg"), setup_level = 1 },
     { name = "del", command = require("builtin.del"), setup_level = 1 },
     { name = "env", command = require("builtin.env"), setup_level = 1 },
     { name = "get", command = require("builtin.get"), setup_level = 1 },

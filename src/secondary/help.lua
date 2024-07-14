@@ -8,10 +8,10 @@ Usage: %s COMMAND [OPTION] [ID]
 List of available commands:
 
 System:
-  archive - backup and restore metadata
-  config  - config your workflow
+  arch    - backup and restore metadata
+  cfg     - config workflow
   get     - get parameters like curr, prev tasks, size, etc
-  init    - init util structure
+  init    - init directory structure
 
 Manipulate:
   add     - add a new task
@@ -54,7 +54,7 @@ for 'em in nice structured way.
         name = "init",
         desc = [[
 Usage: tman init
-Initialize util.
+Initialize directory structure.
 ]],
     },
     {
