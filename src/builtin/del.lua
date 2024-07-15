@@ -1,6 +1,6 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
-local struct = require("struct.struct")
+local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local shell = require("core.shell")

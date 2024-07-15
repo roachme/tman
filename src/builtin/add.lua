@@ -1,12 +1,29 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
-local struct = require("struct.struct")
+local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 local shell = require("core.shell")
 local utils = require("aux.utils")
+
+--[[
+Modules
+    defaults:
+    - getopt    - parse command options
+
+    core parts:
+    - core      - access database.
+    - taskid    - cache task unit's id
+    - taskenv   - access current envname
+    - taskunit  - create new task unit
+
+    plugins:
+    - struct    - create task directorise and files (default plugin)
+    - git       - create task branches in repos
+    - make      - init commands to run
+]]
 
 --- Add a new task.
 -- Fill the rest with default values.
