@@ -88,8 +88,8 @@ local function tman_sync()
         for _, repo in pairs(uconfig.repos) do
             if not git.branch_exist(repo.name, branch, path) then
                 git.branch_create(repo.name, branch, path)
-                git.branch_switch(repo.name, branch, path)
             end
+            git.branch_switch(repo.name, branch, path)
         end
 
         struct.create(envname, id)
