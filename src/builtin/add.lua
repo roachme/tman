@@ -66,21 +66,21 @@ local function builtin_add()
     elseif not taskunit.add(envname, id, desc, tasktype, prio) then
         taskid.del(envname, id)
         core.die(1, "could not create new task unit", id)
-    elseif not struct.create(envname, id) then
-        taskid.del(envname, id)
-        taskunit.del(envname, id)
-        core.die(id, "could not create new task structure", id)
     end
 
     -- plugins
+    if not struct.create(envname, id) then
+        taskid.del(envname, id)
+        taskunit.del(envname, id)
+        core.die(id, "could not create new task structure", id)
     --[[
-    if not git.init() then
+    elseif not git.init() then
         taskid.del(envname, id)
         taskunit.del(envname, id)
         struct.delete(envname, id)
         core.die(id, "plugin git failed", id)
-    end
     ]]
+    end
 
     -- cache current task id
     shell.setcurr(utils.genname(envname, id))

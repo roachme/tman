@@ -107,4 +107,11 @@ function core.restore(fname)
     return true
 end
 
+---Setup database stuff before execute a command.
+---@param level string
+---@return boolean
+function core.setup(level)
+    return boolean
+end
+
 return core
