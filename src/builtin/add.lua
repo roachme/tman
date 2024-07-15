@@ -1,5 +1,5 @@
 local env = require("core.env")
-local git = require("plugin.git")
+local gitlib = require("aux.gitlib")
 local taskid = require("core.taskid")
 local struct = require("struct.struct")
 local taskunit = require("core.taskunit")
@@ -64,7 +64,7 @@ local function builtin_add()
     uconfig = config.uget(envname)
     -- check that repos are ready to create task branch.
     for _, repo in pairs(uconfig.repos) do
-        if git.repo_isuncommited(repo.name, path) then
+        if gitlib.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
     end
@@ -87,13 +87,13 @@ local function builtin_add()
     -- create task branch in repos.
     local branch = taskunit.get(envname, id, "branch")
     for _, repo in pairs(uconfig.repos) do
-        if not git.branch_create(repo.name, branch, path) then
+        if not gitlib.branch_create(repo.name, branch, path) then
             taskid.del(envname, id)
             taskunit.del(envname, id)
             struct.delete(id)
             core.die(1, "could not create new task branch", id)
         end
-        git.branch_switch(repo.name, branch, path)
+        gitlib.branch_switch(repo.name, branch, path)
     end
 
     -- cache current task id

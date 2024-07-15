@@ -1,5 +1,5 @@
 local env = require("core.env")
-local git = require("plugin.git")
+local gitlib = require("aux.gitlib")
 local taskid = require("core.taskid")
 local struct = require("struct.struct")
 local config = require("struct.config")
@@ -47,13 +47,13 @@ local function tman_del()
 
     -- delete task id's branches.
     for _, repo in pairs(uconfig.repos) do
-        if git.repo_isuncommited(repo.name, path) then
+        if gitlib.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
     end
     for _, repo in pairs(uconfig.repos) do
-        git.branch_switch(repo.name, repo.branch, path)
-        git.branch_delete(repo.name, branch, path)
+        gitlib.branch_switch(repo.name, repo.branch, path)
+        gitlib.branch_delete(repo.name, branch, path)
     end
 
     taskid.del(envname, id)
@@ -67,7 +67,7 @@ local function tman_del()
             return core.die(1, "task unit file missing branch", curr)
         end
         for _, repo in pairs(uconfig.repos) do
-            git.branch_switch(repo.name, branch, path)
+            gitlib.branch_switch(repo.name, branch, path)
         end
 
         -- cache current task id

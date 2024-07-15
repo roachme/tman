@@ -1,5 +1,5 @@
 local env = require("core.env")
-local git = require("plugin.git")
+local gitlib = require("aux.gitlib")
 local taskid = require("core.taskid")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
@@ -42,7 +42,7 @@ local function builtin_pack()
     if not taskid.exists(envname, id) then
         core.die(1, "no such task id", id)
     end
-    if not git.branch_exist(id) then
+    if not gitlib.branch_exist(id) then
         core.die(1, "task branch doesn't exist", "REPONAME")
     end
 
@@ -50,7 +50,7 @@ local function builtin_pack()
         print("run commands from the Makefile: under development")
     elseif fcommit then
         print("create commits")
-        git.commit_create(id)
+        gitlib.commit_create(id)
     end
     return 0
 end

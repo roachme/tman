@@ -1,5 +1,5 @@
 local env = require("core.env")
-local git = require("plugin.git")
+local gitlib = require("aux.gitlib")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
@@ -50,12 +50,12 @@ local function tman_prev()
 
     local branch = taskunit.get(envname, prev, "branch")
     for _, repo in pairs(uconfig.repos) do
-        if git.repo_isuncommited(repo.name, path) then
+        if gitlib.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
     end
     for _, repo in pairs(uconfig.repos) do
-        if not git.branch_switch(repo.name, branch, path) then
+        if not gitlib.branch_switch(repo.name, branch, path) then
             return core.die(1, "could not switch to task branch", repo.name)
         end
     end

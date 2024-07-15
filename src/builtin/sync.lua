@@ -1,5 +1,5 @@
 local env = require("core.env")
-local git = require("plugin.git")
+local gitlib = require("aux.gitlib")
 local config = require("struct.config")
 local taskid = require("core.taskid")
 local struct = require("struct.struct")
@@ -54,15 +54,15 @@ local function tman_sync()
         print("sync: remote")
         -- check that repos are ready to create task branch.
         for _, repo in pairs(uconfig.repos) do
-            if git.repo_isuncommited(repo.name, path) then
+            if gitlib.repo_isuncommited(repo.name, path) then
                 return core.die(1, "repo has uncommited changes", repo.name)
             end
         end
         for _, repo in pairs(uconfig.repos) do
-            git.branch_switch(repo.name, repo.branch, path)
-            git.branch_pullall(repo.name, path)
-            git.branch_switch(repo.name, branch, path)
-            git.branch_rebase(repo.name, repo.branch, path)
+            gitlib.branch_switch(repo.name, repo.branch, path)
+            gitlib.branch_pullall(repo.name, path)
+            gitlib.branch_switch(repo.name, branch, path)
+            gitlib.branch_rebase(repo.name, repo.branch, path)
         end
     end
     if fstruct then
@@ -71,25 +71,25 @@ local function tman_sync()
         local errfmt = "repo not on task branch tho has uncommited changes"
 
         for _, repo in pairs(uconfig.repos) do
-            if git.branch_on(repo.name, branch, path) then
-                if git.repo_isuncommited(repo.name, path) then
+            if gitlib.branch_on(repo.name, branch, path) then
+                if gitlib.repo_isuncommited(repo.name, path) then
                     table.insert(active_repos, repo.name)
                 elseif
-                    git.branch_ahead(repo.name, repo.branch, branch, path)
+                    gitlib.branch_ahead(repo.name, repo.branch, branch, path)
                 then
                     table.insert(active_repos, repo.name)
                 end
-            elseif git.repo_isuncommited(repo.name, path) then
+            elseif gitlib.repo_isuncommited(repo.name, path) then
                 return core.die(1, errfmt, repo.name)
             end
         end
 
         -- create task branch if needed
         for _, repo in pairs(uconfig.repos) do
-            if not git.branch_exist(repo.name, branch, path) then
-                git.branch_create(repo.name, branch, path)
+            if not gitlib.branch_exist(repo.name, branch, path) then
+                gitlib.branch_create(repo.name, branch, path)
             end
-            git.branch_switch(repo.name, branch, path)
+            gitlib.branch_switch(repo.name, branch, path)
         end
 
         struct.create(envname, id)

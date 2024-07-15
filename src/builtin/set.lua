@@ -1,5 +1,5 @@
 local env = require("core.env")
-local git = require("plugin.git")
+local gitlib = require("aux.gitlib")
 local taskid = require("core.taskid")
 local struct = require("struct.struct")
 local taskunit = require("core.taskunit")
@@ -37,10 +37,10 @@ local function _set_desc(id, newdesc)
 
     newbranch = taskunit.get(envname, id, "branch")
     for _, repo in pairs(uconfig.repos) do
-        if not git.branch_switch(repo.name, oldbranch, path) then
+        if not gitlib.branch_switch(repo.name, oldbranch, path) then
             core.die(1, "could not switch to task branch", repo.name)
         end
-        if not git.branch_rename(repo.name, oldbranch, newbranch, path) then
+        if not gitlib.branch_rename(repo.name, oldbranch, newbranch, path) then
             core.die(1, "could not rename task branch", repo.name)
         end
     end
@@ -57,7 +57,7 @@ local function _set_id(id, newid)
     local currbranch = taskunit.get(envname, id, "branch")
 
     for _, repo in pairs(uconfig.repos) do
-        if git.repo_isuncommited(repo.name, path) then
+        if gitlib.repo_isuncommited(repo.name, path) then
             core.die(1, "repo has uncommited changes", repo.name)
         end
     end
@@ -75,7 +75,7 @@ local function _set_id(id, newid)
     struct.rename(envname, id, newid)
 
     for _, repo in pairs(uconfig.repos) do
-        git.branch_rename(repo.name, currbranch, newbranch, path)
+        gitlib.branch_rename(repo.name, currbranch, newbranch, path)
     end
 
     -- cache current task id
@@ -128,10 +128,10 @@ local function _set_type(id, newtype)
     end
 
     for _, repo in pairs(uconfig.repos) do
-        if not git.branch_switch(repo.name, oldbranch, path) then
+        if not gitlib.branch_switch(repo.name, oldbranch, path) then
             core.die(1, "could not switch to task branch", repo.name)
         end
-        if not git.branch_rename(repo.name, oldbranch, newbranch, path) then
+        if not gitlib.branch_rename(repo.name, oldbranch, newbranch, path) then
             core.die(1, "could not rename task branch", repo.name)
         end
     end
@@ -206,7 +206,7 @@ local function builtin_set()
 
     local path = core.struct.code.path
     for _, repo in pairs(uconfig.repos) do
-        if git.repo_isuncommited(repo.name, path) then
+        if gitlib.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
     end

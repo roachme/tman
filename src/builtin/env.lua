@@ -1,5 +1,5 @@
 local config = require("struct.config")
-local git = require("plugin.git")
+local gitlib = require("aux.gitlib")
 local env = require("core.env")
 local shell = require("core.shell")
 local core = require("core.core")
@@ -26,7 +26,7 @@ local function _env_add(envname)
     uconfig = config.uget(envname)
     for _, repo in pairs(uconfig.repos) do
         if not utils.access(path .. "/" .. repo.name) then
-            if not git.repo_clone(repo.link, repo.name, path) then
+            if not gitlib.repo_clone(repo.link, repo.name, path) then
                 core.die(1, "could not download repo '%s'", "init", repo.name)
             end
         end

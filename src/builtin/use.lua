@@ -1,5 +1,5 @@
 local env = require("core.env")
-local git = require("plugin.git")
+local gitlib = require("aux.gitlib")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
@@ -39,7 +39,7 @@ local function tman_use()
 
     -- check that repos are ready to create task branch.
     for _, repo in pairs(uconfig.repos) do
-        if git.repo_isuncommited(repo.name, path) then
+        if gitlib.repo_isuncommited(repo.name, path) then
             return core.die(1, "repo has uncommited changes", repo.name)
         end
     end
@@ -49,7 +49,7 @@ local function tman_use()
         return core.die(1, "task unit file missing branch", id)
     end
     for _, repo in pairs(uconfig.repos) do
-        git.branch_switch(repo.name, branch, path)
+        gitlib.branch_switch(repo.name, branch, path)
     end
 
     taskid.setcurr(envname, id)
