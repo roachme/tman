@@ -1,5 +1,3 @@
-local config = require("struct.config")
-local gitlib = require("aux.gitlib")
 local env = require("core.env")
 local shell = require("core.shell")
 local core = require("core.core")
@@ -11,9 +9,6 @@ env.init(core.struct.envs.path)
 ---Add new environment.
 ---@param envname string
 local function _env_add(envname)
-    local uconfig
-    local path = core.struct.code.path
-
     if not envname then
         return core.die(1, "env name is required", "no envname")
     elseif env.exists(envname) then
@@ -22,15 +17,6 @@ local function _env_add(envname)
     env.add(envname, utils.get_input("description"))
     shell.setcurr("")
 
-    -- download repos.
-    uconfig = config.uget(envname)
-    for _, repo in pairs(uconfig.repos) do
-        if not utils.access(path .. "/" .. repo.name) then
-            if not gitlib.repo_clone(repo.link, repo.name, path) then
-                core.die(1, "could not download repo '%s'", "init", repo.name)
-            end
-        end
-    end
     return 0
 end
 

@@ -1,12 +1,10 @@
 local env = require("core.env")
-local gitlib = require("aux.gitlib")
 local taskid = require("core.taskid")
 local struct = require("struct.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
-local config = require("struct.config")
 local shell = require("core.shell")
 local utils = require("aux.utils")
 
@@ -17,7 +15,6 @@ local utils = require("aux.utils")
 -- @return on failrue - false
 local function builtin_add()
     local id
-    local uconfig
     local cmdname = "add"
     local prio = "mid"
     local tasktype = "bugfix"
@@ -26,7 +23,6 @@ local function builtin_add()
     local last_index = 1
     local keyhelp
     local envname = env.getcurr()
-    local path = core.struct.code.path
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -61,14 +57,6 @@ local function builtin_add()
         return core.die(1, "task id exists", id)
     end
 
-    uconfig = config.uget(envname)
-    -- check that repos are ready to create task branch.
-    for _, repo in pairs(uconfig.repos) do
-        if gitlib.repo_isuncommited(repo.name, path) then
-            return core.die(1, "repo has uncommited changes", repo.name)
-        end
-    end
-
     -- read task description.
     local desc = utils.get_input("Desc")
 
@@ -84,21 +72,18 @@ local function builtin_add()
         core.die(id, "could not create new task structure", id)
     end
 
-    -- create task branch in repos.
-    local branch = taskunit.get(envname, id, "branch")
-    for _, repo in pairs(uconfig.repos) do
-        if not gitlib.branch_create(repo.name, branch, path) then
-            taskid.del(envname, id)
-            taskunit.del(envname, id)
-            struct.delete(id)
-            core.die(1, "could not create new task branch", id)
-        end
-        gitlib.branch_switch(repo.name, branch, path)
+    -- plugins
+    --[[
+    if not git.init() then
+        taskid.del(envname, id)
+        taskunit.del(envname, id)
+        struct.delete(envname, id)
+        core.die(id, "plugin git failed", id)
     end
+    ]]
 
     -- cache current task id
     shell.setcurr(utils.genname(envname, id))
-
     return 0
 end
 
