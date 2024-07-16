@@ -5,7 +5,7 @@ local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
-local config = require("struct.config")
+local config = require("aux.config")
 local shell = require("core.shell")
 local utils = require("aux.utils")
 

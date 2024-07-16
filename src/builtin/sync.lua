@@ -1,6 +1,6 @@
 local env = require("core.env")
 local gitlib = require("aux.gitlib")
-local config = require("struct.config")
+local config = require("aux.config")
 local taskid = require("core.taskid")
 local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
