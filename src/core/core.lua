@@ -111,7 +111,7 @@ end
 ---@param level string
 ---@return boolean
 function core.setup(level)
-    return boolean
+    return true
 end
 
 return core

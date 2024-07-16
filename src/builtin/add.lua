@@ -73,7 +73,7 @@ local function builtin_add()
         taskid.del(envname, id)
         taskunit.del(envname, id)
         core.die(id, "could not create new task structure", id)
-    --[[
+        --[[
     elseif not git.init() then
         taskid.del(envname, id)
         taskunit.del(envname, id)
