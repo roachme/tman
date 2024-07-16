@@ -3,7 +3,6 @@ local taskid = require("core.taskid")
 local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
-local shell = require("core.shell")
 local utils = require("aux.utils")
 
 --- Delete task.
@@ -37,13 +36,6 @@ local function tman_del()
 
     taskid.del(envname, id)
     taskunit.del(envname, id)
-
-    -- switch to new current task if exists.
-    local curr = taskid.getcurr(envname)
-    if curr then
-        -- cache current task id
-        shell.setcurr(utils.genname(envname, curr or ""))
-    end
 
     -- if you delete current task, and are in current directory.
     -- delete task dir at the end, cuz it causes error for tman.sh

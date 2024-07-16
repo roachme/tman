@@ -1,10 +1,10 @@
 local env = require("core.env")
-local shell = require("core.shell")
 local core = require("core.core")
 local taskid = require("core.taskid")
 local utils = require("aux.utils")
 
 env.init(core.struct.envs.path)
+taskid.init(core.struct.ids.path)
 
 ---Add new environment.
 ---@param envname string
@@ -15,8 +15,7 @@ local function _env_add(envname)
         return core.die(1, "env name already exists", envname)
     end
     env.add(envname, utils.get_input("description"))
-    shell.setcurr("")
-
+    taskid.updcurr(envname)
     return 0
 end
 
@@ -48,15 +47,7 @@ local function _env_prev(prevenv)
     end
 
     env.setcurr(prevenv)
-    -- roachme: gotta structure it.
-    -- update task as well
-    taskid.init(core.struct.ids.path)
-    local curr_id = taskid.getcurr(prevenv)
-    if curr_id then
-        shell.setcurr(utils.genname(prevenv, curr_id))
-    else
-        shell.setcurr("")
-    end
+    taskid.updcurr(prevenv)
 end
 
 ---Switch to environment.
@@ -66,10 +57,7 @@ local function _env_use(envname)
         return core.die(1, "no such env name", envname)
     end
     env.setcurr(envname)
-
-    taskid.init(core.struct.ids.path)
-    local curr_id = taskid.getcurr(envname) or ""
-    shell.setcurr(utils.genname(envname, curr_id))
+    taskid.updcurr(envname)
 end
 
 --- Define or display task environments.

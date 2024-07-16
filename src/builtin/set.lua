@@ -6,8 +6,6 @@ local taskunit = require("core.taskunit")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
 local config = require("aux.config")
-local shell = require("core.shell")
-local utils = require("aux.utils")
 
 local envname
 local uconfig
@@ -79,9 +77,8 @@ local function _set_id(id, newid)
     end
 
     -- cache current task id
-    local curr = taskid.getcurr(envname)
-    shell.setcurr(utils.genname(envname, curr or ""))
-
+    taskid.init(core.struct.ids.path)
+    taskid.updcurr(envname)
     return true
 end
 

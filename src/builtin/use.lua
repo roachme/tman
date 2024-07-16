@@ -1,8 +1,6 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
 local core = require("core.core")
-local shell = require("core.shell")
-local utils = require("aux.utils")
 
 --- Switch to task.
 local function tman_use()
@@ -32,7 +30,6 @@ local function tman_use()
     end
 
     taskid.setcurr(envname, id)
-    shell.setcurr(utils.genname(envname, id))
     return 0
 end
 

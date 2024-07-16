@@ -21,6 +21,20 @@ taskid.status = {
     COMP = 3,
 }
 
+---Set current environment and task id.
+---@param val string
+---@retrun boolean
+local function shell_setcurr(val)
+    local fname = "/home/roach/test/.tman/curr"
+    local f = io.open(fname, "w")
+
+    if not f then
+        return false
+    end
+    f:write(val, "\n")
+    return f:close() == true
+end
+
 ---Check task id exists in specified environment.
 ---@param envname string
 ---@param id string
@@ -61,6 +75,8 @@ end
 function taskid.unsetcurr(envname)
     local curr = taskid.getcurr(envname)
 
+    shell_setcurr("")
+
     if not curr then
         return false
     end
@@ -82,6 +98,9 @@ function taskid.setcurr(envname, id)
     if not ids.exist(envname, id) then
         return false
     end
+
+    shell_setcurr(envname .. "/" .. id)
+
     -- sentinel guard: don't mark the same id as current
     if id == curr then
         return true
@@ -97,7 +116,19 @@ function taskid.setcurr(envname, id)
     end
     ids.set(envname, id, taskid.status.CURR)
     ids.save()
+
     return true
+end
+
+---Update current task id.
+---@param envname string
+function taskid.updcurr(envname)
+    local curr = taskid.getcurr(envname)
+
+    if curr then
+        return shell_setcurr(envname .. "/" .. curr)
+    end
+    return shell_setcurr("")
 end
 
 ---Swap current and previous task ids.

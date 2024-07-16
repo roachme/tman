@@ -5,7 +5,6 @@ local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
-local shell = require("core.shell")
 local utils = require("aux.utils")
 
 --- Add a new task.
@@ -81,9 +80,6 @@ local function builtin_add()
         core.die(id, "plugin git failed", id)
     ]]
     end
-
-    -- cache current task id
-    shell.setcurr(utils.genname(envname, id))
     return 0
 end
 
