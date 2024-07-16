@@ -53,7 +53,6 @@ function struct.create(envname, id)
     local notedir = core.struct.tasks.path .. dirname .. "/notes/"
     local repodir = core.struct.tasks.path .. dirname .. "/repos/"
 
-    utils.mkdir(dirname)
     utils.mkdir(notedir)
     utils.mkdir(taskdir)
     utils.mkdir(repodir)
