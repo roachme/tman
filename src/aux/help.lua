@@ -71,9 +71,9 @@ Options:
 ]],
     },
     {
-        name = "config",
+        name = "cfg",
         desc = [[
-Usage: tman config OPTION
+Usage: tman cfg OPTION
 Work with config files.
 
 Options:
