@@ -10,10 +10,7 @@ local help = require("aux.help")
 
 ---Tman interface.
 local function main()
-    local cmd = arg[1] or "help"
-
-    -- POSIX getopt() does not let permutations as GNU version.
-    table.remove(arg, 1)
+    local cmd = table.remove(arg, 1) or "help"
 
     -- Call a command.
     for _, builtin in pairs(builtins) do
