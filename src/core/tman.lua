@@ -4,7 +4,7 @@
 _G.progname = "tman"
 _G.version = "v0.1.15"
 
-local setup = require("core.setup")
+local core = require("core.core")
 local builtins = require("core.builtin")
 local help = require("aux.help")
 
@@ -15,13 +15,7 @@ local function main()
     -- Call a command.
     for _, builtin in pairs(builtins) do
         if cmd == builtin.name then
-            if builtin.setup_level == 1 then
-                setup.basic()
-            elseif builtin.setup_level == 2 then
-                setup.strict()
-            elseif builtin.setup_level == 3 then
-                setup.full()
-            end
+            core.setup(builtin.setup_level)
             return builtin.command()
         end
     end
