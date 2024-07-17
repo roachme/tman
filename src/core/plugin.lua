@@ -23,7 +23,6 @@ function plugin.init(envname, id)
     local git_repobase = core.struct.code.path
     local git_linkbase = core.struct.tasks.path .. envname .. "/" .. id .. "/"
 
-
     -- make sure plugin stuff don't conflict with each other.
     -- roachme: put a meaningful messeage here
     -- PART1: struct vs git

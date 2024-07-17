@@ -80,6 +80,15 @@ end
 ---@param branch string
 ---@return boolean
 function git.update_remote(branch)
+    -- download repos if they don't exist.
+    for _, repo in pairs(repos) do
+        print("---")
+        if not gitlib.repo_clone(repo.link, repo.name, repobase) then
+            io.stderr:write(("could not download repo '%s'\n"):format(repo.name))
+            return false
+        end
+    end
+
     -- make sure task has symlinks to repos.
     for _, repo in pairs(repos) do
         local target = repobase .. "/" .. repo.name
@@ -101,8 +110,10 @@ function git.update_remote(branch)
             io.stderr:write(("repo %s: could not switch to default branch\n"):format(repo.name))
             return false
         elseif not gitlib.branch_exist(repo.name, branch, repobase) then
-            io.stderr:write(("repo %s: task branch does not exist\n"):format(repo.name))
-            return false
+            if not gitlib.branch_create(repo.name, branch, repobase) then
+                io.stderr:write(("repo %s: could not create task branch\n"):format(repo.name))
+                return false
+            end
         end
     end
 

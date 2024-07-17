@@ -44,7 +44,8 @@ function struct.create(envname, id)
     return true
 end
 
----Delete task filesystem structure.
+---Delete directories and/ or files defined in config.
+--- roachme: change function logic according to description.
 ---@param envname string
 ---@param id string
 ---@return boolean
