@@ -16,6 +16,19 @@ Status: Active development
 # More descriptive help message
 
 
+## Inner structure
+Tman consist of four parts: core, aux, builtin and plugin.
+
+
+# Plugin
+Tman has three plugins (for right now)
+1. `struct` - Create files and directory for each task (using templete defined
+              in configuration file `user.json`)
+2. `git`    - Add support to work with git repositories. Create symlinks for
+              each task, task branches, support to pull from remote git server,
+              rebase (update) task branch against default branch.
+3. `make`   - Run make commands defined in Makefile, like tests, build.
+
 
 Config repo:
 File `repos` contain list of repos that might be possibly used at work. The file
