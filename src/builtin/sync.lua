@@ -10,8 +10,10 @@ local plugin = require("plugin")
 -- TODO: if wd util not supported then add its features here. Optioon `-w'.
 local function tman_sync()
     local id
-    local optstr = "gst"
-    local fstruct, fgit, ftask
+    local optstr = "Ggst"
+    local fstruct
+    local fgit_local, fgit_remote
+    local ftask
     local last_index = 1
     local envname = env.getcurr()
 
@@ -21,8 +23,10 @@ local function tman_sync()
         end
 
         last_index = optind
-        if optopt == "g" then
-            fgit = true
+        if optopt == "G" then
+            fgit_remote = true
+        elseif optopt == "g" then
+            fgit_local = true
         elseif optopt == "s" then
             fstruct = true
         elseif optopt == "t" then
@@ -49,8 +53,14 @@ local function tman_sync()
     end
 
     local branch = taskunit.get(envname, id, "branch")
-    if fgit then
-        plugin.git.update(branch)
+    if fgit_remote then
+        if not plugin.git.update_remote(branch) then
+            core.die(1, "plugin git problem", "git")
+        end
+    elseif fgit_local then
+        if not plugin.git.update_local(branch) then
+            core.die(1, "plugin git problem", "git")
+        end
     elseif fstruct then
         plugin.struct.create(envname, id)
     end

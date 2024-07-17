@@ -79,22 +79,53 @@ end
 ---Update repos from remove git server.
 ---@param branch string
 ---@return boolean
-function git.update(branch)
+function git.update_remote(branch)
     -- general check
     for _, repo in pairs(repos) do
         if gitlib.repo_isuncommited(repo.name, repobase) then
+            io.stderr:write(("repo %s: has uncommited changes\n"):format(repo.name))
             return false
         elseif not gitlib.branch_switch(repo.name, repo.branch, repobase) then
+            io.stderr:write(("repo %s: could not switch to default branch\n"):format(repo.name))
             return false
-        --[[
         elseif not gitlib.branch_exist(repo.name, branch, repobase) then
+            io.stderr:write(("repo %s: task branch does not exist\n"):format(repo.name))
             return false
-        ]]
         end
     end
 
     for _, repo in pairs(repos) do
         gitlib.branch_pullall(repo.name, repobase)
+        gitlib.branch_switch(repo.name, branch, repobase)
+        if not gitlib.branch_rebase(repo.name, repo.branch, repobase) then
+            io.stderr:write(("repo %s: could not automatically rebase against default branch\n"):format(repo.name))
+            return false
+        end
+    end
+    return true
+end
+
+---Update repos from remove git server.
+---@param branch string
+---@return boolean
+function git.update_local(branch)
+    -- general check
+    for _, repo in pairs(repos) do
+        if gitlib.repo_isuncommited(repo.name, repobase) then
+            io.stderr:write(("repo %s: has uncommited changes\n"):format(repo.name))
+            return false
+        elseif not gitlib.branch_switch(repo.name, branch, repobase) then
+            io.stderr:write(("repo %s: could not switch to task branch\n"):format(repo.name))
+            return false
+        end
+    end
+
+    for _, repo in pairs(repos) do
+        gitlib.branch_switch(repo.name, branch, repobase)
+        if not gitlib.branch_rebase(repo.name, repo.branch, repobase) then
+            io.stderr:write(("repo %s: could not automatically rebase against default branch\n"):format(repo.name))
+            return false
+        end
     end
     return true
 end
