@@ -68,6 +68,11 @@ local function builtin_add()
         core.die(1, "could not create new task unit", id)
     end
 
+    -- create task dir
+    if not utils.mkdir(core.struct.tasks.path .. envname .. "/" .. id) then
+        return core.die(1, "could not create task dir", "taskdir")
+    end
+
     -- plugins
     if not plugin.init(envname, id) then
         taskid.del(envname, id)

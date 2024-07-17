@@ -1,8 +1,9 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
-local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
+local utils = require("aux.utils")
+local plugin = require("plugin")
 
 --- Delete task.
 local function tman_del()
@@ -36,9 +37,17 @@ local function tman_del()
     taskid.del(envname, id)
     taskunit.del(envname, id)
 
-    -- if you delete current task, and are in current directory.
-    -- delete task dir at the end, cuz it causes error for tman.sh
-    struct.delete(envname, id)
+    if not plugin.init(envname, id) then
+        taskid.del(envname, id)
+        taskunit.del(envname, id)
+        return core.die(1, "could not init plugin", "plugin")
+    end
+
+    local branch = taskunit.get(envname, id, "branch")
+    plugin.git.delete(branch)
+
+    -- delete task directory
+    utils.rm(core.struct.tasks.path .. "/" .. envname .. "/" .. id)
     return 0
 end
 

@@ -18,6 +18,11 @@ local function _env_add(envname)
     env.add(envname, utils.get_input("description"))
     taskid.updcurr(envname)
 
+    -- create env directory
+    if not utils.mkdir(core.struct.tasks.path .. "/" .. envname) then
+        return core.die(1, "could not create environment directory", "envdir")
+    end
+
 
     -- roachme: no task id for now. might cause problems in function below.
     if not plugin.init(envname, "") then
