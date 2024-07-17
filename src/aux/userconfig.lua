@@ -64,16 +64,16 @@ local function config_load()
         config[envname].struct.files = config[envname].struct.files or {}
 
         -- plugin: git
-        config[envname].git = default_plugin_git
-        config[envname].git.repos = config[envname].repos
+        config[envname].git = config[envname].git or default_plugin_git
+        config[envname].git.repos = config[envname].git.repos
             or default_plugin_git.repos
-        config[envname].git.branchpatt = config[envname].branchpatt
+        config[envname].git.branchpatt = config[envname].git.branchpatt
             or default_plugin_git.branchpatt
-        config[envname].git.commitpatt = config[envname].commitpatt
+        config[envname].git.commitpatt = config[envname].git.commitpatt
             or default_plugin_git.commitpatt
 
         -- plugin: make
-        config[envname].make = default_plugin_make
+        config[envname].make = config[envname].make or default_plugin_make
         config[envname].make.commands = default_plugin_make.commands
     end
 end
