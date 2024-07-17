@@ -38,6 +38,8 @@ function git.create(branch)
 end
 
 ---Delete task branches.
+---@param branch string
+---@return boolean
 function git.delete(branch)
     for _, repo in pairs(repos) do
         gitlib.branch_delete(repo.name, branch, repobase)
@@ -67,7 +69,34 @@ function git.switch(branch)
 end
 
 ---Rename task branches.
-function git.rename()
+---@param oldbranch string
+---@param newbranch string
+---@return boolean
+function git.rename(oldbranch, newbranch)
+    return true
+end
+
+---Update repos from remove git server.
+---@param branch string
+---@return boolean
+function git.update(branch)
+    -- general check
+    for _, repo in pairs(repos) do
+        if gitlib.repo_isuncommited(repo.name, repobase) then
+            return false
+        elseif not gitlib.branch_switch(repo.name, repo.branch, repobase) then
+            return false
+        --[[
+        elseif not gitlib.branch_exist(repo.name, branch, repobase) then
+            return false
+        ]]
+        end
+    end
+
+    for _, repo in pairs(repos) do
+        gitlib.branch_pullall(repo.name, repobase)
+    end
+    return true
 end
 
 ---Clone repos.

@@ -6,10 +6,7 @@ local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 local utils = require("aux.utils")
 
-local plugin = require("core.plugin")
-local struct = require("plugin.struct")
-local make = require("plugin.make")
-local git = require("plugin.git")
+local plugin = require("plugin")
 
 --- Add a new task.
 -- Fill the rest with default values.
