@@ -25,6 +25,10 @@ local function create_files(base)
     end
 end
 
+---Init plugin struct.
+function struct.init()
+end
+
 ---Create task filesystem structure.
 ---@param envname string
 ---@param id string

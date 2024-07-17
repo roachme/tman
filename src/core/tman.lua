@@ -2,7 +2,7 @@
 -- @module tman
 
 _G.progname = "tman"
-_G.version = "v0.1.15"
+_G.version = "0.1.15"
 
 local core = require("core.core")
 local builtins = require("core.builtin")

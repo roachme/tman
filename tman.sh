@@ -132,7 +132,6 @@ function _tman_form_full_command()
     stat="$stat .. ';${TMAN_INSTALL}/src/?.lua;'"
     stat="$stat .. ';${TMAN_INSTALL}/src/aux/?.lua;'"
     stat="$stat .. ';${TMAN_INSTALL}/src/core/?.lua;'"
-    stat="$stat .. ';${TMAN_INSTALL}/src/struct/?.lua;'"
     stat="$stat .. ';${TMAN_INSTALL}/src/plugin/?.lua;'"
     stat="$stat .. ';${TMAN_INSTALL}/src/builtin/?.lua;'"
 
