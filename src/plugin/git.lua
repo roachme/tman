@@ -80,6 +80,18 @@ end
 ---@param branch string
 ---@return boolean
 function git.update_remote(branch)
+    -- make sure task has symlinks to repos.
+    for _, repo in pairs(repos) do
+        local target = repobase .. "/" .. repo.name
+        local linkname = linkbase .. "/" .. dirbase .. "/" .. repo.name
+        if not utils.access(linkname) then
+            if not utils.link(target, linkname, true) then
+                io.stderr:write(("repo %s: could not create symlink\n"):format(repo.name))
+                return false
+            end
+        end
+    end
+
     -- general check
     for _, repo in pairs(repos) do
         if gitlib.repo_isuncommited(repo.name, repobase) then
@@ -109,6 +121,18 @@ end
 ---@param branch string
 ---@return boolean
 function git.update_local(branch)
+    -- make sure task has symlinks to repos.
+    for _, repo in pairs(repos) do
+        local target = repobase .. "/" .. repo.name
+        local linkname = linkbase .. "/" .. dirbase .. "/" .. repo.name
+        if not utils.access(linkname) then
+            if not utils.link(target, linkname, true) then
+                io.stderr:write(("repo %s: could not create symlink\n"):format(repo.name))
+                return false
+            end
+        end
+    end
+
     -- general check
     for _, repo in pairs(repos) do
         if gitlib.repo_isuncommited(repo.name, repobase) then
