@@ -1,6 +1,8 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
+local taskunit = require("core.taskunit")
 local core = require("core.core")
+local plugin = require("core.plugin")
 
 --- Switch to task.
 local function tman_use()
@@ -30,6 +32,13 @@ local function tman_use()
     end
 
     taskid.setcurr(envname, id)
+
+    if not plugin.init(envname, id) then
+        return core.die(1, "could not init plugin", "plugin")
+    end
+
+    local branch = taskunit.get(envname, id, "branch")
+    plugin.git.switch(branch)
     return 0
 end
 
