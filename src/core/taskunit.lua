@@ -35,8 +35,9 @@ end
 local function format_branch(envname)
     local separators = "/_-"
     local uconfig = config.uget(envname)
-    local sepcomponents = pattsplit(uconfig.branchpatt, separators)
-    local branch = uconfig.branchpatt
+
+    local sepcomponents = pattsplit(uconfig.git.branchpatt, separators)
+    local branch = uconfig.git.branchpatt
 
     for _, item in pairs(sepcomponents) do
         local uitem = unit.get(string.lower(item))
