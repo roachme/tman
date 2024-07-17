@@ -2,6 +2,7 @@ local env = require("core.env")
 local core = require("core.core")
 local taskid = require("core.taskid")
 local utils = require("aux.utils")
+local plugin = require("plugin")
 
 env.init(core.struct.envs.path)
 taskid.init(core.struct.ids.path)
@@ -16,6 +17,17 @@ local function _env_add(envname)
     end
     env.add(envname, utils.get_input("description"))
     taskid.updcurr(envname)
+
+
+    -- roachme: no task id for now. might cause problems in function below.
+    plugin.init(envname, "")
+    -- plugin: struct
+    -- create env directory
+    -- code goes here..
+
+    -- plugin: git
+    -- download repos
+    plugin.git.clone()
     return 0
 end
 

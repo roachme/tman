@@ -70,4 +70,16 @@ end
 function git.rename()
 end
 
+---Clone repos.
+function git.clone()
+    for _, repo in pairs(repos) do
+        if not utils.access(repobase .. "/" .. repo.name) then
+            if not gitlib.repo_clone(repo.link, repo.name, repobase) then
+                return false
+            end
+        end
+    end
+    return true
+end
+
 return git

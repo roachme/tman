@@ -29,13 +29,13 @@ function plugin.init(envname, id)
     -- PART1: struct vs git
     for _, dir in pairs(struct_dirs) do
         if git_dirbase ~= "." and dir == git_dirbase then
-            core.die(1, "plugins struct and git conflict", "plugin")
+            io.stderr:write("plugins struct and git conflict: same file\n")
             return false
         end
     end
     for _, file in pairs(struct_files) do
         if git_dirbase ~= "." and file == git_dirbase then
-            core.die(1, "plugins struct and git conflict", "plugin")
+            io.stderr:write("plugins struct and git conflict: same dir\n")
             return false
         end
     end
