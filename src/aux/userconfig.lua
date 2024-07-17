@@ -50,7 +50,7 @@ local function read_file(fname)
     return res ~= "" and res or "{}"
 end
 
-local fconf = find_config_file("user.json")
+local fconf = find_config_file("user2.json")
 local config = json.decode(read_file(fconf))
 
 local function config_load()

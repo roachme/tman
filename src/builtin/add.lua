@@ -1,11 +1,15 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
-local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 local utils = require("aux.utils")
+
+local plugin = require("core.plugin")
+local struct = require("plugin.struct")
+local make = require("plugin.make")
+local git = require("plugin.git")
 
 --- Add a new task.
 -- Fill the rest with default values.
@@ -68,18 +72,17 @@ local function builtin_add()
     end
 
     -- plugins
-    if not struct.create(envname, id) then
+    if not plugin.init(envname, id) then
         taskid.del(envname, id)
         taskunit.del(envname, id)
-        core.die(id, "could not create new task structure", id)
-        --[[
-    elseif not git.init() then
-        taskid.del(envname, id)
-        taskunit.del(envname, id)
-        struct.delete(envname, id)
-        core.die(id, "plugin git failed", id)
-    ]]
+        return core.die(1, "could not init plugin", "plugin")
     end
+
+    local branch = taskunit.get(envname, id, "branch")
+    -- roachme: shouldn't pass envname, cuz plugin sets it
+    plugin.struct.create(envname, id)
+    plugin.git.create(branch)
+    plugin.make.create()
     return 0
 end
 
