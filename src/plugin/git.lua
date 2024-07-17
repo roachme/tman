@@ -1,6 +1,4 @@
-local core = require("core.core")
 local gitlib = require("aux.gitlib")
-local config = require("aux.config")
 local utils = require("aux.utils")
 
 local git = {}
@@ -43,6 +41,27 @@ end
 function git.delete(branch)
     for _, repo in pairs(repos) do
         gitlib.branch_delete(repo.name, branch, repobase)
+    end
+    return true
+end
+
+---Switch to task branch.
+--Create a branch if does not exists.
+---@param branch string
+---@return boolean
+function git.switch(branch)
+    for _, repo in pairs(repos) do
+        if gitlib.repo_isuncommited(repo.name, repobase) then
+            return false
+        elseif not gitlib.branch_exist(repo.name, branch, repobase) then
+            if not gitlib.branch_create(repo.name, branch, repobase) then
+                return false
+            end
+        end
+    end
+
+    for _, repo in pairs(repos) do
+        gitlib.branch_switch(repo.name, branch, repobase)
     end
     return true
 end

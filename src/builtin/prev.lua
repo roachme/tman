@@ -1,8 +1,10 @@
 local env = require("core.env")
 local taskid = require("core.taskid")
+local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
+local plugin = require("core.plugin")
 
 --- Switch to previous task.
 local function tman_prev()
@@ -41,6 +43,13 @@ local function tman_prev()
     end
 
     taskid.swap(envname)
+
+    if not plugin.init(envname, prev) then
+        return core.die(1, "could not init plugin", "plugin")
+    end
+
+    local branch = taskunit.get(envname, prev, "branch")
+    plugin.git.switch(branch)
     return 0
 end
 

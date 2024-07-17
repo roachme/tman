@@ -55,4 +55,10 @@ function plugin.init(envname, id)
     return true
 end
 
+---Check that plugins are ok and don't conflict with each other.
+---@return boolean
+function plugin:check()
+    return true
+end
+
 return plugin
