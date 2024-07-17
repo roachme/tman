@@ -3,7 +3,6 @@ local taskid = require("core.taskid")
 local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
-local utils = require("aux.utils")
 
 --- Delete task.
 local function tman_del()
