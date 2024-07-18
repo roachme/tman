@@ -48,21 +48,21 @@ local function tman_sync()
     end
 
 
-    if not plugin.init(envname, id) then
+    if not plugin.init(envname) then
         return core.die(1, "could not init plugins", "plugin")
     end
 
     local branch = taskunit.get(envname, id, "branch")
     if fgit_remote then
-        if not plugin.git.update_remote(branch) then
+        if not plugin.git.update_remote(id, branch) then
             core.die(1, "plugin git problem", "git")
         end
     elseif fgit_local then
-        if not plugin.git.update_local(branch) then
+        if not plugin.git.update_local(id, branch) then
             core.die(1, "plugin git problem", "git")
         end
     elseif fstruct then
-        plugin.struct.create(envname, id)
+        plugin.struct.create(id)
     end
     if ftask then
         print("sync: task status: under development")

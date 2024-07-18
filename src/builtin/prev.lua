@@ -44,12 +44,12 @@ local function tman_prev()
 
     taskid.swap(envname)
 
-    if not plugin.init(envname, prev) then
+    if not plugin.init(envname) then
         return core.die(1, "could not init plugin", "plugin")
     end
 
     local branch = taskunit.get(envname, prev, "branch")
-    plugin.git.switch(branch)
+    plugin.git.switch(prev, branch)
     return 0
 end
 

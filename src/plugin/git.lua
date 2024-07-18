@@ -18,13 +18,22 @@ function git.init(_repos, _repobase, _linkbase, _dirbase)
 end
 
 ---Download repos and create symlinks.
+---@param id string
 ---@param branch string
 ---@return boolean
-function git.create(branch)
+function git.create(id, branch)
+    -- prepare git
+    if dirbase ~= "." and id then
+        local dirbase_path = linkbase .. "/" .. id .. "/" .. dirbase
+        if not utils.mkdir(dirbase_path) then
+            return false
+        end
+    end
+
     -- create symlinks to repos
     for _, repo in pairs(repos) do
         local target = repobase .. "/" .. repo.name
-        local linkname = linkbase .. "/" .. dirbase .. "/" .. repo.name
+        local linkname = linkbase .. "/" .. id .. "/" .. dirbase .. "/" .. repo.name
         utils.link(target, linkname, true)
     end
 
@@ -38,9 +47,10 @@ function git.create(branch)
 end
 
 ---Delete task branches.
+---@param id string
 ---@param branch string
 ---@return boolean
-function git.delete(branch)
+function git.delete(id, branch)
     for _, repo in pairs(repos) do
         gitlib.branch_delete(repo.name, branch, repobase)
     end
@@ -49,9 +59,10 @@ end
 
 ---Switch to task branch.
 --Create a branch if does not exists.
+---@param id string
 ---@param branch string
 ---@return boolean
-function git.switch(branch)
+function git.switch(id, branch)
     for _, repo in pairs(repos) do
         if gitlib.repo_isuncommited(repo.name, repobase) then
             return false
@@ -69,20 +80,21 @@ function git.switch(branch)
 end
 
 ---Rename task branches.
+---@param id string
 ---@param oldbranch string
 ---@param newbranch string
 ---@return boolean
-function git.rename(oldbranch, newbranch)
+function git.rename(id, oldbranch, newbranch)
     return true
 end
 
 ---Update repos from remove git server.
+---@param id string
 ---@param branch string
 ---@return boolean
-function git.update_remote(branch)
+function git.update_remote(id, branch)
     -- download repos if they don't exist.
     for _, repo in pairs(repos) do
-        print("---")
         if not gitlib.repo_clone(repo.link, repo.name, repobase) then
             io.stderr:write(("could not download repo '%s'\n"):format(repo.name))
             return false
@@ -92,7 +104,7 @@ function git.update_remote(branch)
     -- make sure task has symlinks to repos.
     for _, repo in pairs(repos) do
         local target = repobase .. "/" .. repo.name
-        local linkname = linkbase .. "/" .. dirbase .. "/" .. repo.name
+        local linkname = linkbase .. "/" .. id .. "/" .. dirbase .. "/" .. repo.name
         if not utils.access(linkname) then
             if not utils.link(target, linkname, true) then
                 io.stderr:write(("repo %s: could not create symlink\n"):format(repo.name))
@@ -129,13 +141,14 @@ function git.update_remote(branch)
 end
 
 ---Update repos from remove git server.
+---@param id string
 ---@param branch string
 ---@return boolean
-function git.update_local(branch)
+function git.update_local(id, branch)
     -- make sure task has symlinks to repos.
     for _, repo in pairs(repos) do
         local target = repobase .. "/" .. repo.name
-        local linkname = linkbase .. "/" .. dirbase .. "/" .. repo.name
+        local linkname = linkbase .. "/" .. id .. "/" .. dirbase .. "/" .. repo.name
         if not utils.access(linkname) then
             if not utils.link(target, linkname, true) then
                 io.stderr:write(("repo %s: could not create symlink\n"):format(repo.name))

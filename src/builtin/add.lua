@@ -83,7 +83,7 @@ local function builtin_add()
     local branch = taskunit.get(envname, id, "branch")
     -- roachme: shouldn't pass envname, cuz plugin sets it
     plugin.struct.create(id)
-    plugin.git.create(branch)
+    plugin.git.create(id, branch)
     plugin.make.create()
     return 0
 end

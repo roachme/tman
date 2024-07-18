@@ -35,14 +35,14 @@ local function tman_del()
     end
 
 
-    if not plugin.init(envname, id) then
+    if not plugin.init(envname) then
         taskid.del(envname, id)
         taskunit.del(envname, id)
         return core.die(1, "could not init plugin", "plugin")
     end
 
     local branch = taskunit.get(envname, id, "branch")
-    plugin.git.delete(branch)
+    plugin.git.delete(id, branch)
 
     -- delete task from database.
     taskid.del(envname, id)

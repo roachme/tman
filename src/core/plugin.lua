@@ -11,9 +11,8 @@ local plugin = {
     make = require("plugin.make"),
 }
 
-function plugin.init(envname, id)
+function plugin.init(envname)
     -- git: make sure all repos are downloded
-
 
     local struct_taskbase = core.struct.tasks.path .. envname
     local struct_dirs = config.user.get(envname).struct.dirs
@@ -22,7 +21,7 @@ function plugin.init(envname, id)
     local git_dirbase = config.user.get(envname).git.dirbase or "."
     local git_repos = config.user.get(envname).git.repos
     local git_repobase = core.struct.code.path
-    local git_linkbase = core.struct.tasks.path .. envname .. "/" .. id .. "/"
+    local git_linkbase = core.struct.tasks.path .. envname
 
     -- make sure plugin stuff don't conflict with each other.
     -- roachme: put a meaningful messeage here
@@ -36,15 +35,6 @@ function plugin.init(envname, id)
     for _, file in pairs(struct_files) do
         if git_dirbase ~= "." and file == git_dirbase then
             io.stderr:write("plugins struct and git conflict: same dir\n")
-            return false
-        end
-    end
-
-
-    -- prepare git
-    if git_dirbase ~= "." and id then
-        local dirbase = core.struct.tasks.path .. envname .. "/" .. id .. "/" .. git_dirbase
-        if not utils.mkdir(dirbase) then
             return false
         end
     end
