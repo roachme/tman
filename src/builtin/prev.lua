@@ -4,7 +4,7 @@ local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
-local plugin = require("plugin")
+local plugin = require("core.plugin")
 
 --- Switch to previous task.
 local function tman_prev()

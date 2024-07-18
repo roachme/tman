@@ -2,7 +2,7 @@ local env = require("core.env")
 local core = require("core.core")
 local taskid = require("core.taskid")
 local utils = require("aux.utils")
-local plugin = require("plugin")
+local plugin = require("core.plugin")
 
 env.init(core.struct.envs.path)
 taskid.init(core.struct.ids.path)

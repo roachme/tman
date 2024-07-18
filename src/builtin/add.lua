@@ -6,7 +6,14 @@ local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 local utils = require("aux.utils")
 
-local plugin = require("plugin")
+local plugin = require("core.plugin")
+
+
+
+--[[
+id - TASKID or current task id
+env - TASKENV or current task env
+]]
 
 --- Add a new task.
 -- Fill the rest with default values.

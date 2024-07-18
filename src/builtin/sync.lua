@@ -3,7 +3,7 @@ local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
-local plugin = require("plugin")
+local plugin = require("core.plugin")
 
 --- Synchronize task dir: structure, task status, remote repo.
 -- With no options jump to task dir.

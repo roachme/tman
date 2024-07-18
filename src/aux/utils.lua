@@ -108,4 +108,21 @@ function utils.get_input(prompt)
     return res
 end
 
+---Return table size
+---@param tab table
+---@return number
+function table.size(tab)
+    local size = 0
+
+    if type(tab) ~= "table" then
+        return size
+    end
+
+    for _, _ in pairs(tab) do
+        size = size + 1
+    end
+
+    return size
+end
+
 return utils

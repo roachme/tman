@@ -2,31 +2,6 @@ local utils = require("aux.utils")
 
 local git = {}
 
-local function generate_commit_msg(id, commitpatt)
-    local commitmsg = commitpatt
-    local parts = { "ID", "PART", "MSG" }
-    local act = {id, "MYPART", "hello there"}
-
-    for i = 1, 3 do
-        commitmsg = string.gsub(commitmsg, parts[i], act[i])
-    end
-    print("commitmsg", commitmsg)
-end
-
----Create commit.
----@param reponame string
----@param commitpatt string
----@param id string
----@param path string | nil
-function git.commit_create(reponame, commitpatt, id, path)
-    path = path or "."
-    local fmt = "git -C %s/%s add ."
-    local cmd = string.format(fmt, path, reponame)
-    print("commitpatt", commitpatt)
-    generate_commit_msg(id, commitpatt)
-    return utils.exec(cmd)
-end
-
 --[[
 ---Squash task commits.
 ---@param reponame string
@@ -246,6 +221,40 @@ function git.repo_isuncommited(reponame, path)
         return false
     end
     return true
+end
+
+local function generate_commit_msg(id, commitpatt)
+    local commitmsg = commitpatt
+    local parts = { "ID", "PART", "MSG" }
+    local act = { id, "MYPART", "hello there" }
+
+    for i = 1, 3 do
+        commitmsg = string.gsub(commitmsg, parts[i], act[i])
+    end
+    print("commitmsg", commitmsg)
+    return commitmsg
+end
+
+---Create commit.
+---@param reponame string
+---@param commitpatt string
+---@param id string
+---@param desc string
+---@param path string | nil
+function git.commit_create(reponame, commitpatt, id, desc, path)
+    path = path or "."
+    local fmt = "git -C %s/%s add ."
+    local cmd = string.format(fmt, path, reponame)
+    utils.exec(cmd)
+
+    local commitmsg = generate_commit_msg(id, commitpatt)
+    fmt = "git -C %s/%s commit -m '%s'"
+    cmd = string.format(fmt, path, reponame, commitmsg)
+
+    print("cmd", cmd)
+    print("commitpatt", commitpatt)
+    print("commitmsg", commitmsg)
+    --return utils.exec(cmd)
 end
 
 return git
