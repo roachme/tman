@@ -15,6 +15,7 @@ function plugin.init(envname, id)
     -- git: make sure all repos are downloded
 
 
+    local struct_taskbase = core.struct.tasks.path .. envname
     local struct_dirs = config.user.get(envname).struct.dirs
     local struct_files = config.user.get(envname).struct.files
 
@@ -41,14 +42,14 @@ function plugin.init(envname, id)
 
 
     -- prepare git
-    if git_dirbase ~= "." then
+    if git_dirbase ~= "." and id then
         local dirbase = core.struct.tasks.path .. envname .. "/" .. id .. "/" .. git_dirbase
         if not utils.mkdir(dirbase) then
             return false
         end
     end
 
-    plugin.struct.init()
+    plugin.struct.init(struct_taskbase, struct_dirs, struct_files)
     plugin.git.init(git_repos, git_repobase, git_linkbase, git_dirbase)
     plugin.make.init()
     return true

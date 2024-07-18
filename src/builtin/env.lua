@@ -25,7 +25,7 @@ local function _env_add(envname)
 
 
     -- roachme: no task id for now. might cause problems in function below.
-    if not plugin.init(envname, "") then
+    if not plugin.init(envname, nil) then
         return core.die(1, "could not init plugins", "plugin")
     end
 

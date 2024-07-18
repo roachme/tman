@@ -3,16 +3,14 @@
 -- @module struct
 
 local utils = require("aux.utils")
-local config = require("aux.config")
-local core = require("core.core")
 
 local struct = {}
-local uconfig
+local struct_taskbase, struct_dirs, struct_files
 
 ---Create dirs.
 ---@param base string
 local function create_dirs(base)
-    for _, dir in pairs(uconfig.struct.dirs) do
+    for _, dir in pairs(struct_dirs) do
         utils.mkdir(base .. "/" .. dir)
     end
 end
@@ -20,49 +18,46 @@ end
 ---Create files.
 ---@param base string
 local function create_files(base)
-    for _, file in pairs(uconfig.struct.files) do
+    for _, file in pairs(struct_files) do
         utils.touch(base .. "/" .. file)
     end
 end
 
 ---Init plugin struct.
-function struct.init()
-end
-
----Create task filesystem structure.
----@param envname string
----@param id string
+---@param taskbase string
+---@param dirs table
+---@param files table
 ---@return boolean
-function struct.create(envname, id)
-    uconfig = config.uget(envname)
-    local dirname = utils.genname(envname, id)
-    local taskdir = core.struct.tasks.path .. dirname
-
-    utils.mkdir(taskdir)
-    create_dirs(taskdir)
-    create_files(taskdir)
+function struct.init(taskbase, dirs, files)
+    struct_taskbase = taskbase
+    struct_dirs = dirs
+    struct_files = files
     return true
 end
 
----Delete directories and/ or files defined in config.
---- roachme: change function logic according to description.
----@param envname string
+---Create task filesystem structure.
 ---@param id string
 ---@return boolean
-function struct.delete(envname, id)
-    local dirname = utils.genname(envname, id)
-    local taskdir = core.struct.tasks.path .. "/" .. dirname
-    return utils.rm(taskdir)
+function struct.create(id)
+    create_dirs(struct_taskbase .. "/" .. id)
+    create_files(struct_taskbase .. "/" .. id)
+    return true
+end
+
+---Delete directories and files defined in config.
+---@param id string
+---@return boolean
+function struct.delete(id)
+    return utils.rm(struct_taskbase .. "/" .. id)
 end
 
 ---Rename task dir.
----@param envname string
 ---@param oldid string
 ---@param newid string
 ---@return boolean
-function struct.rename(envname, oldid, newid)
-    local old_dir = core.struct.units.path .. utils.genname(envname, oldid)
-    local new_dir = core.struct.units.path .. utils.genname(envname, newid)
+function struct.rename(oldid, newid)
+    local old_dir = struct_taskbase .. "/" .. oldid
+    local new_dir = struct_taskbase .. "/" .. newid
     return utils.rename(old_dir, new_dir) == 0
 end
 
