@@ -34,8 +34,6 @@ local function tman_del()
         os.exit(1)
     end
 
-    taskid.del(envname, id)
-    taskunit.del(envname, id)
 
     if not plugin.init(envname, id) then
         taskid.del(envname, id)
@@ -45,6 +43,10 @@ local function tman_del()
 
     local branch = taskunit.get(envname, id, "branch")
     plugin.git.delete(branch)
+
+    -- delete task from database.
+    taskid.del(envname, id)
+    taskunit.del(envname, id)
 
     -- delete task directory
     utils.rm(core.struct.tasks.path .. "/" .. envname .. "/" .. id)
