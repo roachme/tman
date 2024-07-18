@@ -2,17 +2,13 @@ local env = require("core.env")
 local core = require("core.core")
 local taskid = require("core.taskid")
 local utils = require("aux.utils")
-local plugin = require("core.plugin")
-
-env.init(core.struct.envs.path)
-taskid.init(core.struct.ids.path)
 
 ---Add new environment.
 ---@param envname string
 local function _env_add(envname)
     if not envname then
         return core.die(1, "env name is required", "no envname")
-    elseif env.exists(envname) then
+    elseif env.exist(envname) then
         return core.die(1, "env name already exists", envname)
     end
     env.add(envname, utils.get_input("description"))
@@ -21,22 +17,16 @@ local function _env_add(envname)
     -- create env directory
     if not utils.mkdir(core.struct.tasks.path .. "/" .. envname) then
         return core.die(1, "could not create environment directory", "envdir")
+    elseif not utils.mkdir(core.struct.units.path .. "/" .. envname) then
+        return core.die(
+            1,
+            "could not create environment directory in units",
+            "envdir"
+        )
+    elseif not utils.mkdir(core.struct.plugin.path .. "/" .. envname) then
+        return core.die(1, "could not create plugin environment directory", "envdir")
     end
 
-
-    -- roachme: no task id for now. might cause problems in function below.
-    if not plugin.init(envname) then
-        return core.die(1, "could not init plugins", "plugin")
-    end
-
-
-    -- plugin: struct
-    -- create env directory
-    -- code goes here..
-
-    -- plugin: git
-    -- download repos
-    plugin.git.clone()
     return 0
 end
 
@@ -74,7 +64,7 @@ end
 ---Switch to environment.
 ---@param envname string
 local function _env_use(envname)
-    if not env.exists(envname) then
+    if not env.exist(envname) then
         return core.die(1, "no such env name", envname)
     end
     env.setcurr(envname)
@@ -85,6 +75,9 @@ end
 local function builtin_env()
     local cmd = arg[1] or "list"
     local envname = arg[2]
+
+    env.init(core.struct.envs.path)
+    taskid.init(core.struct.ids.path)
 
     if cmd == "add" then
         _env_add(envname)

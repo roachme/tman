@@ -17,7 +17,7 @@ local default_plugin_git = {
     commitpatt = "[ID] PART: MSG",
 }
 local default_plugin_make = {
-    commands = {}
+    commands = {},
 }
 
 local default_env = {
@@ -55,6 +55,7 @@ end
 
 local fconf = find_config_file("user2.json")
 local config = json.decode(read_file(fconf))
+uconfig.envlist = {}
 
 local function config_load()
     for envname, _ in pairs(config) do
@@ -75,6 +76,8 @@ local function config_load()
         -- plugin: make
         config[envname].make = config[envname].make or default_plugin_make
         config[envname].make.commands = default_plugin_make.commands
+
+        table.insert(uconfig.envlist, envname)
     end
 end
 

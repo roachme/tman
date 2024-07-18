@@ -48,7 +48,13 @@ end
 ---@param id string
 ---@return boolean
 function struct.delete(id)
-    return utils.rm(struct_taskbase .. "/" .. id)
+    for _, dir in pairs(struct_dirs) do
+        utils.rm(struct_taskbase .. "/" .. id .. "/" .. dir)
+    end
+    for _, file in pairs(struct_files) do
+        utils.rm(struct_taskbase .. "/" .. id .. "/" .. file)
+    end
+    return true
 end
 
 ---Rename task dir.

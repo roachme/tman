@@ -9,15 +9,19 @@ local core = {}
 local prefix = config.prefix .. "/"
 
 core.struct = {
-    prefix = { isdir = false, core = true, path = prefix },
-    dbdir = { isdir = false, core = true, path = prefix .. ".tman/" },
-    curr = { isdir = false, core = true, path = prefix .. ".tman/curr" },
-    units = { isdir = true, core = true, path = prefix .. ".tman/units/" },
-    refs = { isdir = true, core = true, path = prefix .. ".tman/refs/" },
-    envs = { isdir = false, core = true, path = prefix .. ".tman/refs/envs" },
-    ids = { isdir = false, core = true, path = prefix .. ".tman/refs/ids" },
-    code = { isdir = true, core = false, path = prefix .. "code/" },
-    tasks = { isdir = true, core = false, path = prefix .. "tasks/" },
+    prefix = { isdir = false, iscore = true, path = prefix },
+    dbdir = { isdir = false, iscore = true, path = prefix .. ".tman/" },
+    curr = { isdir = false, iscore = true, path = prefix .. ".tman/curr" },
+
+    units = { isdir = true, iscore = true, path = prefix .. ".tman/units/" },
+
+    refs = { isdir = true, iscore = true, path = prefix .. ".tman/refs/" },
+    envs = { isdir = false, iscore = true, path = prefix .. ".tman/refs/envs" },
+    ids = { isdir = false, iscore = true, path = prefix .. ".tman/refs/ids" },
+
+    plugin = { isdir = true, iscore = false, path = prefix .. ".tman/plugin/" },
+
+    tasks = { isdir = true, iscore = false, path = prefix .. "tasks/" },
 }
 
 function core.die(exit_code, errfmt, ...)

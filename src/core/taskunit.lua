@@ -1,61 +1,13 @@
 --- Operate on task unit inside meta data.
--- Metadata like branch name, date, description and so on.
+-- Metadata like date, description and so on.
 -- @module TaskUnit
 
-local config = require("aux.config")
-local core = require("core.core")
 local utils = require("aux.utils")
 local unit = require("aux.unitdb")
 
--- roachme: gotta make sure that branch is correct.
--- so the rest of the code shouldn't check branch for nil.
-
 local taskunit = {}
 
--- Private functions: end --
-
----String separator.
----@param inputstr string
----@param sep string | nil
----@return table
-local function pattsplit(inputstr, sep)
-    local res = {}
-
-    if sep == nil then
-        sep = "%s"
-    end
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(res, str)
-    end
-    return res
-end
-
----Form branch according to pattern.
----@return string | nil
-local function format_branch(envname)
-    local separators = "/_-"
-    local uconfig = config.uget(envname)
-
-    local sepcomponents = pattsplit(uconfig.git.branchpatt, separators)
-    local branch = uconfig.git.branchpatt
-
-    for _, item in pairs(sepcomponents) do
-        local uitem = unit.get(string.lower(item))
-
-        if not uitem then
-            local errmsg = "error: branch formatiton: '%s': unit not found\n"
-            io.stderr:write(errmsg:format(item))
-            return nil
-        end
-
-        -- roachme: HOTFIX: desc: replace whitespace with undrescore
-        if item == "DESC" then
-            uitem = string.gsub(uitem, " ", "_")
-        end
-        branch = string.gsub(branch, item, uitem)
-    end
-    return branch
-end
+local unit_dir, task_dir
 
 ---Check task id.
 ---@param id string
@@ -74,19 +26,6 @@ end
 local function _check_desc(desc)
     local descregex = "[a-zA-Z0-9_%s-]*"
     if string.match(desc, descregex) == desc then
-        return true
-    end
-    return false
-end
-
----Check link.
----@param link string
----@return boolean
-local function _check_link(link)
-    local linkregex = "[a-zA-Z0-9_%s-:/.]*"
-    link = link or "" -- roachme: find a better way.
-
-    if string.match(link, linkregex) == link then
         return true
     end
     return false
@@ -124,10 +63,8 @@ end
 ---@param newdesc string
 ---@return boolean
 local function _set_desc(envname, id, newdesc)
-    --unit.init(core.struct.units.path .. utils.genname(envname, id))
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id))
     unit.set("desc", newdesc)
-    unit.set("branch", format_branch(envname))
     return unit.save()
 end
 
@@ -137,12 +74,11 @@ end
 ---@return boolean
 local function _set_id(envname, id, newid)
     -- rocahme: outta use struct.lua
-    local old_taskdir = core.struct.tasks.path .. utils.genname(envname, id)
-    local new_taskdir = core.struct.tasks.path .. utils.genname(envname, newid)
+    local old_taskdir = task_dir .. utils.genname(envname, id)
+    local new_taskdir = task_dir .. utils.genname(envname, newid)
 
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id))
     unit.set("id", newid)
-    unit.set("branch", format_branch(envname))
     unit.save()
 
     -- gotta update curr & prev task ids.
@@ -152,9 +88,8 @@ end
 ---Change task type.
 ---@return boolean
 local function _set_type(envname, id, newtype)
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id))
     unit.set("type", newtype)
-    unit.set("branch", format_branch(envname))
     return unit.save()
 end
 
@@ -163,35 +98,16 @@ end
 ---@param newprio string
 ---@return boolean
 local function _set_prio(envname, id, newprio)
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id))
     unit.set("prio", newprio)
     return unit.save()
 end
 
----Set link to work task manager.
----@param envname string
----@param id string
----@param newlink string
----@return boolean
-local function _set_link(envname, id, newlink)
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
-    unit.set("link", newlink)
-    return unit.save()
+function taskunit.init(unitdir, taskdir)
+    unit_dir = unitdir
+    task_dir = taskdir
+    return true
 end
-
----Set list of active repos.
----@param id string
----@param taskrepos string
----@return boolean
-local function _set_repo(envname, id, taskrepos)
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
-    unit.set("repos", taskrepos)
-    return unit.save()
-end
-
--- Private functions: end --
-
--- Public functions: start --
 
 ---Check task units.
 ---@param key string
@@ -199,30 +115,18 @@ end
 ---@return boolean
 function taskunit.check(key, value)
     local params = {
+        uniqid = function(val)
+            return not (val == nil or val == "")
+        end,
         id = _check_id,
         desc = _check_desc,
         prio = _check_prio,
         type = _check_type,
-        link = _check_link,
-        branch = function(val)
-            return not (val == nil or val == "")
-        end,
-        status = function(val)
-            return not (val == nil or val == "")
-        end,
         date = function(val)
             return not (val == nil or val == "")
         end,
-        envname = function(val)
+        env = function(val)
             return not (val == nil or val == "")
-        end,
-
-        -- roachme: under development.
-        time = function()
-            return true
-        end,
-        repos = function()
-            return true
         end,
     }
 
@@ -244,36 +148,20 @@ end
 ---@param prio string
 ---@return boolean
 function taskunit.add(envname, id, desc, tasktype, prio)
-    local branch
-    prio = prio or unit.prios.mid
-
-    -- create envname directory
-    utils.mkdir(core.struct.units.path .. envname)
-
-    -- Set values.
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id))
     unit.set("id", id)
+    unit.set("env", envname)
     unit.set("prio", prio)
     unit.set("type", tasktype)
     unit.set("desc", desc)
-    unit.set("time", "")
-    unit.set("link", "")
-    unit.set("repos", "")
     unit.set("date", tostring(os.date("%Y%m%d")))
-    unit.set("status", "progress")
-    unit.set("envname", envname)
-
-    branch = format_branch(envname)
-    if not branch then
-        return false
-    end
-
-    unit.set("branch", branch)
+    unit.set("uniqid", tostring(os.date("%s")))
 
     -- Check input values for validity.
     for _, ukey in pairs(unit.keys) do
-        local value = unit.get(ukey)
-        if not taskunit.check(ukey, value) then
+        local value = unit.get(ukey.val)
+        if not taskunit.check(ukey.val, value) then
+            print("ERROR: taskunit.add: failed", ukey.val, value)
             return false
         end
     end
@@ -294,12 +182,8 @@ function taskunit.set(envname, id, key, value)
         return _set_desc(envname, id, value)
     elseif key == "id" then
         return _set_id(envname, id, value)
-    elseif key == "link" then
-        return _set_link(envname, id, value)
     elseif key == "prio" then
         return _set_prio(envname, id, value)
-    elseif key == "repos" then
-        return _set_repo(envname, id, value)
     elseif key == "type" then
         return _set_type(envname, id, value)
     end
@@ -311,7 +195,7 @@ end
 ---@param id string
 ---@return boolean
 function taskunit.del(envname, id)
-    local unitfile = core.struct.units.path .. utils.genname(envname, id)
+    local unitfile = unit_dir .. utils.genname(envname, id)
     return utils.rm(unitfile)
 end
 
@@ -320,21 +204,31 @@ end
 ---@param key string
 ---@return string
 function taskunit.get(envname, id, key)
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id))
     return unit.get(key)
+end
+
+---Get task units.
+---@param envname string
+---@param id string
+---@return table
+function taskunit.units(envname, id)
+    unit.init(unit_dir .. utils.genname(envname, id))
+    return unit.units()
 end
 
 ---Show task unit metadata.
 ---@param id string
 ---@param key string
+---@param option string
 ---@return boolean
-function taskunit.cat(envname, id, key)
-    unit.init(core.struct.units.path .. utils.genname(envname, id))
+function taskunit.cat(envname, id, option, key)
+    unit.init(unit_dir .. utils.genname(envname, id))
 
     -- output only key value
     if key then
         for _, ukey in pairs(unit.keys) do
-            if ukey == key then
+            if ukey.val == key then
                 local uval = unit.get(key)
                 uval = uval and uval ~= "" and uval .. "\n" or ""
                 io.write(("%s"):format(uval))
@@ -346,12 +240,12 @@ function taskunit.cat(envname, id, key)
 
     -- output all key values
     for _, ukey in pairs(unit.keys) do
-        local value = unit.get(ukey) or ""
-        print(("%-8s: %s"):format(ukey, value))
+        local value = unit.get(ukey.val) or ""
+        if ukey.lvl == 1 then
+            print(("%-8s: %s"):format(ukey.val, value))
+        end
     end
     return true
 end
-
--- Public functions: end --
 
 return taskunit

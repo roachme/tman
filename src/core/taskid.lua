@@ -39,7 +39,7 @@ end
 ---@param envname string
 ---@param id string
 ---@return boolean
-function taskid.exists(envname, id)
+function taskid.exist(envname, id)
     return ids.exist(envname, id)
 end
 
@@ -156,6 +156,12 @@ function taskid.rename(envname, oldid, newid)
     ids.del(envname, oldid)
     ids.add(envname, newid, item.status)
     return ids.save()
+end
+
+---Check that id does not have illegal symbols.
+---@return boolean
+function taskid.check(id)
+    return true
 end
 
 ---Add new current task id into environment.

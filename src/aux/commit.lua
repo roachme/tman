@@ -8,8 +8,7 @@ local items = {
     "MSG",
 }
 
-local function commit_check(msg)
-end
+local function commit_check(msg) end
 
 ---Generate commit message.
 local function genmsg(msgpatt)
@@ -37,7 +36,6 @@ function commit.create(reponame, path)
 
     -- add all changes. maybe it's better a user to choose what he wants.
     utils.exec(cmd)
-
 
     return true
 end

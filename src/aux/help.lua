@@ -3,39 +3,35 @@
 
 local function show_usage()
     io.stdout:write(([[
-Usage: %s COMMAND [OPTION] [ID]
+Usage: %s COMMAND [OPTION] [ID] [ENV]
 
 List of available commands:
 
 System:
-  arch    - backup and restore metadata
-  cfg     - config workflow
-  get     - get parameters like curr, prev tasks, size, etc
+  arch    - backup and/or restore
   init    - init directory structure
 
-Manipulate:
+Basic:
   add     - add a new task
   del     - delete a task
-  env     - define or display environments
+  env     - manipulate environments
   prev    - switch to previous task
   use     - switch to specific task
+  set     - set task unit values
+
+Additional:
+  cfg     - config workflow
+  pgn     - manipulate plugins: struct, git, make, time
 
 Info:
   cat     - cat task info
-  list    - list environment tasks
-
-Change:
-  pack    - pack commits in repos for review.
-  set     - set task units like description, branch, etc
-  sync    - synchronize task struct, git branch, repos, etc
-
-Info:
-  help    - display help information about %s
+  list    - list task environment
+  help    - display help information
   ver     - show version
 
 '%s help COMMAND' to get detailed info about command.
 '%s help %s' to get info about util itself.
-]]):format(progname, progname, progname, progname, progname))
+]]):format(progname, progname, progname, progname))
 end
 
 local cmds = {
@@ -120,25 +116,6 @@ Options:
 ]],
     },
     {
-        name = "sync",
-        desc = [[
-Usage: tman sync OPTION [ID]
-Update task repos, structure, etc. Default: current task.
-With no option applied jump to task directory.
-
-Notes: Add support for other task cuz another task might be broken so
-      repair's need (if task branch's deleted)
-
-Options:
-    -s      - synchronize task structure (directories, files)
-    -g      - synchronize (rebase) task branch with default branch
-    -G      - synchronize (pull) branches from remote server
-    -t      - synchronize task status (active, completed)
-    -p      - push branch to remote repo
-]],
-    },
-
-    {
         name = "use",
         desc = [[
 Usage: tman use ID
@@ -146,19 +123,6 @@ Switch to specified task. Use `tman list` to see existing tasks.
 
 Notes:
     ID - taks ID. Default is current task.
-]],
-    },
-    {
-        name = "get",
-        desc = [[
-Usage: tman get PARAM
-Get parameters like curr, prev tasks, current env, etc
-
-Notes:
-PARAM can have one of the next values
-    env     - current env
-    curr    - current task id
-    prev    - previous task id
 ]],
     },
     {
@@ -188,17 +152,6 @@ ENVNAME - environment name. Under development (pro'ly).
 
 Options:
     -h   Show this help message.
-]],
-    },
-    {
-        name = "pack",
-        desc = [[
-Usage: tman pack OPTION [ID]
-Pack commits in repos for review.
-
-Options:
-    -c      - create commit (default)
-    -m      - run commands from the Makefile
 ]],
     },
     {
@@ -246,9 +199,9 @@ Show tman version.
     },
 }
 
---- Get general and detailed info about command.
--- @param cmdname command name to get info about
--- @return status code: 0 - ok, otherwise error code
+---Get info about command.
+---@param cmdname string
+---@return number
 local function help_usage(cmdname)
     local errmsg = "%s: no such command '%s'. Use '%s help' for more info.\n"
 
@@ -263,6 +216,7 @@ local function help_usage(cmdname)
             return 0
         end
     end
+
     io.stderr:write(errmsg:format(progname, cmdname, progname))
     return 1
 end

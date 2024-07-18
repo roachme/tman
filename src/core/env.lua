@@ -13,7 +13,7 @@ local status = {
 ---@param fname string
 function env.init(fname)
     fenv = fname
-    envdb.init(fenv)
+    return envdb.init(fenv)
 end
 
 ---Get previous env.
@@ -82,7 +82,7 @@ end
 ---Check that env exists in database.
 ---@param name string
 ---@return boolean
-function env.exists(name)
+function env.exist(name)
     return envdb.exists(name)
 end
 
@@ -137,6 +137,14 @@ function env.list()
             print(("a %-10s %s"):format(item.name, item.desc))
         end
     end
+end
+
+function env.open(fname)
+    return true
+end
+
+function env.check(envname)
+    return true
 end
 
 return env

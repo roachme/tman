@@ -1,4 +1,4 @@
-local env = require("core.env")
+local taskenv = require("core.env")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
@@ -6,20 +6,7 @@ local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 local utils = require("aux.utils")
 
-local plugin = require("core.plugin")
-
-
-
---[[
-id - TASKID or current task id
-env - TASKENV or current task env
-]]
-
 --- Add a new task.
--- Fill the rest with default values.
--- @see tman_set
--- @return on success - true
--- @return on failrue - false
 local function builtin_add()
     local id
     local cmdname = "add"
@@ -29,7 +16,11 @@ local function builtin_add()
     local optstr = "hp:t:"
     local last_index = 1
     local keyhelp
-    local envname = env.getcurr()
+    local envname
+    -- roach: make tman accept description from command line, not CLI
+    local desc = utils.get_input("Desc")
+    local unit_dir = core.struct.units.path
+    local task_dir = core.struct.tasks.path
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -46,52 +37,58 @@ local function builtin_add()
         end
     end
 
+    id = arg[last_index]
+    envname = arg[last_index + 1]
+
     if keyhelp then
         help.usage(cmdname)
         return 0
     end
 
-    id = arg[last_index]
-    taskid.init(core.struct.ids.path)
+    -- system dependant (fatal): load core modules
+    if not taskenv.init(core.struct.envs.path) then
+        return core.die(1, "could not init module taskenv", "fatal")
+    elseif not taskid.init(core.struct.ids.path) then
+        return core.die(1, "could not init module taskid", "fatal")
+    elseif not taskunit.init(unit_dir, task_dir) then
+        return core.die(1, "could not init module taskunit", "fatal")
+    end
 
+    -- check: user dependant: sentinel guards
+    envname = envname or taskenv.getcurr()
     if not envname then
         return core.die(1, "no current env", "envname")
-    elseif not env.exists(envname) then
-        return core.die(1, "no such env", envname)
-    elseif not id then
-        return core.die(1, "task id required", "id")
-    elseif taskid.exists(envname, id) then
-        return core.die(1, "task id exists", id)
+    elseif not taskenv.check(envname) then
+        return core.die(1, "illegal environment name value", envname)
     end
 
-    -- read task description.
-    local desc = utils.get_input("Desc")
+    if not id then
+        return core.die(1, "task id required", "id")
+    elseif not taskenv.check(envname) then
+        return core.die(1, "illegal environment name value", envname)
+    elseif not taskenv.exist(envname) then
+        return core.die(1, "no such environment name", envname)
+    elseif not taskid.check(id) then
+        return core.die(1, "illegal task id value", id)
+    elseif taskid.exist(envname, id) then
+        return core.die(1, "task id already exists", id)
+    elseif not taskunit.check("desc", desc) then
+        return core.die(1, "illegal description value", desc)
+    end
 
     -- create all necessary stuff for new task.
+    local taskdir = core.struct.tasks.path .. "/" .. envname .. "/" .. id
     if not taskid.add(envname, id) then
-        core.die(1, "task id already exists", id)
+        return core.die(1, "fatal never: should never happen", id)
     elseif not taskunit.add(envname, id, desc, tasktype, prio) then
         taskid.del(envname, id)
-        core.die(1, "could not create new task unit", id)
-    end
-
-    -- create task dir
-    if not utils.mkdir(core.struct.tasks.path .. envname .. "/" .. id) then
-        return core.die(1, "could not create task dir", "taskdir")
-    end
-
-    -- plugins
-    if not plugin.init(envname) then
+        return core.die(1, "fatal never: could not create unit file", id)
+    elseif not utils.mkdir(taskdir) then
         taskid.del(envname, id)
         taskunit.del(envname, id)
-        return core.die(1, "could not init plugin", "plugin")
+        return core.die(1, "fatal never: could not create task dir", "taskdir")
     end
 
-    local branch = taskunit.get(envname, id, "branch")
-    -- roachme: shouldn't pass envname, cuz plugin sets it
-    plugin.struct.create(id)
-    plugin.git.create(id, branch)
-    plugin.make.create()
     return 0
 end
 

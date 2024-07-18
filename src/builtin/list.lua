@@ -1,4 +1,4 @@
-local env = require("core.env")
+local taskenv = require("core.env")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
@@ -15,6 +15,8 @@ local function builtin_list()
     local keyhelp
     local envname
     local last_index = 1
+    local unit_dir = core.struct.units.path
+    local task_dir = core.struct.tasks.path
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
@@ -41,15 +43,25 @@ local function builtin_list()
         return 0
     end
 
-    envname = arg[last_index] or env.getcurr()
+    -- system dependant (fatal): load core modules
+    if not taskenv.init(core.struct.envs.path) then
+        return core.die(1, "could not init module taskenv", "fatal")
+    elseif not taskid.init(core.struct.ids.path) then
+        return core.die(1, "could not init module taskid", "fatal")
+    elseif not taskunit.init(unit_dir, task_dir) then
+        return core.die(1, "could not init module taskunit", "fatal")
+    end
+
+    -- check: user dependant: sentinel guards
+
+    envname = arg[last_index] or taskenv.getcurr()
     if not envname then
         -- nothing to show, terminate here.
         return 0
-    elseif not env.exists(envname) then
+    elseif not taskenv.exist(envname) then
         return core.die(1, "no such environment name", envname)
     end
 
-    taskid.init(core.struct.ids.path)
     local curr = taskid.getcurr(envname)
     local prev = taskid.getprev(envname)
 

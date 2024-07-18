@@ -1,4 +1,4 @@
-local env = require("core.env")
+local taskenv = require("core.env")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
@@ -8,11 +8,11 @@ local getopt = require("posix.unistd").getopt
 --- Show task unit metadata.
 local function builtin_cat()
     local id
+    local envname
     local last_index = 1
     local optstr = "hk:"
     local key, keyhelp
     local cmdname = "cat"
-    local envname = env.getcurr()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -31,22 +31,35 @@ local function builtin_cat()
         return 0
     end
 
-    taskid.init(core.struct.ids.path)
+    -- system dependant (fatal): load core modules
+    if not taskenv.init(core.struct.envs.path) then
+        return core.die(1, "could not init module taskenv", "fatal")
+    elseif not taskid.init(core.struct.ids.path) then
+        return core.die(1, "could not init module taskid", "fatal")
+    elseif not taskunit.init(core.struct.units.path) then
+        return core.die(1, "could not init module taskunit", "fatal")
+    end
 
+    envname = arg[last_index + 1] or taskenv.getcurr()
     if not envname then
         return core.die(1, "no current environment", "cat")
-    elseif not env.exists(envname) then
+    elseif not taskenv.check(envname) then
+        return core.die(1, "illegal environment name value", envname)
+    elseif not taskenv.exist(envname) then
         return core.die(1, "no such environment", "cat")
     end
 
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
-        core.die(1, "no current task id", "")
-    elseif not taskid.exists(envname, id) then
-        core.die(1, "no such task id", id)
+        return core.die(1, "no current task id", "")
+    elseif not taskid.check(id) then
+        return core.die(1, "illegal task id value", id)
+    elseif not taskid.exist(envname, id) then
+        return core.die(1, "no such task id", id)
     end
 
-    if not taskunit.cat(envname, id, key) then
+    local option = "" -- basic, additional, system, full
+    if not taskunit.cat(envname, id, option, key) then
         if key then
             core.die(1, "no such key", key)
         end

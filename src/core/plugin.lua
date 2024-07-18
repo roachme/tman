@@ -1,55 +1,43 @@
----Module that handles plugins.
--- @module plugin
+---Provide system means to plugins.
+--@module plugin
 
 local core = require("core.core")
 local config = require("aux.config")
+local taskid = require("core.taskid")
+local taskunit = require("core.taskunit")
 
-local plugin = {
-    struct = require("plugin.struct"),
-    git = require("plugin.git"),
-    make = require("plugin.make"),
-}
+local plugin = {}
 
-function plugin.init(envname)
-    -- git: make sure all repos are downloded
+function plugin.init(envname, id)
+    local unit_dir = core.struct.units.path
+    local task_dir = core.struct.tasks.path
 
-    local struct_taskbase = core.struct.tasks.path .. envname
-    local struct_dirs = config.user.get(envname).struct.dirs
-    local struct_files = config.user.get(envname).struct.files
-
-    local git_dirbase = config.user.get(envname).git.dirbase or "."
-    local git_repos = config.user.get(envname).git.repos
-    local git_repobase = core.struct.code.path
-    local git_linkbase = core.struct.tasks.path .. envname
-    local git_commitpatt = config.user.get(envname).git.commitpatt
-    local git_branchpatt = config.user.get(envname).git.branchpatt
-
-    -- make sure plugin stuff don't conflict with each other.
-    -- roachme: put a meaningful messeage here
-    -- PART1: struct vs git
-    for _, dir in pairs(struct_dirs) do
-        if git_dirbase ~= "." and dir == git_dirbase then
-            io.stderr:write("plugins struct and git conflict: same file\n")
-            return false
-        end
-    end
-    for _, file in pairs(struct_files) do
-        if git_dirbase ~= "." and file == git_dirbase then
-            io.stderr:write("plugins struct and git conflict: same dir\n")
-            return false
-        end
+    -- system dependant (fatal): load core modules
+    if not taskid.init(core.struct.ids.path) then
+        return core.die(1, "could not init module taskid", "fatal")
+    elseif not taskunit.init(unit_dir, task_dir) then
+        return core.die(1, "could not init module taskunit", "fatal")
     end
 
-    plugin.struct.init(struct_taskbase, struct_dirs, struct_files)
-    plugin.git.init(git_repos, git_repobase, git_linkbase, git_dirbase, git_commitpatt)
-    plugin.make.init()
+    plugin.prefix = core.struct.prefix.path
+    plugin.uconfig = config.uget(envname)
+    plugin.units = taskunit.units(envname, id)
     return true
 end
 
----Check that plugins are ok and don't conflict with each other.
----@return boolean
-function plugin:check()
-    return true
+---Get task units.
+---@param envname string
+---@param uniqid string
+---@return table
+function plugin.get_units(envname, uniqid)
+    return {}
+end
+
+---Get plugin config.
+---@param envname string
+---@return table
+function plugin.get_uconfig(envname)
+    return config.uget(envname)
 end
 
 return plugin

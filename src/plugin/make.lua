@@ -1,11 +1,7 @@
 local make = {}
 
+function make.init() end
 
-function make.init()
-end
-
-function make.create()
-end
-
+function make.create() end
 
 return make

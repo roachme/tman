@@ -1,24 +1,18 @@
-local env = require("core.env")
-local gitlib = require("aux.gitlib")
+local taskenv = require("core.env")
 local taskid = require("core.taskid")
-local struct = require("plugin.struct")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
-local config = require("aux.config")
+local utils = require("aux.utils")
 
 local envname
-local uconfig
 
 ---Set task description.
 ---@param id string
 ---@param newdesc string
 ---@return boolean
 local function _set_desc(id, newdesc)
-    local path = core.struct.code.path
     local olddesc = taskunit.get(envname, id, "desc")
-    local oldbranch = taskunit.get(envname, id, "branch")
-    local newbranch
 
     if olddesc == newdesc then
         core.die(1, "the same task description", newdesc)
@@ -32,62 +26,31 @@ local function _set_desc(id, newdesc)
     if not taskunit.set(envname, id, "desc", newdesc) then
         core.die(1, "could not set new task description", "desc")
     end
-
-    newbranch = taskunit.get(envname, id, "branch")
-    for _, repo in pairs(uconfig.repos) do
-        if not gitlib.branch_switch(repo.name, oldbranch, path) then
-            core.die(1, "could not switch to task branch", repo.name)
-        end
-        if not gitlib.branch_rename(repo.name, oldbranch, newbranch, path) then
-            core.die(1, "could not rename task branch", repo.name)
-        end
-    end
     return true
 end
 
 ---Set task id.
 ---@param id string
 ---@param newid string
----@return boolean
 local function _set_id(id, newid)
-    local path = core.struct.code.path
-    local newbranch
-    local currbranch = taskunit.get(envname, id, "branch")
-
-    for _, repo in pairs(uconfig.repos) do
-        if gitlib.repo_isuncommited(repo.name, path) then
-            core.die(1, "repo has uncommited changes", repo.name)
-        end
-    end
-
     if id == newid then
-        core.die(1, "the same task id", newid)
-    elseif taskid.exists(envname, newid) then
-        core.die(1, "task id exists", newid)
+        -- do nothing.
+        return 0
+    elseif taskid.exist(envname, newid) then
+        return core.die(1, "task id exists", newid)
     elseif not taskunit.set(envname, id, "id", newid) then
-        core.die(1, "could not set new task id", newid)
+        return core.die(1, "could not set new task id", newid)
     end
 
-    newbranch = taskunit.get(envname, id, "branch")
     taskid.rename(envname, id, newid)
-    struct.rename(envname, id, newid)
-
-    for _, repo in pairs(uconfig.repos) do
-        gitlib.branch_rename(repo.name, currbranch, newbranch, path)
-    end
-
     -- cache current task id
-    taskid.init(core.struct.ids.path)
     taskid.updcurr(envname)
-    return true
-end
 
----Set task link.
----@param id string
----@param newlink string
----@return boolean
-local function _set_link(id, newlink)
-    taskunit.set(envname, id, "link", newlink)
+    local olddir = core.struct.units.path .. envname .. "/" .. id
+    local newdir = core.struct.units.path .. envname .. "/" .. newid
+    if not utils.rename(olddir, newdir) then
+        return core.die(1, "could not rename task directory", "set")
+    end
     return true
 end
 
@@ -112,25 +75,13 @@ end
 ---@param newtype string
 ---@return boolean
 local function _set_type(id, newtype)
-    local path = core.struct.code.path
-    local oldbranch = taskunit.get(envname, id, "branch")
     local currtype = taskunit.get(envname, id, "type")
     taskunit.set(envname, id, "type", newtype)
-    local newbranch = taskunit.get(envname, id, "branch")
 
     if currtype == newtype then
         local errfmt = "'%s' and '%s' are the same task type"
         core.die(1, errfmt, "set", currtype, newtype)
         return true
-    end
-
-    for _, repo in pairs(uconfig.repos) do
-        if not gitlib.branch_switch(repo.name, oldbranch, path) then
-            core.die(1, "could not switch to task branch", repo.name)
-        end
-        if not gitlib.branch_rename(repo.name, oldbranch, newbranch, path) then
-            core.die(1, "could not rename task branch", repo.name)
-        end
     end
     return true
 end
@@ -139,18 +90,25 @@ end
 local function builtin_set()
     local id
     local last_index = 1
-    local optstr = "di:l:p:t:"
+    local optstr = "di:p:t:"
     local newdesc -- roachme: get rid of this variable
     local options = {
-        newid = { arg = nil, func = _set_id },
         newdesc = { arg = nil, func = _set_desc },
-        newlink = { arg = nil, func = _set_link },
         newprio = { arg = nil, func = _set_prio },
         newtype = { arg = nil, func = _set_type },
+        newid = { arg = nil, func = _set_id },
     }
-    envname = env.getcurr()
+    local unit_dir = core.struct.units.path
+    local task_dir = core.struct.tasks.path
 
-    -- roachme: It'd be better to show what task id's changing. Maybe?
+    -- system dependant (fatal): load core modules
+    if not taskenv.init(core.struct.envs.path) then
+        return core.die(1, "could not init module taskenv", "fatal")
+    elseif not taskid.init(core.struct.ids.path) then
+        return core.die(1, "could not init module taskid", "fatal")
+    elseif not taskunit.init(unit_dir, task_dir) then
+        return core.die(1, "could not init module taskunit", "fatal")
+    end
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -171,8 +129,6 @@ local function builtin_set()
                 core.die(1, "invalid id", optarg)
             end
             options.newid.arg = optarg
-        elseif optopt == "l" then
-            options.newlink.arg = optarg
         elseif optopt == "p" then
             if not taskunit.check("prio", optarg) then
                 core.die(1, "invalid priority", optarg)
@@ -186,33 +142,32 @@ local function builtin_set()
         end
     end
 
+    envname = taskenv.getcurr()
     if not envname then
-        core.die(1, "no such env", envname or "no envname")
-        return
+        return core.die(1, "no current environment", "env")
+    elseif not taskenv.check(envname) then
+        return core.die(1, "illegal environment name value", envname)
+    elseif not taskenv.exist(envname) then
+        return core.die(1, "no such environment", "env")
     end
 
-    uconfig = config.uget(envname)
-    taskid.init(core.struct.ids.path)
     id = arg[last_index] or taskid.getcurr(envname)
     if not id then
         core.die(1, "no current task id", "")
-    end
-    if not taskid.exists(envname, id) then
+    elseif not taskid.check(id) then
+        return core.die(1, "illegal task id value", id)
+    elseif not taskid.exist(envname, id) then
         core.die(1, "no such task id", id)
     end
 
-    local path = core.struct.code.path
-    for _, repo in pairs(uconfig.repos) do
-        if gitlib.repo_isuncommited(repo.name, path) then
-            return core.die(1, "repo has uncommited changes", repo.name)
-        end
-    end
-
-    -- roachme: error if no arguments're passed
-
     if options.newid.arg and options.newtype.arg then
-        io.stderr:write("BUG: options '-i' and '-t' can't be used togother\n")
-        return 1
+        return core.die(1, "1 option -i can't be used with other options", "BUG")
+    elseif options.newid.arg and options.newdesc.arg then
+        return core.die(1, "2 option -i can't be used with other options", "BUG")
+    elseif options.newid.arg and options.newprio.arg then
+        return core.die(1, "3 option -i can't be used with other options", "BUG")
+    elseif options.newid.arg and options.newtype.arg then
+        return core.die(1, "4 option -i can't be used with other options", "BUG")
     end
 
     -- set values

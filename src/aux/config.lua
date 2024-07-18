@@ -21,7 +21,7 @@ local function find_config_file(fname)
     return nil
 end
 
-local fsysconf = find_config_file("sys.conf")
+local fsysconf = find_config_file("sys2.conf")
 
 function config.check()
     if not fsysconf then

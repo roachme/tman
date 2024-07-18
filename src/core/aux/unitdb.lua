@@ -2,36 +2,41 @@
 -- @module unit
 
 local unit = {}
-local units = {}
+local unitdb = {}
 local unitfile = ""
 local unitregex = "(%w*): (.*)"
 local unitfmt = "%s: %s\n"
 
-unit.keys = {
-    "id",
-    "prio",
-    "type",
-    "desc",
-    "time",
-    "date",
-    "link",
-    "repos",
-    "envname",
-    "status",
-    "branch",
+local levels = {
+    SYS = 0,
+    BASIC = 1,
+    ADDIT = 2,
 }
-unit.prios = {
-    highest = "highest",
-    high = "high",
-    mid = "mid",
-    low = "low",
-    lowest = "lowest",
+
+unit = {
+    keys = {
+        { val = "id", lvl = 1 },
+        { val = "prio", lvl = 1 },
+        { val = "type", lvl = 1 },
+        { val = "desc", lvl = 1 },
+        { val = "env", lvl = 2 },
+        { val = "date", lvl = 2 },
+        { val = "uniqid", lvl = 3 }, -- uniq ID for each task id (use time).
+    },
+    prios = {
+        highest = "highest",
+        high = "high",
+        mid = "mid",
+        low = "low",
+        lowest = "lowest",
+    }
 }
+
 
 ---Load task units from the file.
 ---@return boolean
 local function load_units()
-    units = {}
+    unitdb = {}
     local f = io.open(unitfile)
 
     if not f then
@@ -40,7 +45,7 @@ local function load_units()
 
     for line in f:lines() do
         local key, val = string.match(line, unitregex)
-        units[key] = val
+        unitdb[key] = val
     end
     return f:close() == true
 end
@@ -62,7 +67,7 @@ function unit.save()
         return false
     end
 
-    for key, val in pairs(units) do
+    for key, val in pairs(unitdb) do
         f:write(unitfmt:format(key, val))
     end
     return f:close() == true
@@ -72,7 +77,7 @@ end
 ---@param key string
 ---@return string
 function unit.get(key)
-    return units[key]
+    return unitdb[key]
 end
 
 ---Set unit key.
@@ -80,13 +85,12 @@ end
 ---@param val string
 ---@return boolean
 function unit.set(key, val)
-    units[key] = val
+    unitdb[key] = val
     return true
 end
 
-function unit.check()
-    -- roachme: value can be nil. Gotta find a better logic.
-    return true
+function unit.units()
+    return unitdb
 end
 
 return unit
