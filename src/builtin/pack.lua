@@ -1,8 +1,8 @@
 local env = require("core.env")
-local gitlib = require("aux.gitlib")
 local taskid = require("core.taskid")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
+local plugin = require("core.plugin")
 
 --- Pack commits in repos for review.
 local function builtin_pack()
@@ -30,9 +30,6 @@ local function builtin_pack()
         return core.die(1, "no current env", "env")
     end
 
-    print("under development")
-    os.exit(1)
-
     taskid.init(core.struct.ids.path)
     id = arg[last_index] or taskid.getcurr(envname)
 
@@ -42,15 +39,16 @@ local function builtin_pack()
     if not taskid.exists(envname, id) then
         core.die(1, "no such task id", id)
     end
-    if not gitlib.branch_exist(id) then
-        core.die(1, "task branch doesn't exist", "REPONAME")
+
+    if not plugin.init(envname) then
+        return core.die(1, "could not init plugin", "plugin")
     end
 
     if fmake then
         print("run commands from the Makefile: under development")
     elseif fcommit then
         print("create commits")
-        gitlib.commit_create(id)
+        plugin.git.commit_create(id)
     end
     return 0
 end

@@ -2,7 +2,6 @@
 -- @module plugin
 
 local core = require("core.core")
-local utils = require("aux.utils")
 local config = require("aux.config")
 
 local plugin = {
@@ -22,6 +21,8 @@ function plugin.init(envname)
     local git_repos = config.user.get(envname).git.repos
     local git_repobase = core.struct.code.path
     local git_linkbase = core.struct.tasks.path .. envname
+    local git_commitpatt = config.user.get(envname).git.commitpatt
+    local git_branchpatt = config.user.get(envname).git.branchpatt
 
     -- make sure plugin stuff don't conflict with each other.
     -- roachme: put a meaningful messeage here
@@ -40,7 +41,7 @@ function plugin.init(envname)
     end
 
     plugin.struct.init(struct_taskbase, struct_dirs, struct_files)
-    plugin.git.init(git_repos, git_repobase, git_linkbase, git_dirbase)
+    plugin.git.init(git_repos, git_repobase, git_linkbase, git_dirbase, git_commitpatt)
     plugin.make.init()
     return true
 end

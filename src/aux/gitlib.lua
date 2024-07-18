@@ -1,17 +1,30 @@
 local utils = require("aux.utils")
-local commit = require("commit")
 
 local git = {}
 
+local function generate_commit_msg(id, commitpatt)
+    local commitmsg = commitpatt
+    local parts = { "ID", "PART", "MSG" }
+    local act = {id, "MYPART", "hello there"}
+
+    for i = 1, 3 do
+        commitmsg = string.gsub(commitmsg, parts[i], act[i])
+    end
+    print("commitmsg", commitmsg)
+end
+
 ---Create commit.
 ---@param reponame string
+---@param commitpatt string
+---@param id string
 ---@param path string | nil
-function git.commit_create(reponame, path)
+function git.commit_create(reponame, commitpatt, id, path)
     path = path or "."
-    local fmt = "git -C %s/%s git add ."
+    local fmt = "git -C %s/%s add ."
     local cmd = string.format(fmt, path, reponame)
-    utils.exec(cmd)
-    return commit.create()
+    print("commitpatt", commitpatt)
+    generate_commit_msg(id, commitpatt)
+    return utils.exec(cmd)
 end
 
 --[[

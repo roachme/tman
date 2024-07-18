@@ -3,18 +3,20 @@ local utils = require("aux.utils")
 
 local git = {}
 
-local repobase, repos, linkbase, dirbase
+local repobase, repos, linkbase, dirbase, commitpatt
 
 ---Init git plugin stuff.
 ---@param _repos table
 ---@param _repobase string
 ---@param _linkbase string
 ---@param _dirbase string
-function git.init(_repos, _repobase, _linkbase, _dirbase)
+---@param _commitpatt string
+function git.init(_repos, _repobase, _linkbase, _dirbase, _commitpatt)
     repobase = _repobase
     repos = _repos
     linkbase = _linkbase
     dirbase = _dirbase
+    commitpatt = _commitpatt
 end
 
 ---Download repos and create symlinks.
@@ -92,7 +94,7 @@ end
 ---@param id string
 ---@param branch string
 ---@return boolean
-function git.update_remote(id, branch)
+function git.update_local(id, branch)
     -- download repos if they don't exist.
     for _, repo in pairs(repos) do
         if not gitlib.repo_clone(repo.link, repo.name, repobase) then
@@ -140,41 +142,11 @@ function git.update_remote(id, branch)
     return true
 end
 
----Update repos from remove git server.
+---Update local repo with remote (git push).
 ---@param id string
 ---@param branch string
 ---@return boolean
-function git.update_local(id, branch)
-    -- make sure task has symlinks to repos.
-    for _, repo in pairs(repos) do
-        local target = repobase .. "/" .. repo.name
-        local linkname = linkbase .. "/" .. id .. "/" .. dirbase .. "/" .. repo.name
-        if not utils.access(linkname) then
-            if not utils.link(target, linkname, true) then
-                io.stderr:write(("repo %s: could not create symlink\n"):format(repo.name))
-                return false
-            end
-        end
-    end
-
-    -- general check
-    for _, repo in pairs(repos) do
-        if gitlib.repo_isuncommited(repo.name, repobase) then
-            io.stderr:write(("repo %s: has uncommited changes\n"):format(repo.name))
-            return false
-        elseif not gitlib.branch_switch(repo.name, branch, repobase) then
-            io.stderr:write(("repo %s: could not switch to task branch\n"):format(repo.name))
-            return false
-        end
-    end
-
-    for _, repo in pairs(repos) do
-        gitlib.branch_switch(repo.name, branch, repobase)
-        if not gitlib.branch_rebase(repo.name, repo.branch, repobase) then
-            io.stderr:write(("repo %s: could not automatically rebase against default branch\n"):format(repo.name))
-            return false
-        end
-    end
+function git.update_remote(id, branch)
     return true
 end
 
@@ -188,6 +160,19 @@ function git.clone()
         end
     end
     return true
+end
+
+---Create commit.
+---@param id string
+---@return boolean
+function git.commit_create(id)
+    for _, repo in pairs(repos) do
+        gitlib.commit_create(repo.name, commitpatt, id, repobase)
+    end
+    return true
+end
+
+function git.commit_squash()
 end
 
 return git

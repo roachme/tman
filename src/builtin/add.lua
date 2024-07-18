@@ -74,7 +74,7 @@ local function builtin_add()
     end
 
     -- plugins
-    if not plugin.init(envname, id) then
+    if not plugin.init(envname) then
         taskid.del(envname, id)
         taskunit.del(envname, id)
         return core.die(1, "could not init plugin", "plugin")

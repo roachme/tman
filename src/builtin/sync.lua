@@ -12,7 +12,8 @@ local function tman_sync()
     local id
     local optstr = "Ggst"
     local fstruct
-    local fgit_local, fgit_remote
+    local fgit_local
+    local fgit_remote
     local ftask
     local last_index = 1
     local envname = env.getcurr()
@@ -23,10 +24,10 @@ local function tman_sync()
         end
 
         last_index = optind
-        if optopt == "G" then
-            fgit_remote = true
-        elseif optopt == "g" then
+        if optopt == "g" then
             fgit_local = true
+        elseif optopt == "G" then
+            fgit_remote = true
         elseif optopt == "s" then
             fstruct = true
         elseif optopt == "t" then
@@ -53,20 +54,26 @@ local function tman_sync()
     end
 
     local branch = taskunit.get(envname, id, "branch")
+    if fgit_local then
+        if not plugin.git.update_local(id, branch) then
+            core.die(1, "could not update local repo", "git")
+        end
+    end
+
     if fgit_remote then
         if not plugin.git.update_remote(id, branch) then
-            core.die(1, "plugin git problem", "git")
+            core.die(1, "could not update remote repo", "git")
         end
-    elseif fgit_local then
-        if not plugin.git.update_local(id, branch) then
-            core.die(1, "plugin git problem", "git")
-        end
-    elseif fstruct then
+    end
+
+    if fstruct then
         plugin.struct.create(id)
     end
+
     if ftask then
         print("sync: task status: under development")
     end
+
     return 0
 end
 

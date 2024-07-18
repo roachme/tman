@@ -2,7 +2,6 @@
 
 local commit = {}
 
---[[
 local items = {
     "ID",
     "PART",
@@ -128,6 +127,5 @@ function git.commit_create(id)
     end
     return true
 end
-]]
 
 return commit
