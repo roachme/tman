@@ -1,14 +1,90 @@
+local core = require("core.core")
 local plugin = require("core.plugin")
 local gitlib = require("aux.gitlib")
 local utils = require("aux.utils")
 
 local git = {}
+local plugin_name = "git"
+local codedir = plugin.prefix .. "code/"
 
-local prefix_codebase -- = plugin.prefix .. "/" .. "code"
-local file_plugin_units
-local repobase, repos, linkbase, dirbase, commitpatt, branchpatt
+---Clone git repositories.
+---@param envname string
+---@return boolean
+function git.clone(envname)
+    local repos = plugin.get_uconfig(envname).git.repos
 
+    if not utils.mkdir(codedir) then
+        core.die(1, "could not create code directory", "git")
+        return false
+    end
 
+    for _, repo in pairs(repos) do
+        if not gitlib.repo_clone(repo.link, repo.name, codedir) then
+            core.die(1, "could not download repo", repo.name)
+            return false
+        end
+    end
+    return true
+end
+
+---Symlink git repos to task dir.
+---@param envname string
+---@param id string
+---@return boolean
+function git.symlink_create(envname, id)
+    local uconfig = plugin.get_uconfig(envname).git
+    local repos = uconfig.repos
+    local dirbase = uconfig.dirbase
+    local taskdir = plugin.prefix .. "tasks/" .. envname .. "/" .. id .. "/"
+
+    -- make sure repos directory exists.
+    if not utils.access(taskdir .. "/" .. dirbase) then
+        if not utils.mkdir(taskdir .. "/" .. dirbase) then
+            core.die(1, "could not create repo directory", id)
+            return false
+        end
+    end
+
+    for _, repo in pairs(repos) do
+        local target = codedir .. repo.name
+        local linkname = taskdir .. dirbase .. "/" .. repo.name
+
+        if not utils.access(target) then
+            core.die(1, "repo not downloaded", repo.name)
+            return false
+        end
+        if not utils.access(linkname) then
+            if not utils.link(target, linkname, true) then
+                core.die(1, "could not create symlink", repo.name)
+                return false
+            end
+        end
+    end
+    return true
+end
+
+local gitunits = {}
+
+---Load plugin git units.
+---@param envname string
+---@param uniqid string
+---@return boolean
+function git.loadunits(envname, uniqid)
+    local fname = plugin.prefix .. ".tman/" .. "plugin/" .. envname .. "/" .. uniqid
+    local f = io.open(fname)
+
+    if not f then
+        return true
+    end
+
+    for line in f:lines() do
+        local pgnname, key, value = string.match(line, "(.*) (.*) (.*)")
+        if pgnname == plugin_name then
+            gitunits[key] = value
+        end
+    end
+    return f:close() == true
+end
 
 ---String separator.
 ---@param inputstr string
@@ -26,9 +102,7 @@ local function pattsplit(inputstr, sep)
     return res
 end
 
----Form branch according to pattern.
----@return string
-local function build_branch(units)
+local function build_branch_by_pattern(branchpatt, units)
     local separators = "/_-"
     local sepcomponents = pattsplit(branchpatt, separators)
 
@@ -44,180 +118,102 @@ local function build_branch(units)
     return branchpatt
 end
 
----Init git plugin stuff.
----@param _repos table
----@param _repobase string
----@param _linkbase string
----@param _dirbase string
----@param _commitpatt string
-function git.init(_repos, _repobase, _linkbase, _dirbase, _commitpatt, _branchpatt)
-    repobase = _repobase
-    repos = _repos
-    linkbase = _linkbase
-    dirbase = _dirbase
-    commitpatt = _commitpatt
-    branchpatt = _branchpatt
-end
+function git.saveunits(envname, uniqid)
+    local fname = plugin.prefix .. ".tman/" .. "plugin/" .. envname .. "/" .. uniqid
+    local f = io.open(fname, "w")
 
-local function save_metadata(items, repos, branch)
-end
-
-
-local function git_mkdir_codebase()
-    print("git.sync: create plugin codebase directory if needed")
-    if utils.access(prefix_codebase) then
-        return true
-    end
-    return utils.mkdir(prefix_codebase)
-end
-
-local function git_get_plugin_units(pgnname)
-    print("git.sync: read plugin units")
-    local f = io.open(file_plugin_units)
     if not f then
-        print("file_plugin_units: err", file_plugin_units)
-        return {}
-    end
-
-    local output = { }
-    for line in f:lines() do
-        local plugin_name, key, value = string.match(line, "(.*) (.*) (.*)")
-        if plugin_name == pgnname then
-            output[key] = value
-        end
-    end
-    return output
-end
-
-local function bulid_branch_by_pattern(_branchpatt, units)
-    print("bulid_branch_by_pattern: branchpatt", _branchpatt)
-    print("bulid_branch_by_pattern: branchpatt", units)
-    local separators = "/_-"
-    local sepcomponents = pattsplit(_branchpatt, separators)
-
-    for _, item in pairs(sepcomponents) do
-        local uitem = units[string.lower(item)]
-
-        -- roachme: HOTFIX: desc: replace whitespace with undrescore
-        if item == "DESC" then
-            uitem = string.gsub(uitem, " ", "_")
-        end
-        _branchpatt = string.gsub(_branchpatt, item, uitem)
-    end
-    return _branchpatt
-end
-
-local function git_update_branch_names(branch_orig, branch_pgn)
-    print("git.sync: compare git plugin branch with task units")
-    print("git.sync: update branch name if needed")
-    print("branch_orig", branch_orig)
-    print("branch_pgn", branch_pgn)
-
-    for _, repo in pairs(plugin.uconfig.git.repos) do
-        print("git_update_branch_names: repo", repo.name)
-        if gitlib.branch_exist(repo.name, branch_pgn, prefix_codebase)
-           and gitlib.branch_exist(repo.name, branch_orig, prefix_codebase) then
-            print("--- rename plugin existing branch")
-            gitlib.branch_switch(repo.name, branch_orig, prefix_codebase)
-            gitlib.branch_rename(repo.name, branch_pgn, branch_orig, prefix_codebase)
-
-        elseif gitlib.branch_exist(repo.name, branch_pgn, prefix_codebase)
-           and gitlib.branch_exist(repo.name, branch_orig, prefix_codebase)
-           and branch_orig ~= branch_pgn then
-            print("--- rename existing branch")
-            gitlib.branch_switch(repo.name, branch_orig, prefix_codebase)
-            gitlib.branch_rename(repo.name, branch_pgn, branch_orig, prefix_codebase)
-
-        else
-            -- create task branch (branch off the repo default branch)
-            print("--- create a new branch")
-            gitlib.branch_switch(repo.name, repo.branch, prefix_codebase)
-            gitlib.branch_create(repo.name, branch_orig, prefix_codebase)
-            gitlib.branch_switch(repo.name, branch_orig, prefix_codebase)
-        end
-    end
-
-    -- update plugin branch with origin task branch
-    -- code goes here...
-
-    return true
-end
-
----Clone repos.
-function git.clone()
-    for _, repo in pairs(repos) do
-        if not utils.access(repobase .. "/" .. repo.name) then
-            if not gitlib.repo_clone(repo.link, repo.name, repobase) then
-                return false
-            end
-        end
-    end
-    return true
-end
-
---[[
-lsync       - update branch names and symlinks
-rsync       - update branch from remote git repository
-cleanup     - delete task branches
-]]
-
-function git.sync(envname, id)
-    print("git.sync: init plugin")
-    if not plugin.init(envname, id) then
+        core.die(1, "could not save plugin git units", uniqid)
         return false
     end
 
-    prefix_codebase = plugin.prefix .. "/" .. "code"
-    file_plugin_units = plugin.prefix .. ".tman/" .. "plugin/" .. envname .. "/" .. id
-
-    if not utils.mkdir(prefix_codebase) then
-        io.stderr:write("ERROR: could not create plugin git codebase dir\n")
-        os.exit(1)
+    for key, value in pairs(gitunits) do
+        local result = ("%s %s %s"):format(plugin_name, key, value)
+        f:write(result .. "\n")
     end
-
-    if not git.clone() then
-        io.stderr:write("ERROR: git_clone_repos: error")
-        os.exit(1)
-    end
-
-    local branch_orig = bulid_branch_by_pattern(plugin.uconfig.git.branchpatt, plugin.units)
-    local branch_pgn = git_get_plugin_units("git").branch
-
-    if not git_update_branch_names(branch_orig, branch_pgn) then
-        io.stderr:write("ERROR: git_update_branch_names: error")
-        os.exit(1)
-    end
-
-    print("- git.sync")
+    return f:close() == true
 end
 
----Delete task branches.
+function git.getunits(key)
+    return gitunits[key]
+end
+
+function git.setunits()
+end
+
+---Create git branch for task.
+---@param envname string
 ---@param id string
----@param branch string
 ---@return boolean
-function git.delete(id, branch)
+function git.branch_create(envname, id)
+    local uconfig = plugin.get_uconfig(envname).git
+    local repos = uconfig.repos
+    local taskunits = plugin.getunits(envname, id)
+
+    if not taskunits.uniqid then
+        core.die(1, "fatal: task has no uniqid", id)
+        return false
+    end
+
+    git.loadunits(envname, taskunits.uniqid)
+    local task_branch = build_branch_by_pattern(uconfig.branchpatt, taskunits)
+    local pgn_branch = git.getunits("branch")
+
+    -- create new/fresh task branch
+    if not pgn_branch  then
+        print("-- create new task branch")
+        for _, repo in pairs(repos) do
+            if gitlib.repo_isuncommited(repo.name, codedir) then
+                core.die(1, "repo has uncommited changes", repo.name)
+                return false
+            end
+            if not gitlib.branch_switch(repo.name, repo.branch, codedir) then
+                core.die(1, "no repo default branch '%s'", repo.name, repo.branch)
+                return false
+            end
+            if not gitlib.branch_exist(repo.name, task_branch, codedir) then
+                gitlib.branch_create(repo.name, task_branch, codedir)
+            end
+            gitlib.branch_switch(repo.name, task_branch, codedir)
+        end
+        gitunits.branch = task_branch
+
+    else
+        -- update plugin branch with existing task branch
+        for _, repo in pairs(repos) do
+            if gitlib.repo_isuncommited(repo.name, codedir) then
+                core.die(1, "repo has uncommited changes", repo.name)
+                return false
+            end
+            if not gitlib.branch_on(repo.name, pgn_branch, codedir) then
+                if not gitlib.branch_switch(repo.name, pgn_branch, codedir) then
+                    core.die(1, "no repo plugin branch '%s'", repo.name, pgn_branch)
+                    return false
+                end
+            end
+            if not gitlib.branch_rename(repo.name, pgn_branch, task_branch, codedir) then
+                core.die(1, "could not rename task branch", repo.name)
+                return false
+            end
+            if not gitlib.branch_switch(repo.name, task_branch, codedir) then
+                core.die(1, "could not switch to task branch", repo.name)
+                return false
+            end
+        end
+        gitunits.branch = task_branch
+    end
+
+    git.saveunits(envname, taskunits.uniqid)
     return true
 end
 
----Rename task branches.
----@param id string
----@param oldbranch string
----@param newbranch string
----@return boolean
-function git.rename(id, oldbranch, newbranch)
-    return true
+function git.sync(envname, id)
+    git.clone(envname)
+    git.symlink_create(envname, id)
+    git.branch_create(envname, id)
 end
 
----Create commit.
----@param id string
----@return boolean
-function git.commit_create(id)
-    for _, repo in pairs(repos) do
-        gitlib.commit_create(repo.name, commitpatt, id, repobase)
-    end
-    return true
+function git.cleanup()
 end
-
-function git.commit_squash() end
 
 return git

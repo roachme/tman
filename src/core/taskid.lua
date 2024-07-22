@@ -2,7 +2,7 @@
 -- Like add, delete, list task ids and so on.
 -- @module taskid
 
-local ids = require("aux.iddb")
+local ids = require("core.aux.iddb")
 
 ---@alias Status
 ---| 0   # Current task
@@ -207,6 +207,21 @@ end
 ---@return table
 function taskid.getidx(envname, idx)
     return ids.getidx(envname, idx)
+end
+
+---Get task id by uniq id.
+---@param envname string
+---@param uid string
+---@retutn string | nil
+function taskid.getuid(envname, uid)
+    for i = 1, ids.size() do
+        local item = ids.getidx(envname, i)
+        if uid == item.uid then
+            return item.id
+        end
+    end
+
+    return nil
 end
 
 ---Get number of task ids.

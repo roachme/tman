@@ -27,23 +27,23 @@ local function _plugin_struct(cmd)
     end
 end
 
-local function _plugin_git(cmd, units)
-    --[[
-    local git_dirbase = config.user.get(envname).git.dirbase or "."
-    local git_repos = config.user.get(envname).git.repos
-    local git_repobase = core.struct.code.path
-    local git_linkbase = core.struct.tasks.path .. envname
-    local git_commitpatt = config.user.get(envname).git.commitpatt
-    local git_branchpatt = config.user.get(envname).git.branchpatt
-    git.init(git_repos, git_repobase, git_linkbase, git_dirbase, git_commitpatt, git_branchpatt)
-    ]]
+---Get task id's uid.
+---@param _envname string
+---@param _id string
+---@return string | nil
+local function get_uid(_envname, _id)
+    if not taskid.exist(_envname, _id) then
+        return nil
+    end
+    return taskunit.get(_envname, _id, "uniqid")
+end
 
+local function _plugin_git(cmd)
     if cmd == "sync" then
+        local uid = get_uid(envname, id)
         git.sync(envname, id)
-
-    elseif cmd == "create" then
-        git.create(id, units)
-
+    elseif cmd == "cleanup" then
+        -- git.cleanup()
     elseif not cmd then
         print("error: command required")
     else
@@ -80,7 +80,7 @@ local function builtin_plugin()
     if plugin == "struct" then
         _plugin_struct(cmd)
     elseif plugin == "git" then
-        _plugin_git(cmd, taskunit.units(envname, id))
+        _plugin_git(cmd)
     elseif not plugin then
         core.die(1, "plugin name required", "")
     else

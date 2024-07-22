@@ -8,29 +8,26 @@ local taskunit = require("core.taskunit")
 
 local plugin = {}
 
-function plugin.init(envname, id)
+plugin.prefix = core.struct.prefix.path
+
+---Get tasks units.
+---@param envname string
+---@param id string
+---@return table
+function plugin.getunits(envname, id)
     local unit_dir = core.struct.units.path
     local task_dir = core.struct.tasks.path
 
     -- system dependant (fatal): load core modules
     if not taskid.init(core.struct.ids.path) then
-        return core.die(1, "could not init module taskid", "fatal")
+        core.die(1, "could not init module taskid", "fatal")
+        return {}
     elseif not taskunit.init(unit_dir, task_dir) then
-        return core.die(1, "could not init module taskunit", "fatal")
+        core.die(1, "could not init module taskunit", "fatal")
+        return {}
     end
 
-    plugin.prefix = core.struct.prefix.path
-    plugin.uconfig = config.uget(envname)
-    plugin.units = taskunit.units(envname, id)
-    return true
-end
-
----Get task units.
----@param envname string
----@param uniqid string
----@return table
-function plugin.get_units(envname, uniqid)
-    return {}
+    return taskunit.units(envname, id)
 end
 
 ---Get plugin config.
