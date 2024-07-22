@@ -213,10 +213,39 @@ function git.branch_create(envname, id)
     return true
 end
 
+function git.pull_remote(envname)
+    local uconfig = plugin.get_uconfig(envname).git
+    local repos = uconfig.repos
+    local pgn_branch = git.getunits("branch")
+
+    for _, repo in pairs(repos) do
+        gitlib.branch_switch(repo.name, repo.branch, codedir)
+        gitlib.branch_pullall(repo.name, codedir)
+        gitlib.branch_switch(repo.name, pgn_branch, codedir)
+    end
+end
+
+function git.rebase_against_default(envname)
+    local uconfig = plugin.get_uconfig(envname).git
+    local repos = uconfig.repos
+    local pgn_branch = git.getunits("branch")
+
+    for _, repo in pairs(repos) do
+        gitlib.branch_switch(repo.name, pgn_branch, codedir)
+        if not gitlib.branch_rebase(repo.name, repo.branch, codedir) then
+            core.die(1, "could not rebase", repo.name)
+            return false
+        end
+    end
+    return true
+end
+
 function git.sync(envname, id)
     git.clone(envname)
     git.symlink_create(envname, id)
     git.branch_create(envname, id)
+    git.pull_remote(envname)
+    git.rebase_against_default(envname)
 end
 
 function git.cleanup()
