@@ -186,6 +186,12 @@ function git.branch_create(envname, id)
                 return false
             end
             if not gitlib.branch_on(repo.name, pgn_branch, codedir) then
+                if not gitlib.branch_exist(repo.name, pgn_branch, codedir) then
+                    if not gitlib.branch_create(repo.name, pgn_branch, codedir) then
+                        core.die(1, "could not create plugin branch", repo.name, pgn_branch)
+                        return false
+                    end
+                end
                 if not gitlib.branch_switch(repo.name, pgn_branch, codedir) then
                     core.die(1, "no repo plugin branch '%s'", repo.name, pgn_branch)
                     return false
