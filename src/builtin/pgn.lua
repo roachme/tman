@@ -27,26 +27,15 @@ local function _plugin_struct(cmd)
     end
 end
 
----Get task id's uid.
----@param _envname string
----@param _id string
----@return string | nil
-local function get_uid(_envname, _id)
-    if not taskid.exist(_envname, _id) then
-        return nil
-    end
-    return taskunit.get(_envname, _id, "uniqid")
-end
-
 local function _plugin_git(cmd)
     if cmd == "sync" then
-        git.lsync(envname, id)
+        git.sync(envname, id)
     elseif cmd == "rsync" then
         git.rsync(envname, id)
     elseif cmd == "pr" then
-        git.pr()
+        git.pr(envname, id)
     elseif cmd == "cleanup" then
-        git.cleanup()
+        git.cleanup(envname, id)
     elseif not cmd then
         print("error: command required")
     else

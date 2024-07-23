@@ -13,25 +13,22 @@ local levels = {
     ADDIT = 2,
 }
 
-unit = {
-    keys = {
-        { val = "id", lvl = 1 },
-        { val = "prio", lvl = 1 },
-        { val = "type", lvl = 1 },
-        { val = "desc", lvl = 1 },
-        { val = "env", lvl = 2 },
-        { val = "date", lvl = 2 },
-        { val = "uniqid", lvl = 3 }, -- uniq ID for each task id (use time).
-    },
-    prios = {
-        highest = "highest",
-        high = "high",
-        mid = "mid",
-        low = "low",
-        lowest = "lowest",
-    }
+unit.keys = {
+    { val = "id", lvl = 1 },
+    { val = "prio", lvl = 1 },
+    { val = "type", lvl = 1 },
+    { val = "desc", lvl = 1 },
+    { val = "env", lvl = 2 },
+    { val = "date", lvl = 2 },
+    { val = "uniqid", lvl = 3 }, -- uniq ID for each task id (use time).
 }
-
+unit.prios = {
+    highest = "highest",
+    high = "high",
+    mid = "mid",
+    low = "low",
+    lowest = "lowest",
+}
 
 ---Load task units from the file.
 ---@return boolean

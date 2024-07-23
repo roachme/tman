@@ -14,6 +14,7 @@ local builtin = {
     { name = "pgn", command = require("builtin.pgn"), setup_level = 1 },
     { name = "prev", command = require("builtin.prev"), setup_level = 1 },
     { name = "set", command = require("builtin.set"), setup_level = 1 },
+    { name = "sync", command = require("builtin.sync"), setup_level = 1 },
     { name = "use", command = require("builtin.use"), setup_level = 1 },
     { name = "ver", command = require("builtin.ver"), setup_level = 0 },
 }

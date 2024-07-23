@@ -6,8 +6,6 @@ local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 local utils = require("aux.utils")
 
-
-local function builtin_sync()
-end
+local function builtin_sync() end
 
 return builtin_sync

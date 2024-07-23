@@ -11,7 +11,7 @@ System:
   arch    - backup and/or restore
   init    - init directory structure
 
-Basic:
+Manipulation:
   add     - add a new task
   del     - delete a task
   env     - manipulate environments

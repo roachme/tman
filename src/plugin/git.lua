@@ -70,7 +70,12 @@ local gitunits = {}
 ---@param uniqid string
 ---@return boolean
 function git.loadunits(envname, uniqid)
-    local fname = plugin.prefix .. ".tman/" .. "plugin/" .. envname .. "/" .. uniqid
+    local fname = plugin.prefix
+        .. ".tman/"
+        .. "plugin/"
+        .. envname
+        .. "/"
+        .. uniqid
     local f = io.open(fname)
 
     if not f then
@@ -119,7 +124,12 @@ local function build_branch_by_pattern(branchpatt, units)
 end
 
 function git.saveunits(envname, uniqid)
-    local fname = plugin.prefix .. ".tman/" .. "plugin/" .. envname .. "/" .. uniqid
+    local fname = plugin.prefix
+        .. ".tman/"
+        .. "plugin/"
+        .. envname
+        .. "/"
+        .. uniqid
     local f = io.open(fname, "w")
 
     if not f then
@@ -138,8 +148,7 @@ function git.getunits(key)
     return gitunits[key]
 end
 
-function git.setunits()
-end
+function git.setunits() end
 
 ---Create git branch for task.
 ---@param envname string
@@ -160,15 +169,19 @@ function git.branch_create(envname, id)
     local pgn_branch = git.getunits("branch")
 
     -- create new/fresh task branch
-    if not pgn_branch  then
-        print("-- create new task branch")
+    if not pgn_branch then
         for _, repo in pairs(repos) do
             if gitlib.repo_isuncommited(repo.name, codedir) then
                 core.die(1, "repo has uncommited changes", repo.name)
                 return false
             end
             if not gitlib.branch_switch(repo.name, repo.branch, codedir) then
-                core.die(1, "no repo default branch '%s'", repo.name, repo.branch)
+                core.die(
+                    1,
+                    "no repo default branch '%s'",
+                    repo.name,
+                    repo.branch
+                )
                 return false
             end
             if not gitlib.branch_exist(repo.name, task_branch, codedir) then
@@ -177,7 +190,6 @@ function git.branch_create(envname, id)
             gitlib.branch_switch(repo.name, task_branch, codedir)
         end
         gitunits.branch = task_branch
-
     else
         -- update plugin branch with existing task branch
         for _, repo in pairs(repos) do
@@ -187,17 +199,36 @@ function git.branch_create(envname, id)
             end
             if not gitlib.branch_on(repo.name, pgn_branch, codedir) then
                 if not gitlib.branch_exist(repo.name, pgn_branch, codedir) then
-                    if not gitlib.branch_create(repo.name, pgn_branch, codedir) then
-                        core.die(1, "could not create plugin branch", repo.name, pgn_branch)
+                    if
+                        not gitlib.branch_create(repo.name, pgn_branch, codedir)
+                    then
+                        core.die(
+                            1,
+                            "could not create plugin branch",
+                            repo.name,
+                            pgn_branch
+                        )
                         return false
                     end
                 end
                 if not gitlib.branch_switch(repo.name, pgn_branch, codedir) then
-                    core.die(1, "no repo plugin branch '%s'", repo.name, pgn_branch)
+                    core.die(
+                        1,
+                        "no repo plugin branch '%s'",
+                        repo.name,
+                        pgn_branch
+                    )
                     return false
                 end
             end
-            if not gitlib.branch_rename(repo.name, pgn_branch, task_branch, codedir) then
+            if
+                not gitlib.branch_rename(
+                    repo.name,
+                    pgn_branch,
+                    task_branch,
+                    codedir
+                )
+            then
                 core.die(1, "could not rename task branch", repo.name)
                 return false
             end
@@ -240,14 +271,13 @@ function git.rebase_against_default(envname)
     return true
 end
 
-
 -- Public functions --
 
----Sync task branches.
+---Locally sync task branches.
 ---@param envname string
 ---@param id string
 ---@return boolean
-function git.lsync(envname, id)
+function git.sync(envname, id)
     git.clone(envname)
     git.symlink_create(envname, id)
     git.branch_create(envname, id)
@@ -255,7 +285,7 @@ function git.lsync(envname, id)
     return true
 end
 
----Sync branches with remote git server.
+---Remotely sync branches with git server.
 ---@param envname string
 ---@param id string
 ---@return boolean

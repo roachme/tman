@@ -161,13 +161,29 @@ local function builtin_set()
     end
 
     if options.newid.arg and options.newtype.arg then
-        return core.die(1, "1 option -i can't be used with other options", "BUG")
+        return core.die(
+            1,
+            "1 option -i can't be used with other options",
+            "BUG"
+        )
     elseif options.newid.arg and options.newdesc.arg then
-        return core.die(1, "2 option -i can't be used with other options", "BUG")
+        return core.die(
+            1,
+            "2 option -i can't be used with other options",
+            "BUG"
+        )
     elseif options.newid.arg and options.newprio.arg then
-        return core.die(1, "3 option -i can't be used with other options", "BUG")
+        return core.die(
+            1,
+            "3 option -i can't be used with other options",
+            "BUG"
+        )
     elseif options.newid.arg and options.newtype.arg then
-        return core.die(1, "4 option -i can't be used with other options", "BUG")
+        return core.die(
+            1,
+            "4 option -i can't be used with other options",
+            "BUG"
+        )
     end
 
     -- set values

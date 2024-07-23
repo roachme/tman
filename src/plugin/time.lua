@@ -1,5 +1,3 @@
 local time = {}
 
-
-
 return time

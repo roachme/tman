@@ -24,7 +24,11 @@ local function _env_add(envname)
             "envdir"
         )
     elseif not utils.mkdir(core.struct.plugin.path .. "/" .. envname) then
-        return core.die(1, "could not create plugin environment directory", "envdir")
+        return core.die(
+            1,
+            "could not create plugin environment directory",
+            "envdir"
+        )
     end
 
     return 0
