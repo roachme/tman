@@ -37,13 +37,13 @@ local function builtin_add()
         end
     end
 
-    id = arg[last_index]
-    envname = arg[last_index + 1]
-
     if keyhelp then
         help.usage(cmdname)
-        return 0
+        return 1
     end
+
+    id = arg[last_index]
+    envname = arg[last_index + 1]
 
     -- system dependant (fatal): load core modules
     if not taskenv.init(core.struct.envs.path) then

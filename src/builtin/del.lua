@@ -33,7 +33,7 @@ local function builtin_del()
 
     if keyhelp then
         help.usage(cmdname)
-        return 0
+        return 1
     end
 
     -- system dependant (fatal): load core modules
