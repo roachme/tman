@@ -3,13 +3,38 @@ local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
 local core = require("core.core")
 local utils = require("aux.utils")
+local getopt = require("posix.unistd").getopt
+local help = require("aux.help")
 
 --- Delete task.
 local function builtin_del()
     local id = arg[1]
     local envname
+    local cmdname = "del"
     local unit_dir = core.struct.units.path
     local task_dir = core.struct.tasks.path
+    local optstr = "fh"
+    local keyhelp
+    local force = false
+    local last_index = 1
+
+    for optopt, _, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            return core.die(1, "unrecognized option", arg[optind - 1])
+        end
+
+        last_index = optind
+        if optopt == "f" then
+            force = true
+        elseif optopt == "h" then
+            keyhelp = true
+        end
+    end
+
+    if keyhelp then
+        help.usage(cmdname)
+        return 0
+    end
 
     -- system dependant (fatal): load core modules
     if not taskenv.init(core.struct.envs.path) then
@@ -30,7 +55,7 @@ local function builtin_del()
         return core.die(1, "no such environment", envname)
     end
 
-    id = arg[1] or taskid.getcurr(envname)
+    id = arg[last_index] or taskid.getcurr(envname)
     if not id then
         return core.die(1, "no current task id", "")
     elseif not taskid.check(id) then
@@ -39,13 +64,16 @@ local function builtin_del()
         return core.die(1, "no such task id", id)
     end
 
-    io.write("Task: ")
-    taskunit.cat(envname, id, "desc")
-    io.write("Do you want to continue? [Yes/No] ")
-    local confirm = io.read("*line")
-    if confirm ~= "Yes" then
-        print("deletion is cancelled")
-        os.exit(1)
+    if not force then
+        io.write("Task: ")
+        local option = ""
+        taskunit.cat(envname, id, option, "desc")
+        io.write("Do you want to continue? [Yes/No] ")
+        local confirm = io.read("*line")
+        if confirm ~= "Yes" then
+            print("deletion is cancelled")
+            os.exit(1)
+        end
     end
 
     -- delete task from database.
