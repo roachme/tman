@@ -240,15 +240,48 @@ function git.rebase_against_default(envname)
     return true
 end
 
-function git.sync(envname, id)
+
+-- Public functions --
+
+---Sync task branches.
+---@param envname string
+---@param id string
+---@return boolean
+function git.lsync(envname, id)
+    git.clone(envname)
+    git.symlink_create(envname, id)
+    git.branch_create(envname, id)
+    git.rebase_against_default(envname)
+    return true
+end
+
+---Sync branches with remote git server.
+---@param envname string
+---@param id string
+---@return boolean
+function git.rsync(envname, id)
     git.clone(envname)
     git.symlink_create(envname, id)
     git.branch_create(envname, id)
     git.pull_remote(envname)
     git.rebase_against_default(envname)
+    return true
 end
 
-function git.cleanup()
+---Create pull request.
+---@param envname string
+---@param id string
+---@return boolean
+function git.pr(envname, id)
+    return true
+end
+
+---Delete task branches.
+---@param envname string
+---@param id string
+---@return boolean
+function git.cleanup(envname, id)
+    return true
 end
 
 return git

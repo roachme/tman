@@ -40,10 +40,13 @@ end
 
 local function _plugin_git(cmd)
     if cmd == "sync" then
-        local uid = get_uid(envname, id)
-        git.sync(envname, id)
+        git.lsync(envname, id)
+    elseif cmd == "rsync" then
+        git.rsync(envname, id)
+    elseif cmd == "pr" then
+        git.pr()
     elseif cmd == "cleanup" then
-        -- git.cleanup()
+        git.cleanup()
     elseif not cmd then
         print("error: command required")
     else
