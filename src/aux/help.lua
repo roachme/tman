@@ -16,8 +16,9 @@ Basic:
   del     - delete a task
   env     - manipulate environments
   prev    - switch to previous task
-  use     - switch to specific task
   set     - set task unit values
+  sync    - synchronize task (under development)
+  use     - switch to specific task
 
 Additional:
   cfg     - config workflow
@@ -25,8 +26,8 @@ Additional:
 
 Info:
   cat     - cat task info
-  list    - list task environment
   help    - display help information
+  list    - list task environment
   ver     - show version
 
 '%s help COMMAND' to get detailed info about command.
