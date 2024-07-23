@@ -189,6 +189,9 @@ function taskid.del(envname, id)
 
     if id == curr and prev then
         taskid.setcurr(envname, prev)
+    elseif id == curr then
+        -- if no special task id are left.
+        taskid.unsetcurr("")
     end
     return ids.save()
 end
