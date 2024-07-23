@@ -5,7 +5,7 @@ local utils = require("aux.utils")
 
 local git = {}
 local plugin_name = "git"
-local codedir = plugin.prefix .. "code/"
+local codedir = plugin.prefix .. "repos/"
 
 ---Clone git repositories.
 ---@param envname string
