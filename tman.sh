@@ -135,7 +135,7 @@ function _tman_form_full_command()
     stat="$stat .. ';${TMAN_INSTALL}/src/plugin/?.lua;'"
     stat="$stat .. ';${TMAN_INSTALL}/src/builtin/?.lua;'"
 
-    TMAN="lua -e \"$stat\" $script"
+    TMAN=(lua -e "$stat" "$script")
 }
 
 function tman()
@@ -147,7 +147,7 @@ function tman()
 
     TMAN_CWD="$(pwd)"
 
-    eval "$TMAN" "$*"
+    "${TMAN[@]}" "$@"
     retcode="$?"
 
     if [ $retcode -ne 0 ]; then
