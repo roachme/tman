@@ -36,7 +36,7 @@ function _tman_wd_rm()
 
 function _tman_get_tmanconf()
 {
-    TMAN_TMANCONF="${HOME}/.config/tman/sys2.conf"
+    TMAN_TMANCONF="${HOME}/.config/tman/sys.conf"
 }
 
 function _tman_get_sys_config_vars()

@@ -53,7 +53,7 @@ local function read_file(fname)
     return res ~= "" and res or "{}"
 end
 
-local fconf = find_config_file("user2.json")
+local fconf = find_config_file("user.json")
 local config = json.decode(read_file(fconf))
 uconfig.envlist = {}
 
