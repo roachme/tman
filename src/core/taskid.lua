@@ -11,7 +11,7 @@ local ids = require("core.aux.iddb")
 ---| 3   # Completed task
 
 local taskid = {}
-local fids
+local fids, fshell
 
 ---Types of task ids.
 taskid.status = {
@@ -25,8 +25,7 @@ taskid.status = {
 ---@param val string
 ---@retrun boolean
 local function shell_setcurr(val)
-    local fname = "/home/roach/test/.tman/curr"
-    local f = io.open(fname, "w")
+    local f = io.open(fshell, "w")
 
     if not f then
         return false
@@ -197,10 +196,12 @@ function taskid.del(envname, id)
 end
 
 ---Init task id database.
----@param fname string
+---@param fname_id string
+---@param fname_shell string
 ---@return boolean
-function taskid.init(fname)
-    fids = fname
+function taskid.init(fname_id, fname_shell)
+    fids = fname_id
+    fshell = fname_shell
     return ids.init(fids)
 end
 

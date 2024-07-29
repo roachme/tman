@@ -33,7 +33,7 @@ local function tman_prev()
     -- system dependant (fatal): load core modules
     if not taskenv.init(core.struct.envs.path) then
         return core.die(1, "could not init module taskenv", "fatal")
-    elseif not taskid.init(core.struct.ids.path) then
+    elseif not taskid.init(core.struct.ids.path, core.struct.curr.path) then
         return core.die(1, "could not init module taskid", "fatal")
     elseif not taskunit.init(unit_dir, task_dir) then
         return core.die(1, "could not init module taskunit", "fatal")

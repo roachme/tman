@@ -51,7 +51,7 @@ local function builtin_plugin()
 
     if not taskenv.init(core.struct.envs.path) then
         return core.die(1, "could not init module taskenv", "fatal")
-    elseif not taskid.init(core.struct.ids.path) then
+    elseif not taskid.init(core.struct.ids.path, core.struct.curr.path) then
         return core.die(1, "could not init module taskid", "fatal")
     elseif not taskunit.init(core.struct.units.path) then
         return core.die(1, "could not init module taskunit", "fatal")

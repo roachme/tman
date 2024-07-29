@@ -271,6 +271,14 @@ function git.rebase_against_default(envname)
     return true
 end
 
+function git.create_structure(envname)
+    local plugin_dir = plugin.dbdir .. "/plugin/" .. envname
+
+    if not utils.mkdir(plugin_dir) then
+        core.die(1, "could not create plugin dir")
+    end
+end
+
 -- Public functions --
 
 ---Locally sync task branches.
@@ -278,6 +286,7 @@ end
 ---@param id string
 ---@return boolean
 function git.sync(envname, id)
+    git.create_structure(envname)
     git.clone(envname)
     git.symlink_create(envname, id)
     git.branch_create(envname, id)

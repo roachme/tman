@@ -81,7 +81,7 @@ local function builtin_env()
     local envname = arg[2]
 
     env.init(core.struct.envs.path)
-    taskid.init(core.struct.ids.path)
+    taskid.init(core.struct.ids.path, core.struct.curr.path)
 
     if cmd == "add" then
         _env_add(envname)

@@ -6,7 +6,7 @@ local config = require("aux.config")
 
 local core = {}
 
-local prefix = config.prefix .. "/"
+local prefix = config.prefix
 
 core.struct = {
     prefix = { isdir = false, iscore = true, path = prefix },
