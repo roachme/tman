@@ -19,6 +19,7 @@ core.struct = {
     envs = { isdir = false, iscore = true, path = prefix .. ".tman/refs/envs" },
     ids = { isdir = false, iscore = true, path = prefix .. ".tman/refs/ids" },
 
+    -- shouldn've been here in first place. It's plugin responsibilty.
     plugin = { isdir = true, iscore = false, path = prefix .. ".tman/plugin/" },
 
     tasks = { isdir = true, iscore = false, path = prefix .. "tasks/" },
