@@ -2,7 +2,7 @@ local core = require("core.core")
 
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")
-local taskenv = require("core.env")
+local taskenv = require("core.taskenv")
 local config = require("aux.config")
 local git = require("plugin.git")
 --local make = require("plugin.make")

@@ -22,7 +22,7 @@ Manipulation:
 
 Additional:
   cfg     - config workflow
-  pgn     - manipulate plugins: struct, git, make, time
+  pgn     - plugin manager
 
 Info:
   cat     - cat task info

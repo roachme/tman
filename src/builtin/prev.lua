@@ -2,7 +2,7 @@ local help = require("aux.help")
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
 local taskid = require("core.taskid")
-local taskenv = require("core.env")
+local taskenv = require("core.taskenv")
 local taskunit = require("core.taskunit")
 
 --- Switch to previous task.
