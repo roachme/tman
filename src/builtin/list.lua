@@ -56,8 +56,7 @@ local function builtin_list()
 
     envname = arg[last_index] or taskenv.getcurr()
     if not envname then
-        -- nothing to show, terminate here.
-        return 0
+        return core.die(1, "no current environment", "env")
     elseif not taskenv.exist(envname) then
         return core.die(1, "no such environment name", envname)
     end
@@ -76,15 +75,13 @@ local function builtin_list()
 
     for i = 1, taskid.size() do
         local item = taskid.getidx(envname, i)
+        local desc = taskunit.get(envname, item.id, "desc")
 
-        if item.envname == envname then
-            local desc = taskunit.get(envname, item.id, "desc")
-            if item.id ~= curr and item.id ~= prev then
-                if item.status == taskid.status.ACTV and active then
-                    print(("+ %-10s %s"):format(item.id, desc))
-                elseif item.status == taskid.status.COMP and completed then
-                    print(("- %-10s %s"):format(item.id, desc))
-                end
+        if item.id ~= curr and item.id ~= prev then
+            if item.status == taskid.status.ACTV and active then
+                print(("+ %-10s %s"):format(item.id, desc))
+            elseif item.status == taskid.status.COMP and completed then
+                print(("- %-10s %s"):format(item.id, desc))
             end
         end
     end
