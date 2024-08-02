@@ -1,5 +1,6 @@
 local core = require("core.core")
 local getopt = require("posix.unistd").getopt
+local config = require("aux.config")
 
 --- Config util for your workflow
 local function tman_config()
@@ -24,11 +25,13 @@ local function tman_config()
     end
 
     if fbase then
-        print("set base & core values: under development", vbase)
+        -- roachme: check that vbase prefix directory can be created.
+        --          convert to correct value if it's "." and has "~/"
+        config.sset("prefix", vbase)
     elseif finstall then
         print("set install value (under development)", vinstall)
     elseif fshow then
-        print("show config: under development")
+        config.sshow()
     end
     return 0
 end

@@ -70,6 +70,12 @@ function sysconfig.get(var)
     return configcontent[var]
 end
 
+function sysconfig.show()
+    for key, value in pairs(configcontent) do
+        print(("%s = %s"):format(key, value))
+    end
+end
+
 function sysconfig.init(fname)
     fconfig = fname
     load_sysconfig()

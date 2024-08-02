@@ -53,6 +53,10 @@ function config.sset(key, val)
     config.load()
 end
 
+function config.sshow()
+    return sconfig.show()
+end
+
 function config.uget(envname)
     return uconfig.get(envname)
 end
