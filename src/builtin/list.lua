@@ -71,7 +71,7 @@ local function builtin_list()
     end
     if (active or (not active and not completed)) and prev then
         local desc = taskunit.get(envname, prev, "desc")
-        print(("- %-10s %s"):format(prev, desc))
+        print(("^ %-10s %s"):format(prev, desc))
     end
 
     for i = 1, taskid.size() do
@@ -81,9 +81,9 @@ local function builtin_list()
             local desc = taskunit.get(envname, item.id, "desc")
             if item.id ~= curr and item.id ~= prev then
                 if item.status == taskid.status.ACTV and active then
-                    print(("a %-10s %s"):format(item.id, desc))
+                    print(("+ %-10s %s"):format(item.id, desc))
                 elseif item.status == taskid.status.COMP and completed then
-                    print(("c %-10s %s"):format(item.id, desc))
+                    print(("- %-10s %s"):format(item.id, desc))
                 end
             end
         end
