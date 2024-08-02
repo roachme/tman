@@ -21,7 +21,7 @@ Manipulation:
   use     - switch to specific task
 
 Additional:
-  cfg     - config workflow
+  cfg     - manipulate system configuration
   pgn     - plugin manager
 
 Info:
