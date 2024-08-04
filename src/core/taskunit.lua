@@ -212,40 +212,27 @@ end
 ---@param envname string
 ---@param id string
 ---@return table
+---@deprecated
 function taskunit.units(envname, id)
     unit.init(unit_dir .. utils.genname(envname, id))
     return unit.units()
 end
 
----Show task unit metadata.
+---Get task units.
+---@param envname string
 ---@param id string
----@param key string
----@param option string
----@return boolean
-function taskunit.cat(envname, id, option, key)
+---@return table
+function taskunit.cat(envname, id)
+    local units = {}
+
     unit.init(unit_dir .. utils.genname(envname, id))
-
-    -- output only key value
-    if key then
-        for _, ukey in pairs(unit.keys) do
-            if ukey.val == key then
-                local uval = unit.get(key)
-                uval = uval and uval ~= "" and uval .. "\n" or ""
-                io.write(("%s"):format(uval))
-                return true
-            end
-        end
-        return false
-    end
-
-    -- output all key values
     for _, ukey in pairs(unit.keys) do
-        local value = unit.get(ukey.val) or ""
+        local value = unit.get(ukey.val)
         if ukey.lvl == 1 then
-            print(("%-8s: %s"):format(ukey.val, value))
+            units[ukey.val] = value
         end
     end
-    return true
+    return units
 end
 
 return taskunit

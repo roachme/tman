@@ -262,16 +262,20 @@ end
 ---@return boolean
 function core.del(envname, id)
     core.init()
+    envname = envname or taskenv.getcurr()
 
     if not envname then
-        core.die(1, "environment name required", "envname")
-        return false
-    elseif not id then
-        core.die(1, "task id required", "id")
+        core.die(1, "no current environment", "envname")
         return false
     elseif not taskenv.exist(envname) then
         local errfmt = "no such environment name"
         core.die(1, errfmt, "envname")
+        return false
+    end
+
+    id = id or taskid.getcurr(envname)
+    if not id then
+        core.die(1, "task id required", "id")
         return false
     elseif not taskid.exist(envname, id) then
         local errfmt = "no such task id in environment %s"
@@ -280,6 +284,12 @@ function core.del(envname, id)
     elseif not taskid.del(envname, id) then
         local errfmt = "could not delete task id %s from environment %s"
         core.die(1, errfmt:format(id, envname), "fatal")
+        return false
+    end
+
+    local taskdir = struct.tasks.path .. "/" .. envname .. "/" .. id
+    if not utils.rm(taskdir) then
+        core.die(1, "fatal never: could not delete task dir", "taskdir")
         return false
     end
     return true
@@ -306,8 +316,10 @@ function core.switch(envname, id)
 
     if not taskenv.exist(envname) then
         core.die(1, "no such environment", envname)
+    elseif not taskenv.setcurr(envname) then
+        core.die(1, "could not switch to environment %s", envname, "switch")
     elseif not taskid.exist(envname, id) then
-        core.die(1, "no such task id", id)
+        core.die(1, "no such task id in environment %s", id, envname)
     elseif not taskid.setcurr(envname, id) then
         core.die(1, "could not switch to task", "switch")
     end
@@ -342,6 +354,7 @@ end
 ---@param envname string
 ---@return table
 function core.list(envname)
+    core.init()
     local tasks = {}
     envname = envname or taskenv.getcurr()
 
@@ -365,6 +378,33 @@ function core.list(envname)
     return tasks
 end
 
+---Get task units.
+---@param envname string
+---@param id string
+---@return table
+function core.cat(envname, id)
+    core.init()
+
+    envname = envname or taskenv.getcurr()
+    if not envname then
+        core.die(1, "no current environment", "cat")
+        return {}
+    elseif not taskenv.exist(envname) then
+        core.die(1, "no such environment %s", "cat", envname)
+        return {}
+    end
+
+    id = id or taskid.getcurr(envname)
+    if not id then
+        core.die(1, "no current task id in environment %s", "cat", envname)
+        return {}
+    elseif not taskid.exist(envname, id) then
+        core.die(1, "no such task id in environment %s", "cat", envname)
+        return {}
+    end
+
+    return taskunit.cat(envname, id)
+end
 
 
 -- hotfix: for env.lua
