@@ -17,11 +17,11 @@ Manipulation:
   env     - manipulate environments
   prev    - switch to previous task
   set     - set task unit values
-  sync    - synchronize task (under development)
   use     - switch to specific task
 
 Additional:
   cfg     - manipulate system configuration
+  sync    - synchronize task (under development)
   pgn     - plugin manager
 
 Info:
