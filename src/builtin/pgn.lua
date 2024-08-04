@@ -1,8 +1,4 @@
 local core = require("core.core")
-
-local taskid = require("core.taskid")
-local taskunit = require("core.taskunit")
-local taskenv = require("core.taskenv")
 local config = require("aux.config")
 local git = require("plugin.git")
 --local make = require("plugin.make")
@@ -49,6 +45,7 @@ local function builtin_plugin()
     local plugin = arg[1]
     local cmd = arg[2] or "create"
 
+--[[
     if not taskenv.init(core.struct.envs.path) then
         return core.die(1, "could not init module taskenv", "fatal")
     elseif not taskid.init(core.struct.ids.path, core.struct.curr.path) then
@@ -78,6 +75,7 @@ local function builtin_plugin()
     else
         core.die(1, "no such plugin", plugin)
     end
+]]
 end
 
 return builtin_plugin

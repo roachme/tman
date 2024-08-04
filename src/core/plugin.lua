@@ -3,8 +3,6 @@
 
 local core = require("core.core")
 local config = require("aux.config")
-local taskid = require("core.taskid")
-local taskunit = require("core.taskunit")
 
 local plugin = {}
 
@@ -17,6 +15,7 @@ plugin.dbdir = core.struct.dbdir.path
 ---@param id string
 ---@return table
 function plugin.getunits(envname, id)
+    --[[
     local unit_dir = core.struct.units.path
     local task_dir = core.struct.tasks.path
 
@@ -30,6 +29,8 @@ function plugin.getunits(envname, id)
     end
 
     return taskunit.units(envname, id)
+    ]]
+    return {}
 end
 
 ---Get plugin config.

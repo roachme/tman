@@ -1,6 +1,3 @@
-local taskenv = require("core.taskenv")
-local taskid = require("core.taskid")
-local taskunit = require("core.taskunit")
 local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
@@ -8,15 +5,14 @@ local getopt = require("posix.unistd").getopt
 --- List all task ids.
 -- Default: show only active task ids.
 local function builtin_list()
+    local tasks
     local cmdname = "list"
     local active = true
     local completed = false
     local optstring = "Aach"
     local keyhelp
-    local envname
     local last_index = 1
-    local unit_dir = core.struct.units.path
-    local task_dir = core.struct.tasks.path
+    local statuses = { "*", "^", "+", "-" }
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
@@ -43,46 +39,21 @@ local function builtin_list()
         return 0
     end
 
-    -- system dependant (fatal): load core modules
-    if not taskenv.init(core.struct.envs.path) then
-        return core.die(1, "could not init module taskenv", "fatal")
-    elseif not taskid.init(core.struct.ids.path, core.struct.curr.path) then
-        return core.die(1, "could not init module taskid", "fatal")
-    elseif not taskunit.init(unit_dir, task_dir) then
-        return core.die(1, "could not init module taskunit", "fatal")
-    end
+    tasks = core.list(arg[last_index])
 
-    -- check: user dependant: sentinel guards
+    table.sort(tasks, function(a, b)
+        return a.status < b.status
+    end)
 
-    envname = arg[last_index] or taskenv.getcurr()
-    if not envname then
-        return core.die(1, "no current environment", "env")
-    elseif not taskenv.exist(envname) then
-        return core.die(1, "no such environment name", envname)
-    end
+    for _, task in pairs(tasks) do
+        local fmt = "%s %-10s %s"
+        local status = task.status
+        local mark = statuses[status + 1]
 
-    local curr = taskid.getcurr(envname)
-    local prev = taskid.getprev(envname)
-
-    if (active or (not active and not completed)) and curr then
-        local desc = taskunit.get(envname, curr, "desc")
-        print(("* %-10s %s"):format(curr, desc))
-    end
-    if (active or (not active and not completed)) and prev then
-        local desc = taskunit.get(envname, prev, "desc")
-        print(("^ %-10s %s"):format(prev, desc))
-    end
-
-    for i = 1, taskid.size() do
-        local item = taskid.getidx(envname, i)
-        local desc = taskunit.get(envname, item.id, "desc")
-
-        if item.id ~= curr and item.id ~= prev then
-            if item.status == taskid.status.ACTV and active then
-                print(("+ %-10s %s"):format(item.id, desc))
-            elseif item.status == taskid.status.COMP and completed then
-                print(("- %-10s %s"):format(item.id, desc))
-            end
+        if completed and task.status == 3 then
+            print(fmt:format(mark, task.id, task.desc))
+        elseif active and task.status ~= 3 then
+            print(fmt:format(mark, task.id, task.desc))
         end
     end
     return 0
