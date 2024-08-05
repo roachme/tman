@@ -303,6 +303,39 @@ end
 ---@return boolean
 function core.set(envname, id, key, val)
     core.init()
+
+    envname = envname or taskenv.getcurr()
+    if not envname then
+        core.die(1, "no current environment", "envname")
+        return false
+    elseif not taskenv.exist(envname) then
+        local errfmt = "no such environment name"
+        core.die(1, errfmt, "envname")
+        return false
+    end
+
+    id = id or taskid.getcurr(envname)
+    if not id then
+        core.die(1, "no current task id", "id")
+        return false
+    elseif not taskid.exist(envname, id) then
+        local errfmt = "no such task id in environment %s"
+        core.die(1, errfmt, id, envname)
+        return false
+    end
+
+    -- check that key exists
+    local curr = taskid.getcurr(envname)
+    if not taskunit.keyexist(key) then
+        core.die(1, "no such key", "set")
+    elseif not taskunit.set(envname, id, key, val) then
+        core.die(1, "could not set unit value", id)
+    end
+
+    if key == "id" then
+        taskid.rename(envname, id, val)
+    end
+
     return true
 end
 
@@ -335,6 +368,9 @@ function core.prev(envname)
 
     if not envname then
         core.die(1, "no current environment", "env")
+        return false
+    elseif not taskenv.exist(envname) then
+        core.die(1, "no such environment name", envname)
         return false
     end
 
@@ -405,6 +441,20 @@ function core.cat(envname, id)
 
     return taskunit.cat(envname, id)
 end
+
+
+--[[
+
+add
+del
+set
+cat/get
+list
+switch
+prev (?)
+
+]]
+
 
 
 -- hotfix: for env.lua

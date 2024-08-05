@@ -109,6 +109,15 @@ function taskunit.init(unitdir, taskdir)
     return true
 end
 
+function taskunit.keyexist(keyname)
+    for _, ukey in pairs(unit.keys) do
+        if keyname == ukey.val then
+            return true
+        end
+    end
+    return false
+end
+
 ---Check task units.
 ---@param key string
 ---@param value string

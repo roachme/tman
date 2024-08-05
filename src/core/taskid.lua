@@ -154,6 +154,8 @@ function taskid.rename(envname, oldid, newid)
     local item = ids.get(envname, oldid)
     ids.del(envname, oldid)
     ids.add(envname, newid, item.status)
+
+    -- update current task if needed
     return ids.save()
 end
 

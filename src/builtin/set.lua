@@ -93,22 +93,11 @@ local function builtin_set()
     local optstr = "di:p:t:"
     local newdesc -- roachme: get rid of this variable
     local options = {
-        newdesc = { arg = nil, func = _set_desc },
-        newprio = { arg = nil, func = _set_prio },
-        newtype = { arg = nil, func = _set_type },
-        newid = { arg = nil, func = _set_id },
+        newdesc = { key = "desc", arg = nil, func = _set_desc },
+        newprio = { key = "prio", arg = nil, func = _set_prio },
+        newtype = { key = "type", arg = nil, func = _set_type },
+        newid = { key = "id", arg = nil, func = _set_id },
     }
-    local unit_dir = core.struct.units.path
-    local task_dir = core.struct.tasks.path
-
-    -- system dependant (fatal): load core modules
-    if not taskenv.init(core.struct.envs.path) then
-        return core.die(1, "could not init module taskenv", "fatal")
-    elseif not taskid.init(core.struct.ids.path, core.struct.curr.path) then
-        return core.die(1, "could not init module taskid", "fatal")
-    elseif not taskunit.init(unit_dir, task_dir) then
-        return core.die(1, "could not init module taskunit", "fatal")
-    end
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -142,24 +131,29 @@ local function builtin_set()
         end
     end
 
-    envname = taskenv.getcurr()
-    if not envname then
-        return core.die(1, "no current environment", "env")
-    elseif not taskenv.check(envname) then
-        return core.die(1, "illegal environment name value", envname)
-    elseif not taskenv.exist(envname) then
-        return core.die(1, "no such environment", "env")
+
+    id = arg[last_index]
+    envname = arg[last_index + 1]
+
+    -- newdesc = { key = "desc", arg = nil, func = _set_desc },
+    for _, item in pairs(options) do
+        if item.arg then
+            core.set(envname, id, item.key, item.arg)
+        end
     end
 
-    id = arg[last_index] or taskid.getcurr(envname)
-    if not id then
-        core.die(1, "no current task id", "")
-    elseif not taskid.check(id) then
-        return core.die(1, "illegal task id value", id)
-    elseif not taskid.exist(envname, id) then
-        core.die(1, "no such task id", id)
+    --core.set(envname, id, "type", options.newtype.arg)
+
+    --[[
+    for _, item in pairs(options) do
+        if item.arg then
+            -- no worries, a function exit if there're any errors.
+            item.func(id, item.arg)
+        end
     end
 
+    ]]
+--[[
     if options.newid.arg and options.newtype.arg then
         return core.die(
             1,
@@ -193,6 +187,8 @@ local function builtin_set()
             item.func(id, item.arg)
         end
     end
+    ]]
+
     return 0
 end
 
