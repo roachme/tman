@@ -7,7 +7,7 @@ local unit = require("aux.unitdb")
 
 local taskunit = {}
 
-local unit_dir, task_dir
+local unit_dir
 
 ---Check task id.
 ---@param id string
@@ -74,15 +74,14 @@ end
 ---@return boolean
 local function _set_id(envname, id, newid)
     -- rocahme: outta use struct.lua
-    local old_taskdir = task_dir .. utils.genname(envname, id)
-    local new_taskdir = task_dir .. utils.genname(envname, newid)
+    local old_unitfile = unit_dir .. utils.genname(envname, id)
+    local new_unitfile = unit_dir .. utils.genname(envname, newid)
 
     unit.init(unit_dir .. utils.genname(envname, id))
     unit.set("id", newid)
     unit.save()
 
-    -- gotta update curr & prev task ids.
-    return utils.rename(old_taskdir, new_taskdir)
+    return utils.rename(old_unitfile, new_unitfile)
 end
 
 ---Change task type.
@@ -103,9 +102,8 @@ local function _set_prio(envname, id, newprio)
     return unit.save()
 end
 
-function taskunit.init(unitdir, taskdir)
+function taskunit.init(unitdir)
     unit_dir = unitdir
-    task_dir = taskdir
     return true
 end
 

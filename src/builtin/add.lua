@@ -2,9 +2,9 @@ local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 
---- Add a new task.
+---Add a new task.
 local function builtin_add()
-    local id
+    local envname, id
     local cmdname = "add"
     local prio = "mid"
     local tasktype = "bugfix"
@@ -12,7 +12,6 @@ local function builtin_add()
     local optstr = "d:hp:t:"
     local last_index = 1
     local keyhelp
-    local envname
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then

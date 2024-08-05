@@ -94,6 +94,8 @@ function env.add(name, desc)
     if not envdb.add(name, desc, status.CURR) then
         return false
     end
+
+    -- gotta create a directory in units
     return env.setcurr(name)
 end
 
@@ -114,6 +116,16 @@ function env.del(name)
         envdb.set(prev, status.CURR)
     end
     return true
+end
+
+function env.getlist()
+    local out = {}
+
+    for i = 1, envdb.size() do
+        local item = envdb.getidx(i)
+        table.insert(out, item)
+    end
+    return out
 end
 
 ---List envs.

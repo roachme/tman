@@ -77,7 +77,7 @@ function taskid.unsetcurr(envname)
     shell_setcurr("")
 
     if not curr then
-        return false
+        return true
     end
 
     ids.set(envname, curr, taskid.status.ACTV)
@@ -151,11 +151,15 @@ function taskid.rename(envname, oldid, newid)
         return false
     end
 
+    local curr = taskid.getcurr(envname)
     local item = ids.get(envname, oldid)
     ids.del(envname, oldid)
     ids.add(envname, newid, item.status)
 
     -- update current task if needed
+    if curr == oldid then
+        taskid.setcurr(envname, newid)
+    end
     return ids.save()
 end
 

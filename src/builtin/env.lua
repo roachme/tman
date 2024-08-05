@@ -1,95 +1,111 @@
-local env = require("core.taskenv")
 local core = require("core.core")
-local taskid = require("core.taskid")
-local utils = require("aux.utils")
+local getopt = require("posix.unistd").getopt
 
----Add new environment.
----@param envname string
-local function _env_add(envname)
-    if not envname then
-        return core.die(1, "env name is required", "no envname")
-    elseif env.exist(envname) then
-        return core.die(1, "env name already exists", envname)
-    end
-    env.add(envname, utils.get_input("description"))
-    taskid.updcurr(envname)
+---Add a new environment.
+local function _env_add()
+    local desc, envname
+    local optstr = "d:h"
+    local last_index = 1
 
-    -- create env directory
-    if not utils.mkdir(core.struct.tasks.path .. "/" .. envname) then
-        return core.die(1, "could not create environment directory", "envdir")
-    elseif not utils.mkdir(core.struct.units.path .. "/" .. envname) then
-        return core.die(
-            1,
-            "could not create environment directory in units",
-            "envdir"
-        )
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            return core.die(1, "unrecognized option", arg[optind - 1])
+        end
+
+        last_index = optind
+        if optopt == "d" then
+            desc = optarg
+        end
     end
 
+    envname = arg[last_index]
+    core.envadd(envname, desc)
     return 0
 end
 
 ---Delete an environment.
----@param envname string
-local function _env_del(envname)
-    if not envname then
-        core.die(1, "no current environment", "env")
-    elseif not env.exist(envname) then
-        core.die(1, "no such environment", "env")
+local function _env_del()
+    local envname
+    local optstr = "f:h"
+    local last_index = 1
+    local force = false
+
+    for optopt, _, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            return core.die(1, "unrecognized option", arg[optind - 1])
+        end
+
+        last_index = optind
     end
 
-    io.write("Do you want to continue? [Yes/No] ")
-    local confirm = io.read("*line")
-    if confirm ~= "Yes" then
-        print("deletion is cancelled")
-        os.exit(1)
+    if not force then
+        io.write("Ya fuckin' sure? [Fucking no | yes]? ")
+        local confirm = io.read("*line")
+        if string.lower(confirm or "") ~= "yes" then
+            print("deletion is cancelled")
+            os.exit(1)
+        end
     end
-    -- roachme: TODO
-    -- delete taskid, taskunit and struct
-    env.del(envname)
+
+    envname = arg[last_index]
+    core.envdel(envname)
+    return 0
 end
 
 ---Switch to previous environment.
----@param prevenv string?
-local function _env_prev(prevenv)
-    if not prevenv then
-        return core.die(1, "no previous env", "env")
-    end
+local function _env_prev()
+    core.envprev()
+    return 0
+end
 
-    env.setcurr(prevenv)
-    taskid.updcurr(prevenv)
+---Set environment values.
+local function _env_set()
+    print("under development")
 end
 
 ---Switch to environment.
----@param envname string
-local function _env_use(envname)
-    if not env.exist(envname) then
-        return core.die(1, "no such env name", envname)
+local function _env_use()
+    local envname = table.remove(arg, 1)
+    core.envswitch(envname)
+    return 0
+end
+
+---List environments.
+local function _env_list()
+    local envlist = core.envlist()
+    local statuses = { "*", "^", "+", "-" }
+
+    table.sort(envlist, function(a, b)
+        return a.status < b.status
+    end)
+
+    for _, item in pairs(envlist) do
+        local fmt = "%s %-10s %s"
+        local mark = statuses[item.status + 1]
+        print(fmt:format(mark, item.name, item.desc))
     end
-    env.setcurr(envname)
-    taskid.updcurr(envname)
+    return 0
 end
 
 --- Define or display task environments.
 local function builtin_env()
-    local cmd = arg[1] or "list"
-    local envname = arg[2]
+    local cmd = table.remove(arg, 1) or "list"
+    local envcmds = {
+        add = _env_add,
+        del = _env_del,
+        list = _env_list,
+        prev = _env_prev,
+        set = _env_set,
+        use = _env_use,
+    }
 
-    env.init(core.struct.envs.path)
-    taskid.init(core.struct.ids.path, core.struct.curr.path)
-
-    if cmd == "add" then
-        _env_add(envname)
-    elseif cmd == "del" then
-        _env_del(envname or env.getcurr())
-    elseif cmd == "list" then
-        env.list()
-    elseif cmd == "prev" then
-        _env_prev(env.getprev())
-    elseif cmd == "use" then
-        _env_use(envname)
-    else
-        core.die(1, "no such env command", cmd)
+    for name, func in pairs(envcmds) do
+        if cmd == name then
+            return func()
+        end
     end
+
+    core.die(1, "no such environment command", cmd)
     return 0
 end
 

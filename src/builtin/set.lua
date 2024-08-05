@@ -91,7 +91,6 @@ local function builtin_set()
     local id
     local last_index = 1
     local optstr = "di:p:t:"
-    local newdesc -- roachme: get rid of this variable
     local options = {
         newdesc = { key = "desc", arg = nil, func = _set_desc },
         newprio = { key = "prio", arg = nil, func = _set_prio },
@@ -106,13 +105,10 @@ local function builtin_set()
 
         last_index = optind
         if optopt == "d" then
-            io.write(("New description (%s): "):format(""))
-            newdesc = io.read("*l")
-            if not taskunit.check("desc", newdesc) then
-                core.die(1, "description has illegal symbols", "")
+            if not taskunit.check("desc", optarg) then
+                core.die(1, "invalid description", optarg)
             end
-            -- roachme: be careful when delete newdesc variable.
-            options.newdesc.arg = newdesc
+            options.newdesc.arg = optarg
         elseif optopt == "i" then
             if not taskunit.check("id", optarg) then
                 core.die(1, "invalid id", optarg)
@@ -131,64 +127,14 @@ local function builtin_set()
         end
     end
 
-
     id = arg[last_index]
     envname = arg[last_index + 1]
 
-    -- newdesc = { key = "desc", arg = nil, func = _set_desc },
     for _, item in pairs(options) do
         if item.arg then
             core.set(envname, id, item.key, item.arg)
         end
     end
-
-    --core.set(envname, id, "type", options.newtype.arg)
-
-    --[[
-    for _, item in pairs(options) do
-        if item.arg then
-            -- no worries, a function exit if there're any errors.
-            item.func(id, item.arg)
-        end
-    end
-
-    ]]
---[[
-    if options.newid.arg and options.newtype.arg then
-        return core.die(
-            1,
-            "1 option -i can't be used with other options",
-            "BUG"
-        )
-    elseif options.newid.arg and options.newdesc.arg then
-        return core.die(
-            1,
-            "2 option -i can't be used with other options",
-            "BUG"
-        )
-    elseif options.newid.arg and options.newprio.arg then
-        return core.die(
-            1,
-            "3 option -i can't be used with other options",
-            "BUG"
-        )
-    elseif options.newid.arg and options.newtype.arg then
-        return core.die(
-            1,
-            "4 option -i can't be used with other options",
-            "BUG"
-        )
-    end
-
-    -- set values
-    for _, item in pairs(options) do
-        if item.arg then
-            -- no worries, a function exit if there're any errors.
-            item.func(id, item.arg)
-        end
-    end
-    ]]
-
     return 0
 end
 

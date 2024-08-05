@@ -39,12 +39,16 @@ local function builtin_list()
         return 0
     end
 
-    tasks = core.list(arg[last_index])
+    local envname = arg[last_index] or core.envcurr()
+    tasks = core.list(envname)
 
     table.sort(tasks, function(a, b)
         return a.status < b.status
     end)
 
+    if envname then
+        print(("envname: %s"):format(envname))
+    end
     for _, task in pairs(tasks) do
         local fmt = "%s %-10s %s"
         local status = task.status
