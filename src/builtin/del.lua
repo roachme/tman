@@ -7,8 +7,6 @@ local function builtin_del()
     local id = arg[1]
     local envname
     local cmdname = "del"
-    local unit_dir = core.struct.units.path
-    local task_dir = core.struct.tasks.path
     local optstr = "fh"
     local keyhelp
     local force = false
@@ -36,9 +34,6 @@ local function builtin_del()
     envname = arg[last_index + 1]
 
     if not force then
-        local option = ""
-        --io.write("Task: ")
-        --taskunit.cat(envname, id, option, "desc")
         io.write("Do you want to continue? [Yes/No] ")
         local confirm = io.read("*line")
         if confirm ~= "Yes" then
@@ -46,7 +41,6 @@ local function builtin_del()
             os.exit(1)
         end
     end
-
 
     core.del(envname, id)
     return 0
