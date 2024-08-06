@@ -25,7 +25,7 @@ local function tman_prev()
     end
 
     envname = arg[1]
-    core.prev(envname)
+    core.id_prev(envname)
     return 0
 end
 

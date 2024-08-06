@@ -10,7 +10,7 @@ local function tman_use()
 
     id = arg[1]
     envname = arg[2]
-    core.switch(envname, id)
+    core.id_switch(envname, id)
     return 0
 end
 

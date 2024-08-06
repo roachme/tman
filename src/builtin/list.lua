@@ -39,8 +39,8 @@ local function builtin_list()
         return 0
     end
 
-    local envname = arg[last_index] or core.envcurr()
-    tasks = core.list(envname)
+    local envname = arg[last_index] or core.env_curr()
+    tasks = core.id_list(envname)
 
     table.sort(tasks, function(a, b)
         return a.status < b.status

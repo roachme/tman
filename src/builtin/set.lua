@@ -132,7 +132,7 @@ local function builtin_set()
 
     for _, item in pairs(options) do
         if item.arg then
-            core.set(envname, id, item.key, item.arg)
+            core.id_set(envname, id, item.key, item.arg)
         end
     end
     return 0

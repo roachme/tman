@@ -19,7 +19,7 @@ local function _env_add()
     end
 
     envname = arg[last_index]
-    core.envadd(envname, desc)
+    core.env_add(envname, desc)
     return 0
 end
 
@@ -48,13 +48,13 @@ local function _env_del()
     end
 
     envname = arg[last_index]
-    core.envdel(envname)
+    core.env_del(envname)
     return 0
 end
 
 ---Switch to previous environment.
 local function _env_prev()
-    core.envprev()
+    core.env_prev()
     return 0
 end
 
@@ -72,7 +72,7 @@ end
 
 ---List environments.
 local function _env_list()
-    local envlist = core.envlist()
+    local envlist = core.env_list()
     local statuses = { "*", "^", "+", "-" }
 
     table.sort(envlist, function(a, b)

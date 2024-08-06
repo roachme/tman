@@ -42,7 +42,7 @@ local function builtin_del()
         end
     end
 
-    core.del(envname, id)
+    core.id_del(envname, id)
     return 0
 end
 

@@ -37,7 +37,7 @@ local function builtin_add()
 
     id = arg[last_index]
     envname = arg[last_index + 1]
-    core.add(envname, id, { desc, tasktype, prio })
+    core.id_add(envname, id, { desc, tasktype, prio })
     return 0
 end
 

@@ -31,7 +31,7 @@ local function builtin_cat()
 
     id = arg[last_index]
     envname = arg[last_index + 1]
-    units = core.cat(envname, id)
+    units = core.id_cat(envname, id)
 
     if key then
         if not units[key] then
