@@ -1,14 +1,12 @@
 --- Tman core module to to init, check and repair itself.
 -- @module core
 
-
 --[[
 
 Each command in this module can be executed separately.
 And the point is a user (builtin commands) cannot break anything.
 
 ]]
-
 
 local utils = require("aux.utils")
 local taskid = require("core.taskid")
@@ -140,7 +138,6 @@ Found the logic in git project. File name setup.c:
         b) task dir
 ]]
 
-
 ---Init core modules.
 function core.init()
     if not taskenv.init(struct.envs.path) then
@@ -210,7 +207,6 @@ file structure:
 curr refs/ units/ pgnunits/
 
 ]]
-
 
 ---Add a new environment.
 ---@param envname string
@@ -487,6 +483,10 @@ function core.prev(envname)
     elseif not taskenv.exist(envname) then
         core.die(1, "no such environment name", envname)
         return false
+    elseif taskenv.getcurr() ~= envname then
+        if not taskenv.setcurr(envname) then
+            core.die(1, "could not set current environment", "add")
+        end
     end
 
     prev = taskid.getprev(envname)

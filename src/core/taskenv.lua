@@ -156,6 +156,9 @@ function env.open(fname)
 end
 
 function env.check(envname)
+    if not envname then
+        return false
+    end
     return true
 end
 

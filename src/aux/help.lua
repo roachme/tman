@@ -101,7 +101,7 @@ ENVNAME: environment to add a new task to. Default is current environment.
     {
         name = "del",
         desc = [[
-Usage: tman del [ID]
+Usage: tman del [ID] [ENVNAME]
 Delete task.
 ID - default is current task.
 ]],
@@ -187,7 +187,7 @@ Notes:
     {
         name = "cat",
         desc = [[
-Usage: tman cat [OPTION] [ID]
+Usage: tman cat [OPTION] [ID] [ENVNAME]
 Show task units.
 ID - task id (default is current task).
 

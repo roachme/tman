@@ -45,7 +45,7 @@ local function builtin_plugin()
     local plugin = arg[1]
     local cmd = arg[2] or "create"
 
---[[
+    --[[
     if not taskenv.init(core.struct.envs.path) then
         return core.die(1, "could not init module taskenv", "fatal")
     elseif not taskid.init(core.struct.ids.path, core.struct.curr.path) then

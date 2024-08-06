@@ -2,7 +2,7 @@ local core = require("core.core")
 local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 
---- Show task unit metadata.
+---Show task unit metadata.
 local function builtin_cat()
     local id
     local envname
@@ -29,7 +29,6 @@ local function builtin_cat()
         return 0
     end
 
-
     id = arg[last_index]
     envname = arg[last_index + 1]
     units = core.cat(envname, id)
@@ -39,11 +38,10 @@ local function builtin_cat()
             core.die(1, "no such key", key, units[key])
         end
         print(("%-8s: %s"):format(key, units[key]))
-        return 0
-    end
-
-    for ukey, uval in pairs(units) do
-        print(("%-8s: %s"):format(ukey, uval))
+    else
+        for ukey, uval in pairs(units) do
+            print(("%-8s: %s"):format(ukey, uval))
+        end
     end
 
     return 0

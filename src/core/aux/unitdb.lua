@@ -7,11 +7,13 @@ local unitfile = ""
 local unitregex = "(%w*): (.*)"
 local unitfmt = "%s: %s\n"
 
+--[[
 local levels = {
     SYS = 0,
     BASIC = 1,
     ADDIT = 2,
 }
+]]
 
 unit.keys = {
     { val = "id", lvl = 1 },

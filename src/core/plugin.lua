@@ -9,7 +9,6 @@ local plugin = {}
 plugin.prefix = core.struct.prefix.path
 plugin.dbdir = core.struct.dbdir.path
 
-
 ---Get tasks units.
 ---@param envname string
 ---@param id string
