@@ -329,7 +329,7 @@ function core.add(envname, id, units)
 
     -- make sure needed environment is ready.
     if not taskenv.exist(envname) then
-        core.envadd(envname, "add")
+        core.envadd(envname)
     end
     if taskenv.getcurr() ~= envname then
         if not taskenv.setcurr(envname) then
