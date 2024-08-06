@@ -84,7 +84,7 @@ Options:
     {
         name = "add",
         desc = [[
-Usage: tman add [OPTION] ID [ENVNAME]
+Usage: tman add [OPTION]... ID [ENVNAME]
 Add new task.
 
 Options:
@@ -109,7 +109,7 @@ ID - default is current task.
     {
         name = "set",
         desc = [[
-Usage: tman set OPTION [ID] [ENVNAME]
+Usage: tman set OPTION... [ID] [ENVNAME]
 Amend task items.
 ID - default is current task.
 
@@ -129,11 +129,12 @@ ID          Task id to set values to. Default: current task.
     {
         name = "use",
         desc = [[
-Usage: tman use ID
+Usage: tman use ID [ENVNAME]
 Switch to specified task. Use `tman list` to see existing tasks.
 
 Notes:
-    ID - taks ID. Default is current task.
+    ID      - taks ID. Default is current task.
+    ENVNAME - environment name. Default is current environment.
 ]],
     },
     {
@@ -177,8 +178,10 @@ Options:
     -h   Show this help message.
 
 Notes:
-    *   Marks current task.
-    -   Makrs previous task.
+    *   Current task.
+    ^   Previous task.
+    +   Active task.
+    -   Completed task.
 ]],
     },
     {
