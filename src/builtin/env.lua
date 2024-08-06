@@ -74,6 +74,17 @@ end
 local function _env_list()
     local envlist = core.env_list()
     local statuses = { "*", "^", "+", "-" }
+    local optstr = "ht"
+    local tasklist = false
+
+    for optopt, _, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            return core.die(1, "unrecognized option", arg[optind - 1])
+        end
+        if optopt == "t" then
+            tasklist = true
+        end
+    end
 
     table.sort(envlist, function(a, b)
         return a.status < b.status
@@ -83,6 +94,17 @@ local function _env_list()
         local fmt = "%s %-10s %s"
         local mark = statuses[item.status + 1]
         print(fmt:format(mark, item.name, item.desc))
+
+        if tasklist then
+            local padding = " "
+            local tasks = core.id_list(item.name)
+            for _, task in pairs(tasks) do
+                mark = statuses[task.status + 1]
+                fmt = "%-4s %s %-10s %s"
+                print(fmt:format(padding, mark, task.id, task.desc))
+            end
+            print()
+        end
     end
     return 0
 end
