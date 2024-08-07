@@ -109,6 +109,27 @@ function envdb.set(name, status)
     return false
 end
 
+---Set value
+---@param name string
+---@param key string
+---@param val string
+---@return boolean
+function envdb.set2(name, key, val)
+    if not envdb.exists(name) then
+        return false
+    end
+
+    if key == "name" then
+        envs[val] = envs[name]
+        envs[name] = nil
+    elseif key == "status" then
+        envs[name].status = val
+    elseif key == "desc" then
+        envs[name].desc = val
+    end
+    return true
+end
+
 ---Add new env entry.
 ---@param name string
 ---@param desc string

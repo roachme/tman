@@ -61,6 +61,20 @@ end
 ---Set environment values.
 local function _env_set()
     print("under development")
+    local optstr = "d:i:"
+    local newdesc, newid
+
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            return core.die(1, "unrecognized option", arg[optind - 1])
+        end
+
+        if optopt == "d" then
+            newdesc = optarg
+        elseif optopt == "i" then
+            newid = optarg
+        end
+    end
 end
 
 ---Switch to environment.
@@ -76,16 +90,21 @@ local function _env_list()
     local statuses = { "*", "^", "+", "-" }
     local optstr = "ht"
     local tasklist = false
+    local envname
+    local last_index = 1
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
             return core.die(1, "unrecognized option", arg[optind - 1])
         end
+
+        last_index = optind
         if optopt == "t" then
             tasklist = true
         end
     end
 
+    envname = arg[last_index]
     table.sort(envlist, function(a, b)
         return a.status < b.status
     end)
@@ -98,6 +117,9 @@ local function _env_list()
         if tasklist then
             local padding = " "
             local tasks = core.id_list(item.name)
+            table.sort(tasks, function(a, b)
+                return a.status < b.status
+            end)
             for _, task in pairs(tasks) do
                 mark = statuses[task.status + 1]
                 fmt = "%-4s %s %-10s %s"

@@ -162,4 +162,12 @@ function env.check(envname)
     return true
 end
 
+---Set environment value.
+---@param key string
+---@param val string
+---@return boolean
+function env.setunit(key, val)
+    return true
+end
+
 return env
