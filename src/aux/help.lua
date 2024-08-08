@@ -17,6 +17,7 @@ Manipulation:
   add     - add a new task
   del     - delete a task
   env     - manipulate environments
+  move    - move task to another environment
   prev    - switch to previous task
   set     - set task unit values
   use     - switch to specific task
@@ -182,6 +183,13 @@ Notes:
     ^   Previous task.
     +   Active task.
     -   Completed task.
+]],
+    },
+    {
+        name = "sync",
+        desc = [[
+Usage: tman sync [OPTION]
+Synchronize with task.
 ]],
     },
     {

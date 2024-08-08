@@ -529,6 +529,20 @@ function core.id_list(envname)
     return tasks
 end
 
+---Move task into another environment.
+---@param envname string
+---@param id string
+function core.id_move(envname, id)
+    core.init()
+    local currenv = taskenv.getcurr()
+
+    if not envname then
+       core.die(1, "environment name required", "move")
+    elseif not taskenv.exist(envname) then
+        core.die(1, "no such environment name", envname)
+    end
+end
+
 ---Get task units.
 ---@param envname string
 ---@param id string
