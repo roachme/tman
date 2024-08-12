@@ -20,8 +20,8 @@ unit.keys = {
     { val = "prio", lvl = 1 },
     { val = "type", lvl = 1 },
     { val = "desc", lvl = 1 },
+    { val = "date", lvl = 1 },
     { val = "env", lvl = 2 },
-    { val = "date", lvl = 2 },
     { val = "uniqid", lvl = 3 }, -- uniq ID for each task id (use time).
 }
 unit.prios = {

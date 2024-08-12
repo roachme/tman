@@ -90,7 +90,7 @@ end
 local function builtin_set()
     local id
     local last_index = 1
-    local optstr = "di:p:t:"
+    local optstr = "d:i:p:t:"
     local options = {
         newdesc = { key = "desc", arg = nil, func = _set_desc },
         newprio = { key = "prio", arg = nil, func = _set_prio },

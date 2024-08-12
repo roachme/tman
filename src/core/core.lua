@@ -579,4 +579,34 @@ function core.id_cat(envname, id)
     return taskunit.cat(envname, id)
 end
 
+function core.id_curr(envname)
+    envname = envname or core.env_curr()
+
+    if not envname then
+        core.die(1, "no current environment", "env")
+        return nil
+    end
+    local curr = taskid.getcurr(envname)
+    return curr
+end
+
+function core.getunits(envname, id)
+    envname = envname or core.env_curr()
+
+    if not envname then
+        core.die(1, "no current envname", "env")
+        return {}
+    end
+    id = id or core.id_curr(envname)
+    if not id then
+        core.die(1, "no current task id", "")
+        return {}
+    end
+
+    return taskunit.cat(envname, id)
+end
+
+core.prefix = prefix
+core.dbdir = struct.dbdir.path
+
 return core

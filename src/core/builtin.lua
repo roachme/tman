@@ -12,7 +12,7 @@ local builtin = {
     { name = "init", command = require("builtin.init"), setup_level = 0 },
     { name = "list", command = require("builtin.list"), setup_level = 1 },
     { name = "move", command = require("builtin.move"), setup_level = 1 },
-    --{ name = "pgn", command = require("builtin.pgn"), setup_level = 1 },
+    { name = "pgn", command = require("builtin.pgn"), setup_level = 1 },
     { name = "prev", command = require("builtin.prev"), setup_level = 1 },
     { name = "set", command = require("builtin.set"), setup_level = 1 },
     { name = "sync", command = require("builtin.sync"), setup_level = 1 },

@@ -5,7 +5,7 @@ local utils = require("aux.utils")
 
 local git = {}
 local plugin_name = "git"
-local codedir = plugin.prefix .. "repos/"
+local codedir = plugin.prefix .. "/" .. "repos/"
 
 ---Clone git repositories.
 ---@param envname string
@@ -35,7 +35,7 @@ function git.symlink_create(envname, id)
     local uconfig = plugin.get_uconfig(envname).git
     local repos = uconfig.repos
     local dirbase = uconfig.dirbase
-    local taskdir = plugin.prefix .. "tasks/" .. envname .. "/" .. id .. "/"
+    local taskdir = plugin.prefix .. "/tasks/" .. envname .. "/" .. id .. "/"
 
     -- make sure repos directory exists.
     if not utils.access(taskdir .. "/" .. dirbase) then
@@ -67,15 +67,17 @@ local gitunits = {}
 
 ---Load plugin git units.
 ---@param envname string
----@param uniqid string
+---@param id string
 ---@return boolean
-function git.loadunits(envname, uniqid)
+function git.loadunits(envname, id)
     local fname = plugin.prefix
-        .. ".tman/"
-        .. "plugin/"
+        .. "/.tman/units/"
         .. envname
         .. "/"
-        .. uniqid
+        .. id
+        .. "/"
+        .. "git"
+
     local f = io.open(fname)
 
     if not f then
@@ -123,17 +125,18 @@ local function build_branch_by_pattern(branchpatt, units)
     return branchpatt
 end
 
-function git.saveunits(envname, uniqid)
+function git.saveunits(envname, id)
     local fname = plugin.prefix
-        .. ".tman/"
-        .. "plugin/"
+        .. "/.tman/units/"
         .. envname
         .. "/"
-        .. uniqid
+        .. id
+        .. "/"
+        .. "git"
     local f = io.open(fname, "w")
 
     if not f then
-        core.die(1, "could not save plugin git units", uniqid)
+        core.die(1, "could not save plugin git units", "pgn git")
         return false
     end
 
@@ -159,12 +162,7 @@ function git.branch_create(envname, id)
     local repos = uconfig.repos
     local taskunits = plugin.getunits(envname, id)
 
-    if not taskunits.uniqid then
-        core.die(1, "fatal: task has no uniqid", id)
-        return false
-    end
-
-    git.loadunits(envname, taskunits.uniqid)
+    git.loadunits(envname, id)
     local task_branch = build_branch_by_pattern(uconfig.branchpatt, taskunits)
     local pgn_branch = git.getunits("branch")
 
@@ -240,7 +238,7 @@ function git.branch_create(envname, id)
         gitunits.branch = task_branch
     end
 
-    git.saveunits(envname, taskunits.uniqid)
+    git.saveunits(envname, id)
     return true
 end
 
@@ -286,7 +284,6 @@ end
 ---@param id string
 ---@return boolean
 function git.sync(envname, id)
-    git.create_structure(envname)
     git.clone(envname)
     git.symlink_create(envname, id)
     git.branch_create(envname, id)
@@ -316,10 +313,8 @@ function git.pr(envname, id)
 end
 
 ---Delete task branches.
----@param envname string
----@param id string
 ---@return boolean
-function git.cleanup(envname, id)
+function git.cleanup()
     return true
 end
 
