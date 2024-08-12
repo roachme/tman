@@ -16,13 +16,14 @@ System:
 Manipulation:
   add     - add a new task
   del     - delete a task
-  env     - manipulate environments
   move    - move task to another environment
   prev    - switch to previous task
   set     - set task unit values
   use     - switch to specific task
 
 Additional:
+  clean   - delete finished tasks
+  env     - manipulate environments
   sync    - synchronize task (under development)
   pgn     - plugin manager
 
