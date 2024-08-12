@@ -63,7 +63,7 @@ end
 ---@param newdesc string
 ---@return boolean
 local function _set_desc(envname, id, newdesc)
-    unit.init(unit_dir .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
     unit.set("desc", newdesc)
     return unit.save()
 end
@@ -77,7 +77,7 @@ local function _set_id(envname, id, newid)
     local old_unitfile = unit_dir .. utils.genname(envname, id)
     local new_unitfile = unit_dir .. utils.genname(envname, newid)
 
-    unit.init(unit_dir .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
     unit.set("id", newid)
     unit.save()
 
@@ -87,7 +87,7 @@ end
 ---Change task type.
 ---@return boolean
 local function _set_type(envname, id, newtype)
-    unit.init(unit_dir .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
     unit.set("type", newtype)
     return unit.save()
 end
@@ -97,7 +97,7 @@ end
 ---@param newprio string
 ---@return boolean
 local function _set_prio(envname, id, newprio)
-    unit.init(unit_dir .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
     unit.set("prio", newprio)
     return unit.save()
 end
@@ -155,7 +155,7 @@ end
 ---@param prio string
 ---@return boolean
 function taskunit.add(envname, id, desc, tasktype, prio)
-    unit.init(unit_dir .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
     unit.set("id", id)
     unit.set("env", envname)
     unit.set("prio", prio)
@@ -211,7 +211,7 @@ end
 ---@param key string
 ---@return string
 function taskunit.get(envname, id, key)
-    unit.init(unit_dir .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
     return unit.get(key)
 end
 
@@ -221,7 +221,7 @@ end
 ---@return table
 ---@deprecated
 function taskunit.units(envname, id)
-    unit.init(unit_dir .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
     return unit.units()
 end
 
@@ -232,7 +232,7 @@ end
 function taskunit.cat(envname, id)
     local units = {}
 
-    unit.init(unit_dir .. utils.genname(envname, id))
+    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
     for _, ukey in pairs(unit.keys) do
         local value = unit.get(ukey.val)
         if ukey.lvl == 1 then

@@ -333,6 +333,14 @@ function core.id_add(envname, id, units)
         end
     end
 
+    local unitdir = struct.units.path .. "/" .. envname .. "/" .. id
+    if not utils.mkdir(unitdir) then
+        taskid.del(envname, id)
+        taskunit.del(envname, id)
+        core.die(1, "fatal never: could not create unit dir", "unitdir")
+        return false
+    end
+
     if taskid.exist(envname, id) then
         local errfmt = "task id %s already exists in environment %s"
         core.die(1, errfmt:format(id, envname), "fatal")
