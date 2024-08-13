@@ -440,7 +440,9 @@ function core.id_set(envname, id, key, val)
 
     -- check that key exists
     if not taskunit.keyexist(key) then
-        core.die(1, "no such key", "set")
+        core.die(1, "no such key '%s'", "set", key)
+    elseif not taskunit.check(key, val) then
+        core.die(1, "illegal value", key)
     elseif not taskunit.set(envname, id, key, val) then
         core.die(1, "could not set unit value", id)
     end
