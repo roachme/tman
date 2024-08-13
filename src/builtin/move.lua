@@ -25,7 +25,6 @@ local function builtin_move()
         return 1
     end
 
-
     print("under development")
     os.exit(0)
     id = arg[last_index]

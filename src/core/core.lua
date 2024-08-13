@@ -547,7 +547,7 @@ function core.id_move(envname, id)
     local currenv = taskenv.getcurr()
 
     if not envname then
-       core.die(1, "environment name required", "move")
+        core.die(1, "environment name required", "move")
     elseif not taskenv.exist(envname) then
         core.die(1, "no such environment name", envname)
     end

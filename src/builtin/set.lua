@@ -6,7 +6,7 @@ local function builtin_set()
     local envname, id
     local last_index = 1
     local optstr = "d:i:p:t:"
-    local options = { }
+    local options = {}
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
