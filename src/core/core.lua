@@ -26,6 +26,7 @@ local struct = {
     tasks = { isdir = true, iscore = false, path = prefix .. "/tasks/" },
     envs = { isdir = false, iscore = true, path = prefix .. "/.tman/refs/envs" },
     curr = { isdir = false, iscore = true, path = prefix .. "/.tman/curr" },
+    prev = { isdir = false, iscore = true, path = prefix .. "/.tman/prev" },
     ids = { isdir = false, iscore = true, path = prefix .. "/.tman/refs/ids" },
 }
 
