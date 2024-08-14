@@ -278,7 +278,7 @@ end
 
 ---Switch to environment.
 ---@param envname string
-function core.envswitch(envname)
+function core.env_switch(envname)
     if not envname then
         core.die(1, "environment name required", "envswitch")
         return 1

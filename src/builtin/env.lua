@@ -80,7 +80,7 @@ end
 ---Switch to environment.
 local function _env_use()
     local envname = table.remove(arg, 1)
-    core.envswitch(envname)
+    core.env_switch(envname)
     return 0
 end
 
