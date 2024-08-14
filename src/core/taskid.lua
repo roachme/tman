@@ -163,12 +163,6 @@ function taskid.rename(envname, oldid, newid)
     return ids.save()
 end
 
----Check that id does not have illegal symbols.
----@return boolean
-function taskid.check(id)
-    return true
-end
-
 ---Add new current task id into environment.
 ---@param envname string
 ---@param id string
@@ -217,21 +211,6 @@ end
 ---@return table
 function taskid.getidx(envname, idx)
     return ids.getidx(envname, idx)
-end
-
----Get task id by uniq id.
----@param envname string
----@param uid string
----@retutn string | nil
-function taskid.getuid(envname, uid)
-    for i = 1, ids.size() do
-        local item = ids.getidx(envname, i)
-        if uid == item.uid then
-            return item.id
-        end
-    end
-
-    return nil
 end
 
 ---Get number of task ids.
