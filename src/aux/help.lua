@@ -10,7 +10,6 @@ List of available commands:
 System:
   arch    - backup and/or restore
   cfg     - manipulate system configuration
-  fix     - fix system database
   init    - init directory structure
 
 Manipulation:
@@ -22,7 +21,6 @@ Manipulation:
   use     - switch to specific task
 
 Additional:
-  clean   - delete finished tasks
   env     - manipulate environments
   sync    - synchronize task (under development)
   pgn     - plugin manager
@@ -190,6 +188,9 @@ Notes:
         desc = [[
 Usage: tman sync [OPTION]
 Synchronize with task.
+
+Options:
+  -c   - delete finished tasks
 ]],
     },
     {
