@@ -117,6 +117,7 @@ Options:
     -i      set task id
     -d      set task description
     -p      set task priority. Values: [highest|high|mid|low|lowest]
+    -s      set task status.
     -t      set task type. Values: [bugfix|hotfix|feature]
 
 Values:
@@ -160,6 +161,7 @@ Switch to previous task if set.
 
 curr - current environment name.
 prev - previous environment if set.
+Default: current environment.
 
 Options:
     -h   Show this help message.
