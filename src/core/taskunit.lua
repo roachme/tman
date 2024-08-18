@@ -3,243 +3,117 @@
 -- @module TaskUnit
 
 local utils = require("aux.utils")
-local unit = require("aux.unitdb")
+local unitdb = require("aux.unitdb")
 
 local taskunit = {}
+local dirpath
 
-local unit_dir
-
----Check task id.
----@param id string
+---Init module.
+---@param unitdir string
 ---@return boolean
-local function _check_id(id)
-    local descregex = "[a-zA-Z0-9_%s-]*"
-    if string.match(id, descregex) == id then
-        return true
-    end
-    return false
-end
-
----Check description.
----@param desc string
----@return boolean
-local function _check_desc(desc)
-    local descregex = "[a-zA-Z0-9_%s-]*"
-    if string.match(desc, descregex) == desc then
-        return true
-    end
-    return false
-end
-
----Check priority.
----@param priority string
----@return boolean
-local function _check_prio(priority)
-    for _, prio in pairs(unit.prios) do
-        if prio == priority then
-            return true
-        end
-    end
-    return false
-end
-
----Check task type.
----@param type string
----@return boolean
-local function _check_type(type)
-    local tasktypes = { "bugfix", "feature", "hotfix" }
-
-    for _, dtype in pairs(tasktypes) do
-        if type == dtype then
-            return true
-        end
-    end
-    return false
-end
-
----Amend task description.
----@param envname string
----@param id string
----@param newdesc string
----@return boolean
-local function _set_desc(envname, id, newdesc)
-    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
-    unit.set("desc", newdesc)
-    return unit.save()
-end
-
----Change task id.
----@param id string
----@param newid string
----@return boolean
-local function _set_id(envname, id, newid)
-    -- rocahme: outta use struct.lua
-    local old_unitfile = unit_dir .. utils.genname(envname, id)
-    local new_unitfile = unit_dir .. utils.genname(envname, newid)
-
-    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
-    unit.set("id", newid)
-    unit.save()
-
-    return utils.rename(old_unitfile, new_unitfile)
-end
-
----Change task type.
----@return boolean
-local function _set_type(envname, id, newtype)
-    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
-    unit.set("type", newtype)
-    return unit.save()
-end
-
----Change priority.
----@param id string
----@param newprio string
----@return boolean
-local function _set_prio(envname, id, newprio)
-    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
-    unit.set("prio", newprio)
-    return unit.save()
-end
-
 function taskunit.init(unitdir)
-    unit_dir = unitdir
+    dirpath = unitdir
     return true
 end
 
-function taskunit.keyexist(keyname)
-    for _, ukey in pairs(unit.keys) do
-        if keyname == ukey.val then
-            return true
-        end
-    end
-    return false
-end
-
----Check task units.
----@param key string
----@param value string
----@return boolean
-function taskunit.check(key, value)
-    local params = {
-        uniqid = function(val)
-            return not (val == nil or val == "")
-        end,
-        id = _check_id,
-        desc = _check_desc,
-        prio = _check_prio,
-        type = _check_type,
-        date = function(val)
-            return not (val == nil or val == "")
-        end,
-        env = function(val)
-            return not (val == nil or val == "")
-        end,
-    }
-
-    -- Check a key-value pair.
-    for name, func in pairs(params) do
-        if name == key then
-            return func(value)
-        end
-    end
-
-    -- Unknown key, return false.
-    return false
-end
-
----Add a new unit for a task.
+---Get task units values.
+---@param envname string
 ---@param id string
----@param desc string
----@param tasktype string
----@param prio string
----@return boolean
-function taskunit.add(envname, id, desc, tasktype, prio)
-    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
-    unit.set("id", id)
-    unit.set("env", envname)
-    unit.set("prio", prio)
-    unit.set("type", tasktype)
-    unit.set("desc", desc)
-    unit.set("date", tostring(os.date("%Y%m%d")))
-    unit.set("uniqid", tostring(os.date("%s")))
-
-    -- Check input values for validity.
-    for _, ukey in pairs(unit.keys) do
-        local value = unit.get(ukey.val)
-        if not taskunit.check(ukey.val, value) then
-            print("ERROR: taskunit.add: failed", ukey.val, value)
-            return false
-        end
-    end
-
-    -- Save values into the database.
-    return unit.save()
+---@return table
+function taskunit.get(envname, id)
+    unitdb.init(dirpath .. "/" .. envname .. "/" .. id .. "/unit")
+    return unitdb.get()
 end
 
----Set unit key value.
---Update related units as well.
+---Check if task unit exists.
+---@param envname string
+---@param id string
+---@return boolean
+function taskunit.ext(envname, id)
+    return next(taskunit.get(envname, id))
+end
+
+---Check unit key value.
+---@param key string
+---@param val string
+---@return boolean
+function taskunit.chk(key, val)
+    local types = { "bugfix", "feature", "hotfix" }
+    local prios = { "lowest", "low", "mid", "high", "highest" }
+
+    if key == "id" then
+        local rgx = "^[%w]+[-]*[%w]+$"
+        return string.match(val, rgx) == val
+    elseif key == "desc" then
+        local rgx = "^[%w]+[%w-%s]*[%w]*"
+        return string.match(val, rgx) == val
+    elseif key == "prio" then
+        for _, v in pairs(prios) do
+            if val == v then
+                return true
+            end
+        end
+        return false
+    elseif key == "type" then
+        for _, v in pairs(types) do
+            if val == v then
+                return true
+            end
+        end
+        return false
+    end
+
+    io.stderr:write("no such key: ", key, "\n")
+    return false
+end
+
+---Set task unit values.
 ---@param envname string
 ---@param id string
 ---@param key string
----@param value string
+---@param val string
 ---@return boolean
-function taskunit.set(envname, id, key, value)
-    if key == "desc" then
-        return _set_desc(envname, id, value)
-    elseif key == "id" then
-        return _set_id(envname, id, value)
-    elseif key == "prio" then
-        return _set_prio(envname, id, value)
-    elseif key == "type" then
-        return _set_type(envname, id, value)
+function taskunit.set(envname, id, key, val)
+    unitdb.init(dirpath .. "/" .. envname .. "/" .. id .. "/unit")
+
+    if not taskunit.chk(key, val) then
+        io.stderr:write("illegal value ", key, " ", val, "\n")
+        return false
     end
-    return false
+    unitdb.set(key, val)
+    return unitdb.save()
 end
 
---- Delete task unit.
+---Add a task unit.
+---@param envname string
+---@param id string
+---@return boolean
+function taskunit.add(envname, id)
+    local options = {
+        id = id,
+        type = "bugfix",
+        prio = "mid",
+        desc = "autogenerated description",
+    }
+
+    if taskunit.ext(envname, id) then
+        io.stderr:write("task id already exists\n")
+        return false
+    end
+
+    for k, v in pairs(options) do
+        taskunit.set(envname, id, k, v)
+    end
+    return true
+end
+
+---Delete task unit.
 ---@param envname string
 ---@param id string
 ---@return boolean
 function taskunit.del(envname, id)
-    local unitfile = unit_dir .. utils.genname(envname, id)
-    return utils.rm(unitfile)
-end
-
----Get unit from task metadata.
----@param id string
----@param key string
----@return string
-function taskunit.get(envname, id, key)
-    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
-    return unit.get(key)
-end
-
----Get task units.
----@param envname string
----@param id string
----@return table
----@deprecated
-function taskunit.units(envname, id)
-    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
-    return unit.units()
-end
-
----Get task units.
----@param envname string
----@param id string
----@return table
-function taskunit.cat(envname, id)
-    local units = {}
-
-    unit.init(unit_dir .. utils.genname(envname, id) .. "/unit")
-    for _, ukey in pairs(unit.keys) do
-        local value = unit.get(ukey.val)
-        if ukey.lvl == 1 then
-            units[ukey.val] = value
-        end
-    end
-    return units
+    local fpath = dirpath .. "/" .. envname .. "/" .. id .. "/unit"
+    return os.remove(fpath) == true
 end
 
 return taskunit

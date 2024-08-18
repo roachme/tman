@@ -7,31 +7,6 @@ local unitfile = ""
 local unitregex = "(%w*): (.*)"
 local unitfmt = "%s: %s\n"
 
---[[
-local levels = {
-    SYS = 0,
-    BASIC = 1,
-    ADDIT = 2,
-}
-]]
-
-unit.keys = {
-    { val = "id", lvl = 1 },
-    { val = "prio", lvl = 1 },
-    { val = "type", lvl = 1 },
-    { val = "desc", lvl = 1 },
-    { val = "date", lvl = 1 },
-    { val = "env", lvl = 2 },
-    { val = "uniqid", lvl = 3 }, -- uniq ID for each task id (use time).
-}
-unit.prios = {
-    highest = "highest",
-    high = "high",
-    mid = "mid",
-    low = "low",
-    lowest = "lowest",
-}
-
 ---Load task units from the file.
 ---@return boolean
 local function load_units()
@@ -73,10 +48,14 @@ function unit.save()
 end
 
 ----Get unit key.
----@param key string
----@return string
-function unit.get(key)
-    return unitdb[key]
+---@return table
+function unit.get()
+    local res = {}
+
+    for k, v in pairs(unitdb) do
+        res[k] = v
+    end
+    return res
 end
 
 ---Set unit key.
@@ -86,10 +65,6 @@ end
 function unit.set(key, val)
     unitdb[key] = val
     return true
-end
-
-function unit.units()
-    return unitdb
 end
 
 return unit

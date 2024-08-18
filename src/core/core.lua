@@ -8,6 +8,7 @@ And the point is a user (builtin commands) cannot break anything.
 
 ]]
 
+local comm = require("core.comm")
 local utils = require("aux.utils")
 local taskid = require("core.taskid")
 local taskenv = require("core.taskenv")
@@ -350,7 +351,7 @@ function core.id_add(envname, id, units)
         local errfmt = "could not add task id %s to environment %s"
         core.die(1, errfmt:format(id, envname), "fatal")
         return false
-    elseif not taskunit.add(envname, id, units[1], units[2], units[3]) then
+    elseif not taskunit.add(envname, id) then
         local errfmt = "could not add task id units %s to environment %s"
         taskid.del(envname, id)
         core.die(1, errfmt:format(id, envname), "fatal")
@@ -409,6 +410,9 @@ function core.id_del(envname, id)
     return true
 end
 
+local function check_input(envname, id)
+end
+
 ---Set task units.
 ---@param envname string
 ---@param id string
@@ -417,6 +421,8 @@ end
 ---@return boolean
 function core.id_set(envname, id, key, val)
     core.init()
+
+    --check_input(envname or taskenv.getcurr(), id or taskid.getcurr())
 
     -- check input values
     envname = envname or taskenv.getcurr()
@@ -433,18 +439,13 @@ function core.id_set(envname, id, key, val)
     if not id then
         core.die(1, "task id required", "id")
         return false
-    elseif not taskid.exist(envname, id) then
+    elseif not taskunit.ext(envname, id) then
         local errfmt = "no such task id in environment %s"
         core.die(1, errfmt, id, envname)
         return false
     end
 
-    -- check that key exists
-    if not taskunit.keyexist(key) then
-        core.die(1, "no such key '%s'", "set", key)
-    elseif not taskunit.check(key, val) then
-        core.die(1, "illegal value", key)
-    elseif not taskunit.set(envname, id, key, val) then
+    if not taskunit.set(envname, id, key, val) then
         core.die(1, "could not set unit value", id)
     end
 
@@ -533,8 +534,8 @@ function core.id_list(envname)
         if envname == task.envname then
             local id = task.id
             local status = task.status
-            local desc = taskunit.get(envname, id, "desc")
-            table.insert(tasks, { id = id, desc = desc, status = status })
+            local units = taskunit.get(envname, id)
+            table.insert(tasks, { id = id, desc = units.desc, status = status })
         end
     end
     return tasks
@@ -579,7 +580,7 @@ function core.id_cat(envname, id)
         return {}
     end
 
-    return taskunit.cat(envname, id)
+    return taskunit.get(envname, id)
 end
 
 function core.id_curr(envname)
@@ -606,8 +607,21 @@ function core.getunits(envname, id)
         return {}
     end
 
-    return taskunit.cat(envname, id)
+    return taskunit.get(envname, id)
 end
+
+
+--[[
+structure:
+    curr prev units/ plugins/ envs/ (?)
+
+FILE curr:
+    envname: ENVNAME
+    curr: TASKID
+    prev: TASKID
+
+]]
+
 
 core.prefix = prefix
 core.dbdir = struct.dbdir.path
