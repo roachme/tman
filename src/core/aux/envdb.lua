@@ -3,7 +3,6 @@
 
 local envdb = {}
 
-
 --[[
 unitdb.lua:
     get: function
@@ -118,10 +117,8 @@ end
 ---@return table
 function envdb.list()
     local list = {}
-
     for _, item in pairs(envs) do
-        local unit = { name = item.name, desc = item.desc, status = item.status }
-        table.insert(list, unit)
+        table.insert(list, item.name)
     end
     return list
 end

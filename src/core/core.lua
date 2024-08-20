@@ -8,7 +8,7 @@ And the point is a user (builtin commands) cannot break anything.
 
 ]]
 
-local comm = require("core.comm")
+--local comm = require("core.comm")
 local utils = require("aux.utils")
 local switch = require("core.switch")
 local taskenv = require("core.taskenv")
@@ -240,12 +240,6 @@ function core.env_add(envname, desc)
     return true
 end
 
----Get current environment name.
----@return string | nil
-function core.env_curr()
-    return switch.env_getcurr().env
-end
-
 ---Delete an environment.
 ---@param envname string
 ---@return boolean
@@ -279,13 +273,14 @@ end
 ---Get list of all environments.
 ---@return table
 function core.env_list()
-    local curr = switch.env_getcurr().env
-    local prev = switch.env_getprev().env
-
+    local res = {}
     -- roachme: add curr & prev environment statuses from module switch.lua
     -- code goes here...
 
-    return taskenv.list()
+    for _, name in pairs(taskenv.list()) do
+        table.insert(res, taskenv.get(name))
+    end
+    return res
 end
 
 ---Switch to environment.
@@ -319,11 +314,17 @@ function core.env_prev()
     return 0
 end
 
+---Get current environment and special task ids.
+---@return table
+function core.getcurr()
+    return switch.env_getcurr()
+end
+
 ---Add a new taks.
 ---@param envname string?
 ---@param id string
 ---@return boolean
-function core.id_add(envname, id, units)
+function core.id_add(envname, id)
     core.init()
     envname = envname or switch.env_getcurr().env
 
@@ -361,7 +362,8 @@ function core.id_add(envname, id, units)
         core.die(1, errfmt:format(id, envname), "fatal")
         return false
     elseif not switch.id_addcurr(id) then
-        local errfmt = "could not set current task id units %s to environment %s"
+        local errfmt =
+            "could not set current task id units %s to environment %s"
         core.die(1, errfmt:format(id, envname), "fatal")
         return false
     end
@@ -425,8 +427,7 @@ function core.id_del(envname, id)
     return true
 end
 
-local function check_input(envname, id)
-end
+--local function check_input(envname, id) end
 
 ---Set task units.
 ---@param envname string
@@ -435,8 +436,10 @@ end
 ---@param val string
 ---@return boolean
 function core.id_set(envname, id, key, val)
+    --[[
     local currid = switch.id_getcurr()
     local previd = switch.id_getprev()
+    ]]
 
     core.init()
 
@@ -558,17 +561,16 @@ function core.id_list(envname)
         else
             status = 2
         end
-        table.insert(tasks, {id = id, desc = units.desc, status = status})
+        table.insert(tasks, { id = id, desc = units.desc, status = status })
     end
     return tasks
 end
 
 ---Move task into another environment.
 ---@param envname string
----@param id string
-function core.id_move(envname, id)
+function core.id_move(envname)
     core.init()
-    local currenv = switch.env_getcurr().env
+    --local currenv = switch.env_getcurr().env
 
     if not envname then
         core.die(1, "environment name required", "move")
@@ -605,18 +607,8 @@ function core.id_cat(envname, id)
     return taskunit.get(envname, id)
 end
 
-function core.id_curr(envname)
-    envname = envname or core.env_curr()
-
-    if not envname then
-        core.die(1, "no current environment", "env")
-        return nil
-    end
-    return switch.id_getcurr()
-end
-
 function core.getunits(envname, id)
-    envname = envname or core.env_curr()
+    envname = envname or switch.env_getcurr().env
 
     if not envname then
         core.die(1, "no current envname", "env")

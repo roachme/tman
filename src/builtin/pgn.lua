@@ -3,8 +3,8 @@ local git = require("plugin.git")
 
 local function pgn_git()
     local cmd = table.remove(arg, 1) or "sync"
-    local envname = core.env_curr()
-    local taskid = core.id_curr(envname)
+    local envname = core.getcurr().env
+    local taskid = core.getcurr().curr
 
     if not envname then
         core.die(1, "no current environtment", "pgn git")

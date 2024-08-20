@@ -3,7 +3,6 @@ local switch = {}
 local fcurr, fprev
 local specs = {}
 
-
 --[[
 
 curr:

@@ -39,7 +39,7 @@ local function builtin_list()
         return 0
     end
 
-    local envname = arg[last_index] or core.env_curr()
+    local envname = arg[last_index] or core.getcurr().env
     tasks = core.id_list(envname)
 
     table.sort(tasks, function(a, b)

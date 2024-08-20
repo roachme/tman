@@ -69,4 +69,11 @@ function taskenv.set(key, val)
     return true
 end
 
+---Get environment unit values.
+---@param name string
+---@return table
+function taskenv.get(name)
+    return envdb.get(name)
+end
+
 return taskenv
