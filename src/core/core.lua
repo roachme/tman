@@ -77,69 +77,6 @@ function core.create()
     return true
 end
 
---- Backup data.
--- @param fname archive filename (default extention is .tar)
--- @param repo_included whether or not include repos in archive
--- @return on success - true
--- @return on failure - false
-function core.backup(fname, repo_included)
-    -- roachme: run git gc before including repos in archive so it takes less place.
-    -- roachme: Replace codebase with value from config
-    local cmd
-
-    if repo_included then
-        cmd = ("tar -C %s -czf %s.tar ."):format(config.base, fname)
-    else
-        cmd = ("tar -C %s --exclude=codebase -czf %s.tar ."):format(
-            config.base,
-            fname
-        )
-    end
-    return utils.exec(cmd)
-end
-
---- Restore archive.
--- @param fname archive fname
--- @return on success - true
--- @return on failure - false
-function core.restore(fname)
-    local cmd = ("tar -xf %s -C %s"):format(fname, config.base)
-
-    if not utils.access(fname) then
-        io.stderr:write(("'%s': no such tar file\n"):format(fname))
-        return false
-    end
-
-    print("delete current structure")
-    utils.rm(config.taskbase)
-    utils.rm(config.codebase)
-    utils.rm(config.tmanbase)
-
-    print("copy backup structure")
-    if not utils.exec(cmd) then
-        io.stderr:write("failed to execute archive command\n")
-        return false
-    end
-    return true
-end
-
---[[
-Found the logic in git project. File name setup.c:
-    1. Run this module before any command. Pro'ly all but might use a flag to
-       specify it.
-    2. Make sure tman directory is safe to perform any command. It frees the
-       rest of code logic from checks and crap like that.
-]]
-
---[[
-
-    1. Check that every task id has corresponding. Yeah, all. It shouldn't take
-       that much time is it seems. Tho the rest of the code'll run no error.
-       If it slows down performance, rewrite it in C. Sounds good?
-        a) unit file
-        b) task dir
-]]
-
 ---Init core modules.
 function core.init()
     if not taskenv.init(struct.envs.path) then
@@ -283,7 +220,7 @@ function core.env_list()
     return res
 end
 
----Switch to environment.
+---Switch to another environment.
 ---@param envname string
 function core.env_switch(envname)
     if not envname then
@@ -338,7 +275,7 @@ function core.id_add(envname, id)
         core.env_add(envname)
     end
     if switch.env_getcurr().env ~= envname then
-        if not switch.env_addcurr({ envname }) then
+        if not switch.env_addcurr({ env = envname }) then
             core.die(1, "could not set current environment", "add")
         end
     end
