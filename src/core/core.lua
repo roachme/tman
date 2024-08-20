@@ -219,9 +219,9 @@ function core.env_add(envname, desc)
 
     if not envname then
         core.die(1, "environment name required", "envadd")
-    elseif not taskenv.check(envname) then
+    elseif not taskenv.chk(envname) then
         core.die(1, "illegal environment name", "env")
-    elseif taskenv.exist(envname) then
+    elseif taskenv.ext(envname) then
         core.die(1, "environment name already exists", envname)
     elseif not taskenv.add(envname, desc) then
         core.die(1, "could not add new environment", envname)
@@ -251,11 +251,11 @@ end
 ---@return boolean
 function core.env_del(envname)
     local curr
-    envname = envname or taskenv.getcurr()
+    envname = envname or switch.env_getcurr().env
 
     if not envname then
         core.die(1, "no current environment", "envdel")
-    elseif not taskenv.exist(envname) then
+    elseif not taskenv.ext(envname) then
         core.die(1, "no such environment name", envname)
     elseif not taskenv.del(envname) then
         core.die(1, "could not delete environment name", envname)
@@ -266,7 +266,7 @@ function core.env_del(envname)
     end
 
     -- update current environment and task id if needed.
-    curr = taskenv.getcurr()
+    curr = switch.env_getcurr().env
     if curr then
         switch.id_delcurr()
         if switch.id_getcurr() then
@@ -279,7 +279,13 @@ end
 ---Get list of all environments.
 ---@return table
 function core.env_list()
-    return taskenv.getlist()
+    local curr = switch.env_getcurr().env
+    local prev = switch.env_getprev().env
+
+    -- roachme: add curr & prev environment statuses from module switch.lua
+    -- code goes here...
+
+    return taskenv.list()
 end
 
 ---Switch to environment.
@@ -288,10 +294,10 @@ function core.env_switch(envname)
     if not envname then
         core.die(1, "environment name required", "envswitch")
         return 1
-    elseif not taskenv.exist(envname) then
+    elseif not taskenv.ext(envname) then
         core.die(1, "no such environment name", envname)
         return 1
-    elseif not taskenv.setcurr(envname) then
+    elseif not switch.env_addcurr({ envname }) then
         core.die(1, "could not set new current environment", envname)
         return 1
     elseif not switch.env_addcurr({ env = envname }) then
@@ -319,7 +325,7 @@ end
 ---@return boolean
 function core.id_add(envname, id, units)
     core.init()
-    envname = envname or taskenv.getcurr()
+    envname = envname or switch.env_getcurr().env
 
     if not envname then
         core.die(1, "no current environment", "envname")
@@ -330,11 +336,11 @@ function core.id_add(envname, id, units)
     end
 
     -- make sure needed environment is ready.
-    if not taskenv.exist(envname) then
+    if not taskenv.ext(envname) then
         core.env_add(envname)
     end
-    if taskenv.getcurr() ~= envname then
-        if not taskenv.setcurr(envname) then
+    if switch.env_getcurr().env ~= envname then
+        if not switch.env_addcurr({ envname }) then
             core.die(1, "could not set current environment", "add")
         end
     end
@@ -380,11 +386,11 @@ function core.id_del(envname, id)
     local prev = switch.id_getprev()
 
     -- check input values
-    envname = envname or taskenv.getcurr()
+    envname = envname or switch.env_getcurr().env
     if not envname then
         core.die(1, "no current environment", "envname")
         return false
-    elseif not taskenv.exist(envname) then
+    elseif not taskenv.ext(envname) then
         local errfmt = "no such environment name"
         core.die(1, errfmt, "envname")
         return false
@@ -435,11 +441,11 @@ function core.id_set(envname, id, key, val)
     core.init()
 
     -- check input values
-    envname = envname or taskenv.getcurr()
+    envname = envname or switch.env_getcurr().env
     if not envname then
         core.die(1, "no current environment", "envname")
         return false
-    elseif not taskenv.exist(envname) then
+    elseif not taskenv.ext(envname) then
         local errfmt = "no such environment name"
         core.die(1, errfmt, "envname")
         return false
@@ -477,11 +483,11 @@ end
 ---@return boolean
 function core.id_switch(envname, id)
     core.init()
-    envname = envname or taskenv.getcurr()
+    envname = envname or switch.env_getcurr().env
 
-    if not taskenv.exist(envname) then
+    if not taskenv.ext(envname) then
         core.die(1, "no such environment", envname)
-    elseif not taskenv.setcurr(envname) then
+    elseif not switch.env_addcurr({ envname }) then
         core.die(1, "could not switch to environment %s", envname, "switch")
     elseif not taskunit.ext(envname, id) then
         core.die(1, "no such task id in environment %s", id, envname)
@@ -497,15 +503,15 @@ function core.id_prev(envname)
     core.init()
     local prev
 
-    envname = envname or taskenv.getcurr()
+    envname = envname or switch.env_getcurr().env
     if not envname then
         core.die(1, "no current environment", "env")
         return false
-    elseif not taskenv.exist(envname) then
+    elseif not taskenv.ext(envname) then
         core.die(1, "no such environment name", envname)
         return false
-    elseif taskenv.getcurr() ~= envname then
-        if not taskenv.setcurr(envname) then
+    elseif switch.env_getcurr().env ~= envname then
+        if not switch.env_addcurr({ env = envname }) then
             core.die(1, "could not set current environment", "add")
         end
     end
@@ -530,13 +536,12 @@ function core.id_list(envname)
     local tasks = {}
     local currid = switch.id_getcurr()
     local previd = switch.id_getprev()
-    --envname = envname or switch.env_getcurr().env
     envname = envname or switch.env_getcurr().env
 
     if not envname then
         core.die(1, "no current environment", "list")
         return {}
-    elseif not taskenv.exist(envname) then
+    elseif not taskenv.ext(envname) then
         core.die(1, "no such environment name %s", "list", envname)
         return {}
     end
@@ -563,11 +568,11 @@ end
 ---@param id string
 function core.id_move(envname, id)
     core.init()
-    local currenv = taskenv.getcurr()
+    local currenv = switch.env_getcurr().env
 
     if not envname then
         core.die(1, "environment name required", "move")
-    elseif not taskenv.exist(envname) then
+    elseif not taskenv.ext(envname) then
         core.die(1, "no such environment name", envname)
     end
 end
@@ -579,11 +584,11 @@ end
 function core.id_cat(envname, id)
     core.init()
 
-    envname = envname or taskenv.getcurr()
+    envname = envname or switch.env_getcurr().env
     if not envname then
         core.die(1, "no current environment", "cat")
         return {}
-    elseif not taskenv.exist(envname) then
+    elseif not taskenv.ext(envname) then
         core.die(1, "no such environment %s", "cat", envname)
         return {}
     end
@@ -625,19 +630,6 @@ function core.getunits(envname, id)
 
     return taskunit.get(envname, id)
 end
-
-
---[[
-structure:
-    curr prev units/ plugins/ envs/ (?)
-
-FILE curr:
-    envname: ENVNAME
-    curr: TASKID
-    prev: TASKID
-
-]]
-
 
 core.prefix = prefix
 core.dbdir = struct.dbdir.path

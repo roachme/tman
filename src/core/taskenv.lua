@@ -1,6 +1,6 @@
 local envdb = require("aux.envdb")
 
-local env = {}
+local taskenv = {}
 local fenv
 
 local status = {
@@ -11,151 +11,50 @@ local status = {
 
 ---Init env.
 ---@param fname string
-function env.init(fname)
+function taskenv.init(fname)
     fenv = fname
     return envdb.init(fenv)
-end
-
----Get previous env.
----@return string | nil
-function env.getprev()
-    for i = 1, envdb.size() do
-        local item = envdb.getidx(i)
-        if item.status == status.PREV then
-            return item.name
-        end
-    end
-    return nil
-end
-
----Get current env.
----@return string | nil
-function env.getcurr()
-    for i = 1, envdb.size() do
-        local item = envdb.getidx(i)
-        if item.status == status.CURR then
-            return item.name
-        end
-    end
-    return nil
-end
-
----Mark env as current.
----@param name string
----@return boolean
-function env.setcurr(name)
-    local curr = env.getcurr()
-    local prev = env.getprev()
-
-    if not envdb.exists(name) then
-        return false
-    end
-    -- sentinel guard: don't mark the same id as current
-    if curr == name then
-        return true
-    end
-
-    -- if theree's previous task then unmark it
-    if prev then
-        envdb.set(prev, status.ACTV)
-    end
-
-    if curr then
-        envdb.set(curr, status.PREV)
-    end
-    envdb.set(name, status.CURR)
-    return true
-end
-
----Swap current and previous env names.
----Only if both current and previous exist.
----@return boolean
-function env.swap()
-    local newcurr = env.getprev()
-
-    if newcurr then
-        return env.setcurr(newcurr)
-    end
-    return false
 end
 
 ---Check that env exists in database.
 ---@param name string
 ---@return boolean
-function env.exist(name)
-    return envdb.exists(name)
+function taskenv.ext(name)
+    return envdb.ext(name)
 end
 
 ---Add an env.
 ---@param name string
 ---@param desc string
 ---@return boolean
-function env.add(name, desc)
-    if not envdb.add(name, desc, status.CURR) then
+function taskenv.add(name, desc)
+    if envdb.ext(name) then
         return false
     end
-
-    -- gotta create a directory in units
-    return env.setcurr(name)
+    return envdb.add(name, desc, status.CURR)
 end
 
 ---Delete an env.
 ---@param name string
 ---@return boolean
-function env.del(name)
-    local curr = env.getcurr()
-    local prev = env.getprev()
-
-    if not envdb.exists(name) then
+function taskenv.del(name)
+    if not envdb.ext(name) then
         return false
     end
-
-    envdb.del(name)
-
-    if name == curr and prev then
-        envdb.set(prev, status.CURR)
-    end
-    return true
+    return envdb.del(name)
 end
 
-function env.getlist()
-    local out = {}
-
-    for i = 1, envdb.size() do
-        local item = envdb.getidx(i)
-        table.insert(out, item)
-    end
-    return out
+---Get list of environments.
+---@return table
+function taskenv.list()
+    return envdb.list()
 end
 
----List envs.
-function env.list()
-    local prev = env.getprev()
-    local curr = env.getcurr()
-
-    if curr then
-        local item = envdb.get(curr)
-        print(("* %-10s %s"):format(item.name, item.desc))
-    end
-    if prev then
-        local item = envdb.get(prev)
-        print(("- %-10s %s"):format(item.name, item.desc))
-    end
-
-    for i = 1, envdb.size() do
-        local item = envdb.getidx(i)
-
-        if item.name ~= curr and item.name ~= prev then
-            print(("a %-10s %s"):format(item.name, item.desc))
-        end
-    end
-end
-
-function env.open(fname)
-    return true
-end
-
-function env.check(envname)
+---Check that environment name is valid.
+---@param envname string
+---@return boolean
+function taskenv.chk(envname)
+    --- roachme: gotta add an implementation
     if not envname then
         return false
     end
@@ -166,8 +65,8 @@ end
 ---@param key string
 ---@param val string
 ---@return boolean
-function env.setunit(key, val)
+function taskenv.set(key, val)
     return true
 end
 
-return env
+return taskenv

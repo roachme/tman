@@ -1,8 +1,8 @@
-local common = {}
+local comm = {}
 
 local prefix = ""
 
-common.struct = {
+comm.struct = {
     prefix = { isdir = false, iscore = true, path = prefix },
     dbdir = { isdir = false, iscore = true, path = prefix .. "/.tman/" },
     units = { isdir = true, iscore = true, path = prefix .. "/.tman/units/" },
@@ -13,4 +13,4 @@ common.struct = {
     ids = { isdir = false, iscore = true, path = prefix .. "/.tman/refs/ids" },
 }
 
-return common
+return comm
