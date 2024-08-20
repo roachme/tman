@@ -1,12 +1,12 @@
---- Terminal task manager.
--- @module tman
+---Task manager.
+--@module tman
 
 _G.program = "tman"
 _G.version = "0.1.16"
 
 local core = require("core.core")
-local builtins = require("core.builtin")
 local help = require("aux.help")
+local builtins = require("core.builtin")
 
 ---Tman interface.
 local function main()
