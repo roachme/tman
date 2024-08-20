@@ -23,6 +23,8 @@ local function create_files(base)
     end
 end
 
+local function create_links(base) end
+
 ---Init plugin struct.
 ---@param taskbase string
 ---@param dirs table
@@ -41,6 +43,7 @@ end
 function struct.create(id)
     create_dirs(struct_taskbase .. "/" .. id)
     create_files(struct_taskbase .. "/" .. id)
+    create_links(struct_taskbase .. "/" .. id)
     return true
 end
 
@@ -55,16 +58,6 @@ function struct.delete(id)
         utils.rm(struct_taskbase .. "/" .. id .. "/" .. file)
     end
     return true
-end
-
----Rename task dir.
----@param oldid string
----@param newid string
----@return boolean
-function struct.rename(oldid, newid)
-    local old_dir = struct_taskbase .. "/" .. oldid
-    local new_dir = struct_taskbase .. "/" .. newid
-    return utils.rename(old_dir, new_dir) == 0
 end
 
 return struct
