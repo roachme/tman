@@ -1,7 +1,7 @@
 --- Terminal task manager.
 -- @module tman
 
-_G.progname = "tman"
+_G.program = "tman"
 _G.version = "0.1.16"
 
 local core = require("core.core")

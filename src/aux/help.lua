@@ -33,12 +33,12 @@ Info:
 
 '%s help COMMAND' to get detailed info about command.
 '%s help %s' to get info about util itself.
-]]):format(progname, progname, progname, progname))
+]]):format(program, program, program, program))
 end
 
 local cmds = {
     {
-        name = progname,
+        name = program,
         desc = [[
 tman - Terminal task manager.
 
@@ -242,7 +242,7 @@ local function help_usage(cmdname)
         end
     end
 
-    io.stderr:write(errmsg:format(progname, cmdname, progname))
+    io.stderr:write(errmsg:format(program, cmdname, program))
     return 1
 end
 

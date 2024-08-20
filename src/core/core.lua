@@ -37,7 +37,7 @@ local struct = {
 ---@param ... unknown
 ---@return number
 function core.die(exit_code, errfmt, ...)
-    local errmsg = ("%s: %s: " .. errfmt .. "\n"):format(progname, ...)
+    local errmsg = ("%s: %s: " .. errfmt .. "\n"):format(program, ...)
     io.stderr:write(errmsg)
     os.exit(exit_code)
 end
