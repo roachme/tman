@@ -288,29 +288,26 @@ end
 function core.env_switch(envname)
     if not envname then
         core.die(1, "environment name required", "envswitch")
-        return 1
     elseif not taskenv.ext(envname) then
         core.die(1, "no such environment name", envname)
-        return 1
-    elseif not switch.env_addcurr({ envname }) then
-        core.die(1, "could not set new current environment", envname)
-        return 1
     elseif not switch.env_addcurr({ env = envname }) then
-        core.die(1, "could not set update curr file", envname)
-        return 1
+        core.die(1, "could not set new current environment", envname)
     end
-    return 0
+    return true
 end
 
 ---Switch to previous environment.
 function core.env_prev()
-    local prevenv = switch.env_getcurr()
+    local prevenv = switch.env_getprev()
 
     if not prevenv.prev then
         core.die(1, "no previous environment", "prev")
         return 1
     end
-    switch.env_swapspec()
+
+    if not switch.env_swapspec() then
+        core.die(1, "could not switch to previous environment", "prev")
+    end
     return 0
 end
 
