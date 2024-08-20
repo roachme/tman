@@ -62,25 +62,6 @@ function envdb.init(fname)
     return load()
 end
 
----Get env database size.
----@return number
-function envdb.size()
-    local size = 0
-
-    for _, _ in pairs(envs) do
-        size = size + 1
-    end
-    return size
-end
-
----Get env unit by index.
----@param idx number
----@return table
-function envdb.getidx(idx)
-    local item = envs[idx] or {}
-    return { status = item.status, name = item.name, desc = item.desc }
-end
-
 ---Get environment unit values.
 ---@param name string
 ---@return table
