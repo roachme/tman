@@ -31,7 +31,7 @@ local struct = {
     ids = { isdir = false, iscore = true, path = prefix .. "/.tman/refs/ids" },
 }
 
----comment
+---Die to util.
 ---@param exit_code number
 ---@param errfmt string
 ---@param ... unknown
@@ -490,7 +490,7 @@ function core.id_switch(envname, id)
 
     if not taskenv.ext(envname) then
         core.die(1, "no such environment", envname)
-    elseif not switch.env_addcurr({ envname }) then
+    elseif not next(switch.env_getcurr()) then
         core.die(1, "could not switch to environment %s", envname, "switch")
     elseif not taskunit.ext(envname, id) then
         core.die(1, "no such task id in environment %s", id, envname)
