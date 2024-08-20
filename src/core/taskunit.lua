@@ -3,6 +3,7 @@
 -- @module TaskUnit
 
 local utils = require("aux.utils")
+local dirent = require("posix.dirent")
 local unitdb = require("aux.unitdb")
 
 local taskunit = {}
@@ -113,7 +114,22 @@ end
 ---@return boolean
 function taskunit.del(envname, id)
     local fpath = dirpath .. "/" .. envname .. "/" .. id .. "/unit"
-    return os.remove(fpath) == true
+    return utils.rm(fpath) == true
+end
+
+---Get list of task ids in environment.
+---@param envname string
+---@return table
+function taskunit.list(envname)
+    local list = {}
+    local udirpath = dirpath .. "/" .. envname
+
+    for _, id in pairs(dirent.dir(udirpath)) do
+        if id ~= "." and id ~= ".." then
+            table.insert(list, id)
+        end
+    end
+    return list
 end
 
 return taskunit

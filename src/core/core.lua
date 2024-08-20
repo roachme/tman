@@ -10,7 +10,7 @@ And the point is a user (builtin commands) cannot break anything.
 
 local comm = require("core.comm")
 local utils = require("aux.utils")
-local taskid = require("core.taskid")
+local switch = require("core.switch")
 local taskenv = require("core.taskenv")
 local taskunit = require("core.taskunit")
 local config = require("aux.config")
@@ -144,10 +144,10 @@ Found the logic in git project. File name setup.c:
 function core.init()
     if not taskenv.init(struct.envs.path) then
         return core.die(1, "could not init module taskenv", "fatal")
-    elseif not taskid.init(struct.ids.path, struct.curr.path) then
-        return core.die(1, "could not init module taskid", "fatal")
     elseif not taskunit.init(struct.units.path) then
         return core.die(1, "could not init module taskunit", "fatal")
+    elseif not switch.init(struct.dbdir.path) then
+        return core.die(1, "could not init module switch", "fatal")
     end
 end
 
@@ -225,13 +225,17 @@ function core.env_add(envname, desc)
         core.die(1, "environment name already exists", envname)
     elseif not taskenv.add(envname, desc) then
         core.die(1, "could not add new environment", envname)
-    elseif not taskenv.setcurr(envname) then
+    elseif not switch.env_addcurr({ env = envname }) then
         core.die(1, "could not set current environment", "add")
-    elseif not utils.mkdir(struct.units.path .. "/" .. envname) then
+    end
+
+    -- create needed structure
+    if not utils.mkdir(struct.units.path .. "/" .. envname) then
         local errfmt = "could not create environment directory in units"
         core.die(1, errfmt, "env")
-    elseif not taskid.updcurr(envname) then
-        core.die(1, "could not set current task for environment", "envadd")
+    elseif not utils.mkdir(struct.tasks.path .. "/" .. envname) then
+        local errfmt = "could not create task environment directory"
+        core.die(1, errfmt, "env")
     end
     return true
 end
@@ -239,7 +243,7 @@ end
 ---Get current environment name.
 ---@return string | nil
 function core.env_curr()
-    return taskenv.getcurr()
+    return switch.env_getcurr().env
 end
 
 ---Delete an environment.
@@ -253,8 +257,6 @@ function core.env_del(envname)
         core.die(1, "no current environment", "envdel")
     elseif not taskenv.exist(envname) then
         core.die(1, "no such environment name", envname)
-    elseif not taskid.unsetcurr(envname) then
-        core.die(1, "could not unset current task id", "envdel")
     elseif not taskenv.del(envname) then
         core.die(1, "could not delete environment name", envname)
     elseif not utils.rm(struct.units.path .. "/" .. envname) then
@@ -266,7 +268,10 @@ function core.env_del(envname)
     -- update current environment and task id if needed.
     curr = taskenv.getcurr()
     if curr then
-        taskid.updcurr(curr)
+        switch.id_delcurr()
+        if switch.id_getcurr() then
+            switch.id_delcurr()
+        end
     end
     return true
 end
@@ -289,7 +294,7 @@ function core.env_switch(envname)
     elseif not taskenv.setcurr(envname) then
         core.die(1, "could not set new current environment", envname)
         return 1
-    elseif not taskid.updcurr(envname) then
+    elseif not switch.env_addcurr({ env = envname }) then
         core.die(1, "could not set update curr file", envname)
         return 1
     end
@@ -298,14 +303,13 @@ end
 
 ---Switch to previous environment.
 function core.env_prev()
-    local prev = taskenv.getprev()
+    local prevenv = switch.env_getcurr()
 
-    if not prev then
+    if not prevenv.prev then
         core.die(1, "no previous environment", "prev")
         return 1
     end
-    taskenv.setcurr(prev)
-    taskid.updcurr(prev)
+    switch.env_swapspec()
     return 0
 end
 
@@ -337,30 +341,27 @@ function core.id_add(envname, id, units)
 
     local unitdir = struct.units.path .. "/" .. envname .. "/" .. id
     if not utils.mkdir(unitdir) then
-        taskid.del(envname, id)
         taskunit.del(envname, id)
         core.die(1, "fatal never: could not create unit dir", "unitdir")
         return false
     end
 
-    if taskid.exist(envname, id) then
+    if taskunit.ext(envname, id) then
         local errfmt = "task id %s already exists in environment %s"
-        core.die(1, errfmt:format(id, envname), "fatal")
-        return false
-    elseif not taskid.add(envname, id) then
-        local errfmt = "could not add task id %s to environment %s"
         core.die(1, errfmt:format(id, envname), "fatal")
         return false
     elseif not taskunit.add(envname, id) then
         local errfmt = "could not add task id units %s to environment %s"
-        taskid.del(envname, id)
+        core.die(1, errfmt:format(id, envname), "fatal")
+        return false
+    elseif not switch.id_addcurr(id) then
+        local errfmt = "could not set current task id units %s to environment %s"
         core.die(1, errfmt:format(id, envname), "fatal")
         return false
     end
 
     local taskdir = struct.tasks.path .. "/" .. envname .. "/" .. id
     if not utils.mkdir(taskdir) then
-        taskid.del(envname, id)
         taskunit.del(envname, id)
         core.die(1, "fatal never: could not create task dir", "taskdir")
         return false
@@ -375,6 +376,8 @@ end
 ---@return boolean
 function core.id_del(envname, id)
     core.init()
+    local curr = switch.id_getcurr()
+    local prev = switch.id_getprev()
 
     -- check input values
     envname = envname or taskenv.getcurr()
@@ -387,23 +390,29 @@ function core.id_del(envname, id)
         return false
     end
 
-    id = id or taskid.getcurr(envname)
+    id = id or switch.id_getcurr()
     if not id then
-        core.die(1, "task id required", "id")
+        core.die(1, "no current task id", "id")
         return false
-    elseif not taskid.exist(envname, id) then
+    elseif not taskunit.ext(envname, id) then
         local errfmt = "no such task id in environment %s"
         core.die(1, errfmt, id, envname)
         return false
+    elseif not taskunit.del(envname, id) then
+        local errfmt = "could not delete task id in environment %s"
+        core.die(1, errfmt, id, envname)
+        return false
+    elseif id == curr then
+        switch.id_delcurr()
+    elseif id == prev then
+        -- cuz there's no way to delete previous task id directly
+        switch.id_swapspec()
+        switch.id_delcurr()
     end
 
     -- actual logic
     local taskdir = struct.tasks.path .. "/" .. envname .. "/" .. id
-    if not taskid.del(envname, id) then
-        local errfmt = "could not delete task id %s from environment %s"
-        core.die(1, errfmt:format(id, envname), "fatal")
-        return false
-    elseif not utils.rm(taskdir) then
+    if not utils.rm(taskdir) then
         core.die(1, "fatal never: could not delete task dir", "taskdir")
         return false
     end
@@ -420,9 +429,10 @@ end
 ---@param val string
 ---@return boolean
 function core.id_set(envname, id, key, val)
-    core.init()
+    local currid = switch.id_getcurr()
+    local previd = switch.id_getprev()
 
-    --check_input(envname or taskenv.getcurr(), id or taskid.getcurr())
+    core.init()
 
     -- check input values
     envname = envname or taskenv.getcurr()
@@ -435,7 +445,7 @@ function core.id_set(envname, id, key, val)
         return false
     end
 
-    id = id or taskid.getcurr(envname)
+    id = id or switch.id_getcurr()
     if not id then
         core.die(1, "task id required", "id")
         return false
@@ -450,7 +460,6 @@ function core.id_set(envname, id, key, val)
     end
 
     if key == "id" then
-        taskid.rename(envname, id, val)
         local old_taskdir = struct.tasks.path .. "/" .. envname .. "/" .. id
         local new_taskdir = struct.tasks.path .. "/" .. envname .. "/" .. val
         if not utils.rename(old_taskdir, new_taskdir) then
@@ -474,10 +483,10 @@ function core.id_switch(envname, id)
         core.die(1, "no such environment", envname)
     elseif not taskenv.setcurr(envname) then
         core.die(1, "could not switch to environment %s", envname, "switch")
-    elseif not taskid.exist(envname, id) then
+    elseif not taskunit.ext(envname, id) then
         core.die(1, "no such task id in environment %s", id, envname)
-    elseif not taskid.setcurr(envname, id) then
-        core.die(1, "could not switch to task", "switch")
+    elseif not switch.id_addcurr(id) then
+        core.die(1, "could not set current task %s", id, envname)
     end
     return true
 end
@@ -501,11 +510,11 @@ function core.id_prev(envname)
         end
     end
 
-    prev = taskid.getprev(envname)
+    prev = switch.id_getprev()
     if not prev then
         core.die(1, "no previos task in environment %s", "prev", envname)
         return false
-    elseif not taskid.swap(envname) then
+    elseif not switch.id_swapspec() then
         local errfmt = "could not switch to previous task in environment %s"
         core.die(1, errfmt, "prev", envname)
         return false
@@ -519,7 +528,10 @@ end
 function core.id_list(envname)
     core.init()
     local tasks = {}
-    envname = envname or taskenv.getcurr()
+    local currid = switch.id_getcurr()
+    local previd = switch.id_getprev()
+    --envname = envname or switch.env_getcurr().env
+    envname = envname or switch.env_getcurr().env
 
     if not envname then
         core.die(1, "no current environment", "list")
@@ -529,14 +541,19 @@ function core.id_list(envname)
         return {}
     end
 
-    for i = 1, taskid.size() do
-        local task = taskid.getidx(envname, i)
-        if envname == task.envname then
-            local id = task.id
-            local status = task.status
-            local units = taskunit.get(envname, id)
-            table.insert(tasks, { id = id, desc = units.desc, status = status })
+    local taskids = taskunit.list(envname)
+    for _, id in pairs(taskids) do
+        local units = taskunit.get(envname, id)
+        local status
+        -- roachme: gotta simplify it
+        if id == currid then
+            status = 0
+        elseif id == previd then
+            status = 1
+        else
+            status = 2
         end
+        table.insert(tasks, {id = id, desc = units.desc, status = status})
     end
     return tasks
 end
@@ -571,11 +588,11 @@ function core.id_cat(envname, id)
         return {}
     end
 
-    id = id or taskid.getcurr(envname)
+    id = id or switch.id_getcurr()
     if not id then
         core.die(1, "no current task id in environment %s", "cat", envname)
         return {}
-    elseif not taskid.exist(envname, id) then
+    elseif not taskunit.ext(envname, id) then
         core.die(1, "no such task id in environment %s", "cat", envname)
         return {}
     end
@@ -590,8 +607,7 @@ function core.id_curr(envname)
         core.die(1, "no current environment", "env")
         return nil
     end
-    local curr = taskid.getcurr(envname)
-    return curr
+    return switch.id_getcurr()
 end
 
 function core.getunits(envname, id)
