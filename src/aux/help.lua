@@ -156,13 +156,8 @@ COMMANDs:
     {
         name = "prev",
         desc = [[
-Usage: tman prev [curr|prev]
-Switch to previous task if set.
-
-curr - current environment name.
-prev - previous environment if set.
-Default: current environment.
-
+Usage: tman prev
+Switch to previous task in current environment (if set).
 Options:
     -h   Show this help message.
 ]],

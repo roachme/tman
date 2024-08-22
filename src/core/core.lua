@@ -12,6 +12,7 @@ And the point is a user (builtin commands) cannot break anything.
 local utils = require("aux.utils")
 local switch = require("core.switch")
 local taskenv = require("core.taskenv")
+local taskdir = require("core.taskdir")
 local taskunit = require("core.taskunit")
 local config = require("aux.config")
 
@@ -85,6 +86,8 @@ function core.init()
         return core.die(1, "could not init module taskunit", "fatal")
     elseif not switch.init(struct.dbdir.path) then
         return core.die(1, "could not init module switch", "fatal")
+    elseif not taskdir.init(struct.tasks.path) then
+        return core.die(1, "could not init module taskdir", "fatal")
     end
     return 0
 end
@@ -268,34 +271,16 @@ function core.id_add(envname, id)
         end
     end
 
-    local unitdir = struct.units.path .. "/" .. envname .. "/" .. id
-    if not utils.mkdir(unitdir) then
-        taskunit.del(envname, id)
-        core.die(1, "fatal never: could not create unit dir", "unitdir")
-        return false
-    end
-
-    if taskunit.ext(envname, id) then
+    if not taskunit.add(envname, id) then
         local errfmt = "task id %s already exists in environment %s"
         core.die(1, errfmt:format(id, envname), "fatal")
-        return false
-    elseif not taskunit.add(envname, id) then
-        local errfmt = "could not add task id units %s to environment %s"
-        core.die(1, errfmt:format(id, envname), "fatal")
-        return false
     elseif not switch.id_addcurr(id) then
         local errfmt = "could not set current task id %s to environment %s"
         core.die(1, errfmt:format(id, envname), "fatal")
-        return false
+    elseif not taskdir.add(envname, id) then
+        local errfmt = "could not create task directory %s in environment %s"
+        core.die(1, errfmt:format(id, envname), "fatal")
     end
-
-    local taskdir = struct.tasks.path .. "/" .. envname .. "/" .. id
-    if not utils.mkdir(taskdir) then
-        taskunit.del(envname, id)
-        core.die(1, "fatal never: could not create task dir", "taskdir")
-        return false
-    end
-
     return true
 end
 
@@ -336,13 +321,9 @@ function core.id_del(envname, id)
         -- cuz there's no way to delete previous task id directly
         switch.id_swapspec()
         switch.id_delcurr()
-    end
-
-    -- actual logic
-    local taskdir = struct.tasks.path .. "/" .. envname .. "/" .. id
-    if not utils.rm(taskdir) then
-        core.die(1, "fatal never: could not delete task dir", "taskdir")
-        return false
+    elseif not taskdir.del(envname, id) then
+        local errfmt = "could not delete task directory %s in environment %s"
+        core.die(1, errfmt:format(id, envname), "fatal")
     end
     return true
 end
@@ -407,10 +388,10 @@ function core.id_switch(envname, id)
 
     if not taskenv.ext(envname) then
         core.die(1, "no such environment", envname)
-    elseif not next(switch.env_getcurr()) then
-        core.die(1, "could not switch to environment %s", envname, "switch")
     elseif not taskunit.ext(envname, id) then
         core.die(1, "no such task id in environment %s", id, envname)
+    elseif not next(switch.env_getcurr()) then
+        core.die(1, "could not switch to environment %s", envname, "switch")
     elseif not switch.id_addcurr(id) then
         core.die(1, "could not set current task %s", id, envname)
     end
@@ -418,26 +399,16 @@ function core.id_switch(envname, id)
 end
 
 ---Switch to previous task.
----@param envname string?
-function core.id_prev(envname)
-    local prev
+function core.id_prev()
+    local envenv = switch.env_getcurr()
+    local prev = envenv.prev
+    local envname = envenv.env
 
-    envname = envname or switch.env_getcurr().env
     if not envname then
         core.die(1, "no current environment", "env")
         return false
-    elseif not taskenv.ext(envname) then
-        core.die(1, "no such environment name", envname)
-        return false
-    elseif switch.env_getcurr().env ~= envname then
-        if not switch.env_addcurr({ env = envname }) then
-            core.die(1, "could not set current environment", "add")
-        end
-    end
-
-    prev = switch.id_getprev()
-    if not prev then
-        core.die(1, "no previos task in environment %s", "prev", envname)
+    elseif not prev then
+        core.die(1, "no previos task", "prev", envname)
         return false
     elseif not switch.id_swapspec() then
         local errfmt = "could not switch to previous task in environment %s"

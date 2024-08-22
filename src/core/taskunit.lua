@@ -98,10 +98,12 @@ function taskunit.add(envname, id)
     }
 
     if taskunit.ext(envname, id) then
-        io.stderr:write("task id already exists\n")
+        return false
+    elseif not utils.mkdir(dirpath .. "/" .. envname .. "/" .. id) then
         return false
     end
 
+    -- set task default values.
     for k, v in pairs(options) do
         taskunit.set(envname, id, k, v)
     end
