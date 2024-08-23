@@ -25,6 +25,9 @@ local function load(fname)
     for line in f:lines() do
         local key, val = string.match(line, "(%w*): (%w*)")
         res[key] = val
+        if res[key] == "" then
+            res[key] = nil
+        end
     end
     f:close()
     return res
