@@ -1,41 +1,53 @@
 local errno = nil
 
 local errmod = {
+    -- system stuff
     ENINT = "tman not inited",
     ECINT = "could not init module",
 
-    EEREQ = "environment name required",
-    EENON = "no such environment name",
-    EECUR = "no current environment set",
-    EEPRV = "no previous environment set",
-    EEPRS = "could not switch to previous environment",
-    EEDEL = "could not delete environment",
+    -- task environment
     EEADD = "could not add new environment",
+    EECUR = "no current environment set",
+    EEDEL = "could not delete environment",
     EEEXT = "environment already exists",
-    EESET = "could not set current environment",
     EEILL = "illegal environment name",
+    EENON = "no such environment name",
+    EEPRS = "could not switch to previous environment",
+    EEPRV = "no previous environment set",
+    EEREQ = "environment name required",
+    EESET = "could not set current environment",
     EESWT = "could not switch to environment",
 
-    EIREQ = "task id required",
-    EINON = "no such task id",
-    EICUR = "no current task id set",
-    EIPRV = "no previous task id set",
-    EIPRS = "could not switch to previous task id",
-    EIDEL = "could not delete task id",
+    -- task id
     EIADD = "could not add new task id",
+    EICUR = "no current task id set",
+    EIDEL = "could not delete task id",
     EIEXT = "task id already exists",
-    EISET = "could not set current task id",
     EIILL = "illegal task id",
+    EINON = "no such task id",
+    EIPRS = "could not switch to previous task id",
+    EIPRV = "no previous task id set",
+    EIREQ = "task id required",
+    EISET = "could not set current task id",
     EISWT = "could not switch to task id",
+    eoue  = "could not ",
 
+    -- switch feature
     EESPRV = "could not switch to previous environment",
     EISPRV = "could not switch to previous task",
 
+    -- unit stuff
     EEUADD = "could not add unit environment",
     EEUDEL = "could not delete unit environment",
+    EEUSET = "could not set unit value",
 
-    EETDEL = "could not delete task directory",
+    -- task directory
     EETADD = "could not create task directory",
+    EETDEL = "could not delete task directory",
+    EETREN = "could not rename task directory",
+
+    -- builtins
+    EBKNON = "no such key",
 }
 
 ---Get error description.
