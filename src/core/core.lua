@@ -44,6 +44,21 @@ function core.die(exit_code, errfmt, ...)
     os.exit(exit_code)
 end
 
+---Check passed arguments.
+---@param env table
+---@param id table
+local function chkargs(env, id)
+    if env.chk and not env.val then
+        core.die(1, errmod.EEREQ, "env")
+    elseif env.chk and not taskenv.ext(env.val) then
+        core.die(1, errmod.EENON, env.val)
+    elseif id.chk and not id.val then
+        core.die(1, errmod.EIREQ, "id")
+    elseif id.chk and not taskunit.ext(env.val, id.val) then
+        core.die(1, errmod.EINON, id.val)
+    end
+end
+
 ---Check tman core and base directories ain't corrupted and exist.
 ---@return boolean
 function core.check()
@@ -291,17 +306,9 @@ function core.id_del(env, id)
     id = id or currenv.curr
 
     -- check input values
-    if not env then
-        core.die(1, errmod.EECUR, "env")
-    elseif not taskenv.ext(env) then
-        core.die(1, errmod.EENON, env)
-    end
+    chkargs({ val = env, chk = true }, { val = id, chk = true })
 
-    if not id then
-        core.die(1, errmod.EICUR, "id")
-    elseif not taskunit.ext(env, id) then
-        core.die(1, errmod.EINON, id)
-    elseif not taskunit.del(env, id) then
+    if not taskunit.del(env, id) then
         core.die(1, errmod.EIDEL, id)
     elseif id == curr then
         switch.id_delcurr()
@@ -444,15 +451,9 @@ function core.id_cat(env, id)
     id = id or currenv.curr
     env = env or currenv.env
 
-    if not env then
-        core.die(1, errmod.EECUR, "env")
-    elseif not taskenv.ext(env) then
-        core.die(1, errmod.EENON, env)
-    elseif not id then
-        core.die(1, errmod.EICUR, "id")
-    elseif not taskunit.ext(env, id) then
-        core.die(1, errmod.EINON, id)
-    end
+    -- check input values
+    chkargs({ val = env, chk = true }, { val = id, chk = true })
+
     return taskunit.get(env, id)
 end
 
