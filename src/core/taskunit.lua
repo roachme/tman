@@ -9,6 +9,14 @@ local unitdb = require("aux.unitdb")
 local taskunit = {}
 local dirpath
 
+local status = {
+    CURR = 1,
+    PREV = 2,
+    ACTV = 3,
+    COMP = 4,
+    ARCH = 5,
+}
+
 ---Init module.
 ---@param unitdir string
 ---@return boolean

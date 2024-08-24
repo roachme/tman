@@ -322,39 +322,43 @@ end
 ---@param val string
 ---@return boolean
 function core.id_set(env, id, key, val)
-    --[[
-    local currid = switch.id_getcurr()
-    local previd = switch.id_getprev()
-    ]]
+    local envenv = switch.env_getcurr()
+    env = env or envenv.env
+    id = id or envenv.curr
+    local currid = envenv.curr
+    local previd = envenv.prev
 
     -- check input values
-    env = env or switch.env_getcurr().env
     if not env then
         core.die(1, errmod.EECUR, "env")
     elseif not taskenv.ext(env) then
-        core.die(1, errmod.EENON, "env")
-    end
-
-    id = id or switch.id_getcurr()
-    if not id then
+        core.die(1, errmod.EENON, env)
+    elseif not id then
         core.die(1, errmod.EIREQ, "id")
     elseif not taskunit.ext(env, id) then
-        core.die(1, errmod.EINON, "id")
+        core.die(1, errmod.EINON, id)
     end
 
     if not taskunit.set(env, id, key, val) then
-        core.die(1, "could not set unit value", id)
+        core.die(1, errmod.EEUSET, id)
     end
 
+    -- update some stuff
     if key == "id" then
         local old_taskdir = struct.tasks.path .. "/" .. env .. "/" .. id
         local new_taskdir = struct.tasks.path .. "/" .. env .. "/" .. val
+
+        -- roachme: under development: taskunit does not rename unit dir
         if not utils.rename(old_taskdir, new_taskdir) then
-            core.die(1, "could not rename task directory", val)
+            core.die(1, errmod.EETREN, id)
             return false
         end
+        if key == "id" and id == currid then
+            if not switch.id_addcurr(val) then
+                core.die(1, errmod.EISET, val)
+            end
+        end
     end
-
     return true
 end
 
@@ -445,7 +449,7 @@ function core.id_cat(env, id)
     elseif not taskenv.ext(env) then
         core.die(1, errmod.EENON, env)
     elseif not id then
-        core.die(1, errmod.EICUR, env)
+        core.die(1, errmod.EICUR, "id")
     elseif not taskunit.ext(env, id) then
         core.die(1, errmod.EINON, id)
     end
