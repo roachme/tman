@@ -182,7 +182,8 @@ end
 ---@param env string
 ---@return boolean
 function core.env_del(env)
-    local curr
+    local curr = switch.env_getcurr().env
+    local prev = switch.env_getprev().env
     env = env or switch.env_getcurr().env
 
     if not env then
@@ -197,13 +198,13 @@ function core.env_del(env)
         core.die(1, errmod.EETDEL, env)
     end
 
-    -- update current environment and task id if needed.
-    curr = switch.env_getcurr().env
-    if curr then
-        switch.id_delcurr()
-        if switch.id_getcurr() then
-            switch.id_delcurr()
-        end
+    -- update special environments.
+    if env == curr then
+        switch.env_delcurr()
+    elseif env == prev then
+        -- cuz there's no way to delete previous task id directly
+        switch.env_swapspec()
+        switch.env_delcurr()
     end
     return true
 end
@@ -272,7 +273,7 @@ function core.id_add(env, id)
     env = env or switch.env_getcurr().env
 
     if not env then
-        core.die(1, errmod.EEREQ, "env")
+        core.die(1, errmod.EECUR, "env")
     elseif not id then
         core.die(1, errmod.EIREQ, "id")
     end

@@ -62,52 +62,6 @@ function switch.init(dirpath)
     return true
 end
 
----Get current environment's current task id.
----@return string|nil
-function switch.id_getcurr()
-    return specs.curr.curr
-end
-
----Get current environment's previous task id.
----@return string|nil
-function switch.id_getprev()
-    return specs.curr.prev
-end
-
----Add new current task id.
----@return boolean
-function switch.id_addcurr(id)
-    local curr = switch.id_getcurr()
-
-    -- prevent from duplicates: do nothing
-    if curr == id then
-        return true
-    end
-
-    specs.curr.curr = id
-    specs.curr.prev = curr
-    return save(fcurr, specs.curr) and save(fprev, specs.prev)
-end
-
----Swap current and previous task ids.
----@return boolean
-function switch.id_swapspec()
-    local prev = switch.id_getprev()
-
-    if not prev then
-        return false
-    end
-    return switch.id_addcurr(prev)
-end
-
----Delete current task id.
----@return boolean
-function switch.id_delcurr()
-    specs.curr.curr = nil
-    switch.id_swapspec()
-    return true
-end
-
 ---Get current environment.
 ---@return table
 function switch.env_getcurr()
@@ -159,9 +113,86 @@ end
 ---Delete current environment.
 ---@return boolean
 function switch.env_delcurr()
-    specs.curr = {}
-    switch.env_swapspec()
-    return true
+    local curr = switch.env_getcurr()
+    local prev = switch.env_getprev()
+
+    if not next(curr) and not next(prev) then
+        return true
+    end
+
+    -- update special task environments.
+    if next(curr) and next(prev) then
+        specs.curr = prev
+        specs.prev = {}
+    elseif next(curr) and not next(prev) then
+        specs.curr = {}
+    end
+    return save(fcurr, specs.curr) and save(fprev, specs.prev)
+end
+
+---Get current environment's current task id.
+---@return string|nil
+function switch.id_getcurr()
+    return specs.curr.curr
+end
+
+---Get current environment's previous task id.
+---@return string|nil
+function switch.id_getprev()
+    return specs.curr.prev
+end
+
+---Add new current task id.
+---@param id string
+---@return boolean
+function switch.id_addcurr(id)
+    local curr = switch.id_getcurr()
+
+    -- prevent from duplicates: do nothing
+    if curr == id then
+        return true
+    elseif not switch.env_getcurr().env then
+        return false
+    end
+
+    specs.curr.curr = id
+    specs.curr.prev = curr
+    return save(fcurr, specs.curr) and save(fprev, specs.prev)
+end
+
+---Swap current and previous task ids.
+---@return boolean
+function switch.id_swapspec()
+    local prev = switch.id_getprev()
+
+    if not prev then
+        return false
+    end
+    return switch.id_addcurr(prev)
+end
+
+---Delete current task id.
+---@return boolean
+function switch.id_delcurr()
+    local env = switch.env_getcurr().env
+    local curr = switch.id_getcurr()
+    local prev = switch.id_getprev()
+
+    if not env then
+        return false
+    elseif not curr and not prev then
+        return true
+    end
+
+    -- update special task ids.
+    if curr and prev then
+        specs.curr.curr = prev
+        specs.curr.prev = nil
+    elseif curr and not prev then
+        specs.curr.curr = nil
+    end
+
+    return save(fcurr, specs.curr)
 end
 
 return switch
