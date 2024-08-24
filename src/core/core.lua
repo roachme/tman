@@ -272,22 +272,20 @@ end
 function core.id_add(env, id)
     env = env or switch.env_getcurr().env
 
+    -- check input values.
     if not env then
         core.die(1, errmod.EECUR, "env")
-    elseif not id then
-        core.die(1, errmod.EIREQ, "id")
+    elseif not taskenv.ext(env) then
+        core.die(1, errmod.EENON, env)
+    elseif not taskenv.chk(env) then
+        core.die(1, errmod.EEILL, env)
+    elseif taskunit.ext(env, id) then
+        core.die(1, errmod.EIEXT, id)
+    elseif not taskunit.chk("id", id) then
+        core.die(1, errmod.EIILL, id)
     end
 
-    -- make sure needed environment is ready.
-    if not taskenv.ext(env) then
-        core.env_add(env)
-    end
-    if switch.env_getcurr().env ~= env then
-        if not switch.env_addcurr({ env = env }) then
-            core.die(1, errmod.EESET, env)
-        end
-    end
-
+    -- roachme: gotta output error description accepted from module
     if not taskunit.add(env, id) then
         core.die(1, errmod.EIEXT, id)
     elseif not switch.id_addcurr(id) then

@@ -71,8 +71,6 @@ function taskunit.chk(key, val)
         end
         return false
     end
-
-    io.stderr:write("no such key: ", key, "\n")
     return false
 end
 
