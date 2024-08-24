@@ -397,7 +397,7 @@ function core.id_prev()
     if not env then
         core.die(1, errmod.EECUR, "env")
     elseif not prev then
-        core.die(1, errmod.EICUR, "id")
+        core.die(1, errmod.EIPRV, "id")
     elseif not switch.id_swapspec() then
         core.die(1, errmod.EISPRV, "id")
     end
