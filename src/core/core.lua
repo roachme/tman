@@ -47,10 +47,14 @@ end
 local function chkargs(env, id)
     if env.chk and not env.val then
         core.die(1, errmod.EEREQ, "env")
+    elseif env.chk and not taskenv.chk(env.val) then
+        core.die(1, errmod.EEILL, env.val)
     elseif env.chk and not taskenv.ext(env.val) then
         core.die(1, errmod.EENON, env.val)
     elseif id.chk and not id.val then
         core.die(1, errmod.EIREQ, "id")
+    elseif id.chk and not taskunit.chk("id", id.val) then
+        core.die(1, errmod.EIILL, id.val)
     elseif id.chk and not taskunit.ext(env.val, id.val) then
         core.die(1, errmod.EINON, id.val)
     end
