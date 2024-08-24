@@ -288,7 +288,7 @@ function core.id_add(env, id)
     end
 
     if not taskunit.add(env, id) then
-        core.die(1, errmod.EEEXT, id)
+        core.die(1, errmod.EIEXT, id)
     elseif not switch.id_addcurr(id) then
         core.die(1, errmod.EISET, id)
     elseif not taskdir.add(env, id) then
