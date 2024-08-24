@@ -1,79 +1,64 @@
-local envdb = require("aux.envdb")
+local utils = require("aux.utils")
+local dirent = require("posix.dirent")
 
 local taskenv = {}
-local fenv
+local dirpath
 
-local status = {
-    CURR = 0,
-    PREV = 1,
-    ACTV = 2,
-}
-
----Init env.
----@param fname string
-function taskenv.init(fname)
-    fenv = fname
-    return envdb.init(fenv)
-end
-
----Check that env exists in database.
----@param name string
----@return boolean
-function taskenv.ext(name)
-    return envdb.ext(name)
-end
-
----Add an env.
----@param name string
----@param desc string
----@return boolean
-function taskenv.add(name, desc)
-    if envdb.ext(name) then
-        return false
-    end
-    return envdb.add(name, desc, status.CURR)
-end
-
----Delete an env.
----@param name string
----@return boolean
-function taskenv.del(name)
-    if not envdb.ext(name) then
-        return false
-    end
-    return envdb.del(name)
+function taskenv.init(edir)
+    dirpath = edir
+    return true
 end
 
 ---Get list of environments.
 ---@return table
 function taskenv.list()
-    return envdb.list()
+    local list = {}
+
+    for _, dir in pairs(dirent.dir(dirpath)) do
+        if dir ~= "." and dir ~= ".." then
+            table.insert(list, dir)
+        end
+    end
+    return list
 end
 
----Check that environment name is valid.
----@param envname string
+---Check if environment exists.
+---@param name string
 ---@return boolean
-function taskenv.chk(envname)
-    --- roachme: gotta add an implementation
-    if not envname then
+function taskenv.ext(name)
+    for _, env in pairs(taskenv.list()) do
+        if env == name then
+            return true
+        end
+    end
+    return false
+end
+
+---Check if environment name has illegal values.
+---@param name string
+---@return boolean
+function taskenv.chk(name)
+    return name == string.match(name, "^[%w]+[-]*[%w]+$")
+end
+
+---Add new environment.
+---@param name string
+---@return boolean
+function taskenv.add(name)
+    if not taskenv.chk(name) then
         return false
     end
-    return true
+    return utils.mkdir(dirpath .. "/" .. name)
 end
 
----Set environment value.
----@param key string
----@param val string
----@return boolean
-function taskenv.set(key, val)
-    return true
-end
-
----Get environment unit values.
+---Delete an environment.
 ---@param name string
----@return table
-function taskenv.get(name)
-    return envdb.get(name)
+---@return boolean
+function taskenv.del(name)
+    if not taskenv.ext(name) then
+        return false
+    end
+    return utils.rm(dirpath .. "/" .. name)
 end
 
 return taskenv
