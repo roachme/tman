@@ -376,14 +376,11 @@ end
 function core.id_switch(env, id)
     env = env or switch.env_getcurr().env
 
-    if not taskenv.ext(env) then
-        core.die(1, errmod.EENON, env)
-    elseif not taskunit.ext(env, id) then
-        core.die(1, errmod.EINON, id)
-    elseif not next(switch.env_getcurr()) then
-        core.die(1, errmod.EISWT, env)
-    elseif not switch.id_addcurr(id) then
-        core.die(1, errmod.EISET, id)
+    -- check input values
+    chkargs({ val = env, chk = true }, { val = id, chk = true })
+
+    if not switch.id_addcurr(id) then
+        core.die(1, errmod.get(errmod.errno), id)
     end
     return true
 end
@@ -399,7 +396,7 @@ function core.id_prev()
     elseif not prev then
         core.die(1, errmod.EIPRV, "id")
     elseif not switch.id_swapspec() then
-        core.die(1, errmod.EISPRV, "id")
+        core.die(1, errmod.EISPRV, prev)
     end
     return true
 end
@@ -413,13 +410,8 @@ function core.id_list(env)
     local previd = switch.id_getprev()
     env = env or switch.env_getcurr().env
 
-    if not env then
-        core.die(1, errmod.EECUR, "env")
-        return {}
-    elseif not taskenv.ext(env) then
-        core.die(1, errmod.EENON, env)
-        return {}
-    end
+    -- check input values
+    chkargs({ val = env, chk = true }, { val = "", chk = false })
 
     local taskids = taskunit.list(env)
     for _, id in pairs(taskids) do

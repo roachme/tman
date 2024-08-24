@@ -79,12 +79,9 @@ end
 function switch.id_addcurr(id)
     local curr = switch.id_getcurr()
 
+    -- prevent from duplicates: do nothing
     if curr == id then
-        print("-!!! !! ! error: id_addcurr: the same ids")
-        return false
-    elseif not next(specs.curr) then
-        print("!!!! error: no current env set")
-        return false
+        return true
     end
 
     specs.curr.curr = id

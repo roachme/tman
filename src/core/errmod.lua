@@ -30,7 +30,6 @@ local errmod = {
     EIREQ = "task id required",
     EISET = "could not set current task id",
     EISWT = "could not switch to task id",
-    eoue  = "could not ",
 
     -- switch feature
     EESPRV = "could not switch to previous environment",
