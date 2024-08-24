@@ -136,7 +136,9 @@ function taskunit.list(env)
 
     for _, id in pairs(dirent.dir(udirpath)) do
         if id ~= "." and id ~= ".." then
-            table.insert(list, id)
+            if utils.access(udirpath .. '/' .. id .. '/' .. 'unit') then
+                table.insert(list, id)
+            end
         end
     end
     return list
