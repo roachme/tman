@@ -316,14 +316,16 @@ function core.id_del(env, id)
 
     if not taskunit.del(env, id) then
         core.die(1, errmod.EIDEL, id)
-    elseif id == curr then
+    elseif not taskdir.del(env, id) then
+        core.die(1, errmod.EETDEL, id)
+    end
+
+    if id == curr then
         switch.id_delcurr()
     elseif id == prev then
         -- cuz there's no way to delete previous task id directly
         switch.id_swapspec()
         switch.id_delcurr()
-    elseif not taskdir.del(env, id) then
-        core.die(1, errmod.EETDEL, id)
     end
     return true
 end
