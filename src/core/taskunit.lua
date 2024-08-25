@@ -115,7 +115,6 @@ function taskunit.add(env, id)
 
     -- set task default values.
     for k, v in pairs(options) do
-        print("--", k, v)
         taskunit.set(env, id, k, v)
     end
     return true
