@@ -42,6 +42,9 @@ local function builtin_del()
         end
     end
 
+    -- trigger plugin commands related to this command
+    -- to make sure everything's ok.
+
     core.id_del(envname, id)
     return 0
 end
