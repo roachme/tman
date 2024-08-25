@@ -1,6 +1,9 @@
 --- Provide help on commands and general usage.help
 -- @module help
 
+local core = require("core.core")
+local errmod = require("core.errmod")
+
 local function show_usage()
     io.stdout:write(([[
 Usage: %s COMMAND [OPTION] [ID] [ENV]
@@ -40,11 +43,11 @@ local cmds = {
     {
         name = program,
         desc = [[
-tman - Terminal task manager.
+tman - Task manager.
 
-Util to switch between tasks, git branches and make the workflow easy and
-less confusing. You no longer need to memerize task ids, branche names,
-cd between directories, lose task notes, but instead look
+Util to switch between tasks, git branches and make the workflow easy and less
+confusing. You no longer need to memerize task ids, branche names, cd between
+directories, lose task notes, but instead look
 for 'em in nice structured way.
 ]],
     },
@@ -237,7 +240,7 @@ local function help_usage(cmdname)
         end
     end
 
-    io.stderr:write(errmsg:format(program, cmdname, program))
+    core.die(1, errmod.EBCNON, cmdname)
     return 1
 end
 
