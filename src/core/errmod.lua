@@ -47,6 +47,7 @@ local errmod = {
     EETREN = "could not rename task directory",
 
     -- builtins
+    EBCNON = ("no such command. Try '%s help' for more info"):format(program),
     EBKNON = "no such key",
 }
 

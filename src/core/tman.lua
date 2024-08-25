@@ -5,14 +5,13 @@ _G.program = "tman"
 _G.version = "0.1.17"
 
 local core = require("core.core")
-local help = require("aux.help")
+local errmod = require("core.errmod")
 local builtins = require("core.builtin")
 
 ---Tman interface.
 local function main()
     local cmd = table.remove(arg, 1) or "help"
 
-    -- Call a command.
     for _, builtin in pairs(builtins) do
         if cmd == builtin.name then
             core.setup(builtin.setup_level)
@@ -20,8 +19,7 @@ local function main()
         end
     end
 
-    -- Command not found. Show some help.
-    return help.usage(cmd)
+    return core.die(1, errmod.get(errmod.EBCNON), cmd)
 end
 
 os.exit(main())
