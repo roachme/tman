@@ -1,5 +1,5 @@
 local core = require("core.core")
-local git = require("plugin.git")
+local git = require("plugin.git.git")
 
 local function pgn_git()
     local cmd = table.remove(arg, 1) or "sync"

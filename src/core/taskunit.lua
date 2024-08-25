@@ -5,6 +5,7 @@
 local utils = require("aux.utils")
 local dirent = require("posix.dirent")
 local unitdb = require("aux.unitdb")
+local errmod = require("core.errmod")
 
 local taskunit = {}
 local dirpath
@@ -84,8 +85,7 @@ function taskunit.set(env, id, key, val)
     unitdb.init(dirpath .. "/" .. env .. "/" .. id .. "/unit")
 
     if not taskunit.chk(key, val) then
-        io.stderr:write("illegal value ", key, " ", val, "\n")
-        return false
+        return errmod.set(errmod.EIDIL)
     end
     unitdb.set(key, val)
     return unitdb.save()
@@ -134,7 +134,7 @@ function taskunit.list(env)
 
     for _, id in pairs(dirent.dir(udirpath)) do
         if id ~= "." and id ~= ".." then
-            if utils.access(udirpath .. '/' .. id .. '/' .. 'unit') then
+            if utils.access(udirpath .. "/" .. id .. "/" .. "unit") then
                 table.insert(list, id)
             end
         end

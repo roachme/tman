@@ -23,7 +23,8 @@ local errmod = {
     EICUR = "no current task id set",
     EIDEL = "could not delete task id",
     EIEXT = "task id already exists",
-    EIILL = "illegal task id",
+    EIIIL = "illegal task id",
+    EIDIL = "illegal task description",
     EINON = "no such task id",
     EIPRS = "could not switch to previous task id",
     EIPRV = "no previous task id set",
@@ -50,17 +51,19 @@ local errmod = {
 }
 
 ---Get error description.
----@param desc string
+---@param desc string?
 ---@return string
 function errmod.get(desc)
     desc = errno or desc
-    return desc
+    return desc or ""
 end
 
 ---Set error.
 ---@param desc string
+---@return false
 function errmod.set(desc)
     errno = desc
+    return false
 end
 
 return errmod

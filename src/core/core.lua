@@ -54,7 +54,7 @@ local function chkargs(env, id)
     elseif id.chk and not id.val then
         core.die(1, errmod.EIREQ, "id")
     elseif id.chk and not taskunit.chk("id", id.val) then
-        core.die(1, errmod.EIILL, id.val)
+        core.die(1, errmod.EIIIL, id.val)
     elseif id.chk and not taskunit.ext(env.val, id.val) then
         core.die(1, errmod.EINON, id.val)
     end
@@ -286,7 +286,7 @@ function core.id_add(env, id)
     elseif taskunit.ext(env, id) then
         core.die(1, errmod.EIEXT, id)
     elseif not taskunit.chk("id", id) then
-        core.die(1, errmod.EIILL, id)
+        core.die(1, errmod.EIIIL, id)
     end
 
     -- roachme: gotta output error description accepted from module
@@ -353,26 +353,18 @@ function core.id_set(env, id, key, val)
     end
 
     if not taskunit.set(env, id, key, val) then
-        core.die(1, errmod.EEUSET, id)
+        core.die(1, errmod.get(), id)
     end
 
     -- update some stuff
     if key == "id" then
-        local old_taskdir = struct.tasks.path .. "/" .. env .. "/" .. id
-        local new_taskdir = struct.tasks.path .. "/" .. env .. "/" .. val
-
-        -- roachme: under development: taskunit does not rename unit dir
-        if not utils.rename(old_taskdir, new_taskdir) then
+        if not taskdir.ren(env, id, val) then
             core.die(1, errmod.EETREN, id)
             return false
-        end
-
-        if not taskunit.ren(env, id, val) then
+        elseif not taskunit.ren(env, id, val) then
             core.die(1, errmod.EEUREN, id)
             return false
-        end
-
-        if id == currid then
+        elseif id == currid then
             switch.id_delcurr()
             switch.id_addcurr(val)
         elseif id == previd then

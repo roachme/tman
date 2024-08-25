@@ -1,6 +1,6 @@
 local core = require("core.core")
 local plugin = require("core.plugin")
-local gitlib = require("aux.gitlib")
+local gitlib = require("plugin.git.gitlib")
 local utils = require("aux.utils")
 
 local git = {}
