@@ -14,7 +14,7 @@ plugin.dbdir = core.dbdir
 ---@param id string
 ---@return table
 function plugin.getunits(envname, id)
-    return core.getunits(envname, id)
+    return core.id_cat(envname, id)
 end
 
 ---Get plugin config.
