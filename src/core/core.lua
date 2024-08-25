@@ -367,12 +367,8 @@ function core.id_set(env, id, key, val)
             return false
         end
 
-        local old_unitdir = struct.units.path .. "/" .. env .. "/" .. id
-        local new_unitdir = struct.units.path .. "/" .. env .. "/" .. val
-
-        -- roachme: under development: taskunit does not rename unit dir
-        if not utils.rename(old_unitdir, new_unitdir) then
-            core.die(1, errmod.EETREN, id)
+        if not taskunit.ren(env, id, val) then
+            core.die(1, errmod.EEUREN, id)
             return false
         end
 
