@@ -366,10 +366,23 @@ function core.id_set(env, id, key, val)
             core.die(1, errmod.EETREN, id)
             return false
         end
-        if key == "id" and id == currid then
-            if not switch.id_addcurr(val) then
-                core.die(1, errmod.EISET, val)
-            end
+
+        local old_unitdir = struct.units.path .. "/" .. env .. "/" .. id
+        local new_unitdir = struct.units.path .. "/" .. env .. "/" .. val
+
+        -- roachme: under development: taskunit does not rename unit dir
+        if not utils.rename(old_unitdir, new_unitdir) then
+            core.die(1, errmod.EETREN, id)
+            return false
+        end
+
+        if id == currid then
+            switch.id_delcurr()
+            switch.id_addcurr(val)
+        elseif id == previd then
+            -- cuz there's no way to delete previous task id directly
+            switch.env_swapspec()
+            switch.env_delcurr()
         end
     end
     return true
