@@ -291,16 +291,22 @@ function git.sync(envname, id)
     return true
 end
 
----Remotely sync branches with git server.
+---Sync branches with remote git repo.
 ---@param envname string
 ---@param id string
 ---@return boolean
 function git.rsync(envname, id)
-    git.clone(envname)
-    git.symlink_create(envname, id)
-    git.branch_create(envname, id)
+    git.sync(envname, id)
     git.pull_remote(envname)
     git.rebase_against_default(envname)
+    return true
+end
+
+---Delete task branch.
+---@param envname string
+---@param id string
+---@return boolean
+function git.delete(envname, id)
     return true
 end
 
