@@ -87,7 +87,6 @@ function taskunit.set(env, id, key, val)
     unitdb.init(dirpath .. "/" .. env .. "/" .. id .. "/unit")
 
     if not taskunit.chk(key, val) then
-        print("----")
         return errmod.set(errmod.EIDIL)
     end
     unitdb.set(key, val)
