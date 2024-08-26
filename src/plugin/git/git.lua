@@ -70,14 +70,7 @@ local gitunits = {}
 ---@param id string
 ---@return boolean
 function git.loadunits(envname, id)
-    local fname = plugin.prefix
-        .. "/.tman/units/"
-        .. envname
-        .. "/"
-        .. id
-        .. "/"
-        .. "git"
-
+    local fname = plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn/git"
     local f = io.open(fname)
 
     if not f then
