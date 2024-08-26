@@ -4,6 +4,8 @@
 local core = require("core.core")
 local errmod = require("core.errmod")
 
+local help = {}
+
 local function show_usage()
     io.stdout:write(([[
 Usage: %s COMMAND [OPTION] [ID] [ENV]
@@ -195,6 +197,13 @@ Options:
 ]],
     },
     {
+        name = "pgn",
+        desc = [[
+Usage: tman pgn PGNAME [PGNCMD]
+Execute plugin commands.
+]],
+    },
+    {
         name = "cat",
         desc = [[
 Usage: tman cat [OPTION] [ID] [ENVNAME]
@@ -225,9 +234,7 @@ Show tman version.
 ---Get info about command.
 ---@param cmdname string
 ---@return number
-local function help_usage(cmdname)
-    local errmsg = "%s: no such command '%s'. Use '%s help' for more info.\n"
-
+function help.usage(cmdname)
     if not cmdname then
         show_usage()
         return 0
@@ -244,6 +251,4 @@ local function help_usage(cmdname)
     return 1
 end
 
-return {
-    usage = help_usage,
-}
+return help
