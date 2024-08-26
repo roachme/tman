@@ -1,4 +1,5 @@
 local core = require("core.core")
+local errmod = require("core.errmod")
 local plugin = require("core.plugin")
 local gitlib = require("plugin.git.gitlib")
 local utils = require("aux.utils")
@@ -277,6 +278,8 @@ end
 
 -- Public functions --
 
+---Execute plugin git commands.
+
 ---Locally sync task branches.
 ---@param envname string
 ---@param id string
@@ -323,4 +326,30 @@ function git.cleanup()
     return true
 end
 
+---Wrapper for plguin git commands.
+function git.exec()
+    local cmd = table.remove(arg, 1) or "sync"
+    local envname = core.getcurr().env
+    local taskid = core.getcurr().curr
+
+    if not envname then
+        core.die(1, errmod.EECUR, "env")
+    elseif not taskid then
+        core.die(1, errmod.EICUR, "id")
+    end
+
+    if cmd == "sync" then
+        git.sync(envname, taskid)
+    elseif cmd == "rsync" then
+        git.rsync(envname, taskid)
+    elseif cmd == "pr" then
+        git.pr(envname, taskid)
+    elseif cmd == "cleanup" then
+        git.cleanup()
+    elseif cmd == "help" then
+        print("plugin git: show some help")
+    else
+        core.die(1, errmod.EPKNON, cmd)
+    end
+end
 return git
