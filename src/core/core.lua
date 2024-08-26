@@ -355,7 +355,7 @@ function core.id_set(env, id, key, val)
     end
 
     if not taskunit.set(env, id, key, val) then
-        core.die(1, errmod.get(), id)
+        core.die(1, errmod.get(), val)
     end
 
     -- update some stuff
