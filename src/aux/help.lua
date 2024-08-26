@@ -199,7 +199,7 @@ Options:
     {
         name = "pgn",
         desc = [[
-Usage: tman pgn PGNAME [PGNCMD]
+Usage: tman pgn PGNAME PGNCMD
 Execute plugin commands.
 ]],
     },
