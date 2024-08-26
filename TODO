@@ -8,9 +8,7 @@ In progress:
     19.  Add module for default values so util doesn't break if no config is preesented.
     22.  taskunit status - fix it or get rid of it.
     25.  Find a good way to delete unused and that no longer on remote repo.
-    27.  Optimize db.lua: use task ID as table index.
     30.  core.lua gotta check config file as well.
-    31.  Delete CUI from `tman set -d' command.
     32.  Diet repos over time.
     35.  tman.sh can't handle args with quotes `tman set -d "test task 2"'.
     37.  Move repos into directory cuz their number's getting bigger.
@@ -47,9 +45,11 @@ Done:
     23.  Add unit for actvite repos.
     24.  git: Add support to download repos.
     26.  Add support to work on different environments: work, personal, test.
+    27.  Optimize db.lua: use task ID as table index.
     28.  Delete sort() from db.lua, it shouldn't know about it.
     29.  taskunit.lua can't change task type.
     31.  Function die() should be used only in tman.lua.
+    32.  Delete CUI from `tman set -d' command.
     33.  `tman del' add task ID with description.
     34.  Find a place to store progname and version. There're in core.lua and help.lua now.
     36.  `tman set' always switch to task dir.
