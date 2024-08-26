@@ -5,7 +5,7 @@ local utils = require("aux.utils")
 
 local git = {}
 local plugin_name = "git"
-local codedir = plugin.prefix .. "/" .. "repos/"
+local codedir = plugin.prefix .. "/" .. "plugin/git/"
 
 ---Clone git repositories.
 ---@param envname string
@@ -126,13 +126,7 @@ local function build_branch_by_pattern(branchpatt, units)
 end
 
 function git.saveunits(envname, id)
-    local fname = plugin.prefix
-        .. "/.tman/units/"
-        .. envname
-        .. "/"
-        .. id
-        .. "/"
-        .. "git"
+    local fname = plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn/git"
     local f = io.open(fname, "w")
 
     if not f then
@@ -277,6 +271,17 @@ function git.create_structure(envname)
     end
 end
 
+function git.struct(envname, id)
+    if not utils.mkdir(plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn") then
+        return false
+    elseif not utils.mkdir(plugin.prefix .. "/plugin/git") then
+        return false
+    elseif not utils.touch(plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn/git") then
+        return false
+    end
+    return true
+end
+
 -- Public functions --
 
 ---Locally sync task branches.
@@ -284,6 +289,7 @@ end
 ---@param id string
 ---@return boolean
 function git.sync(envname, id)
+    git.struct(envname, id)
     git.clone(envname)
     git.symlink_create(envname, id)
     git.branch_create(envname, id)

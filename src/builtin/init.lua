@@ -1,8 +1,8 @@
 local core = require("core.core")
+local utils = require("aux.utils")
 local getopt = require("posix.unistd").getopt
 
 local function tman_init()
-    local fbase
     local optstr = "b:"
 
     for optopt, optarg, optind in getopt(arg, optstr) do
@@ -15,6 +15,8 @@ local function tman_init()
         core.die(1, "could not create core structure", "init")
     end
 
+    local gitcmd = "git -C %s init"
+    utils.exec(gitcmd:format(core.prefix))
     return 0
 end
 

@@ -7,6 +7,7 @@ local config = require("aux.config")
 local plugin = {}
 
 plugin.prefix = core.prefix
+plugin.taskdir = core.taskdir
 plugin.dbdir = core.dbdir
 
 ---Get tasks units.

@@ -31,7 +31,7 @@ end
 ---@param id string
 ---@return table
 function taskunit.get(env, id)
-    unitdb.init(dirpath .. "/" .. env .. "/" .. id .. "/unit")
+    unitdb.init(dirpath .. "/" .. env .. "/" .. id .. "/.tman" .. "/unit")
     return unitdb.get()
 end
 
@@ -84,7 +84,7 @@ end
 ---@param val string
 ---@return boolean
 function taskunit.set(env, id, key, val)
-    unitdb.init(dirpath .. "/" .. env .. "/" .. id .. "/unit")
+    unitdb.init(dirpath .. "/" .. env .. "/" .. id .. "/.tman" .. "/unit")
 
     if not taskunit.chk(key, val) then
         return errmod.set(errmod.EIDIL)
@@ -108,7 +108,7 @@ function taskunit.add(env, id)
 
     if taskunit.ext(env, id) then
         return false
-    elseif not utils.mkdir(dirpath .. "/" .. env .. "/" .. id) then
+    elseif not utils.mkdir(dirpath .. "/" .. env .. "/" .. id .. "/.tman") then
         return false
     end
 
@@ -137,7 +137,7 @@ function taskunit.list(env)
 
     for _, id in pairs(dirent.dir(udirpath)) do
         if id ~= "." and id ~= ".." then
-            if utils.access(udirpath .. "/" .. id .. "/" .. "unit") then
+            if utils.access(udirpath .. "/" .. id) then
                 table.insert(list, id)
             end
         end

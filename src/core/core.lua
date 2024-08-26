@@ -23,8 +23,7 @@ local prefix = config.prefix
 
 local struct = {
     prefix = { isdir = false, iscore = true, path = prefix },
-    dbdir = { isdir = false, iscore = true, path = prefix .. "/.tman/" },
-    units = { isdir = true, iscore = true, path = prefix .. "/.tman/units/" },
+    dbdir = { isdir = true, iscore = true, path = prefix .. "/.tman/" },
     tasks = { isdir = true, iscore = false, path = prefix .. "/tasks/" },
     curr = { isdir = false, iscore = true, path = prefix .. "/.tman/curr" },
     prev = { isdir = false, iscore = true, path = prefix .. "/.tman/prev" },
@@ -97,9 +96,9 @@ end
 
 ---Init core modules.
 function core.init()
-    if not taskenv.init(struct.units.path) then
+    if not taskenv.init(struct.tasks.path) then
         return core.die(1, "could not init module taskenv", "fatal")
-    elseif not taskunit.init(struct.units.path) then
+    elseif not taskunit.init(struct.tasks.path) then
         return core.die(1, "could not init module taskunit", "fatal")
     elseif not switch.init(struct.dbdir.path) then
         return core.die(1, "could not init module switch", "fatal")
@@ -172,10 +171,7 @@ function core.env_add(env)
     end
 
     -- create needed structure
-    if not utils.mkdir(struct.units.path .. "/" .. env) then
-        local errfmt = "could not create environment directory in units"
-        core.die(1, errfmt, "env")
-    elseif not utils.mkdir(struct.tasks.path .. "/" .. env) then
+    if not utils.mkdir(struct.tasks.path .. "/" .. env) then
         local errfmt = "could not create task environment directory"
         core.die(1, errfmt, "env")
     end
@@ -290,12 +286,12 @@ function core.id_add(env, id)
     end
 
     -- roachme: gotta output error description accepted from module
-    if not taskunit.add(env, id) then
+    if not taskdir.add(env, id) then
+        core.die(1, errmod.EETADD, id)
+    elseif not taskunit.add(env, id) then
         core.die(1, errmod.EIEXT, id)
     elseif not switch.id_addcurr(id) then
         core.die(1, errmod.EISET, id)
-    elseif not taskdir.add(env, id) then
-        core.die(1, errmod.EETADD, id)
     end
     return true
 end
@@ -459,6 +455,7 @@ function core.id_cat(env, id)
 end
 
 core.prefix = prefix
+core.taskdir = struct.tasks.path
 core.dbdir = struct.dbdir.path
 
 return core
