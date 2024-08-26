@@ -2,7 +2,7 @@
 --@module tman
 
 _G.program = "tman"
-_G.version = "0.1.17"
+_G.version = "0.1.18"
 
 local core = require("core.core")
 local errmod = require("core.errmod")
