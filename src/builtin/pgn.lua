@@ -1,6 +1,8 @@
 local core = require("core.core")
 local errmod = require("core.errmod")
+
 local git = require("plugin.git.git")
+local struct = require("plugin.struct.struct")
 
 ---Call plugins.
 local function builtin_pgn()
@@ -8,6 +10,8 @@ local function builtin_pgn()
 
     if pgnname == "git" then
         git.exec()
+    elseif pgnname == "struct" then
+        struct.exec()
     elseif not pgnname then
         core.die(1, errmod.EPMIS, "pgn")
     else

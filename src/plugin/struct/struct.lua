@@ -2,7 +2,10 @@
 -- Create repo symlinks, helper dirs, etc.
 -- @module struct
 
+local core = require("core.core")
 local utils = require("aux.utils")
+local errmod = require("core.errmod")
+local plugin = require("core.plugin")
 
 local struct = {}
 local struct_taskbase, struct_dirs, struct_files
@@ -58,6 +61,38 @@ function struct.delete(id)
         utils.rm(struct_taskbase .. "/" .. id .. "/" .. file)
     end
     return true
+end
+
+function struct.exec()
+    local cmd = table.remove(arg, 1) or "create"
+    local envname = core.getcurr().env
+    local taskid = core.getcurr().curr
+
+    if not envname then
+        core.die(1, errmod.EECUR, "env")
+    elseif not taskid then
+        core.die(1, errmod.EICUR, "id")
+    end
+
+
+    local config = plugin.get_uconfig(envname).struct or {}
+    if not struct.init(plugin.taskdir .. "/" .. envname,
+        config.dirs or {},
+        config.files or {})
+        then
+            print("err: could not init plugin struct")
+            os.exit(1)
+    end
+
+    if cmd == "create" then
+        struct.create(taskid)
+    elseif cmd == "delete" then
+        struct.delete(taskid)
+    elseif cmd == "help" then
+        print("plugin struct: show some help")
+    else
+        core.die(1, errmod.EPKNON, cmd)
+    end
 end
 
 return struct
