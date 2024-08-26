@@ -1,4 +1,5 @@
 local core = require("core.core")
+local errmod = require("core.errmod")
 local git = require("plugin.git.git")
 
 local function pgn_git()
@@ -7,11 +8,9 @@ local function pgn_git()
     local taskid = core.getcurr().curr
 
     if not envname then
-        core.die(1, "no current environtment", "pgn git")
-        return false
+        core.die(1, errmod.EECUR, "env")
     elseif not taskid then
-        core.die(1, "no current task id", "pgn git")
-        return false
+        core.die(1, errmod.EICUR, "id")
     end
 
     if cmd == "sync" then
@@ -23,7 +22,7 @@ local function pgn_git()
     elseif cmd == "cleanup" then
         git.cleanup()
     else
-        core.die(1, "no such plugin git command", "pgn")
+        core.die(1, errmod.EPKNON, cmd)
     end
 end
 
@@ -33,9 +32,9 @@ local function builtin_pgn()
     if pgnname == "git" then
         pgn_git()
     elseif not pgnname then
-        core.die(1, "gotta specify plugin name", "pgn")
+        core.die(1, errmod.EPMIS, "pgn")
     else
-        core.die(1, "no such plugin", pgnname)
+        core.die(1, errmod.EPNON, pgnname)
     end
 end
 

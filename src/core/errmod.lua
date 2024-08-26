@@ -49,6 +49,11 @@ local errmod = {
     -- builtins
     EBCNON = ("no such command. Try '%s help' for more info"):format(program),
     EBKNON = "no such key",
+
+    -- plugin
+    EPMIS = "plugin name missing",
+    EPNON = "no such plugin",
+    EPKNON = "no such plugin command",
 }
 
 ---Get error description.
