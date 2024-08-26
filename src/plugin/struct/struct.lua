@@ -74,14 +74,16 @@ function struct.exec()
         core.die(1, errmod.EICUR, "id")
     end
 
-
     local config = plugin.get_uconfig(envname).struct or {}
-    if not struct.init(plugin.taskdir .. "/" .. envname,
-        config.dirs or {},
-        config.files or {})
-        then
-            print("err: could not init plugin struct")
-            os.exit(1)
+    if
+        not struct.init(
+            plugin.taskdir .. "/" .. envname,
+            config.dirs or {},
+            config.files or {}
+        )
+    then
+        print("err: could not init plugin struct")
+        os.exit(1)
     end
 
     if cmd == "create" then

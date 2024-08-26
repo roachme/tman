@@ -71,7 +71,13 @@ local gitunits = {}
 ---@param id string
 ---@return boolean
 function git.loadunits(envname, id)
-    local fname = plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn/git"
+    local fname = plugin.taskdir
+        .. "/"
+        .. envname
+        .. "/"
+        .. id
+        .. "/"
+        .. ".tman/pgn/git"
     local f = io.open(fname)
 
     if not f then
@@ -120,7 +126,13 @@ local function build_branch_by_pattern(branchpatt, units)
 end
 
 function git.saveunits(envname, id)
-    local fname = plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn/git"
+    local fname = plugin.taskdir
+        .. "/"
+        .. envname
+        .. "/"
+        .. id
+        .. "/"
+        .. ".tman/pgn/git"
     local f = io.open(fname, "w")
 
     if not f then
@@ -266,11 +278,25 @@ function git.create_structure(envname)
 end
 
 function git.struct(envname, id)
-    if not utils.mkdir(plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn") then
+    if
+        not utils.mkdir(
+            plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn"
+        )
+    then
         return false
     elseif not utils.mkdir(plugin.prefix .. "/plugin/git") then
         return false
-    elseif not utils.touch(plugin.taskdir .. "/" .. envname .. "/" .. id .. "/" .. ".tman/pgn/git") then
+    elseif
+        not utils.touch(
+            plugin.taskdir
+                .. "/"
+                .. envname
+                .. "/"
+                .. id
+                .. "/"
+                .. ".tman/pgn/git"
+        )
+    then
         return false
     end
     return true
