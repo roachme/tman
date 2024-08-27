@@ -17,6 +17,7 @@ local errmod = {
     EEREQ = "environment name required",
     EESET = "could not set current environment",
     EESWT = "could not switch to environment",
+    EEDENV = "no destination environment",
 
     -- task id
     EIADD = "could not add new task id",

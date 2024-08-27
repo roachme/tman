@@ -159,6 +159,17 @@ COMMANDs:
 ]],
     },
     {
+        name = "move",
+        desc = [[
+Usage: tman move ID [ DSTENV | [DSTENV SRCENV] ]
+Move task to another environment.
+
+SRCENV - defialt current environment.
+Options:
+    -h   Show this help message.
+]],
+    },
+    {
         name = "prev",
         desc = [[
 Usage: tman prev

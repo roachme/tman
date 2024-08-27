@@ -433,8 +433,47 @@ function core.id_list(env)
 end
 
 ---Move task into another environment.
----@param env string
-function core.id_move(env) end
+---@param dstenv string
+---@param srcenv string
+---@param id string
+function core.id_move(dstenv, srcenv, id)
+    local currid = switch.id_getcurr()
+    local previd = switch.id_getprev()
+    srcenv = srcenv or switch.env_getcurr().env
+
+    if not dstenv then
+        core.die(1, errmod.EEDENV, "env")
+    elseif not taskenv.ext(dstenv) then
+        core.die(1, errmod.EENON, dstenv)
+    elseif not srcenv then
+        core.die(1, errmod.EECUR, "env")
+    elseif not taskenv.ext(srcenv) then
+        core.die(1, errmod.EENON, srcenv)
+
+    elseif not id then
+        core.die(1, errmod.EIREQ, "id")
+    elseif not taskunit.ext(srcenv, id) then
+        core.die(1, errmod.EINON, id)
+
+    elseif taskunit.ext(dstenv, id) then
+        core.die(1, errmod.EIEXT, id)
+    end
+
+    local srcdir = struct.tasks.path .. "/" .. srcenv .. "/" .. id
+    local dstdir = struct.tasks.path .. "/" .. dstenv .. "/" .. id
+    if not utils.rename(srcdir, dstdir) then
+        core.die(1, "could not move task", id)
+    end
+
+    -- update special ids.
+    if id == currid then
+        switch.id_delcurr()
+    elseif id == previd then
+        -- cuz there's no way to delete previous task id directly
+        switch.id_swapspec()
+        switch.id_delcurr()
+    end
+end
 
 ---Get task units.
 ---@param env string

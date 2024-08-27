@@ -3,7 +3,7 @@ local help = require("aux.help")
 local getopt = require("posix.unistd").getopt
 
 local function builtin_move()
-    local envname, id
+    local srcenv, dstenv, id
     local optstr = "hf"
     local last_index = 1
     local cmdname = "move"
@@ -25,12 +25,11 @@ local function builtin_move()
         return 1
     end
 
-    print("under development")
-    os.exit(0)
     id = arg[last_index]
-    envname = arg[last_index + 1]
-    core.move(id, envname)
-    print("envname", envname)
+    dstenv = arg[last_index + 1]
+    srcenv = arg[last_index + 2]
+    core.id_move(dstenv, srcenv, id)
+    return 0
 end
 
 return builtin_move
