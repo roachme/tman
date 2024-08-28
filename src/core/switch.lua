@@ -195,4 +195,25 @@ function switch.id_delcurr()
     return save(fcurr, specs.curr)
 end
 
+function switch.id_delprev()
+    local env = switch.env_getcurr().env
+    local curr = switch.id_getcurr()
+    local prev = switch.id_getprev()
+
+    if not env then
+        return false
+    elseif not curr and not prev then
+        return true
+    end
+
+    if not curr then
+        return false
+    elseif not curr or not prev then
+        return false
+    end
+
+    specs.curr.prev = nil
+    return save(fcurr, specs.curr)
+end
+
 return switch
