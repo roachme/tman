@@ -178,6 +178,49 @@ function core.env_add(env)
     return true
 end
 
+---Set environment value.
+---Change environment name.
+---@param env string
+---@param key string
+---@param val string
+function core.env_set(env, key, val)
+    local curr = switch.env_getcurr()
+    local prev = switch.env_getprev()
+
+    if not env then
+        core.die(1, errmod.EECUR, "env")
+    elseif not taskenv.ext(env) then
+        core.die(1, errmod.EENON, env)
+    elseif key ~= "name" then
+        core.die(1, "can change only name", key or "nokey")
+    elseif not val then
+        core.die(1, "value required", "noval")
+    elseif taskenv.ext(val) then
+        core.die(1, errmod.EEEXT, val)
+    elseif not taskenv.chk(val) then
+        core.die(1, errmod.EEILL, val)
+    end
+
+    -- rename env directory
+    local dstdir = struct.tasks.path .. "/" .. val
+    local srcdir = struct.tasks.path .. "/" .. env
+    if not utils.rename(srcdir, dstdir) then
+        core.die(1, "could not rename environment directory", val)
+    end
+
+    -- update special environments
+    if env == curr.env then
+        curr.env = val -- only rename env name, keep the rest the same
+        switch.env_delcurr()
+        switch.env_addcurr(curr)
+    elseif env == prev.env then
+        prev.env = val -- only rename env name, keep the rest the same
+        switch.env_swapspec()
+        switch.env_delcurr()
+        switch.env_addcurr(prev)
+    end
+end
+
 ---Delete an environment.
 ---@param env string
 ---@return boolean

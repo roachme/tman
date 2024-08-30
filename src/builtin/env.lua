@@ -3,24 +3,25 @@ local getopt = require("posix.unistd").getopt
 
 ---Add a new environment.
 local function _env_add()
-    local desc, envname
+    local envname
     local optstr = "d:h"
     local last_index = 1
 
-    for optopt, optarg, optind in getopt(arg, optstr) do
+    for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
             return core.die(1, "unrecognized option", arg[optind - 1])
-        end
-
-        last_index = optind
-        if optopt == "d" then
-            desc = optarg
         end
     end
 
     envname = arg[last_index]
-    core.env_add(envname, desc)
+    core.env_add(envname)
     return 0
+end
+
+local function _env_set()
+    local dstenv = arg[1]
+    local srcenv = arg[2] or core.getcurr().env
+    core.env_set(srcenv, "name", dstenv)
 end
 
 ---Delete an environment.
@@ -90,6 +91,7 @@ local function builtin_env()
         del = _env_del,
         list = _env_list,
         prev = _env_prev,
+        set = _env_set,
         use = _env_use,
     }
 

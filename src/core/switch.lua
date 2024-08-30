@@ -116,17 +116,22 @@ function switch.env_delcurr()
     local curr = switch.env_getcurr()
     local prev = switch.env_getprev()
 
-    if not next(curr) and not next(prev) then
+    if not curr then
+        return false
+    elseif not curr and not prev then
         return true
     end
 
     -- update special task environments.
-    if next(curr) and next(prev) then
+    if curr and prev then
+        local tmp = specs.curr
         specs.curr = prev
-        specs.prev = {}
-    elseif next(curr) and not next(prev) then
+        specs.prev = tmp
+    elseif curr and not prev then
         specs.curr = {}
     end
+
+    --return save(fcurr, specs.curr)
     return save(fcurr, specs.curr) and save(fprev, specs.prev)
 end
 
