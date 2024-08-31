@@ -46,9 +46,7 @@ local function builtin_list()
         return a.status < b.status
     end)
 
-    if envname then
-        print(("envname: %s"):format(envname))
-    end
+    print(("envname: %s"):format(envname))
     for _, task in pairs(tasks) do
         local fmt = "%s %-10s %s"
         local status = task.status
