@@ -5,7 +5,7 @@ local getopt = require("posix.unistd").getopt
 local function builtin_set()
     local envname, id
     local last_index = 1
-    local optstr = "d:i:p:s:t:"
+    local optstr = "d:i:p:s:"
     local options = {}
 
     for optopt, optarg, optind in getopt(arg, optstr) do
@@ -22,8 +22,6 @@ local function builtin_set()
             options.prio = optarg
         elseif optopt == "s" then
             options.status = optarg
-        elseif optopt == "t" then
-            options.type = optarg
         end
     end
 
