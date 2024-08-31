@@ -3,9 +3,13 @@ local dirent = require("posix.dirent")
 
 local taskenv = {}
 local dirpath
+local envrgx = "^[%w]+[-]*[%w]+$"
 
-function taskenv.init(edir)
-    dirpath = edir
+---Init module.
+---@param dir string
+---@return boolean
+function taskenv.init(dir)
+    dirpath = dir
     return true
 end
 
@@ -38,7 +42,7 @@ end
 ---@param name string
 ---@return boolean
 function taskenv.chk(name)
-    return name == string.match(name, "^[%w]+[-]*[%w]+$")
+    return name == string.match(name, envrgx)
 end
 
 ---Add new environment.

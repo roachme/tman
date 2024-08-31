@@ -490,12 +490,10 @@ function core.id_move(dstenv, srcenv, id)
         core.die(1, errmod.EECUR, "env")
     elseif not taskenv.ext(srcenv) then
         core.die(1, errmod.EENON, srcenv)
-
     elseif not id then
         core.die(1, errmod.EIREQ, "id")
     elseif not taskunit.ext(srcenv, id) then
         core.die(1, errmod.EINON, id)
-
     elseif taskunit.ext(dstenv, id) then
         core.die(1, errmod.EIEXT, id)
     end
