@@ -40,11 +40,11 @@ local function builtin_add()
     id = arg[last_index]
     envname = arg[last_index + 1]
     core.id_add(envname, id)
-    --[[
+
     for k, v in pairs(options) do
         core.id_set(envname, id, k, v)
     end
-    ]]
+
     return 0
 end
 
