@@ -52,12 +52,13 @@ function _tman_handle_command()
     local taskid=
     local taskdir=
 
-    # get env from the file
+    # get current env and task id from the file
     local fcurr="${TMAN_PREFIX}/.tman/curr"
-    local currenv="$(cat "$fcurr" | grep env | sed 's/env: \(.*\)/\1/g')"
-    local currid="$(cat "$fcurr" | grep curr | sed 's/curr: \(.*\)/\1/g')"
-    TMAN_CURR="$currenv/$currid"
-    #TMAN_CURR="$(cat "${TMAN_PREFIX}/.tman/curr" 2>/dev/null)"
+    if [ -f "$fcurr" ]; then
+        local currenv="$(cat "$fcurr" | grep env | sed 's/env: \(.*\)/\1/g')"
+        local currid="$(cat "$fcurr" | grep curr | sed 's/curr: \(.*\)/\1/g')"
+        TMAN_CURR="$currenv/$currid"
+    fi
 
     if [ "$cmd" = "add" ]; then
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
