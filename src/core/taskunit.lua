@@ -83,6 +83,7 @@ end
 ---@param id string
 ---@return boolean
 function taskunit.add(env, id)
+    local unitdir = dirpath .. "/" .. env .. "/" .. id .. "/.tman"
     local options = {
         id = id,
         prio = "mid",
@@ -92,7 +93,7 @@ function taskunit.add(env, id)
 
     if taskunit.ext(env, id) then
         return false
-    elseif not utils.mkdir(dirpath .. "/" .. env .. "/" .. id .. "/.tman") then
+    elseif not utils.mkdir(unitdir) then
         return false
     end
 
@@ -120,10 +121,9 @@ function taskunit.list(env)
     local udirpath = dirpath .. "/" .. env
 
     for _, id in pairs(dirent.dir(udirpath)) do
+        -- eliminate parent and current directories.
         if id ~= "." and id ~= ".." then
-            if utils.access(udirpath .. "/" .. id) then
-                table.insert(list, id)
-            end
+            table.insert(list, id)
         end
     end
     return list
