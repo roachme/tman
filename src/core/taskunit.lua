@@ -3,8 +3,8 @@
 -- @module TaskUnit
 
 local utils = require("aux.utils")
+local unit = require("aux.unit")
 local dirent = require("posix.dirent")
-local unitdb = require("aux.unitdb")
 local errmod = require("core.errmod")
 
 local taskunit = {}
@@ -23,8 +23,8 @@ end
 ---@param id string
 ---@return table
 function taskunit.get(env, id)
-    unitdb.init(dirpath .. "/" .. env .. "/" .. id .. "/.tman" .. "/unit")
-    return unitdb.get()
+    unit.init(dirpath .. "/" .. env .. "/" .. id .. "/.tman" .. "/unit")
+    return unit.get()
 end
 
 ---Check if task unit exists.
@@ -69,13 +69,13 @@ end
 ---@param val string
 ---@return boolean
 function taskunit.set(env, id, key, val)
-    unitdb.init(dirpath .. "/" .. env .. "/" .. id .. "/.tman" .. "/unit")
+    unit.init(dirpath .. "/" .. env .. "/" .. id .. "/.tman" .. "/unit")
 
     if not taskunit.chk(key, val) then
         return errmod.set(errmod.EIDIL)
     end
-    unitdb.set(key, val)
-    return unitdb.save()
+    unit.set(key, val)
+    return unit.save()
 end
 
 ---Add a task unit.
