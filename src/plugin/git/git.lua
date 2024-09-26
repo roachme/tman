@@ -8,6 +8,11 @@ local git = {}
 local plugin_name = "git"
 local codedir = plugin.prefix .. "/" .. "plugin/git/"
 
+--[[
+    TODO
+    1. Move task type from core to plugin git
+]]
+
 ---Clone git repositories.
 ---@param envname string
 ---@return boolean
