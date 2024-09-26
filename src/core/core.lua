@@ -8,6 +8,18 @@ And the point is a user (builtin commands) cannot break anything.
 
 ]]
 
+--[[
+
+Q: do I need any more and customize number?
+A:
+
+* current
+^ previous
++ pending (active)
+- archived
+
+]]
+
 --local comm = require("core.comm")
 local utils = require("aux.utils")
 local errmod = require("core.errmod")
