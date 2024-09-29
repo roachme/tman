@@ -359,9 +359,6 @@ function core.id_set(env, id, key, val)
         if not taskdir.ren(env, id, val) then
             core.die(1, errmod.EETREN, id)
             return false
-        elseif not taskunit.ren(env, id, val) then
-            core.die(1, errmod.EEUREN, id)
-            return false
         elseif id == currid then
             switch.id_delcurr()
             switch.id_addcurr(val)

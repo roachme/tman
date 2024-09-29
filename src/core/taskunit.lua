@@ -145,15 +145,4 @@ function taskunit.list(env)
     return list
 end
 
----Rename task unit.
----@param env string
----@param oldid string
----@param newid string
----@return boolean
-function taskunit.ren(env, oldid, newid)
-    local oldpath = dirpath .. "/" .. env .. "/" .. oldid
-    local newpath = dirpath .. "/" .. env .. "/" .. newid
-    return utils.rename(oldpath, newpath)
-end
-
 return taskunit
