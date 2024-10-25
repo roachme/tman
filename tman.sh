@@ -2,6 +2,7 @@
 
 TMAN=""
 TMAN_CWD=
+TMAN_OUT=
 
 # config vars
 TMAN_PREFIX=
@@ -57,9 +58,12 @@ function _tman_handle_command()
     local currenv="$(cat "$fcurr" | grep env | sed 's/env: \(.*\)/\1/g')"
     local currid="$(cat "$fcurr" | grep curr | sed 's/curr: \(.*\)/\1/g')"
     TMAN_CURR="$currenv/$currid"
-    #TMAN_CURR="$(cat "${TMAN_PREFIX}/.tman/curr" 2>/dev/null)"
 
-    if [ "$cmd" = "add" ]; then
+    if [ "$cmd" = "env" ]; then
+        # load updated sys.conf values
+        _tman_get_sys_config_vars
+        _tman_form_full_command
+
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
         cd "$taskdir" || return 1
         _tman_wd_add task
@@ -72,58 +76,10 @@ function _tman_handle_command()
         else
             _tman_wd_rm task
         fi
-
-    elif [ "$cmd" = "prev" ]; then
+    else
+        # for commands: add, prev, sync, use, set
         local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
-        cd "$taskdir" || return 1
-        _tman_wd_add task
-
-    #elif [ "$cmd" = "env" ] && [ "$2" = "prev" ]; then
-    elif [ "$cmd" = "env" ]; then
-        # load updated sys.conf values
-        _tman_get_sys_config_vars
-        _tman_form_full_command
-
-        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
-        cd "$taskdir" || return 1
-        _tman_wd_add task
-
-    elif [ "$cmd" = "set" ]; then
-        # raach: Refactor it. Too complicated.
-        local myargs=("$@")
-        local myargs=("${myargs[@]:1}")
-        local flag=false
-
-        while getopts ":i" arg "${myargs[@]}";  do
-            case "$arg" in
-                i)
-                    flag=true
-                    ;;
-                *)
-                    ;;
-            esac
-        done
-
-        if [ "$flag" = true ]; then
-            local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
-
-            cd "$taskdir" || return 1
-            _tman_wd_add task
-
-            # switch back if CWD is not the task ID changed.
-            if [ -d "$TMAN_CWD" ]; then
-                cd "$TMAN_CWD" || return 1
-            fi
-        fi
-
-    elif [ "$cmd" = "sync" ]; then
-        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
-        cd "$taskdir" || return 1
-        _tman_wd_add task
-
-    elif [ "$cmd" = "use" ]; then
-        local taskdir="${TMAN_PREFIX}/tasks/${TMAN_CURR}"
-        cd "$taskdir" || return 1
+        cd "$TMAN_OUT" || return 1
         _tman_wd_add task
     fi
 }
@@ -151,10 +107,11 @@ function tman()
 
     TMAN_CWD="$(pwd)"
 
-    "${TMAN[@]}" "$@"
+    TMAN_OUT="$("${TMAN[@]}" "$@")"
     retcode="$?"
 
     if [ $retcode -ne 0 ]; then
+        echo "$TMAN_OUT"
         return $retcode
     fi
 

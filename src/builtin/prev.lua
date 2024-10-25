@@ -5,7 +5,6 @@ local getopt = require("posix.unistd").getopt
 --- Switch to previous task.
 local function tman_prev()
     local keyhelp
-    local envname
     local optstr = ":h"
     local cmdname = "prev"
 
@@ -24,8 +23,11 @@ local function tman_prev()
         return 0
     end
 
-    envname = arg[1]
-    core.id_prev(envname)
+    core.id_prev()
+
+    local curr = core.getcurr()
+    local newdir = core.prefix .. "/tasks/" .. curr.env .. "/" .. curr.curr
+    print(newdir)
     return 0
 end
 

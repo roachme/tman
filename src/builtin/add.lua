@@ -45,6 +45,11 @@ local function builtin_add()
         core.id_set(envname, id, k, v)
     end
     ]]
+
+
+    local curr = core.getcurr()
+    local newdir = core.prefix .. "/tasks/" .. curr.env .. "/" .. curr.curr
+    print(newdir)
     return 0
 end
 

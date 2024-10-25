@@ -36,7 +36,7 @@ local function builtin_list()
 
     if keyhelp then
         help.usage(cmdname)
-        return 0
+        return 1
     end
 
     local envname = arg[last_index] or core.getcurr().env
@@ -60,7 +60,7 @@ local function builtin_list()
             print(fmt:format(mark, task.id, task.desc))
         end
     end
-    return 0
+    return 1
 end
 
 return builtin_list
