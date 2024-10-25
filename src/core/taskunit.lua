@@ -4,7 +4,7 @@
 
 local utils = require("aux.utils")
 local dirent = require("posix.dirent")
-local unitdb = require("aux.unitdb")
+local unitdb = require("core.aux.unitdb")
 local errmod = require("core.errmod")
 
 local taskunit = {}
