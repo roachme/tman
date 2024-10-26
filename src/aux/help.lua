@@ -237,18 +237,18 @@ Show tman version.
 function help.usage(cmdname)
     if not cmdname then
         show_usage()
-        return 0
+        return 1
     end
 
     for _, cmd in ipairs(cmds) do
         if cmd.name == cmdname then
             io.stdout:write(cmd.desc)
-            return 0
+            return 1
         end
     end
 
     core.die(1, errmod.EBCNON, cmdname)
-    return 1
+    return -1
 end
 
 return help
