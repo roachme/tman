@@ -2,7 +2,7 @@
 -- @module userconfig
 
 local json = require("cjson")
-local utils = require("aux.utils")
+local utils = require("src.aux.utils")
 
 local uconfig = {}
 

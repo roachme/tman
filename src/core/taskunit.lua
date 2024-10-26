@@ -2,10 +2,10 @@
 -- Metadata like date, description and so on.
 -- @module TaskUnit
 
-local utils = require("aux.utils")
+local utils = require("src.aux.utils")
 local dirent = require("posix.dirent")
-local unitdb = require("core.aux.unitdb")
-local errmod = require("core.errmod")
+local unitdb = require("src.core.aux.unitdb")
+local errmod = require("src.core.errmod")
 
 local taskunit = {}
 local dirpath

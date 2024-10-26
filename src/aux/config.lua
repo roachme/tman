@@ -1,9 +1,9 @@
 --- Parse config file and provide env for the rest of the code.
 -- @module config
 
-local utils = require("aux.utils")
-local sconfig = require("aux.sysconfig")
-local uconfig = require("aux.userconfig")
+local utils = require("src.aux.utils")
+local sconfig = require("src.aux.sysconfig")
+local uconfig = require("src.aux.userconfig")
 
 local config = {}
 

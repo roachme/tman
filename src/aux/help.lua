@@ -1,8 +1,8 @@
 --- Provide help on commands and general usage.help
 -- @module help
 
-local core = require("core.core")
-local errmod = require("core.errmod")
+local core = require("src.core.core")
+local errmod = require("src.core.errmod")
 
 local help = {}
 

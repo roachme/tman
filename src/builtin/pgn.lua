@@ -1,8 +1,8 @@
-local core = require("core.core")
-local errmod = require("core.errmod")
+local core = require("src.core.core")
+local errmod = require("src.core.errmod")
 
-local git = require("plugin.git.git")
-local struct = require("plugin.struct.struct")
+local git = require("src.plugin.git.git")
+local struct = require("src.plugin.struct.struct")
 
 ---Call plugins.
 local function builtin_pgn()

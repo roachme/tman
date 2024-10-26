@@ -1,6 +1,6 @@
-local core = require("core.core")
+local core = require("src.core.core")
 local getopt = require("posix.unistd").getopt
-local config = require("aux.config")
+local config = require("src.aux.config")
 
 --- Config util for your workflow
 local function tman_config()

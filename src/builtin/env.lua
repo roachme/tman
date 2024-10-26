@@ -1,4 +1,4 @@
-local core = require("core.core")
+local core = require("src.core.core")
 local getopt = require("posix.unistd").getopt
 
 ---Add a new environment.

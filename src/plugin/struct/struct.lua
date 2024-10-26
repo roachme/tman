@@ -2,10 +2,10 @@
 -- Create repo symlinks, helper dirs, etc.
 -- @module struct
 
-local core = require("core.core")
-local utils = require("aux.utils")
-local errmod = require("core.errmod")
-local plugin = require("core.plugin")
+local core = require("src.core.core")
+local utils = require("src.aux.utils")
+local errmod = require("src.core.errmod")
+local plugin = require("src.core.plugin")
 
 local struct = {}
 local struct_taskbase, struct_dirs, struct_files

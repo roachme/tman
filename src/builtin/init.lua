@@ -1,5 +1,5 @@
-local core = require("core.core")
-local utils = require("aux.utils")
+local core = require("src.core.core")
+local utils = require("src.aux.utils")
 local getopt = require("posix.unistd").getopt
 
 local function tman_init()

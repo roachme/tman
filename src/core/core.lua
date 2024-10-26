@@ -9,13 +9,13 @@ And the point is a user (builtin commands) cannot break anything.
 ]]
 
 --local comm = require("core.comm")
-local utils = require("aux.utils")
-local errmod = require("core.errmod")
-local switch = require("core.switch")
-local taskenv = require("core.taskenv")
-local taskdir = require("core.taskdir")
-local taskunit = require("core.taskunit")
-local config = require("aux.config")
+local utils = require("src.aux.utils")
+local errmod = require("src.core.errmod")
+local switch = require("src.core.switch")
+local taskenv = require("src.core.taskenv")
+local taskdir = require("src.core.taskdir")
+local taskunit = require("src.core.taskunit")
+local config = require("src.aux.config")
 
 local core = {}
 

@@ -4,9 +4,9 @@
 _G.program = "tman"
 _G.version = "0.1.18"
 
-local core = require("core.core")
-local errmod = require("core.errmod")
-local builtins = require("core.builtin")
+local core = require("src.core.core")
+local errmod = require("src.core.errmod")
+local builtins = require("src.core.builtin")
 
 ---Tman interface.
 local function main()

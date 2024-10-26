@@ -1,5 +1,5 @@
-local core = require("core.core")
-local help = require("aux.help")
+local core = require("src.core.core")
+local help = require("src.aux.help")
 local getopt = require("posix.unistd").getopt
 
 local function builtin_move()

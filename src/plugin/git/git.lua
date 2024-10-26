@@ -1,8 +1,8 @@
-local core = require("core.core")
-local errmod = require("core.errmod")
-local plugin = require("core.plugin")
-local gitlib = require("plugin.git.gitlib")
-local utils = require("aux.utils")
+local core = require("src.core.core")
+local errmod = require("src.core.errmod")
+local plugin = require("src.core.plugin")
+local gitlib = require("src.plugin.git.gitlib")
+local utils = require("src.aux.utils")
 
 local git = {}
 local plugin_name = "git"

@@ -1,8 +1,8 @@
 ---Provide system means to plugins.
 --@module plugin
 
-local core = require("core.core")
-local config = require("aux.config")
+local core = require("src.core.core")
+local config = require("src.aux.config")
 
 local plugin = {}
 

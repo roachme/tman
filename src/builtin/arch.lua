@@ -1,5 +1,5 @@
-local help = require("aux.help")
-local core = require("core.core")
+local help = require("src.aux.help")
+local core = require("src.core.core")
 local getopt = require("posix.unistd").getopt
 
 --- Backup and restore.
