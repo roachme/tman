@@ -87,14 +87,8 @@ function _tman_handle_command()
 function _tman_form_full_command()
 {
     local script="${TMAN_INSTALL}/src/core/tman.lua"
-
     local stat="package.path = package.path"
-    stat="$stat .. ';${TMAN_INSTALL}/src/?.lua;'"
-    stat="$stat .. ';${TMAN_INSTALL}/src/aux/?.lua;'"
-    stat="$stat .. ';${TMAN_INSTALL}/src/core/?.lua;'"
-    stat="$stat .. ';${TMAN_INSTALL}/src/plugin/?.lua;'"
-    stat="$stat .. ';${TMAN_INSTALL}/src/builtin/?.lua;'"
-
+    stat="$stat .. ';${TMAN_INSTALL}/?.lua;'"
     TMAN=(lua -e "$stat" "$script")
 }
 

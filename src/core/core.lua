@@ -11,7 +11,7 @@ And the point is a user (builtin commands) cannot break anything.
 --local comm = require("core.comm")
 local utils = require("src.aux.utils")
 local errmod = require("src.core.errmod")
-local switch = require("src.core.switch")
+local state = require("src.core.state")
 local taskenv = require("src.core.taskenv")
 local taskdir = require("src.core.taskdir")
 local taskunit = require("src.core.taskunit")
@@ -101,7 +101,7 @@ function core.init()
         return core.die(1, "could not init module taskenv", "fatal")
     elseif not taskunit.init(struct.tasks.path) then
         return core.die(1, "could not init module taskunit", "fatal")
-    elseif not switch.init(struct.dbdir.path) then
+    elseif not state.init(struct.dbdir.path) then
         return core.die(1, "could not init module switch", "fatal")
     elseif not taskdir.init(struct.tasks.path) then
         return core.die(1, "could not init module taskdir", "fatal")
@@ -167,7 +167,7 @@ function core.env_add(env)
         core.die(1, errmod.EEEXT, env)
     elseif not taskenv.add(env) then
         core.die(1, errmod.EEADD, env)
-    elseif not switch.env_addcurr({ env = env }) then
+    elseif not state.env_addcurr({ env = env }) then
         core.die(1, errmod.EESET, env)
     end
 
@@ -183,9 +183,9 @@ end
 ---@param env string
 ---@return boolean
 function core.env_del(env)
-    local curr = switch.env_getcurr().env
-    local prev = switch.env_getprev().env
-    env = env or switch.env_getcurr().env
+    local curr = state.env_getcurr().env
+    local prev = state.env_getprev().env
+    env = env or state.env_getcurr().env
 
     if not env then
         core.die(1, errmod.EECUR, "env")
@@ -201,11 +201,11 @@ function core.env_del(env)
 
     -- update special environments.
     if env == curr then
-        switch.env_delcurr()
+        state.env_delcurr()
     elseif env == prev then
         -- cuz there's no way to delete previous task id directly
-        switch.env_swapspec()
-        switch.env_delcurr()
+        state.env_swapspec()
+        state.env_delcurr()
     end
     return true
 end
@@ -214,8 +214,8 @@ end
 ---@return table
 function core.env_list()
     local res = {}
-    local curr = switch.env_getcurr().env
-    local prev = switch.env_getprev().env
+    local curr = state.env_getcurr().env
+    local prev = state.env_getprev().env
 
     -- roachme:TODO simplify it
     for _, name in pairs(taskenv.list()) do
@@ -235,7 +235,7 @@ end
 ---Switch to another environment.
 ---@param env string
 function core.env_switch(env)
-    local currenv = switch.env_getcurr().env
+    local currenv = state.env_getcurr().env
 
     if currenv == env then
         -- do nothing
@@ -244,7 +244,7 @@ function core.env_switch(env)
         core.die(1, errmod.EEREQ, "env")
     elseif not taskenv.ext(env) then
         core.die(1, errmod.EENON, env)
-    elseif not switch.env_addcurr({ env = env }) then
+    elseif not state.env_addcurr({ env = env }) then
         core.die(1, errmod.EESET, env)
     end
     return true
@@ -252,9 +252,9 @@ end
 
 ---Switch to previous environment.
 function core.env_prev()
-    if not switch.env_getprev().env then
+    if not state.env_getprev().env then
         core.die(1, errmod.EEPRV, "env")
-    elseif not switch.env_swapspec() then
+    elseif not state.env_swapspec() then
         core.die(1, errmod.EEPRS, "env")
     end
     return 0
@@ -263,7 +263,7 @@ end
 ---Get current environment and special task ids.
 ---@return table
 function core.getcurr()
-    return switch.env_getcurr()
+    return state.env_getcurr()
 end
 
 ---Add a new taks.
@@ -271,7 +271,7 @@ end
 ---@param id string
 ---@return boolean
 function core.id_add(env, id)
-    env = env or switch.env_getcurr().env
+    env = env or state.env_getcurr().env
 
     -- check input values.
     if not env then
@@ -291,7 +291,7 @@ function core.id_add(env, id)
         core.die(1, errmod.EETADD, id)
     elseif not taskunit.add(env, id) then
         core.die(1, errmod.EIEXT, id)
-    elseif not switch.id_addcurr(id) then
+    elseif not state.id_addcurr(id) then
         core.die(1, errmod.EISET, id)
     end
     return true
@@ -302,7 +302,7 @@ end
 ---@param id string
 ---@return boolean
 function core.id_del(env, id)
-    local currenv = switch.env_getcurr()
+    local currenv = state.env_getcurr()
     local curr = currenv.curr
     local prev = currenv.prev
     env = env or currenv.env
@@ -318,11 +318,11 @@ function core.id_del(env, id)
     end
 
     if id == curr then
-        switch.id_delcurr()
+        state.id_delcurr()
     elseif id == prev then
         -- cuz there's no way to delete previous task id directly
-        switch.id_swapspec()
-        switch.id_delcurr()
+        state.id_swapspec()
+        state.id_delcurr()
     end
     return true
 end
@@ -334,7 +334,7 @@ end
 ---@param val string
 ---@return boolean
 function core.id_set(env, id, key, val)
-    local envenv = switch.env_getcurr()
+    local envenv = state.env_getcurr()
     env = env or envenv.env
     id = id or envenv.curr
     local currid = envenv.curr
@@ -361,12 +361,12 @@ function core.id_set(env, id, key, val)
             core.die(1, errmod.EETREN, id)
             return false
         elseif id == currid then
-            switch.id_delcurr()
-            switch.id_addcurr(val)
+            state.id_delcurr()
+            state.id_addcurr(val)
         elseif id == previd then
             -- cuz there's no way to delete previous task id directly
-            switch.env_swapspec()
-            switch.env_delcurr()
+            state.env_swapspec()
+            state.env_delcurr()
         end
     end
     return true
@@ -377,12 +377,12 @@ end
 ---@param id string
 ---@return boolean
 function core.id_switch(env, id)
-    env = env or switch.env_getcurr().env
+    env = env or state.env_getcurr().env
 
     -- check input values
     chkargs({ val = env, chk = true }, { val = id, chk = true })
 
-    if not switch.id_addcurr(id) then
+    if not state.id_addcurr(id) then
         core.die(1, errmod.get(errmod.errno), id)
     end
     return true
@@ -390,7 +390,7 @@ end
 
 ---Switch to previous task.
 function core.id_prev()
-    local envenv = switch.env_getcurr()
+    local envenv = state.env_getcurr()
     local env = envenv.env
     local prev = envenv.prev
 
@@ -398,7 +398,7 @@ function core.id_prev()
         core.die(1, errmod.EECUR, "env")
     elseif not prev then
         core.die(1, errmod.EIPRV, "id")
-    elseif not switch.id_swapspec() then
+    elseif not state.id_swapspec() then
         core.die(1, errmod.EISPRV, prev)
     end
     return true
@@ -409,9 +409,9 @@ end
 ---@return table
 function core.id_list(env)
     local tasks = {}
-    local currid = switch.id_getcurr()
-    local previd = switch.id_getprev()
-    env = env or switch.env_getcurr().env
+    local currid = state.id_getcurr()
+    local previd = state.id_getprev()
+    env = env or state.env_getcurr().env
 
     -- check input values
     chkargs({ val = env, chk = true }, { val = "", chk = false })
@@ -442,7 +442,7 @@ function core.id_move(env) end
 ---@param id string
 ---@return table
 function core.id_cat(env, id)
-    local currenv = switch.env_getcurr()
+    local currenv = state.env_getcurr()
     id = id or currenv.curr
     env = env or currenv.env
 
