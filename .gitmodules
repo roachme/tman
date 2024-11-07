@@ -1,0 +1,3 @@
+[submodule "pgns"]
+	path = pgns
+	url = git@github.com:roachme/tman-pgn.git
