@@ -21,10 +21,10 @@ struct item {
 #define LISTPGN 40
 #define LISTBINUN 50
 
-#define LSIZE   100
-#define LBINNUM 2
-#define LBINSIZ 80
-#define LPGNSIZ 80
+#define LSIZE       1000000
+#define LBINNUM     2
+#define LBINSIZ     80
+#define LPGNSIZ     80
 
 struct ilist {
     char mark;
