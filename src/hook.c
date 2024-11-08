@@ -11,10 +11,10 @@
 
 static char *hooks[] = {
     "HOOKCMD = add struct create",
+    "HOOKCMD = add gun sync",
     "HOOKCAT = cat time cat",
-    "HOOKCAT = cat repo cat",
+    "HOOKCAT = cat gun cat",
     "HOOKLIST = list tag list",
-    "HOOKLIST = list tag date",
     //"HOOKCMD = add repo sync",
 };
 
@@ -75,7 +75,7 @@ int pgngen(char *command, char *env, char *id, char *pgname, char *pgncmd)
     sprintf(command, "%s -e %s -i %s -b %s %s", pathname, env, id, TMANBASE, pgncmd);
 
     if (access(pathname, F_OK))
-        return elog("%s: plugin does not exist", pgname);
+        return elog("%s: plugin does not exist", pathname);
     return 0;
 }
 
@@ -114,7 +114,6 @@ struct punit *hookcat(struct punit *unit, char *env, char *id)
         sscanf(hooks[i], "HOOKCAT = %s %s %s", cmd, pgn, pgncmd);
         if (strcmp(cmd, "cat") != 0)
             continue;
-        memset(cmd, 0, sizeof(cmd));
 
         if (pgngen(fullcmd, env, id, pgn, pgncmd)) {
             continue;
@@ -153,7 +152,6 @@ char *hookls(char *pgnout, char *env, char *id)
         if (pgngen(fullcmd, env, id, pgn, pgncmd)) {
             continue;
         }
-        //elog("fullcmd %s", fullcmd);
         FILE *pipe = popen(fullcmd, "r");
         if (!pipe) {
             elog("hookls: failed: '%s'", fullcmd);

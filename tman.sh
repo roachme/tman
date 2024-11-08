@@ -4,12 +4,11 @@ function tman()
 {
     CWD="$(pwd)"
 
-    cd /home/roach/.workspace/sewer/sketch/c
-    output="$(./tman "$@")"
+    output="$(_tman "$@")"
     retcode="$?"
     if [ "$retcode" -eq 0 ]; then
         cd "$output"
     else
-        [ -n "$output" ] && echo "$output"
+        [ -n "$output" ] && echo "$output" && cd "$CWD"
     fi
 }
