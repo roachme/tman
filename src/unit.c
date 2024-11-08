@@ -119,7 +119,7 @@ int genunit(char *env, char *id)
 
     ++i;
     strcpy(unit.pair[i].key, "date");
-    strcpy(unit.pair[i].val, "24 Oct");
+    strcpy(unit.pair[i].val, "23022024");
 
     ++i;
     strcpy(unit.pair[i].key, "desc");
@@ -132,6 +132,9 @@ static int _load(char *fname, struct bunit *unt)
     char line[BUFSIZ];
     FILE *fp = fopen(fname, "r");
     unt = unt ? unt : &unit;
+
+    // HOTFIX: prevents duplicates from happening
+    memset(unt, 0, sizeof(struct bunit));
 
     if (!fp) {
         fprintf(stderr, "could not open file %s\n", fname);

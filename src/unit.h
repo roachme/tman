@@ -7,10 +7,12 @@
 #define BUILTINSIZ  5
 #define PLUGINSIZ   10
 
+#define USIZE 80
+
 struct pair {
     int isset;
-    char key[40];
-    char val[40];
+    char key[USIZE];
+    char val[USIZE];
 };
 
 struct unit {

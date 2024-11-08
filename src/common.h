@@ -24,8 +24,8 @@
 #define TMANSTATE       "/home/roach/trash/tman/.tman/state"
 #define TMANINITED      "/home/roach/trash/tman/.tman/inited"
 
-#define TMANPBASE       "/home/roach/workspace/sewer/sketch/c"
-#define TMAN_PGNDIR     "/home/roach/workspace/sewer/sketch/c"
+#define TMANPBASE       "/home/roach/workspace/toolkit/tman"
+#define TMAN_PGNDIR     "/home/roach/workspace/toolkit/tman"
 
 int elog(char *fmt, ...);
 int wlog(char *fmt, ...);
