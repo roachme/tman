@@ -34,7 +34,6 @@ static int show(void)
 
 static int save(const char *fname)
 {
-    char line[BUFSIZ];
     FILE *fp = fopen(fname, "w");
 
     if (fp == NULL) {
