@@ -15,6 +15,11 @@
 #include "common.h"
 #include "osdep.h"
 
+const char *usermarks = {
+// mark tag level
+    "& review 1",
+};
+
 static int _envext(char *env)
 {
     char pathname[PATHSIZ];
@@ -230,23 +235,27 @@ struct list *core_id_list(struct list *list, char *env)
         // FIXME: if current and previous environments have the same task ID
         //        then task id might be marked as current/previous mistakenly.
         if (strcmp(env, state_getcenv()) == 0) {
-            if (strcmp(list->ilist[i].id,      state_getcid()) == 0)
+            if (strcmp(list->ilist[i].id,      state_getcid()) == 0) {
                 list->ilist[i].mark = '*';
-            else if (strcmp(list->ilist[i].id, state_getpid()) == 0)
+                list->ilist[i].col.mark = '*';
+                list->ilist[i].col.level = 0;
+            }
+            else if (strcmp(list->ilist[i].id, state_getpid()) == 0) {
                 list->ilist[i].mark = '^';
-            else
+                list->ilist[i].col.mark = '^';
+                list->ilist[i].col.level = 1;
+            }
+            else {
                 list->ilist[i].mark = '+';
+                list->ilist[i].col.mark = '+';
+                list->ilist[i].col.level = 2;
+            }
         }
-        else if (strcmp(env, state_getcenv()) == 0) {
-            if (strcmp(list->ilist[i].id,      state_getcid()) == 0)
-                list->ilist[i].mark = '*';
-            else if (strcmp(list->ilist[i].id, state_getpid()) == 0)
-                list->ilist[i].mark = '^';
-            else
-                list->ilist[i].mark = '+';
-        }
-        else
-            list->ilist[i].mark = '+';
+        // TODO: show previous env actual marks as well.
+        // For right now module state has no means to provide current and previous
+        // IDs of previous env.
+
+
 
         // handle hookls
         if (!hookls(list->ilist[i].pgn, env, list->ilist[i].id)) {

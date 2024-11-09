@@ -67,6 +67,13 @@ Qs:
 
 */
 
+static int compare(const void *aa, const void *bb)
+{
+    struct ilist *a = (struct ilist*)aa;
+    struct ilist *b = (struct ilist*)bb;
+    return (a->col.level - b->col.level);
+}
+
 static int pretty_cat(char *env, char *id, char *key)
 {
     struct units units;
@@ -92,6 +99,11 @@ static int pretty_list(char *env)
     memset(&list, 0, sizeof(list));
     if (!core_id_list(&list, env))
         return 1;
+
+    // sort list according to mark level
+    // code goes here..
+    size_t listsize = sizeof(list.ilist) / sizeof(list.ilist[0]);
+    qsort((void*)list.ilist, list.num, sizeof(list.ilist[0]), compare);
 
     for (int i = 0; i < list.num; ++i) {
         struct ilist item = list.ilist[i];
