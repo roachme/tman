@@ -21,16 +21,17 @@ struct item {
 #define LISTPGN 40
 #define LISTBINUN 50
 
-#define LSIZE       1000000
+#define LSIZE       50
 #define LBINNUM     2
 #define LBINSIZ     80
 #define LPGNSIZ     80
 
 struct ilist {
     char mark;
-    char id[IDSIZ];
-    char pgn[LPGNSIZ];
-    char desc[DESCSIZ];
+    char id[IDSIZ + 1];
+    char pgn[LPGNSIZ + 1];
+    char desc[DESCSIZ + 1];
+    struct column col;
 };
 
 struct list {
