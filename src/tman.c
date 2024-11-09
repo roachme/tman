@@ -252,8 +252,8 @@ int tman_del(int argc, char **argv)
 
 int tman_prev(int argc, char **argv)
 {
-    if (core_id_prev() != 0)
-        return 1;
+    if (core_id_prev())
+        return elog("no previous task is set");
     return core_currdir();
 }
 
