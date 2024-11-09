@@ -215,18 +215,17 @@ struct list *core_id_list(struct list *list, char *env)
 
     // actual logic goes here
     size_t i = 0;
+    struct bunit bunit;
     while ((ent = readdir(ids)) != NULL && i < LSIZE) {
-        if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, ".."))
+        if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..") || ent->d_type != DT_DIR)
             continue;
 
         strcpy(list->ilist[i].id, ent->d_name);
-        strcpy(list->ilist[i].desc, "dumb description");
 
         // struct bunit *unit_get(struct bunit *u, char *env, char *id);
         // TODO: looks disgusting
         // FIXME: gonna fail if no description is set
         // FIXME: gonna fail if description position changes
-        struct bunit bunit;
         if (unit_get(&bunit, env, list->ilist[i].id) == NULL) {
             elog("core_id_list: failde to get units");
         }
