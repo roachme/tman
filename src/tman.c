@@ -17,6 +17,8 @@
 #include "help.h"
 #include "osdep.h"
 
+struct tmanstruct tmanfs;
+
 builtin_t builtins[] = {
     /* system commands */
     { .name = "cfg",  .func = &tman_cfg  },
@@ -122,22 +124,31 @@ int tman_cfg(int argc, char **argv)
 
 int tman_init(int argc, char **argv)
 {
+    char *homedir = getenv("HOME");
+    // TODO: should get it from config file
+    sprintf(tmanfs.base,  "%s/%s", homedir, "trash/tman");
+    sprintf(tmanfs.db,    "%s/%s", tmanfs.base, ".tman");
+    sprintf(tmanfs.finit, "%s/%s", tmanfs.db,   "inited");
+    sprintf(tmanfs.finit, "%s/%s", tmanfs.db,   "state");
+    sprintf(tmanfs.task,  "%s/%s", tmanfs.base, "task");
+    sprintf(tmanfs.pgn,   "%s/%s", tmanfs.base, "pgns");
+
     /* Generic check */
-    if (access(TMANINITED, F_OK) == 0)
+    if (access(tmanfs.finit, F_OK) == 0)
         return 0;
 
-    if (MKDIR(TMANBASE))
-        return elog("could not create directory %s", TMANBASE);
-    else if (MKDIR(TMANTASKS))
-        return elog("could not create directory %s", TMANTASKS);
-    else if (MKDIR(TMANPGNS))
-        return elog("could not create directory %s", TMANPGNS);
-    else if (MKDIR(TMANDB))
-        return elog("could not create directory %s", TMANDB);
-    else if (TOUCH(TMANSTATE))
-        return elog("could not create file %s", TMANSTATE);
-    else if (TOUCH(TMANINITED))
-        return elog("could not create init file %s", TMANINITED);
+    if (MKDIR(tmanfs.base))
+        return elog("could not create directory %s", tmanfs.base);
+    else if (MKDIR(tmanfs.task))
+        return elog("could not create directory %s", tmanfs.task);
+    else if (MKDIR(tmanfs.pgn))
+        return elog("could not create directory %s", tmanfs.pgn);
+    else if (MKDIR(tmanfs.db))
+        return elog("could not create directory %s", tmanfs.db);
+    else if (TOUCH(tmanfs.fstate))
+        return elog("could not create file %s", tmanfs.fstate);
+    else if (TOUCH(tmanfs.finit))
+        return elog("could not create init file %s", tmanfs.finit);
     return 0;
 }
 

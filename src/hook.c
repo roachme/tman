@@ -14,8 +14,8 @@ static char *hooks[] = {
     "HOOKCMD = add gun sync",
     "HOOKCAT = cat time cat",
     "HOOKCAT = cat gun cat",
-    //"HOOKLIST = list tag list",
-    //"HOOKCMD = add repo sync",
+    "HOOKLIST = list tag list",
+    "HOOKCMD = add repo sync",
 };
 
 int hooknum = sizeof(hooks) / sizeof(hooks[0]);
