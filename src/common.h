@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "limit.h"
+
 #define PROGRAM "tman"
 #define VERSION "v0.1.0"
 
