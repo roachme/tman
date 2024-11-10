@@ -14,7 +14,7 @@ static char *hooks[] = {
     "HOOKCMD = add gun sync",
     "HOOKCAT = cat time cat",
     "HOOKCAT = cat gun cat",
-    "HOOKLIST = list tag list",
+    //"HOOKLIST = list tag list",
     //"HOOKCMD = add repo sync",
 };
 

@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,6 +14,7 @@
 #include "common.h"
 #include "unit.h"
 #include "hook.h"
+#include "help.h"
 #include "osdep.h"
 
 builtin_t builtins[] = {
@@ -428,8 +430,20 @@ int tman_list(int argc, char **argv)
 
 int tman_help(int argc, char **argv)
 {
-    printf("%s: show some help message\n", PROGRAM);
-    return 1;
+    char c;
+    char *cmd;
+    char *key = NULL;
+    char o_desc = false;
+
+    while ((c = getopt(argc, argv, "dk:")) != -1) {
+        switch (c) {
+            case 'k':
+                key = optarg; break;
+        };
+    }
+
+    cmd = argv[optind];
+    return help_lookup(cmd);
 }
 
 int tman_ver(int argc, char **argv)
