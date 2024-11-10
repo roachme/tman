@@ -123,7 +123,8 @@ int genunit(char *env, char *id)
 
     ++i;
     strcpy(unit.pair[i].key, "desc");
-    strcpy(unit.pair[i].val, "generated description");
+    strcpy(unit.pair[i].val, "generated description for ");
+    strcat(unit.pair[i].val, id);
     return 0;
 }
 
