@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define PROGRAM "tman-c"
+#define PROGRAM "tman"
 #define VERSION "v0.1.0"
 
 #define IDSIZ           20
@@ -15,17 +15,18 @@
 #define HELPDESC        100
 
 
-
 // TODO: move to config file, not a hard-coded value
-#define TMANBASE        "/home/roach/trash/tman"
-#define TMANDB          "/home/roach/trash/tman/.tman"
-#define TMANPGNS        "/home/roach/trash/tman/pgns"
-#define TMANTASKS       "/home/roach/trash/tman/tasks"
-#define TMANSTATE       "/home/roach/trash/tman/.tman/state"
-#define TMANINITED      "/home/roach/trash/tman/.tman/inited"
+#define HOME            "/home/roach"
+#define TMANBASE        HOME "/trash/tman"
+#define TMANPBASE       HOME "/workspace/toolkit/tman"
 
-#define TMANPBASE       "/home/roach/workspace/toolkit/tman"
-#define TMAN_PGNDIR     "/home/roach/workspace/toolkit/tman"
+// Not these ones tho
+#define TMANDB          TMANBASE "/.tman"
+#define TMANPGNS        TMANBASE "/pgns"
+#define TMANTASKS       TMANBASE "/tasks"
+#define TMANSTATE       TMANBASE "/.tman/state"
+#define TMANINITED      TMANBASE "/.tman/inited"
+
 
 int elog(char *fmt, ...);
 int wlog(char *fmt, ...);
