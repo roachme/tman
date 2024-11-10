@@ -26,7 +26,6 @@ struct column {
 };
 
 struct ilist {
-    char mark;
     char id[IDSIZ + 1];
     char pgn[LPGNSIZ + 1];
     char desc[DESCSIZ + 1];

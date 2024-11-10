@@ -106,7 +106,7 @@ static int pretty_list(char *env)
 
     for (int i = 0; i < list.num; ++i) {
         struct ilist item = list.ilist[i];
-        printf("%c %-10s [%s] %s\n", item.mark, item.id, item.pgn, item.desc);
+        printf("%c %-10s [%s] %s\n", item.col.mark, item.id, item.pgn, item.desc);
     }
 
     return 1;
