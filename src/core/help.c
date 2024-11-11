@@ -154,5 +154,5 @@ int help_lookup(const char *cmd)
             return 1;
         }
     }
-    return elog("cannot access '%s': commnd not found", cmd);
+    return elog(1, "cannot access '%s': commnd not found", cmd);
 }

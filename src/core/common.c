@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #include "common.h"
 
-int elog(char *fmt, ...)
+int elog(int status, char *fmt, ...)
 {
     va_list arg;
     va_start(arg, fmt);
@@ -9,7 +9,7 @@ int elog(char *fmt, ...)
     vfprintf(stderr, fmt, arg);
     fprintf(stderr, "\n");
     va_end(arg);
-    return 1;
+    return status;
 }
 
 /*

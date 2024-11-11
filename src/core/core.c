@@ -48,62 +48,68 @@ int core_init(char *cmd)
         return 0;
 
     if (FCHK(TMANINITED))
-        return elog("not inited");
+        return elog(1, "not inited");
     return state_init();
 }
 
-int core_id_add(char *env, char *id)
+int core_id_add(char *id, struct tman_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
-    env = env != NULL ? env : state_getcenv();
+    opt->env = opt->env != NULL ? opt->env : state_getcenv();
 
-    if (env[0] == '\0')
-        return elog("no current environment");
-    else if (!_envext(env))
-        return elog("%s: no such environment", env);
+    if (opt->env[0] == '\0')
+        return elog(1, "no current environment");
+    else if (!_envext(opt->env))
+        return elog(1, "%s: no such environment", opt->env);
     else if (!_chkid(id))
-        return elog("%s: illegal task id name", id);
-    else if (_idext(env, id))
-        return elog("%s: task id already exists", id);
+        return elog(1, "%s: illegal task id name", id);
+    else if (_idext(opt->env, id)) {
+        if (opt->force == 0)
+            elog(TMAN_ADD_IDEXT, "%s: task id already exists", id);
+        return TMAN_ADD_IDEXT;
+    }
 
-    if (imkdir(TMANTASKS, env, id) != 0)
-        return elog("%s: could not create task directory", id);
-    else if (unit_add(env, id) != 0)
-        return elog("%s: could not create task unit", id);
-    else if (hookact("add", env, id))
-        return elog("could not execute hook");
+    if (imkdir(TMANTASKS, opt->env, id) != 0)
+        return elog(1, "%s: could not create task directory", id);
+    else if (unit_add(opt->env, id) != 0)
+        return elog(1, "%s: could not create task unit", id);
+    else if (hookact("add", opt->env, id))
+        return elog(1, "could not execute hook");
     return state_id_add(id);
 }
 
-int core_id_del(char *env, char *id)
+int core_id_del(char *id, struct tman_del_opt *opt)
 {
     id  = id != NULL ? id : state_getcid();
-    env = env != NULL ? env : state_getcenv();
+    opt->env = opt->env != NULL ? opt->env : state_getcenv();
 
-    if (env[0] == '\0')
-        return elog("no current environment");
-    else if (!_envext(env))
-        return elog("%s: no such environment", env);
+    if (opt->env[0] == '\0')
+        return elog(1, "no current environment");
+    else if (!_envext(opt->env))
+        return elog(1, "%s: no such environment", opt->env);
     else if (id[0] == '\0')
-        return elog("no current task id");
-    else if (!_idext(env, id))
-        return elog("%s: no such task id", id);
+        return elog(1, "no current task id");
+    else if (!_idext(opt->env, id)) {
+        if (opt->force == 0)
+            elog(TMAN_DEL_NOID, "%s: no such task id", id);
+        return TMAN_DEL_NOID;
+    }
 
-    if (hookact("del", env, id))
-        return elog("could not execute hook");
-    else if (unit_del(env, id))
-        return elog("%s: could not delete task unit", id);
-    else if (irmdir(TMANTASKS, env, id))
-        return elog("%s: could not delete task directory", id);
+    if (hookact("del", opt->env, id))
+        return elog(1, "could not execute hook");
+    else if (unit_del(opt->env, id))
+        return elog(1, "%s: could not delete task unit", id);
+    else if (irmdir(TMANTASKS, opt->env, id))
+        return elog(1, "%s: could not delete task directory", id);
 
     // TODO: simplify this
     if (strcmp(state_getcid(), id) == 0) {
         if (state_id_del() != 0)
-            return elog("could not delete current task id");
+            return elog(1, "could not delete current task id");
     }
     else if (strcmp(state_getpid(), id) == 0) {
         if (state_id_pdel() != 0)
-            return elog("could not delete previous task id");
+            return elog(1, "could not delete previous task id");
     }
     return 0;
 }
@@ -120,7 +126,7 @@ int core_id_prev(void)
     cenv = state_getcenv();
 
      if (hookact("prev", cenv, cid))
-        elog("could not execute hook");
+        elog(1, "could not execute hook");
      return 0;
 }
 
@@ -130,13 +136,13 @@ int core_id_sync(void)
     char *cenv = NULL;
 
     if (strlen(state_getcid()) == 0)
-        return elog("no current task id set");
+        return elog(1, "no current task id set");
 
     cid  = state_getcid();
     cenv = state_getcenv();
 
     if (hookact("sync", cenv, cid))
-        elog("could not execute hook");
+        elog(1, "could not execute hook");
     return 0;
 }
 
@@ -146,36 +152,37 @@ int core_id_set(char *env, char *id, struct unit *unit)
     env = env != NULL ? env : state_getcenv();
 
     if (env[0] == '\0')
-        return elog("no current environment");
+        return elog(1, "no current environment");
     else if (!_envext(env))
-        return elog("%s: no such environment", env);
+        return elog(1, "%s: no such environment", env);
     else if (id[0] == '\0')
-        return elog("no current task id");
+        return elog(1, "no current task id");
     else if (!_idext(env, id))
-        return elog("%s: no such task id", id);
+        return elog(1, "%s: no such task id", id);
     else if (unit_set(env, id, unit))
-        return elog("%s: could not set unit values", id);
+        return elog(1, "%s: could not set unit values", id);
 
     // TODO: change task directory if id unit was changed
     // TODO: update task id status as well.
     return 0;
 }
 
-int core_id_use(char *env, char *id)
+// int core_id_add(char *id, struct tman_add_opt *opt)
+int core_id_use(char *id, struct tman_use_opt *opt)
 {
-    env = env != NULL ? env : state_getcenv();
+    opt->env = opt->env != NULL ? opt->env : state_getcenv();
 
-    if (env[0] == '\0')
-        return elog("no current environment");
-    if (!_envext(env))
-        return elog("%s: no such env", env);
-    else if (!_chkenv(env))
-        return elog("%s: illegal task env name", env);
+    if (opt->env[0] == '\0')
+        return elog(1, "no current environment");
+    if (!_envext(opt->env))
+        return elog(1, "%s: no such env", opt->env);
+    else if (!_chkenv(opt->env))
+        return elog(1, "%s: illegal task env name", opt->env);
     else if (id[0] == '\0')
-        return elog("task id required");
-    else if (!_idext(env, id))
-        return elog("%s: no such task id", env);
-    else if (env != state_getcenv())
+        return elog(1, "task id required");
+    else if (!_idext(opt->env, id))
+        return elog(1, "%s: no such task id", opt->env);
+    else if (opt->env != state_getcenv())
         printf("trynna switch to task in another env\n");
 
     // TODO: it can't switch to task in non-current env.
@@ -191,18 +198,18 @@ int core_id_move(char *id, char *dst, char *src)
     sprintf(dstid, "%s/%s/%s", TMANTASKS, dst, id);
 
     if (!_envext(dst))
-        return elog("no such destination env");
+        return elog(1, "no such destination env");
     else if (!src || strlen(src) == 0)
-        return elog("no current env set");
+        return elog(1, "no current env set");
     else if (!_envext(src))
-        return elog("no such source env");
+        return elog(1, "no such source env");
     else if (!_idext(src, id))
-        return elog("cannot access '%s': no such task id", id);
+        return elog(1, "cannot access '%s': no such task id", id);
     else if (!DCHK(dstid))
-        return elog("cannot move '%s': task id exists in env '%s'", id, dst);
+        return elog(1, "cannot move '%s': task id exists in env '%s'", id, dst);
 
     if (imove(TMANTASKS, id, dst, src))
-        return elog("%s: could not move task to %s", id, dst);
+        return elog(1, "%s: could not move task to %s", id, dst);
     else if (strcmp(state_getcid(), id) == 0)
         return state_id_del();
     else if (strcmp(state_getpid(), id) == 0)
@@ -223,15 +230,15 @@ struct list *core_id_list(struct list *list, char *env)
     struct dirent *ent;
 
     if (strlen(env) == 0) {
-        elog("no current environment set");
+        elog(1, "no current environment set");
         return NULL;
     }
     else if (!_envext(env)) {
-        elog("%s: no such environment", env);
+        elog(1, "%s: no such environment", env);
         return NULL;
     }
     else if (!ids) {
-        elog("%s: could not read environment", env);
+        elog(1, "%s: could not read environment", env);
         return NULL;
     }
 
@@ -249,7 +256,7 @@ struct list *core_id_list(struct list *list, char *env)
         // FIXME: gonna fail if no description is set
         // FIXME: gonna fail if description position changes
         if (unit_get(&bunit, env, list->ilist[i].id) == NULL) {
-            elog("core_id_list: failde to get units");
+            elog(1, "core_id_list: failde to get units");
         }
         strcpy(list->ilist[i].desc, bunit.pair[4].val);
 
@@ -274,7 +281,7 @@ struct list *core_id_list(struct list *list, char *env)
         // IDs of previous env.
 
         if (!hookls(list->ilist[i].pgn, env, list->ilist[i].id)) {
-            elog("failed to get hookls output");
+            elog(1, "failed to get hookls output");
         }
         ++i;
     }
@@ -289,28 +296,28 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
     env = env ? env : state_getcenv();
 
     if (!env) {
-        elog("no current environment");
+        elog(1, "no current environment");
         return NULL;
     }
     else if (!_envext(env)) {
-        elog("%s: no such env name", env);
+        elog(1, "%s: no such env name", env);
         return NULL;
     }
     else if (!id || strlen(id) == 0) {
-        elog("no current task id");
+        elog(1, "no current task id");
         return NULL;
     }
     else if (!_idext(env, id)) {
-        elog("%s: no such task id", id);
+        elog(1, "%s: no such task id", id);
         return NULL;
     }
 
     if (unit_get(&units->builtn, env, id) == NULL) {
-        elog("core_id_cat: failed to get builtn units");
+        elog(1, "core_id_cat: failed to get builtn units");
         return NULL;
     }
     if (hookcat(&units->plugin, env, id) == NULL) {
-        elog("core_id_cat: failed to get plugin units");
+        elog(1, "core_id_cat: failed to get plugin units");
         return NULL;
     }
     return units;
@@ -319,13 +326,13 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
 int core_env_add(char *env)
 {
     if (env[0] == '\0')
-        return elog("env name required");
+        return elog(1, "env name required");
     else if (_envext(env))
-        return elog("%s: env already exists", env);
+        return elog(1, "%s: env already exists", env);
     else if (!_chkenv(env))
-        return elog("%s: illegal task env name", env);
+        return elog(1, "%s: illegal task env name", env);
     else if (emkdir(TMANTASKS, env))
-        return elog("%s: could not create env directory", env);
+        return elog(1, "%s: could not create env directory", env);
     return state_env_add(env);
 }
 
@@ -342,8 +349,8 @@ int core_env_prev()
 int core_env_use(char *env)
 {
     if (env[0] == '\0')
-        return elog("env name required");
+        return elog(1, "env name required");
     else if (!_envext(env))
-        return elog("%s: env does not exist", env);
+        return elog(1, "%s: env does not exist", env);
     return state_env_add(env);
 }

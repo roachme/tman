@@ -4,6 +4,6 @@
 int tman_sync(int argc, char **argv)
 {
     if (core_id_sync())
-        return elog("no current task is set");
+        return elog(1, "no current task is set");
     return core_currdir();
 }

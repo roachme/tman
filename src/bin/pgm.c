@@ -30,5 +30,5 @@ int tman_pgm(int argc, char **argv)
     for (int i = 0; i < pgmcmd_size; ++i)
         if (strncmp(cmd, pgmcmds[i].name, CMDSIZ) == 0)
             return pgmcmds[i].func(argc - 1, argv + 1);
-    return elog("no such pgm command '%s'", cmd);
+    return elog(1, "no such pgm command '%s'", cmd);
 }

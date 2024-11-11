@@ -1,8 +1,11 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "common.h"
 #include "unit.h"
+#include "common.h"
+#include "../bin/add.h"
+#include "../bin/del.h"
+#include "../bin/use.h"
 
 #define DESCSIZ         80
 #define PGNOUTSCSIZ     80
@@ -47,11 +50,11 @@ int core_currdir();
 /* Task ID stuff */
 int core_id_prev(void);
 int core_id_sync(void);
-int core_id_add (char *env, char *id);
-int core_id_del (char *env, char *id);
+int core_id_add (char *id, struct tman_add_opt *opt);
+int core_id_del (char *id, struct tman_del_opt *opt);
 int core_id_move(char *id, char *dst, char *src);
 int core_id_set (char *env, char *id, struct unit *unit);
-int core_id_use (char *env, char *id);
+int core_id_use (char *id, struct tman_use_opt *opt);
 
 struct units *core_id_cat (struct units *units, char *env, char *id);
 

@@ -17,6 +17,9 @@ $(PROGRAM): $(OBJS)
 clean:
 	rm -rf $(PROGRAM) $(OBJS)
 
+chk:
+	clear
+	cppcheck --std=c89 --enable=all --language=c src/bin/*.c src/core/*.c src/pgn/*.c
 
 #build:
 #	#gcc -g -Wall src/*.h src/*.c -o tman
@@ -29,9 +32,4 @@ clean:
 #	./tman_prof
 #	gprof ./tman_prof > prof.txt
 #
-#chk:
-#	clear
-#	cppcheck --std=c89 --enable=all --language=c src/*.c
 #
-#clean:
-	#rm -rf *.o $(PROGRAM)

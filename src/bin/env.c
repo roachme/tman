@@ -36,7 +36,7 @@ int _env_add(int argc, char **argv)
     }
 
     if (optind == argc)
-        return elog("%s: task env required\n", PROGRAM);
+        return elog(1, "%s: task env required\n", PROGRAM);
 
     for (int i = optind; i < argc; ++i) {
         char *env = argv[i];
@@ -59,7 +59,7 @@ int _env_list(int argc, char **argv)
     DIR *edir = opendir(TMANTASKS);
 
     if (!edir)
-        return elog("could not open task directory\n");
+        return elog(1, "could not open task directory\n");
 
     while ((ent = readdir(edir)) != NULL) {
         if ((strcmp(ent->d_name, ".") == 0) || (strcmp(ent->d_name, "..") == 0))
@@ -105,5 +105,5 @@ int tman_env(int argc, char **argv)
         if (strncmp(cmd, envcmds[i].name, CMDSIZ) == 0)
             return envcmds[i].func(argc - 1, argv + 1);
 
-    return elog("no such env command '%s'", cmd);
+    return elog(1, "no such env command '%s'", cmd);
 }

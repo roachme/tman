@@ -46,7 +46,7 @@ static int _chkprio(char *prio)
         if (strncmp(prio, prios[i], 10) == 0)
             return 1;
     }
-    elog("invalid priority '%s'. Try help for more info", prio);
+    elog(1, "invalid priority '%s'. Try help for more info", prio);
     return 0;
 }
 
@@ -59,7 +59,7 @@ static int _chktype(char *type)
         if (strncmp(type, types[i], 10) == 0)
             return 1;
     }
-    elog("invalid type '%s'. Try help for more info", type);
+    elog(1, "invalid type '%s'. Try help for more info", type);
     return 0;
 }
 
@@ -87,7 +87,7 @@ static int check(char *key, char *val)
         return _chktype(val);
     else if (!strcmp(key, "desc"))
         return _chkdesc(val);
-    elog("not found '%s': no such builtin key", key);
+    elog(1, "not found '%s': no such builtin key", key);
     return 0;
 }
 
@@ -158,7 +158,7 @@ static int _save(char *fname)
     FILE *fp = fopen(fname, "w");
 
     if (!fp)
-        return elog("could not open file %s\n", fname);
+        return elog(1, "could not open file %s\n", fname);
 
     for (int i = 0; i < UNITSIZ; ++i) {
         unit.pair[i].isset = 1;
@@ -188,12 +188,12 @@ struct bunit *unit_get(struct bunit *u, char *env, char *id)
     sprintf(fname, "%s/%s/%s/.tman/unit", TMANTASKS, env, id);
 
     if (_load(fname, u)) {
-        elog("_load: failed");
+        elog(1, "_load: failed");
         return NULL;
     }
 
     if (!u) {
-        elog("unit_get: bunit is NULL");
+        elog(1, "unit_get: bunit is NULL");
     }
     return u;
 }

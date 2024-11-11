@@ -58,9 +58,9 @@ int plugin(int argc, char **argv)
 
     // TODO: check that ID and env exist.
     if (env[0] == '\0')
-        return elog("no current env set");
+        return elog(1, "no current env set");
     else if (id[0] == '\0')
-        return elog("no current id set");
+        return elog(1, "no current id set");
 
     // pgname ENV ID base subcmd [OPTION]..
     sprintf(pgn, "%s -e %s -i %s -b %s %s", path, env, id, TMANBASE, subcmd);
@@ -115,7 +115,7 @@ struct punit *hookcat(struct punit *unit, char *env, char *id)
         }
         FILE *pipe = popen(fullcmd, "r");
         if (!pipe) {
-            elog("hookcat: failed: '%s'", fullcmd);
+            elog(1, "hookcat: failed: '%s'", fullcmd);
             return NULL;
         }
 
@@ -149,7 +149,7 @@ char *hookls(char *pgnout, char *env, char *id)
         }
         FILE *pipe = popen(fullcmd, "r");
         if (!pipe) {
-            elog("hookls: failed: '%s'", fullcmd);
+            elog(1, "hookls: failed: '%s'", fullcmd);
             return NULL;
         }
 

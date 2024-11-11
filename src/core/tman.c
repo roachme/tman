@@ -81,5 +81,5 @@ int main(int argc, char **argv)
     if (isplugin(cmd))
         return plugin(argc, argv);
 
-    return elog("cannot access '%s': no such command or plugin", cmd);
+    return elog(1, "cannot access '%s': no such command or plugin", cmd);
 }
