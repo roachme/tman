@@ -1,35 +1,43 @@
-/*
-    Add a task to specified or current environment.
-*/
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "add.h"
 #include "../core/core.h"
 #include "../core/common.h"
 
+int tman_add_usage(void)
+{
+    printf("show some help info: under development\n");
+    return TMAN_NOPATH;
+}
+
 int tman_add(int argc, char **argv)
 {
-    char c;
-    char *env = NULL;
-    int retcode;
+    int c;
+    int status;
+    struct tman_add_opt opt = { .env = NULL, .force = 0, .help = 0, };
 
-    // TODO: Add force flag to suppress errors
-    while ((c = getopt(argc, argv, "e:f")) != -1) {
+    while ((c = getopt(argc, argv, ":e:fh")) != -1) {
         switch (c) {
             case 'e':
-                env = optarg; break ;
+                opt.env = optarg; break;
+            case 'f':
+                opt.force = 1; break;
+            case 'h':
+                opt.help = 1; break;
+            case ':':
+                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
         }
     }
 
-    if (optind == argc)
-        return elog("task id required");
+    if (opt.help == 1)
+        return tman_add_usage();
+    else if (optind == argc)
+        return elog(TMAN_ADD_IDREQ, "task id required");
 
-    /*
-         // From GNU rm (in the end)
-         enum RM_status status = rm (file, &x);
-         affirm (VALID_STATUS (status));
-         return status == RM_ERROR ? EXIT_FAILURE : EXIT_SUCCESS;
-    */
     for (int i = optind; i < argc; ++i)
-        retcode = core_id_add(env, argv[i]);
-    return retcode == 0 ? core_currdir() : 1;
+        status = core_id_add(argv[i], &opt);
+    return status == TMAN_OK ? core_currdir() : status;
 }

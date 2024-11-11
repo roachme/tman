@@ -17,9 +17,9 @@ int tman_move(int argc, char **argv)
     }
 
     if (optind == argc)
-        return elog("task id required");
+        return elog(1, "task id required");
     if (optind + 1 == argc)
-        return elog("destination env required");
+        return elog(1, "destination env required");
 
     dstenv = argv[--argc];
     for (int i = optind; i < argc; ++i) {

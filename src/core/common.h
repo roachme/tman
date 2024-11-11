@@ -9,6 +9,12 @@
 #define PROGRAM "tman"
 #define VERSION "v0.1.0"
 
+enum tman_errno {
+    TMAN_OK = 0,        /* OK, switch to task ID */
+    TMAN_NOPATH = 1,    /* OK, but output should not be treated as path */
+    TMAN_INVOPT = 2,    /* Error, invalid option */
+};
+
 #define IDSIZ           20
 #define CMDSIZ          5
 #define PGNSIZ          10
@@ -31,7 +37,7 @@
 #define TMANINITED      TMANBASE "/.tman/inited"
 
 
-int elog(char *fmt, ...);
+int elog(int status, char *fmt, ...);
 int wlog(char *fmt, ...);
 int ilog(char *fmt, ...);
 int dlog(char *fmt, ...);

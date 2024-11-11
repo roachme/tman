@@ -2,35 +2,44 @@
 #include "../core/common.h"
 #include "../core/core.h"
 
+int tman_del_usage(void)
+{
+    printf("show some help info: under development\n");
+    return TMAN_NOPATH;
+}
+
 int tman_del(int argc, char **argv)
 {
     char c;
-    char *env = NULL, *id = NULL;
-    int o_strict = 0;
-    int o_force = 0;
-    int retcode;
+    int status;
+    struct tman_del_opt opt = { .env = NULL, .force = 0, .help = 0,};
 
-    while ((c = getopt(argc, argv, "e:fs")) != -1) {
+    while ((c = getopt(argc, argv, ":e:fh")) != -1) {
         switch (c) {
             case 'e':
-                env = optarg; break ;
+                opt.env = optarg; break ;
             case 'f':
-                o_force = 1;  break ;
-            case 's':
-                o_strict = 1; break ;
+                opt.force = 1; break ;
+            case 'h':
+                opt.help = 1; break ;
+            case ':':
+                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
         }
     }
 
-    if (o_force && o_strict)
-        return elog("options -f and -s mutually exclusive");
+    if (opt.help == 1)
+        return tman_del_usage();
 
-    for (int i = optind; i < argc; ++i) {
-        id = argv[i];
-        if ((retcode = core_id_del(env, id)) != 0 && o_strict) {
-            break;
-        }
-    }
+    for (int i = optind; i < argc; ++i)
+        status = core_id_del(argv[i], &opt);
+
     if (optind == argc) /* delete current task id */
-        retcode = core_id_del(env, id);
-    return retcode != 0 ? retcode : core_currdir();
+        status = core_id_del(opt.env, NULL);
+
+    // FIXME: when delete task ID from non-current env,
+    // it switches to current task in current env.
+    // BUT should not change user's CWD at all.
+    return status == TMAN_OK ? core_currdir() : status;
 }

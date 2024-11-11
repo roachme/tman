@@ -56,7 +56,7 @@ Options:
     }
 
     if (unit.size == 0)
-        return elog("gotta supply one of the options");
+        return elog(1, "gotta supply one of the options");
 
     if (optind == argc) {
         core_id_set(env, id, &unit);
