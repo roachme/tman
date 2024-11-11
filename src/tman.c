@@ -129,8 +129,8 @@ int tman_init(int argc, char **argv)
     sprintf(tmanfs.base,  "%s/%s", homedir, "trash/tman");
     sprintf(tmanfs.db,    "%s/%s", tmanfs.base, ".tman");
     sprintf(tmanfs.finit, "%s/%s", tmanfs.db,   "inited");
-    sprintf(tmanfs.finit, "%s/%s", tmanfs.db,   "state");
-    sprintf(tmanfs.task,  "%s/%s", tmanfs.base, "task");
+    sprintf(tmanfs.fstate,"%s/%s", tmanfs.db,   "state");
+    sprintf(tmanfs.task,  "%s/%s", tmanfs.base, "tasks");
     sprintf(tmanfs.pgn,   "%s/%s", tmanfs.base, "pgns");
 
     /* Generic check */
