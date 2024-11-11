@@ -251,9 +251,6 @@ struct list *core_id_list(struct list *list, char *env)
         // For right now module state has no means to provide current and previous
         // IDs of previous env.
 
-
-
-        // handle hookls
         if (!hookls(list->ilist[i].pgn, env, list->ilist[i].id)) {
             elog("failed to get hookls output");
         }
