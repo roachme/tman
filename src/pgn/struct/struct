@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+CONF=
+
+ENV=
+ID=
+BASE=
+CMD=
+
+while getopts "b:e:i:s" opt; do
+    case "${opt}" in
+        b)
+            BASE="$OPTARG"
+            ;;
+        e)
+            ENV="$OPTARG"
+            ;;
+        i)
+            ID="$OPTARG"
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+CMD="$1"
+
+function _find_config()
+{
+    local confdir=("$HOME/.tman/pgns/struct.conf" "$HOME/.config/tman/pgns/struct.conf")
+
+    for conf in "${confdir[@]}"; do
+        if [ -f "$conf" ]; then
+            CONF="$conf"
+            return 0
+        fi
+    done
+    return 1
+}
+
+function struct_create()
+{
+    for dir in "${STRUCT_DIRS[@]}"; do
+        mkdir -p "$BASE/tasks/$ENV/$ID/$dir"
+    done
+    for file in "${STRUCT_FILES[@]}"; do
+        touch "$BASE/tasks/$ENV/$ID/$file"
+    done
+    return 0;
+}
+
+function struct_delete()
+{
+    for dir in "${STRUCT_DIRS[@]}"; do
+        rm -rf "$BASE/tasks/$ENV/$ID/$dir"
+    done
+    for file in "${STRUCT_FILES[@]}"; do
+        rm -rf "$BASE/tasks/$ENV/$ID/$file"
+    done
+    return 0;
+}
+
+function struct_show()
+{
+    printf "Dirs  : "
+    for dir in "${STRUCT_DIRS[@]}"; do
+        printf "%s " "$dir"
+    done
+
+    printf "\nFiles : "
+    for file in "${STRUCT_FILES[@]}"; do
+        printf "%s " "$file"
+    done
+}
+
+function struct_rename()
+{
+    echo "struct_rename"
+    return 0;
+}
+
+
+_find_config && source "$CONF" || exit 0
+
+if [ -z "$CMD" -o "$CMD" = "create" ]; then
+    struct_create
+elif [ "$CMD" = "delete" ]; then
+    struct_delete
+elif [ "$CMD" = "rename" ]; then
+    struct_rename
+elif [ "$CMD" = "show" ]; then
+    struct_show
+else
+    echo "no such command '$CMD'" && exit 1
+fi

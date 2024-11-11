@@ -1,12 +1,25 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+
 #include <dirent.h>
 
 #include "env.h"
-#include "core.h"
-#include "common.h"
-#include "state.h"
+#include "../core/tman.h"
+#include "../core/core.h"
+#include "../core/state.h"
+#include "../core/common.h"
+
+builtin_t envcmds[] = {
+    { .name = "add",  .func = &_env_add  },
+    { .name = "del",  .func = &_env_del  },
+    { .name = "list", .func = &_env_list },
+    { .name = "prev", .func = &_env_prev },
+    { .name = "set",  .func = &_env_set  },
+    { .name = "use",  .func = &_env_use  },
+};
+
+int envcmd_size = sizeof(envcmds) / sizeof(envcmds[0]);
 
 
 int _env_add(int argc, char **argv)
@@ -83,4 +96,14 @@ int _env_use(int argc, char **argv)
     if (core_env_use(env))
         return 1;
     return core_currdir();
+}
+int tman_env(int argc, char **argv)
+{
+    char *cmd = argv[1] != NULL ? argv[1] : "list";
+
+    for (int i = 0; i < envcmd_size; ++i)
+        if (strncmp(cmd, envcmds[i].name, CMDSIZ) == 0)
+            return envcmds[i].func(argc - 1, argv + 1);
+
+    return elog("no such env command '%s'", cmd);
 }

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+CONF=
+
+ENV=
+ID=
+BASE=
+CMD=
+
+while getopts "b:e:i:s" opt; do
+    case "${opt}" in
+        b)
+            BASE="$OPTARG"
+            ;;
+        e)
+            ENV="$OPTARG"
+            ;;
+        i)
+            ID="$OPTARG"
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+CMD="$1"
+
+
+# Dumb wrapper so a plugin can call its libraries
+[ -z "$CMD" ] && CMD="sync"
+CWD="$(pwd)"
+PGNDIR="`dirname $0`"
+cd "$PGNDIR"
+lua gun.lua -e "$ENV" -b "$BASE" -i "$ID" "$CMD"
+cd "$CWD"

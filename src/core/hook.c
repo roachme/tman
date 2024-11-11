@@ -70,13 +70,9 @@ int plugin(int argc, char **argv)
 
 int pgngen(char *command, char *env, char *id, char *pgname, char *pgncmd)
 {
-    // pgn CMD BASE ENV ID
     char pathname[BUFSIZ];
-    sprintf(pathname, "%s/pgns/%s/%s", TMANPBASE, pgname, pgname);
+    sprintf(pathname, "%s/src/pgn/%s/%s", TMANPBASE, pgname, pgname);
     sprintf(command, "%s -e %s -i %s -b %s %s", pathname, env, id, TMANBASE, pgncmd);
-
-    if (access(pathname, F_OK))
-        return elog("%s: plugin does not exist", pathname);
     return 0;
 }
 
@@ -90,8 +86,7 @@ int hookact(char *command, char *env, char *id)
         sscanf(hooks[i], "HOOKCMD = %s %s %s", cmd, pgn, pgncmd);
         if (strcmp(command, cmd) == 0) {
             char fullcmd[BUFSIZ];
-            if (pgngen(fullcmd, env, id, pgn, pgncmd))
-                continue;
+            pgngen(fullcmd, env, id, pgn, pgncmd);
             system(fullcmd);
         }
     }
@@ -172,4 +167,3 @@ char *hookls(char *pgnout, char *env, char *id)
     }
     return pgnout;
 }
-

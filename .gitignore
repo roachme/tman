@@ -4,3 +4,4 @@ gmon.out
 prof.txt
 tests
 tman_prof
+*.o
