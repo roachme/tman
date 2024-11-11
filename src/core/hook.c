@@ -24,7 +24,7 @@ int hooknum = sizeof(hooks) / sizeof(hooks[0]);
 int isplugin(char *pgn)
 {
     char path[PATHSIZ + 1];
-    sprintf(path, "%s/pgns/%s/%s", TMANPBASE, pgn, pgn);
+    sprintf(path, "%s/src/pgn/%s/%s", TMANPBASE, pgn, pgn);
     return !FCHK(path);
 }
 
