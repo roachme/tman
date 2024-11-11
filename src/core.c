@@ -110,12 +110,34 @@ int core_id_del(char *env, char *id)
 
 int core_id_prev(void)
 {
-    return state_id_swap();
+    char *cid  = NULL;
+    char *cenv = NULL;
+
+    if (state_id_swap())
+        return 1;
+
+    cid  = state_getcid();
+    cenv = state_getcenv();
+
+     if (hookact("prev", cenv, cid))
+        elog("could not execute hook");
+     return 0;
 }
 
 int core_id_sync(void)
 {
-    return !strlen(state_getcid());
+    char *cid  = NULL;
+    char *cenv = NULL;
+
+    if (strlen(state_getcid()) == 0)
+        return elog("no current task id set");
+
+    cid  = state_getcid();
+    cenv = state_getcenv();
+
+    if (hookact("sync", cenv, cid))
+        elog("could not execute hook");
+    return 0;
 }
 
 int core_id_set(char *env, char *id, struct unit *unit)
