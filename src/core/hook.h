@@ -3,6 +3,16 @@
 
 #include "unit.h"
 
+// "HOOKCMD = add struct create",
+struct hookcmd {
+    char hook[10];
+    char cmd[10];
+    char cmdopt[10];
+    char pgname[10];
+    char pgncmd[10];
+    char pgnopt[10];
+};
+
 
 int isplugin(char *pgn);
 int plugin(int argc, char **argv);

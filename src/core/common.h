@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
+#include <getopt.h>
 #include "limit.h"
 
 #define PROGRAM "tman"

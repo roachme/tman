@@ -59,6 +59,13 @@ struct help help[] = {
     },
     {
         .tag = TAGBASIC,
+        .name  = "sync",
+        .synop = PROGRAM " sync",
+        .sdesc = "synchronize task",
+        .desc  = "sync description",
+    },
+    {
+        .tag = TAGBASIC,
         .name  = "use",
         .synop = PROGRAM " use ID [ENV]",
         .sdesc = "switch to specific task",
@@ -78,13 +85,6 @@ struct help help[] = {
         .synop = PROGRAM " move [OPTION] ID DST SRC",
         .sdesc = "move task to another environment",
         .desc  = "move description",
-    },
-    {
-        .tag = TAGMISC,
-        .name  = "sync",
-        .synop = PROGRAM " sync",
-        .sdesc = "synchronize task",
-        .desc  = "sync description",
     },
 
     {

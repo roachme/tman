@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+PGNAME="time"
+CONF=
+ENV=
+ID=
+BASE=
+CMD=
+
+while getopts "b:e:i:" opt; do
+    case "${opt}" in
+        b)
+            BASE="$OPTARG"
+            ;;
+        e)
+            ENV="$OPTARG"
+            ;;
+        i)
+            ID="$OPTARG"
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+CMD="$1"
+
+function _find_config()
+{
+    local confdir=("$HOME/.tman/pgns/${PGNAME}.conf" "$HOME/.config/tman/pgns/${PGNAME}.conf")
+
+    for conf in "${confdir[@]}"; do
+        if [ -f "$conf" ]; then
+            CONF="$conf"
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+function time_init()
+{
+    return 0;
+}
+
+function time_sync()
+{
+    echo "time_sync: under development"
+    return 0;
+}
+
+function time_rsync()
+{
+    echo "time_rsync: under development"
+    return 0;
+}
+
+function time_cat()
+{
+    echo "otime  : original time expectation"
+    echo "stime  : time spent on task"
+    return 0;
+}
+
+function time_help()
+{
+    echo "Usage: repo [sync|rsync|cat|help]"
+}
+
+
+_find_config && source "$CONF" || exit 0
+
+if [ -z "$CMD" -o "$CMD" = "sync" ]; then
+    time_sync
+elif [ "$CMD" = "rsync" ]; then
+    time_rsync
+elif [ "$CMD" = "cat" ]; then
+    time_cat
+elif [ "$CMD" = "help" ]; then
+    time_help
+else
+    echo "$PGNAME: no such command '$CMD'" && exit 1
+fi
