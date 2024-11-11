@@ -77,7 +77,6 @@ int state_id_pdel(void)
     if (state[CENV].name[0] == '\0' || state[CENV].curr[0] == '\0')
         return 1;
 
-    fprintf(stderr, "pdel: curr: %s prev: %s\n", state[CENV].curr, state[CENV].prev);
     state[CENV].prev[0] = '\0';
     return save(TMANSTATE);
 }
