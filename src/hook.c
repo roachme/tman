@@ -15,7 +15,6 @@ static char *hooks[] = {
     "HOOKCAT = cat time cat",
     "HOOKCAT = cat gun cat",
     "HOOKLIST = list tag list",
-    "HOOKCMD = add repo sync",
 };
 
 int hooknum = sizeof(hooks) / sizeof(hooks[0]);
@@ -163,6 +162,10 @@ char *hookls(char *pgnout, char *env, char *id)
             strcpy(pgnout + strlen(pgnout), line);
             prefix = " ";
         }
+
+        // roach: memory leak??? For some reasons calls other types of hooks.
+        memset(cmd, 0, sizeof(cmd));
+
         pclose(pipe);
     }
     return pgnout;
