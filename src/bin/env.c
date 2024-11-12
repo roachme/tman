@@ -56,7 +56,7 @@ int _env_list(int argc, char **argv)
 {
     char mark = '+';
     struct dirent *ent;
-    DIR *edir = opendir(TMANTASKS);
+    DIR *edir = opendir(tmanfs.task);
 
     if (!edir)
         return elog(1, "could not open task directory\n");

@@ -2,12 +2,14 @@
 #define COMMON_H
 
 #include <stdio.h>
-
 #include <getopt.h>
+
 #include "limit.h"
 
 #define PROGRAM "tman"
 #define VERSION "v0.1.0"
+
+extern struct tmanstruct tmanfs;
 
 enum tman_errno {
     TMAN_OK = 0,        /* OK, switch to task ID */
@@ -24,6 +26,7 @@ enum tman_errno {
 #define HELPDESC        100
 
 
+/*
 // TODO: move to config file, not a hard-coded value
 #define HOME            "/home/roach"
 #define TMANBASE        HOME "/trash/tman"
@@ -35,7 +38,7 @@ enum tman_errno {
 #define TMANTASKS       TMANBASE "/tasks"
 #define TMANSTATE       TMANBASE "/.tman/state"
 #define TMANINITED      TMANBASE "/.tman/inited"
-
+*/
 
 int elog(int status, char *fmt, ...);
 int wlog(char *fmt, ...);

@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "hook.h"
+#include "tman.h"
 #include "unit.h"
 #include "osdep.h"
 #include "state.h"
@@ -24,7 +25,7 @@ int hooknum = sizeof(hooks) / sizeof(hooks[0]);
 int isplugin(char *pgn)
 {
     char path[PATHSIZ + 1];
-    sprintf(path, "%s/src/pgn/%s/%s", TMANPBASE, pgn, pgn);
+    sprintf(path, "%s/%s/%s", tmanfs.pgnins, pgn, pgn);
     return !FCHK(path);
 }
 
@@ -39,10 +40,10 @@ int plugin(int argc, char **argv)
     char *name = argc > 1 ? argv[1] : "";
     char *subcmd = argc > 2 ? argv[2] : "";
     char *id = NULL, *env = NULL;
-    sprintf(path, "%s/pgns/%s/%s", TMANPBASE, name, name);
+    sprintf(path, "%s/%s/%s", tmanfs.pgnins, name, name);
 
     if (access(path, F_OK))
-        return 1;
+        return elog(1, "plugin not found -> %s", path);
 
     while ((c = getopt(argc, argv, ":e:")) != -1) {
         switch (c) {
@@ -63,7 +64,7 @@ int plugin(int argc, char **argv)
         return elog(1, "no current id set");
 
     // pgname ENV ID base subcmd [OPTION]..
-    sprintf(pgn, "%s -e %s -i %s -b %s %s", path, env, id, TMANBASE, subcmd);
+    sprintf(pgn, "%s -e %s -i %s -b %s %s", path, env, id, tmanfs.base, subcmd);
     system(pgn);
     return 1;
 }
@@ -71,8 +72,8 @@ int plugin(int argc, char **argv)
 int pgngen(char *command, char *env, char *id, char *pgname, char *pgncmd)
 {
     char pathname[BUFSIZ];
-    sprintf(pathname, "%s/src/pgn/%s/%s", TMANPBASE, pgname, pgname);
-    sprintf(command, "%s -e %s -i %s -b %s %s", pathname, env, id, TMANBASE, pgncmd);
+    sprintf(pathname, "%s/%s/%s", tmanfs.pgnins, pgname, pgname);
+    sprintf(command, "%s -e %s -i %s -b %s %s", pathname, env, id, tmanfs.base, pgncmd);
     return 0;
 }
 

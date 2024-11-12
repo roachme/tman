@@ -5,8 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "common.h"
+
+#include "tman.h"
 #include "unit.h"
+#include "common.h"
 
 static char *keys[] = { "id", "prio", "type", "date", "desc" };
 static int keynum = sizeof(keys) / sizeof(keys[0]);
@@ -171,7 +173,7 @@ static int _save(char *fname)
 int unit_add(char *env, char *id)
 {
     char fname[PATHSIZ + 1];
-    sprintf(fname, "%s/%s/%s/.tman/unit", TMANTASKS, env, id);
+    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
 
     genunit(env, id);
     return _save(fname);
@@ -185,7 +187,7 @@ int unit_del(char *env, char *id)
 struct bunit *unit_get(struct bunit *u, char *env, char *id)
 {
     char fname[PATHSIZ + 1];
-    sprintf(fname, "%s/%s/%s/.tman/unit", TMANTASKS, env, id);
+    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
 
     if (_load(fname, u)) {
         elog(1, "_load: failed");
@@ -205,7 +207,7 @@ struct bunit *unit_get(struct bunit *u, char *env, char *id)
 int unit_set(char *env, char *id, struct unit *_unit)
 {
     char fname[PATHSIZ + 1];
-    sprintf(fname, "%s/%s/%s/.tman/unit", TMANTASKS, env, id);
+    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
 
     if (_load(fname, NULL))
         return 1;

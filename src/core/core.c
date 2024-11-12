@@ -7,6 +7,7 @@
 #include <dirent.h>
 
 #include "dir.h"
+#include "tman.h"
 #include "core.h"
 #include "unit.h"
 #include "hook.h"
@@ -23,20 +24,20 @@ const char *usermarks = {
 static int _envext(char *env)
 {
     char pathname[PATHSIZ];
-    sprintf(pathname, "%s/%s", TMANTASKS, env);
+    sprintf(pathname, "%s/%s", tmanfs.task, env);
     return access(pathname, F_OK) == 0;
 }
 
 static int _idext(char *env, char *id)
 {
     char pathname[PATHSIZ];
-    sprintf(pathname, "%s/%s/%s", TMANTASKS, env, id);
+    sprintf(pathname, "%s/%s/%s", tmanfs.task, env, id);
     return access(pathname, F_OK) == 0;
 }
 
 int core_currdir()
 {
-    printf("%s/%s/%s\n", TMANTASKS, state_getcenv(), state_getcid());
+    printf("%s/%s/%s\n", tmanfs.task, state_getcenv(), state_getcid());
     return 0;
 }
 
@@ -47,7 +48,7 @@ int core_init(char *cmd)
         || strncmp(cmd, "ver", CMDSIZ) == 0)
         return 0;
 
-    if (FCHK(TMANINITED))
+    if (FCHK(tmanfs.finit))
         return elog(1, "not inited");
     return state_init();
 }
@@ -69,7 +70,7 @@ int core_id_add(char *id, struct tman_add_opt *opt)
         return TMAN_ADD_IDEXT;
     }
 
-    if (imkdir(TMANTASKS, opt->env, id) != 0)
+    if (imkdir(tmanfs.task, opt->env, id) != 0)
         return elog(1, "%s: could not create task directory", id);
     else if (unit_add(opt->env, id) != 0)
         return elog(1, "%s: could not create task unit", id);
@@ -99,7 +100,7 @@ int core_id_del(char *id, struct tman_del_opt *opt)
         return elog(1, "could not execute hook");
     else if (unit_del(opt->env, id))
         return elog(1, "%s: could not delete task unit", id);
-    else if (irmdir(TMANTASKS, opt->env, id))
+    else if (irmdir(tmanfs.task, opt->env, id))
         return elog(1, "%s: could not delete task directory", id);
 
     // TODO: simplify this
@@ -195,7 +196,7 @@ int core_id_move(char *id, char *dst, char *src)
     char dstid[BUFSIZ] = {0};
 
     src = src ? src : state_getcenv();
-    sprintf(dstid, "%s/%s/%s", TMANTASKS, dst, id);
+    sprintf(dstid, "%s/%s/%s", tmanfs.task, dst, id);
 
     if (!_envext(dst))
         return elog(1, "no such destination env");
@@ -208,7 +209,7 @@ int core_id_move(char *id, char *dst, char *src)
     else if (!DCHK(dstid))
         return elog(1, "cannot move '%s': task id exists in env '%s'", id, dst);
 
-    if (imove(TMANTASKS, id, dst, src))
+    if (imove(tmanfs.task, id, dst, src))
         return elog(1, "%s: could not move task to %s", id, dst);
     else if (strcmp(state_getcid(), id) == 0)
         return state_id_del();
@@ -225,7 +226,7 @@ struct list *core_id_list(struct list *list, char *env)
 {
     char pathname[PATHSIZ];
     env = env ? env : state_getcenv();
-    sprintf(pathname, "%s/%s", TMANTASKS, env);
+    sprintf(pathname, "%s/%s", tmanfs.task, env);
     DIR *ids = opendir(pathname);
     struct dirent *ent;
 
@@ -331,7 +332,7 @@ int core_env_add(char *env)
         return elog(1, "%s: env already exists", env);
     else if (!_chkenv(env))
         return elog(1, "%s: illegal task env name", env);
-    else if (emkdir(TMANTASKS, env))
+    else if (emkdir(tmanfs.task, env))
         return elog(1, "%s: could not create env directory", env);
     return state_env_add(env);
 }

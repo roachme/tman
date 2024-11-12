@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "state.h"
+#include "tman.h"
 #include "common.h"
 
 
@@ -49,7 +50,7 @@ static int save(const char *fname)
 
 int state_init()
 {
-    return load(TMANSTATE);
+    return load(tmanfs.fstate);
 }
 
 int state_id_add(char *id)
@@ -60,7 +61,7 @@ int state_id_add(char *id)
         return 1;
     strcpy(state[CENV].prev, state[CENV].curr);
     strcpy(state[CENV].curr, id);
-    return save(TMANSTATE);
+    return save(tmanfs.fstate);
 }
 
 int state_id_del(void)
@@ -69,7 +70,7 @@ int state_id_del(void)
         return 1;
     strcpy(state[CENV].curr, state[CENV].prev);
     state[CENV].prev[0] = '\0';
-    return save(TMANSTATE);
+    return save(tmanfs.fstate);
 }
 
 int state_id_pdel(void)
@@ -78,7 +79,7 @@ int state_id_pdel(void)
         return 1;
 
     state[CENV].prev[0] = '\0';
-    return save(TMANSTATE);
+    return save(tmanfs.fstate);
 }
 
 int state_id_swap(void)
@@ -92,7 +93,7 @@ int state_id_swap(void)
     strcpy(tmp, state[CENV].curr);
     strcpy(state[CENV].curr, state[CENV].prev);
     strcpy(state[CENV].prev, tmp);
-    return save(TMANSTATE);
+    return save(tmanfs.fstate);
 }
 
 int state_env_add(char *env)
@@ -102,14 +103,14 @@ int state_env_add(char *env)
     state[PENV] = state[CENV];
     strcpy(state[CENV].name, env);
     state[CENV].curr[0] = state[CENV].prev[0] = '\0';
-    return save(TMANSTATE);
+    return save(tmanfs.fstate);
 }
 
 int state_env_del(void)
 {
     state[CENV] = state[PENV];
     memset(&state[PENV], 0, sizeof(struct state));
-    return save(TMANSTATE);
+    return save(tmanfs.fstate);
 }
 
 int state_env_swap(void)
@@ -121,7 +122,7 @@ int state_env_swap(void)
     tmp = state[CENV];
     state[CENV] = state[PENV];
     state[PENV] = tmp;
-    return save(TMANSTATE);
+    return save(tmanfs.fstate);
 }
 
 char *state_getcid()

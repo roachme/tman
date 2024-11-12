@@ -42,6 +42,24 @@ builtin_t builtins[] = {
 
 int builtin_size = sizeof(builtins) / sizeof(builtins[0]);
 
+int tman_initfs()
+{
+    char *homedir = getenv("HOME");
+
+    // TODO: should get it from config file
+    sprintf(tmanfs.base,  "%s/%s", homedir, "trash/tman");
+
+    sprintf(tmanfs.db,    "%s/%s", tmanfs.base, ".tman");
+    sprintf(tmanfs.finit, "%s/%s", tmanfs.db,   "inited");
+    sprintf(tmanfs.fstate,"%s/%s", tmanfs.db,   "state");
+    sprintf(tmanfs.task,  "%s/%s", tmanfs.base, "tasks");
+    sprintf(tmanfs.pgn,   "%s/%s", tmanfs.base, "pgns");
+
+    // TODO: find a better way
+    sprintf(tmanfs.pgnins,"%s/%s", homedir, "workspace/toolkit/tman/src/pgn");
+    return 0;
+}
+
 int tman_help(int argc, char **argv)
 {
     char c;
@@ -71,7 +89,7 @@ int main(int argc, char **argv)
     char *cmd = argc > 1 ? argv[1] : "list";
 
     /* init util for a command. Not all of 'em need initialization */
-    if (core_init(cmd))
+    if (tman_initfs() != 1 && core_init(cmd))
         return 1;
 
     for (int i = 0; i < builtin_size; ++i)
