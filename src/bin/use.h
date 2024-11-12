@@ -2,8 +2,8 @@
 #define TMAN_USE_H
 
 enum tman_use_errno {
-    TMAN_USE_IDREQ = 3,     /* task ID required */
-    TMAN_USE_NOID  = 4,     /* task ID does not exist */
+    TMAN_USE_IDREQ = 20,     /* task ID required */
+    TMAN_USE_NOID  = 21,     /* task ID does not exist */
 };
 
 struct tman_use_opt {

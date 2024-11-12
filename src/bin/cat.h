@@ -2,7 +2,7 @@
 #define TMAN_CAT_H
 
 enum tman_cat_errno {
-    TMAN_CAT_NOID = 3,     /* task ID already exists */
+    TMAN_CAT_NOID = 20,     /* task ID already exists */
 };
 
 struct tman_cat_opt {
