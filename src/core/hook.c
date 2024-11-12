@@ -85,8 +85,7 @@ int hookact(char *command, char *env, char *id)
     char pgncmd[20];
 
     for (int i = 0; i < hooknum; ++i) {
-        // FIXME: memleak?? Variable `cmd' keep old value so loop
-        // iterates more than neccessary.
+        // FIXME: memleak?? Keeps old value if no match found in sscanf()??
         memset(cmd, 0, sizeof(cmd));
 
         sscanf(hooks[i], "HOOKCMD = %s %s %s", cmd, pgn, pgncmd);
@@ -112,6 +111,9 @@ struct punit *hookcat(struct punit *unit, char *env, char *id)
     int pidx = 0; // cuz a plugin can output more than one lines
 
     for (int i = 0; i < hooknum; ++i) {
+        // FIXME: memleak?? Keeps old value if no match found in sscanf()??
+        memset(cmd, 0, sizeof(cmd));
+
         sscanf(hooks[i], "HOOKCAT = %s %s %s", cmd, pgn, pgncmd);
         if (strcmp(cmd, "cat") != 0)
             continue;
@@ -144,6 +146,9 @@ char *hookls(char *pgnout, char *env, char *id)
 
     char *prefix = "";
     for (int i = 0; i < hooknum; ++i) {
+        // FIXME: memleak?? Keeps old value if no match found in sscanf()??
+        memset(cmd, 0, sizeof(cmd));
+
         sscanf(hooks[i], "HOOKLIST = %s %s %s", cmd, pgn, pgncmd);
 
         if (strcmp(cmd, "list") != 0) {
