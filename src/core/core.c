@@ -81,7 +81,9 @@ int core_id_add(char *id, struct tman_add_opt *opt)
 
 int core_id_del(char *id, struct tman_del_opt *opt)
 {
-    id  = id != NULL ? id : state_getcid();
+    char *cid = state_getcid();
+    char *pid = state_getpid();
+    id  = id != NULL ? id : cid;
     opt->env = opt->env != NULL ? opt->env : state_getcenv();
 
     if (opt->env[0] == '\0')
@@ -104,16 +106,16 @@ int core_id_del(char *id, struct tman_del_opt *opt)
         return elog(1, "%s: could not delete task directory", id);
 
     // TODO: simplify this
-    if (strcmp(state_getcid(), id) == 0) {
+    if (strcmp(cid, id) == 0) {
         if (state_id_del() != 0)
             return elog(1, "could not delete current task id");
     }
-    else if (strcmp(state_getpid(), id) == 0) {
+    else if (strcmp(pid, id) == 0) {
         if (state_id_pdel() != 0)
             return elog(1, "could not delete previous task id");
     }
 
-    return 0;
+    return TMAN_OK;
 }
 
 int core_id_prev(void)
@@ -158,7 +160,7 @@ int core_id_set(char *env, char *id, struct unit *unit)
 
     // TODO: change task directory if id unit was changed
     // TODO: update task id status as well.
-    return 0;
+    return TMAN_OK;
 }
 
 // int core_id_add(char *id, struct tman_add_opt *opt)
@@ -208,7 +210,7 @@ int core_id_move(char *id, char *dst, char *src)
         return state_id_del();
     else if (strcmp(state_getpid(), id) == 0)
         return !state_id_swap() && !state_id_del();
-    return 0;
+    return TMAN_OK;
 }
 
 /*
@@ -332,7 +334,7 @@ int core_env_add(char *env)
 
 int core_env_list()
 {
-    return 0;
+    return TMAN_OK;
 }
 
 int core_env_prev()
