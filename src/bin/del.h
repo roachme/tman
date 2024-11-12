@@ -2,7 +2,7 @@
 #define DEL_H
 
 enum tman_del_errno {
-    TMAN_DEL_NOID = 3,     /* task ID does not exist */
+    TMAN_DEL_NOID = 20,     /* task ID does not exist */
 };
 
 struct tman_del_opt {

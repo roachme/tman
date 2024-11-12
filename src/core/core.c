@@ -112,6 +112,7 @@ int core_id_del(char *id, struct tman_del_opt *opt)
         if (state_id_pdel() != 0)
             return elog(1, "could not delete previous task id");
     }
+
     return 0;
 }
 
@@ -121,9 +122,9 @@ int core_id_prev(void)
     char *cenv = state_getcenv();
 
     if (state_id_swap())
-        return 1;
+        return TMAN_ECORE;
     if (hookact("prev", cenv, cid))
-        elog(1, "could not execute hook");
+        return elog(TMAN_EHOOK, "could not execute hook");
     return TMAN_OK;
 }
 
@@ -133,9 +134,9 @@ int core_id_sync(void)
     char *cenv = state_getcenv();
 
     if (strlen(cid) == 0)
-        return elog(1, "no current task id set");
+        return elog(TMAN_ECORE, "no current task id set");
     if (hookact("sync", cenv, cid))
-        elog(1, "could not execute hook");
+        return elog(TMAN_EHOOK, "could not execute hook");
     return TMAN_OK;
 }
 

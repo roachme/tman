@@ -13,6 +13,7 @@
 static char *hooks[] = {
     "HOOKCMD = add struct create",
     "HOOKCMD = add gun sync",
+    "HOOKCMD = del gun del",
     "HOOKCMD = prev gun sync",
     "HOOKCMD = sync gun sync",
     "HOOKCAT = cat time cat",

@@ -8,8 +8,8 @@
 #define TMAN_ADD_H
 
 enum tman_add_errno {
-    TMAN_ADD_IDEXT = 3,     /* task ID already exists */
-    TMAN_ADD_IDREQ = 4,     /* task ID required */
+    TMAN_ADD_IDEXT = 20,     /* task ID already exists */
+    TMAN_ADD_IDREQ = 21,     /* task ID required */
 };
 
 struct tman_add_opt {
