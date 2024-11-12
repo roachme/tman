@@ -2,14 +2,12 @@
 
 function tman()
 {
-    CWD="$(pwd)"
-
     output="$(_tman "$@")"
     retstatus="$?"
     if [ "$retstatus" -eq 0 ]; then
         cd "$output"
     else
-        [ -n "$output" ] && echo "$output" && cd "$CWD"
+        [ -n "$output" ] && echo "$output"
     fi
 
     # Status 0 - ok, no error, no need to explain anything.

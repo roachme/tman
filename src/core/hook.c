@@ -84,6 +84,10 @@ int hookact(char *command, char *env, char *id)
     char pgncmd[20];
 
     for (int i = 0; i < hooknum; ++i) {
+        // FIXME: memleak?? Variable `cmd' keep old value so loop
+        // iterates more than neccessary.
+        memset(cmd, 0, sizeof(cmd));
+
         sscanf(hooks[i], "HOOKCMD = %s %s %s", cmd, pgn, pgncmd);
         if (strcmp(command, cmd) == 0) {
             char fullcmd[BUFSIZ];

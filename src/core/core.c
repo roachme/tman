@@ -117,34 +117,26 @@ int core_id_del(char *id, struct tman_del_opt *opt)
 
 int core_id_prev(void)
 {
-    char *cid  = NULL;
-    char *cenv = NULL;
+    char *cid  = state_getcid();
+    char *cenv = state_getcenv();
 
     if (state_id_swap())
         return 1;
-
-    cid  = state_getcid();
-    cenv = state_getcenv();
-
-     if (hookact("prev", cenv, cid))
+    if (hookact("prev", cenv, cid))
         elog(1, "could not execute hook");
-     return 0;
+    return TMAN_OK;
 }
 
 int core_id_sync(void)
 {
-    char *cid  = NULL;
-    char *cenv = NULL;
+    char *cid  = state_getcid();
+    char *cenv = state_getcenv();
 
-    if (strlen(state_getcid()) == 0)
+    if (strlen(cid) == 0)
         return elog(1, "no current task id set");
-
-    cid  = state_getcid();
-    cenv = state_getcenv();
-
     if (hookact("sync", cenv, cid))
         elog(1, "could not execute hook");
-    return 0;
+    return TMAN_OK;
 }
 
 int core_id_set(char *env, char *id, struct unit *unit)
