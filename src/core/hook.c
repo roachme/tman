@@ -9,19 +9,10 @@
 #include "osdep.h"
 #include "state.h"
 #include "common.h"
+#include "config.h"
 
-static char *hooks[] = {
-    "HOOKCMD = add struct create",
-    "HOOKCMD = add gun sync",
-    "HOOKCMD = del gun del",
-    "HOOKCMD = prev gun sync",
-    "HOOKCMD = sync gun sync",
-    "HOOKCAT = cat time cat",
-    "HOOKCAT = cat gun cat",
-    "HOOKLIST = list tag list",
-};
 
-int hooknum = sizeof(hooks) / sizeof(hooks[0]);
+char fullcmd[HOOKSIZ];
 
 int isplugin(char *pgn)
 {
@@ -70,63 +61,41 @@ int plugin(int argc, char **argv)
     return 1;
 }
 
-int pgngen(char *command, char *env, char *id, char *pgname, char *pgncmd)
+static char *cmdgen(struct hook *hook, char *env, char *id)
 {
-    char pathname[BUFSIZ];
-    sprintf(pathname, "%s/%s/%s", tmanfs.pgnins, pgname, pgname);
-    sprintf(command, "%s -e %s -i %s -b %s %s", pathname, env, id, tmanfs.base, pgncmd);
-    return 0;
+    sprintf(fullcmd, "%s/%s/%s -e %s -i %s -b %s %s",
+            config.pgnins, hook->pgname, hook->pgname,
+            env, id, config.base, hook->pgncmd);
+    return fullcmd;
 }
 
-int hookact(char *command, char *env, char *id)
+int hookact(char *cmd, char *env, char *id)
 {
-    char cmd[20];
-    char pgn[20];
-    char pgncmd[20];
-
-    for (int i = 0; i < hooknum; ++i) {
-        // FIXME: memleak?? Keeps old value if no match found in sscanf()??
-        memset(cmd, 0, sizeof(cmd));
-
-        sscanf(hooks[i], "HOOKCMD = %s %s %s", cmd, pgn, pgncmd);
-        if (strcmp(command, cmd) == 0) {
-            char fullcmd[BUFSIZ];
-            pgngen(fullcmd, env, id, pgn, pgncmd);
-            system(fullcmd);
-        }
+    for (int i = 0; i < config.hooknum; ++i) {
+        struct hook *hook = &config.hooks[i];
+        if (strcmp(cmd, hook->cmd) == 0)
+            system(cmdgen(hook, env, id));
     }
     return 0;
 }
 
 struct punit *hookcat(struct punit *unit, char *env, char *id)
 {
-    char cmd[20] = {0};
-    char pgn[20] = {0};
-    char pgncmd[20] = {0};
+    char *hookcmd;
     char line[BUFSIZ] = {0};
-    char fullcmd[BUFSIZ] = {0};
-
-    unit->size = 0;
-    memset(unit, 0, sizeof(struct unit));
     int pidx = 0; // cuz a plugin can output more than one lines
 
-    for (int i = 0; i < hooknum; ++i) {
-        // FIXME: memleak?? Keeps old value if no match found in sscanf()??
-        memset(cmd, 0, sizeof(cmd));
-
-        sscanf(hooks[i], "HOOKCAT = %s %s %s", cmd, pgn, pgncmd);
-        if (strcmp(cmd, "cat") != 0)
+    for (int i = 0; i < config.hooknum; ++i) {
+        struct hook *hook = &config.hooks[i];
+        if (strcmp(hook->cmd, "cat") != 0)
             continue;
 
-        if (pgngen(fullcmd, env, id, pgn, pgncmd)) {
-            continue;
-        }
+        hookcmd = cmdgen(hook, env, id);
         FILE *pipe = popen(fullcmd, "r");
         if (!pipe) {
-            elog(1, "hookcat: failed: '%s'", fullcmd);
+            elog(1, "hookcat: failed: '%s'", hookcmd);
             return NULL;
         }
-
         for ( ; fgets(line, BUFSIZ, pipe); ++pidx) {
             sscanf(line, "%s : %[^\n]s", unit->pair[pidx].key, unit->pair[pidx].val);
             ++unit->size;
@@ -138,41 +107,29 @@ struct punit *hookcat(struct punit *unit, char *env, char *id)
 
 char *hookls(char *pgnout, char *env, char *id)
 {
-    char cmd[BUFSIZ] = {0};
-    char pgncmd[BUFSIZ] = {0};
-    char line[BUFSIZ] = {0};
-    char fullcmd[BUFSIZ] = {0};
-    char pgn[BUFSIZ] = {0};
-
     char *prefix = "";
-    for (int i = 0; i < hooknum; ++i) {
-        // FIXME: memleak?? Keeps old value if no match found in sscanf()??
-        memset(cmd, 0, sizeof(cmd));
+    char line[BUFSIZ] = {0};
+    char *hookcmd;
 
-        sscanf(hooks[i], "HOOKLIST = %s %s %s", cmd, pgn, pgncmd);
-
-        if (strcmp(cmd, "list") != 0) {
+    for (int i = 0; i < config.hooknum; ++i) {
+        struct hook *hook = &config.hooks[i];
+        if (strcmp(hook->cmd, "list") != 0)
             continue;
-        }
 
-        if (pgngen(fullcmd, env, id, pgn, pgncmd)) {
-            continue;
-        }
-        FILE *pipe = popen(fullcmd, "r");
+        hookcmd = cmdgen(hook, env, id);
+        FILE *pipe = popen(hookcmd, "r");
         if (!pipe) {
-            elog(1, "hookls: failed: '%s'", fullcmd);
+            elog(1, "hookls: failed: '%s'", hookcmd);
             return NULL;
         }
 
+        // TODO: simplify this shit
         if (fgets(line, BUFSIZ, pipe)) {
             line[strcspn(line, "\n")] = 0;
             strcpy(pgnout + strlen(pgnout), prefix);
             strcpy(pgnout + strlen(pgnout), line);
             prefix = " ";
         }
-
-        // roach: memory leak??? For some reasons calls other types of hooks.
-        memset(cmd, 0, sizeof(cmd));
 
         pclose(pipe);
     }

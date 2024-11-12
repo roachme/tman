@@ -29,21 +29,6 @@ enum tman_errno {
 #define PATHSIZ         4096
 #define HELPDESC        100
 
-
-/*
-// TODO: move to config file, not a hard-coded value
-#define HOME            "/home/roach"
-#define TMANBASE        HOME "/trash/tman"
-#define TMANPBASE       HOME "/workspace/toolkit/tman"
-
-// Not these ones tho
-#define TMANDB          TMANBASE "/.tman"
-#define TMANPGNS        TMANBASE "/pgns"
-#define TMANTASKS       TMANBASE "/tasks"
-#define TMANSTATE       TMANBASE "/.tman/state"
-#define TMANINITED      TMANBASE "/.tman/inited"
-*/
-
 int elog(int status, char *fmt, ...);
 int wlog(char *fmt, ...);
 int ilog(char *fmt, ...);

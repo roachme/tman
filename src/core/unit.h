@@ -2,7 +2,7 @@
 #define UNIT_H
 
 #define UNITSIZ 5
-#define HOOKSIZ 10
+#define HOOKSIZ 1000
 
 #define BUILTINSIZ  5
 #define PLUGINSIZ   10
