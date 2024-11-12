@@ -46,4 +46,3 @@ int tman_cat(int argc, char **argv)
     /* if no arguments passed cat current task (if any) */
     return optind < argc ? retcode : pretty_cat(env, NULL, key);
 }
-

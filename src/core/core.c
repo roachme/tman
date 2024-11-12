@@ -181,7 +181,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
     else if (id[0] == '\0')
         return elog(1, "task id required");
     else if (!_idext(opt->env, id))
-        return elog(1, "%s: no such task id", opt->env);
+        return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
     else if (opt->env != state_getcenv())
         printf("trynna switch to task in another env\n");
 
