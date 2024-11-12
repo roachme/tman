@@ -9,9 +9,10 @@
 
 #include "tman.h"
 #include "core.h"
-#include "common.h"
 #include "hook.h"
 #include "help.h"
+#include "config.h"
+#include "common.h"
 
 struct tmanstruct tmanfs;
 
@@ -44,19 +45,13 @@ int builtin_size = sizeof(builtins) / sizeof(builtins[0]);
 
 int tman_initfs()
 {
-    char *homedir = getenv("HOME");
-
-    // TODO: should get it from config file
-    sprintf(tmanfs.base,  "%s/%s", homedir, "trash/tman");
-
-    sprintf(tmanfs.db,    "%s/%s", tmanfs.base, ".tman");
-    sprintf(tmanfs.finit, "%s/%s", tmanfs.db,   "inited");
-    sprintf(tmanfs.fstate,"%s/%s", tmanfs.db,   "state");
-    sprintf(tmanfs.task,  "%s/%s", tmanfs.base, "tasks");
-    sprintf(tmanfs.pgn,   "%s/%s", tmanfs.base, "pgns");
-
-    // TODO: find a better way
-    sprintf(tmanfs.pgnins,"%s/%s", homedir, "workspace/toolkit/tman/src/pgn");
+    sprintf(tmanfs.base,   "%s",    config.base);
+    sprintf(tmanfs.db,     "%s/%s", tmanfs.base, ".tman");
+    sprintf(tmanfs.finit,  "%s/%s", tmanfs.db,   "inited");
+    sprintf(tmanfs.fstate, "%s/%s", tmanfs.db,   "state");
+    sprintf(tmanfs.task,   "%s/%s", tmanfs.base, "tasks");
+    sprintf(tmanfs.pgn,    "%s/%s", tmanfs.base, "pgns");
+    sprintf(tmanfs.pgnins, "%s",    config.pgnins);
     return 0;
 }
 
@@ -87,6 +82,10 @@ int tman_ver(int argc, char **argv)
 int main(int argc, char **argv)
 {
     char *cmd = argc > 1 ? argv[1] : "list";
+
+    if (parseconf("/home/roach/.config/tman/tman.cfg")) {
+        return elog(1, "failed to parse system config file\n");
+    }
 
     /* init util for a command. Not all of 'em need initialization */
     if (tman_initfs() != 1 && core_init(cmd))

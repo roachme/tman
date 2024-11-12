@@ -179,7 +179,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
     else if (!_idext(opt->env, id))
         return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
     else if (opt->env != state_getcenv())
-        printf("trynna switch to task in another env\n");
+        fprintf(stderr, "trynna switch to task in another env\n");
 
     // TODO: it can't switch to task in non-current env.
     // Cuz it gotta switch env first.
