@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "common.h"
 #include "config.h"
 
 struct config config;
@@ -30,27 +31,35 @@ int parseconf(const char *fname)
     const char *delim = " =\n";
     FILE *fp = fopen(fname, "r");
 
-    if (!fp) {
-        fprintf(stderr, "could not open config file\n");
-        return 1;
-    }
+    if (!fp)
+        return elog(1, "could not open config file");
 
     while (fgets(line, BUFSIZ, fp) != NULL) {
         token = strtok(line, delim);
         if (!token || strlen(token) == 0 || token[0] == '\n' || token[0] == '#')
             continue;
 
-        hook = &config.hooks[config.hooknum++];
+        if (config.hooknum >= CONF_MAXHOOK)
+            return elog(1, "Too many hooks in config");
+
+        hook = &config.hooks[config.hooknum];
+
         if (strcmp(token, "TMANBASE") == 0)
             parsepath(config.base);
         else if (strcmp(token, "TMANPGNINS") == 0)
             parsepath(config.pgnins);
-        else if (strcmp(token, "HOOKCMD") == 0)
+        else if (strcmp(token, "HOOKCMD") == 0) {
             parsehook(token, hook);
-        else if (strcmp(token, "HOOKCAT") == 0)
+            ++config.hooknum;
+        }
+        else if (strcmp(token, "HOOKCAT") == 0) {
             parsehook(token, hook);
-        else if (strcmp(token, "HOOKLIST") == 0)
+            ++config.hooknum;
+        }
+        else if (strcmp(token, "HOOKLIST") == 0) {
             parsehook(token, hook);
+            ++config.hooknum;
+        }
         else {
             fprintf(stderr, "not found %s: unknown variable\n", token);
             return 1;
