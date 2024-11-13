@@ -20,3 +20,36 @@ Tman comes with 3 basic ideas
 ## ⇁  Structure
 - Customize: Adjust the util for your workflow via config file.
 - Extensible: Extend util with predefined or your own plugins.  You can get full list of Tman plugins in `tman-pgn`. 
+
+## ⇁  Dependencies
+No external dependencies, the whole program's written in C. Tho plugins might have dependencies. Take a look at plugins README.md for more info.
+
+## ⇁  Build
+Simply run the command below.
+```bash
+make
+```
+
+## ⇁  Installation
+1. Once you compiled successfully, put executable `_tman` into one of directories defined in env variable `PATH`. I put it in `~/.locil/bin` .
+2. Copy the content of tman.sh into your shell rc file. It's `~/.bashrc`, `.zshrc`, etc.
+
+```bash
+#!/usr/bin/env sh
+
+function tman()
+{
+    output="$(_tman "$@")"
+    retstatus="$?"
+    if [ "$retstatus" -eq 0 ]; then
+        cd "$output"
+    else
+        [ -n "$output" ] && echo "$output"
+    fi
+
+    # Status 0 - ok, no error, no need to explain anything.
+    # Status 1 - ok, but output is not a path, so juts output it.
+    [ "$retstatus" -eq 1 ] && return 0 || return "$retstatus"
+    return "$retstatus"
+}
+```
