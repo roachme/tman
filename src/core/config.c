@@ -56,7 +56,7 @@ int parseconf(const char *fname)
             return 1;
         }
     }
-    return 0;
+    return fclose(fp);
 }
 
 int findconfig()
