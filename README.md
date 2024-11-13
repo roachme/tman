@@ -53,3 +53,30 @@ function tman()
     return "$retstatus"
 }
 ```
+3. Create basic Tman config file. Either in `~/.tman/tman.cfg` or `~/.config/tman/tman.cfg` and fill it with content below
+
+```
+# Necessary variables
+# Where to crease base for your future tasks
+TMANBASE = /home/user/tman
+# Where your plugins are installed
+TMANPGNINS = /home/user/.tman/pgnins
+
+# Set of hooks, uncomment them IF you really want them and you have defined config files for them
+#HOOKCMD = add struct create
+#HOOKCMD = add gun sync
+#HOOKCMD = sync gun sync
+#HOOKCMD = prev gun sync
+#HOOKCMD = del gun del
+#HOOKCMD = prev gun sync
+#HOOKCAT = cat time cat
+#HOOKCAT = cat gun cat
+#HOOKLIST = list tag list
+```
+
+## ⇁  Basic workflow
+1. To initalize util type in `tman init`.
+2. Now you're ready to create task boards (there're called `env` in Tman): `tman env add test`
+3. Once task board is created you can fill it out with task: `tman add test1`
+4. List all your task in current board: `tman list`
+5. Show the content of task: `tman cat test1`
