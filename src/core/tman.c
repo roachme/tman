@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 {
     char *cmd = argc > 1 ? argv[1] : "list";
 
-    if (parseconf("/home/roach/.config/tman/tman.cfg"))
+    if (config_init())
         return elog(1, "failed to parse system config file\n");
 
     /* init util for a command. Not all of 'em need initialization */

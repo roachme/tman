@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "common.h"
+#include "osdep.h"
 #include "config.h"
 
 struct config config;
@@ -68,10 +69,24 @@ int parseconf(const char *fname)
     return fclose(fp);
 }
 
-int findconfig()
+int config_init(void)
 {
-    char homedir[BUFSIZ];
-    sprintf(homedir, "%s", getenv("HOME"));
-    char *configs[] = {};
-    return 0;
+    char *fconfig = NULL;
+    char *homedir = getenv("HOME");
+    char configs[NUMCONFIG][MAXCONFIG] = {0};
+
+    sprintf(configs[0], "%s/.%s/%s.cfg", homedir, PROGRAM, PROGRAM);
+    sprintf(configs[1], "%s/.config/%s/%s.cfg", homedir, PROGRAM, PROGRAM);
+
+    for (int i = 0; i < NUMCONFIG; ++i) {
+        if (FCHK(configs[i]) == 0) {
+            fconfig = configs[i];
+            break;
+        }
+    }
+
+    if (fconfig == NULL)
+        return elog(1, "could not find system config file");
+
+    return parseconf(fconfig);
 }
