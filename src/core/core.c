@@ -48,6 +48,7 @@ int core_init(char *cmd)
         || strncmp(cmd, "ver", CMDSIZ) == 0)
         return 0;
 
+    // TODO: Find a better way to check that util's inited.
     if (FCHK(tmanfs.finit))
         return elog(1, "not inited");
     return state_init();
@@ -344,7 +345,7 @@ int core_env_prev()
 
 int core_env_use(char *env)
 {
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "env name required");
     else if (!_envext(env))
         return elog(1, "%s: env does not exist", env);
