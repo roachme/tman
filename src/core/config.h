@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define NUMCONFIG       2
+#define MAXCONFIG       256
 #define CONF_MAXHOOK    20
 #define CONF_MAXBASE    256
 #define CONF_MAXPGNINS  256
@@ -23,6 +25,6 @@ struct config {
     struct hook hooks[CONF_MAXHOOK];
 };
 
-int parseconf(const char *fname);
+int config_init(void);
 
 #endif
