@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "tman.h"
 #include "unit.h"
@@ -107,6 +108,12 @@ static struct bunit unit;
 int genunit(char *env, char *id)
 {
     int i = 0;
+    char buff[BUFSIZ];
+    time_t rawtime = time(NULL);
+    struct tm *timeinfo = localtime(&rawtime);
+
+    // Get current time according to format
+    strftime(buff, BUFSIZ, "%Y%m%d", timeinfo);
 
     strcpy(unit.pair[i].key, "id");
     strcpy(unit.pair[i].val, id);
@@ -121,7 +128,7 @@ int genunit(char *env, char *id)
 
     ++i;
     strcpy(unit.pair[i].key, "date");
-    strcpy(unit.pair[i].val, "23022024");
+    strcpy(unit.pair[i].val, buff);
 
     ++i;
     strcpy(unit.pair[i].key, "desc");
