@@ -2,7 +2,6 @@
 ##### Terminal task manager
 
 
-## ⇁  Builtin commands
 
 ## ⇁  Problems
 During my work I encounter many subtaks I gotta do on the daily basis.
@@ -72,6 +71,32 @@ TMANPGNINS = /home/user/.tman/pgnins
 #HOOKCAT = cat time cat
 #HOOKCAT = cat gun cat
 #HOOKLIST = list tag list
+```
+
+## ⇁  Tman builtin commands
+```
+System:
+  cfg    - manipulate system configuration
+  init   - init directory structure
+  pgm    - plugin manager
+
+Basic:
+  add    - add a new task
+  del    - delete a task
+  prev   - switch to previous task
+  set    - set task unit values
+  sync   - synchronize task
+  use    - switch to specific task
+
+Misc:
+  env    - manipulate environments
+  move   - move task to another environment
+
+Info:
+  cat    - cat task info
+  help   - show this help message and exit
+  list   - list environment task
+  ver    - show version and exit
 ```
 
 ## ⇁  Basic workflow
