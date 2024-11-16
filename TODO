@@ -1,3 +1,5 @@
 1. Write config file parser and define config itself.
 2. Find a good way to invoke hooks
 3. Find good structures for commands like list and cat.
+4. Use dynamic memory allocation so there'd be no limit on number of tasks in enviroment.
+5. Add a support for a user to add custom task columns.
