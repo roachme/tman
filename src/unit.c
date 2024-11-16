@@ -11,7 +11,15 @@
 #include "unit.h"
 #include "common.h"
 
-static char *keys[] = { "id", "prio", "type", "date", "desc" };
+/* List of builtin task units */
+static char *keys[] = {
+    "id",       /* task ID */
+    "col",      /* task column: under development: should not be outputed directly */
+    "prio",     /* task priority */
+    "type",     /* task type: bugfix, hotfix, feature */
+    "date",     /* task date of creation */
+    "desc",     /* task description */
+};
 static int keynum = sizeof(keys) / sizeof(keys[0]);
 
 /*
@@ -25,9 +33,7 @@ static int keynum = sizeof(keys) / sizeof(keys[0]);
 */
 int _chkid(char *id)
 {
-    while (isspace(*id++)) /* skip white space */
-        ;
-    if (!isalnum(*++id))
+    if (!isalnum(*id++))
         return 0;
     for (; *id; ++id)
         if (!(isalnum(*id) || *id == '_' || *id == '-'))
@@ -37,7 +43,12 @@ int _chkid(char *id)
 
 int _chkenv(char *env)
 {
-    return _chkid(env);
+    if (!isalnum(*env++))
+        return 0;
+    for (; *env; ++env)
+        if (!(isalnum(*env) || *env == '_' || *env == '-'))
+            return 0;
+    return isalnum(*--env);
 }
 
 static int _chkprio(char *prio)
@@ -93,15 +104,6 @@ static int check(char *key, char *val)
     elog(1, "not found '%s': no such builtin key", key);
     return 0;
 }
-
-
-/*
-id      : taskID
-prio    : lowest|low|middle|high|highest
-type    : bugfix|feature|hotfix|etc..
-date    : date of creation
-desc    : task description
-*/
 
 static struct bunit unit;
 
@@ -201,9 +203,13 @@ struct bunit *unit_get(struct bunit *u, char *env, char *id)
         return NULL;
     }
 
-    if (!u) {
+    if (u) {
+        // TODO: Add task ID into units.
+    }
+    else {
         elog(1, "unit_get: bunit is NULL");
     }
+
     return u;
 }
 
