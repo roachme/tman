@@ -3,11 +3,11 @@
 
 #include "unit.h"
 #include "common.h"
-#include "../bin/add.h"
-#include "../bin/del.h"
-#include "../bin/use.h"
+#include "bin/add.h"
+#include "bin/del.h"
+#include "bin/use.h"
 
-#include "../bin/env.h"
+#include "bin/env.h"
 
 #define DESCSIZ         80
 #define PGNOUTSCSIZ     80

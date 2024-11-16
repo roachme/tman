@@ -1,6 +1,6 @@
 #include "prev.h"
-#include "../core/common.h"
-#include "../core/core.h"
+#include "../common.h"
+#include "../core.h"
 
 int tman_prev(int argc, char **argv)
 {

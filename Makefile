@@ -1,6 +1,6 @@
 PROGRAM=_tman
 CC=gcc
-SRCS=$(wildcard src/core/*.c src/bin/*.c)
+SRCS=$(wildcard src/*.c src/bin/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
 CFLAGS=-I src
 

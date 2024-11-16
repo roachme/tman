@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../core/core.h"
+#include "../core.h"
 
 static int compare(const void *aa, const void *bb)
 {
