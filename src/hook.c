@@ -12,7 +12,7 @@
 #include "config.h"
 
 
-char fullcmd[HOOKSIZ];
+static char fullcmd[HOOKSIZ];
 
 int isplugin(const char *pgn)
 {
@@ -81,7 +81,6 @@ int hookact(char *cmd, char *env, char *id)
 
 struct punit *hookcat(struct punit *unit, char *env, char *id)
 {
-    char *hookcmd;
     char line[BUFSIZ] = {0};
     int pidx = 0; // cuz a plugin can output more than one lines
 
@@ -90,10 +89,9 @@ struct punit *hookcat(struct punit *unit, char *env, char *id)
         if (strcmp(hook->cmd, "cat") != 0)
             continue;
 
-        hookcmd = cmdgen(hook, env, id);
-        FILE *pipe = popen(fullcmd, "r");
+        FILE *pipe = popen(cmdgen(hook, env, id), "r");
         if (!pipe) {
-            elog(1, "hookcat: failed: '%s'", hookcmd);
+            elog(1, "hookcat: failed: '%s'", fullcmd);
             return NULL;
         }
         for ( ; fgets(line, BUFSIZ, pipe); ++pidx) {
@@ -109,17 +107,15 @@ char *hookls(char *pgnout, char *env, char *id)
 {
     char *prefix = "";
     char line[BUFSIZ] = {0};
-    char *hookcmd;
 
     for (int i = 0; i < config.hooknum; ++i) {
         struct hook *hook = &config.hooks[i];
         if (strcmp(hook->cmd, "list") != 0)
             continue;
 
-        hookcmd = cmdgen(hook, env, id);
-        FILE *pipe = popen(hookcmd, "r");
+        FILE *pipe = popen(cmdgen(hook, env, id), "r");
         if (!pipe) {
-            elog(1, "hookls: failed: '%s'", hookcmd);
+            elog(1, "hookls: failed: '%s'", fullcmd);
             return NULL;
         }
 
