@@ -21,6 +21,9 @@ chk:
 	clear
 	cppcheck --std=c89 --enable=all --language=c src/bin/*.c src/core/*.c src/pgn/*.c
 
+lnum:
+	find src -name '*.c' | grep -v bin |  xargs wc -l
+
 #build:
 #	#gcc -g -Wall src/*.h src/*.c -o tman
 #	gcc -g  src/*.h src/*.c -o _tman
