@@ -5,22 +5,22 @@
 #include "../common.h"
 
 builtin_t pgmcmds[] = {
-    { .name = "chk",  .func = &_pgn_chk  },
-    { .name = "list", .func = &_pgn_list },
+    { .name = "chk",  .func = &_pgm_chk  },
+    { .name = "list", .func = &_pgm_list },
 };
 
 int pgmcmd_size = sizeof(pgmcmds) / sizeof(pgmcmds[0]);
 
-int _pgn_chk(int argc, char **argv)
+int _pgm_chk(int argc, char **argv)
 {
     printf("check plugins\n");
-    return 0;
+    return 1;
 }
 
-int _pgn_list(int argc, char **argv)
+int _pgm_list(int argc, char **argv)
 {
     printf("list installed plugins\n");
-    return 0;
+    return 1;
 }
 
 int tman_pgm(int argc, char **argv)
