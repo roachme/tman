@@ -2,8 +2,8 @@
 #include <unistd.h>
 
 #include "init.h"
-#include "../core/osdep.h"
-#include "../core/common.h"
+#include "../osdep.h"
+#include "../common.h"
 
 int tman_init(int argc, char **argv)
 {

@@ -1,6 +1,6 @@
 #include "move.h"
-#include "../core/core.h"
-#include "../core/common.h"
+#include "../core.h"
+#include "../common.h"
 
 
 int tman_move(int argc, char **argv)

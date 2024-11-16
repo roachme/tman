@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "../core/core.h"
-#include "../core/common.h"
+#include "../core.h"
+#include "../common.h"
 
 int tman_set(int argc, char **argv)
 {

@@ -1,8 +1,8 @@
 #include <string.h>
 
 #include "pgm.h"
-#include "../core/tman.h"
-#include "../core/common.h"
+#include "../tman.h"
+#include "../common.h"
 
 builtin_t pgmcmds[] = {
     { .name = "chk",  .func = &_pgn_chk  },

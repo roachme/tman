@@ -1,6 +1,6 @@
 #include "use.h"
-#include "../core/core.h"
-#include "../core/common.h"
+#include "../core.h"
+#include "../common.h"
 
 int tman_use_usage(void)
 {

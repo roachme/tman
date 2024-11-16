@@ -5,10 +5,10 @@
 #include <dirent.h>
 
 #include "env.h"
-#include "../core/tman.h"
-#include "../core/core.h"
-#include "../core/state.h"
-#include "../core/common.h"
+#include "../tman.h"
+#include "../core.h"
+#include "../state.h"
+#include "../common.h"
 
 builtin_t envcmds[] = {
     { .name = "add",  .func = &_env_add  },

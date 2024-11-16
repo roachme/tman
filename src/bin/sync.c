@@ -1,5 +1,5 @@
-#include "../core/core.h"
-#include "../core/common.h"
+#include "../core.h"
+#include "../common.h"
 
 int tman_sync(int argc, char **argv)
 {
