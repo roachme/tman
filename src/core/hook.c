@@ -14,7 +14,7 @@
 
 char fullcmd[HOOKSIZ];
 
-int isplugin(char *pgn)
+int isplugin(const char *pgn)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s/%s", tmanfs.pgnins, pgn, pgn);

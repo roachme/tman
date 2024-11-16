@@ -41,7 +41,7 @@ int core_currdir()
     return 0;
 }
 
-int core_init(char *cmd)
+int core_init(const char *cmd)
 {
     if (strncmp(cmd, "init", CMDSIZ) == 0
         || strncmp(cmd, "help", CMDSIZ) == 0
@@ -221,7 +221,8 @@ int core_id_move(char *id, char *dst, char *src)
 struct list *core_id_list(struct list *list, char *env)
 {
     char pathname[PATHSIZ];
-    env = env ? env : state_getcenv();
+    char *cenv = state_getcenv();
+    env = env ? env : cenv;
     sprintf(pathname, "%s/%s", tmanfs.task, env);
     DIR *ids = opendir(pathname);
     struct dirent *ent;
@@ -259,7 +260,7 @@ struct list *core_id_list(struct list *list, char *env)
 
         // FIXME: if current and previous environments have the same task ID
         //        then task id might be marked as current/previous mistakenly.
-        if (strcmp(env, state_getcenv()) == 0) {
+        if (strcmp(env, cenv) == 0) {
             if (strcmp(list->ilist[i].id,      state_getcid()) == 0) {
                 list->ilist[i].col.mark = '*';
                 list->ilist[i].col.level = 0;
@@ -320,12 +321,15 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
     return units;
 }
 
-int core_env_add(char *env)
+int core_env_add(char *env, struct tman_env_add_opt *opt)
 {
     if (env[0] == '\0')
         return elog(1, "env name required");
-    else if (_envext(env))
-        return elog(1, "%s: env already exists", env);
+    else if (_envext(env)) {
+        if (opt->force == 0)
+            elog(1, "%s: env already exists", env);
+        return TMAN_ECORE;
+    }
     else if (!_chkenv(env))
         return elog(1, "%s: illegal task env name", env);
     else if (emkdir(tmanfs.task, env))

@@ -12,6 +12,7 @@
 
 builtin_t envcmds[] = {
     { .name = "add",  .func = &_env_add  },
+    { .name = "cat",  .func = &_env_cat  }, // under consideration
     { .name = "del",  .func = &_env_del  },
     { .name = "list", .func = &_env_list },
     { .name = "prev", .func = &_env_prev },
@@ -21,30 +22,37 @@ builtin_t envcmds[] = {
 
 int envcmd_size = sizeof(envcmds) / sizeof(envcmds[0]);
 
-
 int _env_add(int argc, char **argv)
 {
     char c;
     int o_strict = 0;
-    int retcode;
+    int status;
+    struct tman_env_add_opt opt;
 
-    while ((c = getopt(argc, argv, "s")) != -1) {
+    while ((c = getopt(argc, argv, ":f")) != -1) {
         switch (c) {
-            case 'o':
-                o_strict = 1; break ;
+            case 'f':
+                opt.force = 1; break ;
+            case ':':
+                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
         }
     }
 
     if (optind == argc)
-        return elog(1, "%s: task env required\n", PROGRAM);
+        return elog(1, "task env required");
 
     for (int i = optind; i < argc; ++i) {
-        char *env = argv[i];
-        retcode = core_env_add(env);
-        if (o_strict && retcode != 0)
-            break;
+        status = core_env_add(argv[i], &opt);
     }
-    return retcode == 0 ? core_currdir() : 1;
+    return status == 0 ? core_currdir() : 1;
+}
+
+// roach: maybe it'll be useful
+int _env_cat(int argc, char **argv)
+{
+    return 0;
 }
 
 int _env_del(int argc, char **argv)
@@ -97,6 +105,7 @@ int _env_use(int argc, char **argv)
         return 1;
     return core_currdir();
 }
+
 int tman_env(int argc, char **argv)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";

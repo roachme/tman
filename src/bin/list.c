@@ -15,8 +15,10 @@ static int pretty_list(char *env)
     struct list list;
 
     memset(&list, 0, sizeof(list));
-    if (!core_id_list(&list, env))
+    if (!core_id_list(&list, env)) {
+        // error: envname not found
         return 1;
+    }
 
     // sort list according to mark level
     // code goes here..
