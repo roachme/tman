@@ -81,7 +81,7 @@ int tman_ver(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-    char *cmd = argc > 1 ? argv[1] : "list";
+    const char *cmd = argc > 1 ? argv[1] : "list";
 
     if (config_init())
         return elog(1, "failed to parse system config file\n");

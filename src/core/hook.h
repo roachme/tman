@@ -14,7 +14,7 @@ struct hookcmd {
 };
 
 
-int isplugin(char *pgn);
+int isplugin(const char *pgn);
 int plugin(int argc, char **argv);
 
 int pgm(int argc, char **argv);
