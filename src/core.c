@@ -25,14 +25,14 @@ static int _envext(char *env)
 {
     char pathname[PATHSIZ];
     sprintf(pathname, "%s/%s", tmanfs.task, env);
-    return access(pathname, F_OK) == 0;
+    return !DCHK(pathname);
 }
 
 static int _idext(char *env, char *id)
 {
     char pathname[PATHSIZ];
     sprintf(pathname, "%s/%s/%s", tmanfs.task, env, id);
-    return access(pathname, F_OK) == 0;
+    return !DCHK(pathname);
 }
 
 int core_currdir()
@@ -202,7 +202,7 @@ int core_id_move(char *id, char *dst, char *src)
         return elog(1, "no such source env");
     else if (!_idext(src, id))
         return elog(1, "cannot access '%s': no such task id", id);
-    else if (!DCHK(dstid))
+    else if (_idext(dst, id))
         return elog(1, "cannot move '%s': task id exists in env '%s'", id, dst);
 
     if (imove(tmanfs.task, id, dst, src))
