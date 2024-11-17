@@ -3,6 +3,14 @@
 
 #include "../core.h"
 
+static int tman_list_usage(void)
+{
+    const char *cmd = "help";
+    printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
+    printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
+    return TMAN_NOPATH;
+}
+
 static int compare(const void *aa, const void *bb)
 {
     struct ilist *a = (struct ilist*)aa;
@@ -35,20 +43,30 @@ static int pretty_list(char *env)
 int tman_list(int argc, char **argv)
 {
     char c;
-    int retcode;
+    int help = 0;
+    int status;
 
-    while ((c = getopt(argc, argv, "a:")) != -1) {
+    while ((c = getopt(argc, argv, ":h")) != -1) {
         switch (c) {
             case 'a':
                 break ;;
+            case 'h':
+                help = 1; break;
+            case ':':
+                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
         }
     }
 
+    if (help == 1)
+        return tman_list_usage();
+
     for (int i = optind; i < argc; ++i) {
         char *env = argv[i];
-        retcode = pretty_list(env);
+        status = pretty_list(env);
     }
 
-    /* if no arguments passed list current env (if any) */
-    return optind < argc ? retcode : pretty_list(NULL);
+    /* if no arguments passed then list current env */
+    return optind < argc ? status : pretty_list(NULL);
 }

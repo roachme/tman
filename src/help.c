@@ -31,8 +31,9 @@ struct help help[] = {
     {
         .tag = TAGBASIC,
         .name  = "add",
-        .synop = PROGRAM " add ID... [ENV]",
-        .sdesc = "add a new task",
+        .synop = "Usage: " PROGRAM " add [OPTION]... ID..\n"
+                 "Try '" PROGRAM " help add' for more info.",
+        .sdesc = "Add a new task into environment",
         .desc  = "add description"
                  " and these too" ,
     },
