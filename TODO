@@ -1,6 +1,18 @@
+Priorities:
+    high - bugfix, hotfix and feature tasks.
+    mid  - constant stuff like make it faster, smaller, etc.
+    low  - when you get time
+
 1. Write config file parser and define config itself.
 2. Find a good way to invoke hooks
 3. Find good structures for commands like list and cat.
 4. Use dynamic memory allocation so there'd be no limit on number of tasks in enviroment.
 5. Add a support for a user to add custom task columns.
 6. Add a good manual system.
+
+
+Prio: low
+1. Add command autocomplitions
+
+
+7. Fucking OPTIMIZED core commands. The latency should be <= 0.01 with 100 tasks
