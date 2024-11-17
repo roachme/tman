@@ -57,7 +57,8 @@ int core_init(const char *cmd)
 int core_id_add(char *id, struct tman_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
-    opt->env = opt->env != NULL ? opt->env : state_getcenv();
+    char *cenv = state_getcenv();
+    opt->env = opt->env != NULL ? opt->env : cenv;
 
     if (opt->env[0] == '\0')
         return elog(1, "no current environment");
@@ -77,7 +78,9 @@ int core_id_add(char *id, struct tman_add_opt *opt)
         return elog(1, "%s: could not create task unit", id);
     else if (hookact("add", opt->env, id))
         return elog(1, "could not execute hook");
-    return state_id_add(id);
+    else if (strcmp(opt->env, cenv) == 0)
+        return state_id_add(id);
+    return TMAN_OK;
 }
 
 int core_id_del(char *id, struct tman_del_opt *opt)
