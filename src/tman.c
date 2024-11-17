@@ -32,6 +32,7 @@ builtin_t builtins[] = {
     /* misc commands */
     { .name = "env",  .func = &tman_env  },
     { .name = "pgm",  .func = &tman_pgm  },
+    // maybe make a move command a env subcommand?
     { .name = "move", .func = &tman_move },
 
     /* info commands */
