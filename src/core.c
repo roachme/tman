@@ -85,6 +85,7 @@ int core_id_add(char *id, struct tman_add_opt *opt)
 
 int core_id_del(char *id, struct tman_del_opt *opt)
 {
+    // FIXME: causes error when delete current task in previous env
     char *cid = state_getcid();
     char *pid = state_getpid();
     id  = id != NULL ? id : cid;
