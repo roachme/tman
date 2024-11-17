@@ -3,9 +3,10 @@
 
 #include "add.h"
 #include "../core.h"
+#include "../help.h"
 #include "../common.h"
 
-int tman_add_usage(void)
+static int tman_add_usage(void)
 {
     const char *cmd = "add";
     printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
@@ -35,7 +36,7 @@ int tman_add(int argc, char **argv)
     }
 
     if (opt.help == 1)
-        return tman_add_usage();
+        return help_lookup("add");
     else if (optind == argc)
         return elog(TMAN_ADD_IDREQ, "task id required");
 

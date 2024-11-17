@@ -204,7 +204,8 @@ struct bunit *unit_get(struct bunit *u, char *env, char *id)
     }
 
     if (u) {
-        // TODO: Add task ID into units.
+        // TODO: Add task ID into units cuz it won't be there
+        // in future releases.
     }
     else {
         elog(1, "unit_get: bunit is NULL");

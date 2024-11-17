@@ -18,7 +18,6 @@ struct tman_add_opt {
     int help;       /* Show command usage */
 };
 
-int tman_add_usage(void);
 int tman_add(int argc, char **argv);
 
 #endif

@@ -45,6 +45,7 @@ int builtin_size = sizeof(builtins) / sizeof(builtins[0]);
 
 int tman_initfs()
 {
+    // TODO: Add a varible for task db as well.
     sprintf(tmanfs.base,   "%s",    config.base);
     sprintf(tmanfs.db,     "%s/%s", tmanfs.base, ".tman");
     sprintf(tmanfs.finit,  "%s/%s", tmanfs.db,   "inited");

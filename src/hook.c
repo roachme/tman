@@ -24,6 +24,7 @@ int isplugin(const char *pgn)
 /*
     pgn cmd [OPTION].. ID ENV
 */
+// TODO: Let tman core pass plugin options to plugins
 int plugin(int argc, char **argv)
 {
     char c;
@@ -33,9 +34,6 @@ int plugin(int argc, char **argv)
     char *subcmd = argc > 2 ? argv[2] : "";
     char *id = NULL, *env = NULL;
     sprintf(path, "%s/%s/%s", tmanfs.pgnins, name, name);
-
-    if (access(path, F_OK))
-        return elog(1, "plugin not found -> %s", path);
 
     while ((c = getopt(argc, argv, ":e:")) != -1) {
         switch (c) {

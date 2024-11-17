@@ -3,3 +3,4 @@
 3. Find good structures for commands like list and cat.
 4. Use dynamic memory allocation so there'd be no limit on number of tasks in enviroment.
 5. Add a support for a user to add custom task columns.
+6. Add a good manual system.
