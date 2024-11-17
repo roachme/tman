@@ -183,8 +183,11 @@ int core_id_use(char *id, struct tman_use_opt *opt)
         return elog(1, "task id required");
     else if (!_idext(opt->env, id))
         return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
-    else if (opt->env != state_getcenv())
+    else if (opt->env != state_getcenv()) {
         fprintf(stderr, "trynna switch to task in another env\n");
+        fprintf(stderr, "under development\n");
+        return 1;
+    }
 
     // TODO: it can't switch to task in non-current env.
     // Cuz it gotta switch env first.
