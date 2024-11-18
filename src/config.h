@@ -1,22 +1,18 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "hook.h"
+#include "unit.h"
+
 #define NUMCONFIG       2
 #define MAXCONFIG       256
-#define CONF_MAXHOOK    20
+
+// FIXME: add an expression max_hookact + max_hookcat + max_hookls
+#define CONF_MAXHOOK    10
 #define CONF_MAXBASE    256
 #define CONF_MAXPGNINS  256
 
 extern struct config config;
-
-struct hook {
-    char hook[10];
-    char cmd[10];
-    char cmdopt[10];
-    char pgname[10];
-    char pgncmd[10];
-    char pgnopt[10];
-};
 
 struct config {
     int hooknum;

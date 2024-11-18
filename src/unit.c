@@ -11,45 +11,18 @@
 #include "unit.h"
 #include "common.h"
 
+static struct bunit unit;
+
 /* List of builtin task units */
 static char *keys[] = {
     "id",       /* task ID */
-    "col",      /* task column: under development: should not be outputed directly */
+    "col",      /* task column: under development */
     "prio",     /* task priority */
     "type",     /* task type: bugfix, hotfix, feature */
     "date",     /* task date of creation */
     "desc",     /* task description */
 };
 static int keynum = sizeof(keys) / sizeof(keys[0]);
-
-/*
-    @return 0 - failed
-    @return 1 - ok
-    else if (!_chkid(id)) - failed
-
-    The isalnum() and isalnum_l() functions shall return non-zero
-    if c is an alphanumeric character; otherwise, they shall
-    return 0.
-*/
-int _chkid(char *id)
-{
-    if (!isalnum(*id++))
-        return 0;
-    for (; *id; ++id)
-        if (!(isalnum(*id) || *id == '_' || *id == '-'))
-            return 0;
-    return isalnum(*--id);
-}
-
-int _chkenv(char *env)
-{
-    if (!isalnum(*env++))
-        return 0;
-    for (; *env; ++env)
-        if (!(isalnum(*env) || *env == '_' || *env == '-'))
-            return 0;
-    return isalnum(*--env);
-}
 
 static int _chkprio(char *prio)
 {
@@ -105,12 +78,10 @@ static int check(char *key, char *val)
     return 0;
 }
 
-static struct bunit unit;
-
-int genunit(char *env, char *id)
+static int genunit(char *env, char *id)
 {
     int i = 0;
-    char buff[BUFSIZ];
+    char buff[BUFSIZ + 1];
     time_t rawtime = time(NULL);
     struct tm *timeinfo = localtime(&rawtime);
 
@@ -154,7 +125,7 @@ static int _load(char *fname, struct bunit *unt)
     }
 
     memset(&unit, 0, sizeof(struct bunit));
-    for (int i = 0; fgets(line, BUFSIZ, fp) != NULL; ++i) {
+    for (int i = 0; fgets(line, BUFSIZ, fp) != NULL && i < MAXUBIN; ++i) {
         //printf("line> %s", line);
         ++unt->size;
         unt->pair[i].isset = 1;
@@ -171,11 +142,8 @@ static int _save(char *fname)
     if (!fp)
         return elog(1, "could not open file %s\n", fname);
 
-    for (int i = 0; i < BINSIZ; ++i) {
-        unit.pair[i].isset = 1;
+    for (int i = 0; i < MAXUBIN; ++i)
         fprintf(fp, "%s : %s\n", unit.pair[i].key, unit.pair[i].val);
-    }
-
     return fclose(fp);
 }
 
@@ -237,4 +205,3 @@ int unit_set(char *env, char *id, struct bunit *bunit)
 
     return _save(fname);
 }
-
