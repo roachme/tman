@@ -4,8 +4,8 @@ SRCS=$(wildcard src/*.c src/bin/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
 CFLAGS=-I src
 
+all: $(PROGRAM)
 .PHONY: clean $(PROGRAM)
-
 
 
 %.o: %.c $(DEPS)
@@ -19,7 +19,10 @@ clean:
 
 chk:
 	clear
-	cppcheck --std=c89 --enable=all --language=c src/bin/*.c src/core/*.c src/pgn/*.c
+	cppcheck --std=c89 --enable=all --language=c src/bin/*.c src/*.c
+
+valgrind:
+	valgrind  --track-origins=yes --leak-check=full --show-leak-kinds=all ./_tman
 
 lnum:
 	find src -name '*.c' | grep -v bin |  xargs wc -l
