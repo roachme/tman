@@ -1,46 +1,33 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-#define BINSIZ      6
-#define PGNSIZ      10
-#define HOOKSIZ     1000
-
-#define USIZE 80
+#define MAXUBIN     6   /* number of builtin unit values */
+#define MAXUPGN     10  /* number of plugin unit values */
+#define UKEYSIZ     10  /* max size of unit key */
+#define UVALSIZ     80  /* max size of unit value */
 
 struct pair {
     int isset;
-    char key[USIZE];
-    char val[USIZE];
+    char key[UKEYSIZ + 1];
+    char val[UVALSIZ + 1];
 };
 
 struct bunit {
     int size;
-    struct pair pair[BINSIZ];
+    struct pair pair[MAXUBIN];
 };
 
 struct punit {
     int size;
-    struct pair pair[PGNSIZ];
+    struct pair pair[MAXUPGN];
 };
 
+/* Keep builtin and plugin units separately, this way it's
+ * easier to save 'em into the separate unit files.  */
 struct units {
-    struct bunit builtn;
-    struct punit plugin;
+    struct bunit bin;
+    struct punit pgn;
 };
-
-
-/*
-struct unit {
-    char id[20];
-    char prio[20];
-    char type[20];
-    char date[100];
-    char desc[100];
-};
-*/
-
-int _chkid(char *id);
-int _chkenv(char *env);
 
 int unit_add(char *env, char *id);
 int unit_del(char *env, char *id);

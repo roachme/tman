@@ -317,11 +317,11 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
         return NULL;
     }
 
-    if (unit_get(&units->builtn, env, id) == NULL) {
+    if (unit_get(&units->bin, env, id) == NULL) {
         elog(1, "core_id_cat: failed to get builtn units");
         return NULL;
     }
-    if (hookcat(&units->plugin, env, id) == NULL) {
+    if (hookcat(&units->pgn, env, id) == NULL) {
         elog(1, "core_id_cat: failed to get plugin units");
         return NULL;
     }

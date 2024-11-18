@@ -3,8 +3,10 @@
 
 #include "unit.h"
 
+#define HOOKSIZ     1000
+
 // "HOOKCMD = add struct create",
-struct hookcmd {
+struct hook {
     char hook[10];
     char cmd[10];
     char cmdopt[10];

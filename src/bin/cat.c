@@ -20,11 +20,11 @@ static int pretty_cat(char *env, char *id, char *key)
         return 1;
     }
 
-    for (int i = 0; i < units.builtn.size; ++i) {
-        printf("%-7s : %s\n", units.builtn.pair[i].key, units.builtn.pair[i].val);
+    for (int i = 0; i < units.bin.size; ++i) {
+        printf("%-7s : %s\n", units.bin.pair[i].key, units.bin.pair[i].val);
     }
-    for (int i = 0; i < units.plugin.size; ++i) {
-        printf("%-7s : %s\n", units.plugin.pair[i].key, units.plugin.pair[i].val);
+    for (int i = 0; i < units.pgn.size; ++i) {
+        printf("%-7s : %s\n", units.pgn.pair[i].key, units.pgn.pair[i].val);
     }
     return TMAN_NOPATH;
 }
