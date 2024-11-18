@@ -1,11 +1,9 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-#define UNITSIZ 5
-#define HOOKSIZ 1000
-
-#define BUILTINSIZ  5
-#define PLUGINSIZ   10
+#define BINSIZ      6
+#define PGNSIZ      10
+#define HOOKSIZ     1000
 
 #define USIZE 80
 
@@ -15,19 +13,14 @@ struct pair {
     char val[USIZE];
 };
 
-struct unit {
-    int size;
-    struct pair pair[UNITSIZ];
-};
-
 struct bunit {
     int size;
-    struct pair pair[BUILTINSIZ];
+    struct pair pair[BINSIZ];
 };
 
 struct punit {
     int size;
-    struct pair pair[PLUGINSIZ];
+    struct pair pair[PGNSIZ];
 };
 
 struct units {
@@ -52,6 +45,6 @@ int _chkenv(char *env);
 int unit_add(char *env, char *id);
 int unit_del(char *env, char *id);
 struct bunit *unit_get(struct bunit *u, char *env, char *id);
-int unit_set(char *env, char *id, struct unit *unit);
+int unit_set(char *env, char *id, struct bunit *bunit);
 
 #endif

@@ -153,7 +153,7 @@ static int _load(char *fname, struct bunit *unt)
         return 1;
     }
 
-    memset(&unit, 0, sizeof(struct unit));
+    memset(&unit, 0, sizeof(struct bunit));
     for (int i = 0; fgets(line, BUFSIZ, fp) != NULL; ++i) {
         //printf("line> %s", line);
         ++unt->size;
@@ -171,7 +171,7 @@ static int _save(char *fname)
     if (!fp)
         return elog(1, "could not open file %s\n", fname);
 
-    for (int i = 0; i < UNITSIZ; ++i) {
+    for (int i = 0; i < BINSIZ; ++i) {
         unit.pair[i].isset = 1;
         fprintf(fp, "%s : %s\n", unit.pair[i].key, unit.pair[i].val);
     }
@@ -218,7 +218,7 @@ struct bunit *unit_get(struct bunit *u, char *env, char *id)
    Unit changes are atomic, i.e. if a single option fails check
    none of 'em will set.
 */
-int unit_set(char *env, char *id, struct unit *_unit)
+int unit_set(char *env, char *id, struct bunit *bunit)
 {
     char fname[PATHSIZ + 1];
     sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
@@ -228,10 +228,10 @@ int unit_set(char *env, char *id, struct unit *_unit)
 
     for (int i = 0; i < unit.size; ++i) {
         // TODO: why is here yet another if statetment??
-        if (_unit->pair[i].isset && strcmp(_unit->pair[i].key, unit.pair[i].key) == 0) {
-            if (!check(_unit->pair[i].key, _unit->pair[i].val))
+        if (bunit->pair[i].isset && strcmp(bunit->pair[i].key, unit.pair[i].key) == 0) {
+            if (!check(bunit->pair[i].key, bunit->pair[i].val))
                 return 1;
-            strcpy(unit.pair[i].val, _unit->pair[i].val);
+            strcpy(unit.pair[i].val, bunit->pair[i].val);
         }
     }
 
