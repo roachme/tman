@@ -3,6 +3,11 @@ Priorities:
     mid  - constant stuff like make it faster, smaller, etc.
     low  - when you get time
 
+Ideas:
+    1. Replace cat & ls hooks with reading from file. Gonna highly optimize
+       command exection.
+
+Prio: high
 1. Write config file parser and define config itself.
 2. Find a good way to invoke hooks
 3. Find good structures for commands like list and cat.
