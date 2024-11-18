@@ -15,3 +15,17 @@ function tman()
     [ "$retstatus" -eq 1 ] && return 0 || return "$retstatus"
     return "$retstatus"
 }
+
+# roach: Under development
+_tman_comp()
+{
+    if [ "$3" == "foo" ]; then
+        COMPREPLY=($(compgen -d "heh"))
+    else
+        COMPREPLY=($(compgen -W "foo bar baz" -- "$2"))
+    fi
+}
+
+#complete -F _tman_comp tman
+complete -W "cfg init pgm add del prev set sync use env move cat help list ver" tman
+
