@@ -147,7 +147,7 @@ int core_id_sync(void)
     return TMAN_OK;
 }
 
-int core_id_set(char *env, char *id, struct unit *unit)
+int core_id_set(char *env, char *id, struct bunit *unit)
 {
     id  = id != NULL ? id : state_getcid();
     env = env != NULL ? env : state_getcenv();
