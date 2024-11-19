@@ -14,7 +14,7 @@
 static struct bunit unit;
 
 /* List of builtin task units */
-static char *keys[] = {
+static char *keys[MAXUBIN] = {
     "id",       /* task ID */
     "col",      /* task column: under development */
     "prio",     /* task priority */
@@ -112,26 +112,22 @@ static int genunit(char *env, char *id)
 
 static int _load(char *fname, struct bunit *unt)
 {
+    int i;
     char line[BUFSIZ];
     FILE *fp = fopen(fname, "r");
     unt = unt ? unt : &unit;
 
+    if (!fp)
+        return elog(1, "could not open file %s", fname);
+
     // HOTFIX: prevents duplicates from happening
     memset(unt, 0, sizeof(struct bunit));
-
-    if (!fp) {
-        fprintf(stderr, "could not open file %s\n", fname);
-        return 1;
-    }
-
-    memset(&unit, 0, sizeof(struct bunit));
-    for (int i = 0; fgets(line, BUFSIZ, fp) != NULL && i < MAXUBIN; ++i) {
-        //printf("line> %s", line);
-        ++unt->size;
+    for (i = 0; i < MAXUBIN && fgets(line, BUFSIZ, fp) != NULL; ++i) {
         unt->pair[i].isset = 1;
         sscanf(line, "%s : %[^\n]s", unt->pair[i].key, unt->pair[i].val);
     }
 
+    unt->size = i;
     return fclose(fp);
 }
 
