@@ -19,6 +19,7 @@ struct tmanstruct tmanfs;
 builtin_t builtins[] = {
     /* system commands */
     { .name = "cfg",  .func = &tman_cfg  },
+    { .name = "chk",  .func = &tman_chk  },
     { .name = "init", .func = &tman_init },
 
     /* basic commands */

@@ -24,8 +24,9 @@ struct tmanstruct {
     char fstate[TMANPATHSIZE];      /* file to store tman task state */
 };
 
-int tman_init(int argc, char **argv);
 int tman_cfg (int argc, char **argv);
+int tman_chk (int argc, char **argv);
+int tman_init(int argc, char **argv);
 int tman_pgm (int argc, char **argv);
 
 int tman_add (int argc, char **argv);
