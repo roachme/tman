@@ -36,7 +36,7 @@ int tman_add(int argc, char **argv)
     }
 
     if (opt.help == 1)
-        return help_lookup("add");
+        return help_usage("add");
     else if (optind == argc)
         return elog(TMAN_ADD_IDREQ, "task id required");
 

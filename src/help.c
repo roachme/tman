@@ -31,17 +31,20 @@ struct help help[] = {
     {
         .tag = TAGBASIC,
         .name  = "add",
-        .synop = "Usage: " PROGRAM " add [OPTION]... ID..\n"
-                 "Try '" PROGRAM " help add' for more info.",
+        .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
         .sdesc = "Add a new task into environment",
-        .desc  = "add description"
-                 " and these too" ,
+        .desc  = "With no option `-e' add a new task to current environment.\n"
+                 "If current environment is not set throw then an error.\n\n"
+                 "  -e      specify an environment to add a task to\n"
+                 "  -f      do not output error message if task aleady exists\n"
+                 "  -h      show this help and exis"
     },
     {
         .tag = TAGBASIC,
         .name  = "del",
-        .synop = PROGRAM " del ID... [ENV]",
-        .sdesc = "delete a task",
+        .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
+                 "Try '" PROGRAM " help del' for more info.",
+        .sdesc = "Delete the task from the environment",
         .desc  = "del description",
     },
     {
@@ -144,16 +147,30 @@ int help_list_commands(void)
     return 1;
 }
 
+int help_usage(const char *cmd)
+{
+    for (int i = 0; i < helpsize; ++i) {
+        if (strcmp(help[i].name, cmd) == 0) {
+            printf("%s\n", help[i].synop);
+            printf("%s\n", help[i].sdesc);
+            printf("Try '" PROGRAM " help %s' for more info.\n", cmd);
+            return 1;
+        }
+    }
+    return elog(1, "cannot access '%s': command not found", cmd);
+}
+
 int help_lookup(const char *cmd)
 {
     if (cmd == NULL)
         return help_list_commands();
     for (int i = 0; i < helpsize; ++i) {
         if (strcmp(help[i].name, cmd) == 0) {
-            printf("%s\n", help[i].sdesc);
             printf("%s\n", help[i].synop);
+            printf("%s\n\n", help[i].sdesc);
+            printf("%s\n", help[i].desc);
             return 1;
         }
     }
-    return elog(1, "cannot access '%s': commnd not found", cmd);
+    return elog(1, "cannot access '%s': command not found", cmd);
 }
