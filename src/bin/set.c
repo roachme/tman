@@ -18,7 +18,7 @@ Options:
     -s      set task status.
     -t      set task type. Values: [bugfix|hotfix|feature]
     */
-    while ((c = getopt(argc, argv, "d:i:p:t:")) != -1) {
+    while ((c = getopt(argc, argv, ":c:d:i:p:t:")) != -1) {
         switch (c) {
             case 'i':
                 idx = 0;
@@ -52,6 +52,18 @@ Options:
                 strcpy(bunit.pair[idx].val, optarg);
                 bunit.pair[idx].isset = 1;
                 break;
+            case 'c':
+                idx = 5;
+                ++bunit.size;
+                if (bunit.pair[idx].isset) break;
+                strcpy(bunit.pair[idx].key, "col");
+                strcpy(bunit.pair[idx].val, optarg);
+                bunit.pair[idx].isset = 1;
+                break;
+            case ':':
+                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
         }
     }
 

@@ -16,11 +16,11 @@ static struct bunit unit;
 /* List of builtin task units */
 static char *keys[MAXUBIN] = {
     "id",       /* task ID */
-    "col",      /* task column: under development */
     "prio",     /* task priority */
     "type",     /* task type: bugfix, hotfix, feature */
     "date",     /* task date of creation */
     "desc",     /* task description */
+    "col",      /* task column: under development */
 };
 static int keynum = sizeof(keys) / sizeof(keys[0]);
 
@@ -60,6 +60,20 @@ static int _chkdesc(char *desc)
     return 1;
 }
 
+static int _chkcol(char *col)
+{
+    const char *cols[] = { "curr", "prev", "blog", "revw", "done" };
+    const int ncol = sizeof(cols) / sizeof(cols[0]);
+
+    if (strcmp(col, "curr") == 0 || strcmp(col, "prev") == 0)
+        return elog(1, "curr & prev are system columns. Can't change 'em");
+
+    for (int i = 0; i < ncol; ++i)
+        if (strcmp(cols[i], col) == 0)
+            return 1;
+    return 0;
+}
+
 /*
  * return 0 - failed
  * return 1 - ok
@@ -74,6 +88,8 @@ static int check(char *key, char *val)
         return _chktype(val);
     else if (!strcmp(key, "desc"))
         return _chkdesc(val);
+    else if (!strcmp(key, "col"))
+        return _chkcol(val);
     elog(1, "not found '%s': no such builtin key", key);
     return 0;
 }
@@ -107,6 +123,10 @@ static int genunit(char *env, char *id)
     strcpy(unit.pair[i].key, "desc");
     strcpy(unit.pair[i].val, "generated description for ");
     strcat(unit.pair[i].val, id);
+
+    ++i;
+    strcpy(unit.pair[i].key, "col");
+    strcpy(unit.pair[i].val, "curr");
     return 0;
 }
 
@@ -193,8 +213,10 @@ int unit_set(char *env, char *id, struct bunit *bunit)
     for (int i = 0; i < unit.size; ++i) {
         // TODO: why is here yet another if statetment??
         if (bunit->pair[i].isset && strcmp(bunit->pair[i].key, unit.pair[i].key) == 0) {
-            if (!check(bunit->pair[i].key, bunit->pair[i].val))
+            if (!check(bunit->pair[i].key, bunit->pair[i].val)) {
+                fprintf(stderr, "unit_set: error\n");
                 return 1;
+            }
             strcpy(unit.pair[i].val, bunit->pair[i].val);
         }
     }
