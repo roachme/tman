@@ -226,5 +226,24 @@ int unit_set(char *env, char *id, struct bunit *bunit)
 
 int unit_set2(char *env, char *id, char *key, char *val)
 {
-    return 0;
+    char funit[1000];
+    sprintf(funit, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
+    FILE *fp;
+
+    if (_load(funit, NULL)) {
+        fprintf(stderr, "could not load unit file\n");
+        return 1;
+    }
+    if ((fp = fopen(funit, "w")) == NULL) {
+        fprintf(stderr, "could not open unit file\n");
+        return 1;
+    }
+
+    for (int i = 0; i < unit.size; ++i) {
+        if (strcmp(unit.pair[i].key, key) == 0)
+            strcpy(unit.pair[i].val, val);
+        //printf("i: %d %s:%s\n", i, bunit.pair[i].key, bunit.pair[i].val);
+        fprintf(fp, "%s : %s\n", unit.pair[i].key, unit.pair[i].val);
+    }
+    return fclose(fp);
 }
