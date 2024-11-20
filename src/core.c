@@ -21,6 +21,29 @@ const char *usermarks = {
     "& review 1",
 };
 
+// TODO: gotta read user defined marks from config.
+static struct column getmark(char *col)
+{
+    int i;
+    const struct column marks[] = {
+        { .mark = '*', .tag = "curr", .level = 0 },
+        { .mark = '^', .tag = "prev", .level = 1 },
+        { .mark = '+', .tag = "blog", .level = 2 },
+        // TODO: user defined columns:
+        // NOTE: to add a new one update unit.c check()
+        { .mark = '&', .tag = "revw", .level = 3 },
+        // TODO: user defined columns
+        { .mark = '-', .tag = "done", .level = 4 },
+        { .mark = '?', .tag = "ukwn", .level = 5 },
+    };
+    int nmarks = sizeof(marks) / sizeof(marks[0]);
+
+    for (i = 0; i < nmarks; ++i)
+        if (strcmp(col, marks[i].tag) == 0)
+            return marks[i];
+    return marks[--i];
+}
+
 static int _envext(char *env)
 {
     char pathname[PATHSIZ];
@@ -253,41 +276,17 @@ struct list *core_id_list(struct list *list, char *env)
     while ((ent = readdir(ids)) != NULL && i < LSIZE) {
         if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..") || ent->d_type != DT_DIR)
             continue;
+        if (unit_get(&bunit, env, ent->d_name) == NULL) {
+            fprintf(stderr, "core_id_list %s: failde to get units\n", ent->d_name);
+            continue;
+        }
+        if (!hookls(list->ilist[i].pgn, env, ent->d_name)) {
+            fprintf(stderr, "core_id_list %s: failed to get hookls output\n", ent->d_name);
+        }
 
         strcpy(list->ilist[i].id, ent->d_name);
-
-        // struct bunit *unit_get(struct bunit *u, char *env, char *id);
-        // TODO: looks disgusting
-        // FIXME: gonna fail if no description is set
-        // FIXME: gonna fail if description position changes
-        if (unit_get(&bunit, env, list->ilist[i].id) == NULL) {
-            elog(1, "core_id_list: failde to get units");
-        }
         strcpy(list->ilist[i].desc, bunit.pair[4].val);
-
-        // FIXME: if current and previous environments have the same task ID
-        //        then task id might be marked as current/previous mistakenly.
-        if (strcmp(env, cenv) == 0) {
-            if (strcmp(list->ilist[i].id,      state_getcid()) == 0) {
-                list->ilist[i].col.mark = '*';
-                list->ilist[i].col.level = 0;
-            }
-            else if (strcmp(list->ilist[i].id, state_getpid()) == 0) {
-                list->ilist[i].col.mark = '^';
-                list->ilist[i].col.level = 1;
-            }
-            else {
-                list->ilist[i].col.mark = '+';
-                list->ilist[i].col.level = 2;
-            }
-        }
-        // TODO: show previous env actual marks as well.
-        // For right now module state has no means to provide current and previous
-        // IDs of previous env.
-
-        if (!hookls(list->ilist[i].pgn, env, list->ilist[i].id)) {
-            elog(1, "failed to get hookls output");
-        }
+        list->ilist[i].col = getmark(bunit.pair[5].val);
         ++i;
     }
     list->num = i;

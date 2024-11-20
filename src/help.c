@@ -17,6 +17,12 @@ struct help help[] = {
     },
     {
         .tag = TAGSYSTEM,
+        .name  = "chk",
+        .sdesc = "check system config and task units",
+        .desc  = "cfg description"
+    },
+    {
+        .tag = TAGSYSTEM,
         .name  = "init",
         .sdesc = "init directory structure",
         .desc  = "init description"
