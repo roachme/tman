@@ -30,6 +30,7 @@ int tman_init(int argc, char **argv);
 int tman_pgm (int argc, char **argv);
 
 int tman_add (int argc, char **argv);
+int tman_col (int argc, char **argv);
 int tman_del (int argc, char **argv);
 int tman_prev(int argc, char **argv);
 int tman_set (int argc, char **argv);

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "list.h"
 #include "../core.h"
 
 static int tman_list_usage(void)
@@ -18,7 +19,7 @@ static int compare(const void *aa, const void *bb)
     return (a->col.level - b->col.level);
 }
 
-static int pretty_list(char *env)
+static int pretty_list(char *env, struct tman_list *opt)
 {
     struct list list;
 
@@ -45,6 +46,7 @@ int tman_list(int argc, char **argv)
     char c;
     int help = 0;
     int status;
+    struct tman_list opt = { .spec = 1, };
 
     /*
         -A - list all (even done tasks)
@@ -54,10 +56,16 @@ int tman_list(int argc, char **argv)
     */
     while ((c = getopt(argc, argv, ":Aac:hs")) != -1) {
         switch (c) {
+            case 'A':
+                opt.all = 1; break;
             case 'a':
-                break ;;
+                opt.almost = 1; break;
+            case 'c':
+                opt.col = optarg; break;
             case 'h':
-                help = 1; break;
+                opt.help = 1; break;
+            case 's':
+                opt.spec = 1; break;
             case ':':
                 return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
             default:
@@ -65,14 +73,16 @@ int tman_list(int argc, char **argv)
         }
     }
 
-    if (help == 1)
+    // TODO: check that option don't conflict with each other.
+
+    if (opt.help == 1)
         return tman_list_usage();
 
     for (int i = optind; i < argc; ++i) {
         char *env = argv[i];
-        status = pretty_list(env);
+        status = pretty_list(env, &opt);
     }
 
     /* if no arguments passed then list current env */
-    return optind < argc ? status : pretty_list(NULL);
+    return optind < argc ? status : pretty_list(NULL, &opt);
 }

@@ -53,7 +53,7 @@ int state_init()
     return load(tmanfs.fstate);
 }
 
-int state_id_add(char *id)
+int state_addcid(char *id)
 {
     if (state[CENV].name[0] == '\0')
         return 1;
@@ -64,7 +64,7 @@ int state_id_add(char *id)
     return save(tmanfs.fstate);
 }
 
-int state_id_del(void)
+int state_delcid(void)
 {
     if (state[CENV].name[0] == '\0')
         return 1;
@@ -73,7 +73,7 @@ int state_id_del(void)
     return save(tmanfs.fstate);
 }
 
-int state_id_pdel(void)
+int state_delpid(void)
 {
     if (state[CENV].name[0] == '\0' || state[CENV].curr[0] == '\0')
         return 1;
@@ -82,7 +82,7 @@ int state_id_pdel(void)
     return save(tmanfs.fstate);
 }
 
-int state_id_swap(void)
+int state_swapids(void)
 {
     char tmp[SSIZE + 1];
 

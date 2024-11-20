@@ -24,6 +24,7 @@ builtin_t builtins[] = {
 
     /* basic commands */
     { .name = "add",  .func = &tman_add  },
+    { .name = "col",  .func = &tman_col  },
     { .name = "del",  .func = &tman_del  },
     { .name = "prev", .func = &tman_prev },
     { .name = "set",  .func = &tman_set  },

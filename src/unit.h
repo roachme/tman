@@ -33,5 +33,6 @@ int unit_add(char *env, char *id);
 int unit_del(char *env, char *id);
 struct bunit *unit_get(struct bunit *u, char *env, char *id);
 int unit_set(char *env, char *id, struct bunit *bunit);
+int unit_set2(char *env, char *id, char *key, char *val);
 
 #endif
