@@ -12,7 +12,7 @@ struct help {
 };
 
 
-
+int help_usage(const char *cmd);
 int help_lookup(const char *cmd);
 
 int help_bincmd(const char *cmd);
