@@ -40,7 +40,7 @@ struct help help[] = {
         .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
         .sdesc = "Add a new task into environment",
         .desc  = "With no option `-e' add a new task to current environment.\n"
-                 "If current environment is not set throw then an error.\n\n"
+                 "If current environment is not set then throw an error.\n\n"
                  "  -e      specify an environment to add a task to\n"
                  "  -f      do not output error message if task aleady exists\n"
                  "  -h      show this help and exis"
