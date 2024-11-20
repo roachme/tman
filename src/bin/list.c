@@ -46,7 +46,13 @@ int tman_list(int argc, char **argv)
     int help = 0;
     int status;
 
-    while ((c = getopt(argc, argv, ":h")) != -1) {
+    /*
+        -A - list all (even done tasks)
+        -a - almost all (everything but done tasks)
+        -c - specify what column to list
+        -s - default: list only current & previous (maybe?)
+    */
+    while ((c = getopt(argc, argv, ":Aac:hs")) != -1) {
         switch (c) {
             case 'a':
                 break ;;
