@@ -62,7 +62,7 @@ static int _chkdesc(char *desc)
 
 static int _chkcol(char *col)
 {
-    const char *cols[] = { "curr", "prev", "blog", "revw", "done" };
+    const char *cols[] = { "curr", "prev", "blog", "revw", "test", "done" };
     const int ncol = sizeof(cols) / sizeof(cols[0]);
 
     if (strcmp(col, "curr") == 0 || strcmp(col, "prev") == 0)
@@ -222,4 +222,9 @@ int unit_set(char *env, char *id, struct bunit *bunit)
     }
 
     return _save(fname);
+}
+
+int unit_set2(char *env, char *id, char *key, char *val)
+{
+    return 0;
 }

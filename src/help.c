@@ -47,6 +47,14 @@ struct help help[] = {
     },
     {
         .tag = TAGBASIC,
+        .name  = "col",
+        .synop = "Usage: " PROGRAM " col [OPTION]... ID..\n"
+                 "Try '" PROGRAM " help col' for more info.",
+        .sdesc = "move task to specific column",
+        .desc  = "col description",
+    },
+    {
+        .tag = TAGBASIC,
         .name  = "del",
         .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
                  "Try '" PROGRAM " help del' for more info.",

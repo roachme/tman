@@ -21,10 +21,10 @@ char *state_getpid(void);
 char *state_getcenv(void);
 char *state_getpenv(void);
 
-int state_id_del(void);
-int state_id_swap(void);
-int state_id_pdel(void);
-int state_id_add(char *id);
+int state_swapids(void);
+int state_delpid(void);
+int state_delcid(void);
+int state_addcid(char *id);
 
 int state_env_del();
 int state_env_swap();

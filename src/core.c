@@ -32,9 +32,10 @@ static struct column getmark(char *col)
         // TODO: user defined columns:
         // NOTE: to add a new one update unit.c check()
         { .mark = '&', .tag = "revw", .level = 3 },
+        { .mark = '$', .tag = "test", .level = 4 },
         // TODO: user defined columns
-        { .mark = '-', .tag = "done", .level = 4 },
-        { .mark = '?', .tag = "ukwn", .level = 5 },
+        { .mark = '-', .tag = "done", .level = 5 },
+        { .mark = '?', .tag = "ukwn", .level = 6 },
     };
     int nmarks = sizeof(marks) / sizeof(marks[0]);
 
@@ -102,7 +103,7 @@ int core_id_add(char *id, struct tman_add_opt *opt)
     else if (hookact("add", opt->env, id))
         return elog(1, "could not execute hook");
     else if (strcmp(opt->env, cenv) == 0)
-        return state_id_add(id);
+        return state_addcid(id);
     return TMAN_OK;
 }
 
@@ -135,11 +136,11 @@ int core_id_del(char *id, struct tman_del_opt *opt)
 
     // TODO: simplify this
     if (strcmp(cid, id) == 0) {
-        if (state_id_del() != 0)
+        if (state_delcid() != 0)
             return elog(1, "could not delete current task id");
     }
     else if (strcmp(pid, id) == 0) {
-        if (state_id_pdel() != 0)
+        if (state_delpid() != 0)
             return elog(1, "could not delete previous task id");
     }
 
@@ -151,7 +152,7 @@ int core_id_prev(void)
     char *cid  = state_getcid();
     char *cenv = state_getcenv();
 
-    if (state_id_swap())
+    if (state_swapids())
         return TMAN_ECORE;
     if (hookact("prev", cenv, cid))
         return elog(TMAN_EHOOK, "could not execute hook");
@@ -214,7 +215,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
 
     // TODO: it can't switch to task in non-current env.
     // Cuz it gotta switch env first.
-    return state_id_add(id);
+    return state_addcid(id);
 }
 
 int core_id_move(char *id, char *dst, char *src)
@@ -238,9 +239,9 @@ int core_id_move(char *id, char *dst, char *src)
     if (imove(tmanfs.task, id, dst, src))
         return elog(1, "%s: could not move task to %s", id, dst);
     else if (strcmp(state_getcid(), id) == 0)
-        return state_id_del();
+        return state_delcid();
     else if (strcmp(state_getpid(), id) == 0)
-        return !state_id_swap() && !state_id_del();
+        return !state_swapids() && !state_delcid();
     return TMAN_OK;
 }
 
