@@ -20,7 +20,6 @@ static char *keys[MAXUBIN] = {
     "type",     /* task type: bugfix, hotfix, feature */
     "date",     /* task date of creation */
     "desc",     /* task description */
-    "col",      /* task column: under development */
 };
 static int keynum = sizeof(keys) / sizeof(keys[0]);
 
@@ -60,6 +59,7 @@ static int _chkdesc(char *desc)
     return 1;
 }
 
+/*
 static int _chkcol(char *col)
 {
     const char *cols[] = { "curr", "prev", "blog", "revw", "test", "done" };
@@ -73,6 +73,7 @@ static int _chkcol(char *col)
             return 1;
     return 0;
 }
+*/
 
 /*
  * return 0 - failed
@@ -88,8 +89,6 @@ static int check(char *key, char *val)
         return _chktype(val);
     else if (!strcmp(key, "desc"))
         return _chkdesc(val);
-    else if (!strcmp(key, "col"))
-        return _chkcol(val);
     elog(1, "not found '%s': no such builtin key", key);
     return 0;
 }
@@ -123,10 +122,6 @@ static int genunit(char *env, char *id)
     strcpy(unit.pair[i].key, "desc");
     strcpy(unit.pair[i].val, "generated description for ");
     strcat(unit.pair[i].val, id);
-
-    ++i;
-    strcpy(unit.pair[i].key, "col");
-    strcpy(unit.pair[i].val, "curr");
     return 0;
 }
 

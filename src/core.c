@@ -14,6 +14,7 @@
 #include "unit.h"
 #include "state.h"
 #include "common.h"
+#include "column.h"
 #include "osdep.h"
 
 const char *usermarks = {
@@ -102,8 +103,16 @@ int core_id_add(char *id, struct tman_add_opt *opt)
         return elog(1, "%s: could not create task unit", id);
     else if (hookact("add", opt->env, id))
         return elog(1, "could not execute hook");
-    else if (strcmp(opt->env, cenv) == 0)
-        return state_addcid(id);
+
+    if (column_mark(opt->env, id)) {
+        return elog(1, "column_mark: failed");
+    } else if (column_loadids(opt->env)) {
+        return elog(1, "column_loadids: failed");
+    } else if (strcmp(opt->env, cenv) == 0 && column_addcid(id)) {
+        return elog(1, "column_addcid: failed");
+    } else if (column_saveids(opt->env) != 0) {
+        return elog(1, "column_saveids: failed");
+    }
     return TMAN_OK;
 }
 
