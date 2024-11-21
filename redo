@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -e
+
+rm -rf ~/trash/tman/
+
+source tman.sh
+tman init
+tman env add test
+tman add test1
