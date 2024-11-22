@@ -1,6 +1,8 @@
 #ifndef TMAN_COLUMN_H
 #define TMAN_COLUMN_H
 
+#include "common.h"
+
 // Gotta define 4 default columns: curr, prev, blog, done
 
 #define CENV        0
@@ -73,7 +75,7 @@ int column_addcid(char *id);
 
 int column_envinit();
 char *column_getcenv();
-int column_getpenv();
+char *column_getpenv();
 int column_delcenv();
 int column_delpenv();
 int column_swapenv();
