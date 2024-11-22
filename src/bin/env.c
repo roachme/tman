@@ -7,7 +7,7 @@
 #include "env.h"
 #include "../tman.h"
 #include "../core.h"
-#include "../state.h"
+#include "../column.h"
 #include "../common.h"
 
 builtin_t envcmds[] = {
@@ -74,9 +74,9 @@ int _env_list(int argc, char **argv)
             continue;
 
         // TODO: simplify this logic
-        if (strcmp(state_getcenv(), ent->d_name) == 0)
+        if (strcmp(column_getcenv(), ent->d_name) == 0)
             mark = '*';
-        else if (strcmp(state_getpenv(), ent->d_name) == 0)
+        else if (strcmp(column_getpenv(), ent->d_name) == 0)
             mark = '^';
         else
             mark = '+';

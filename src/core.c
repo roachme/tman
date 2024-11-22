@@ -12,7 +12,6 @@
 #include "unit.h"
 #include "hook.h"
 #include "unit.h"
-#include "state.h"
 #include "common.h"
 #include "column.h"
 #include "osdep.h"
@@ -38,7 +37,8 @@ static int _idext(char *env, char *id)
 
 int core_currdir()
 {
-    printf("%s/%s/%s\n", tmanfs.task, column_getcenv(), column_getcid());
+    char *cid = column_getcid();
+    printf("%s/%s/%s\n", tmanfs.task, column_getcenv(), cid ? cid : "");
     return 0;
 }
 
@@ -54,7 +54,7 @@ int core_init(const char *cmd)
         return elog(1, "not inited");
     else if (column_init())
         return elog(1, "column_init: error: could not init");
-    return state_init();
+    return 0;
 }
 
 int core_id_add(char *id, struct tman_add_opt *opt)
@@ -157,7 +157,7 @@ int core_id_sync(void)
     char *cid  = column_getcid();
     char *cenv = column_getcenv();
 
-    if (strlen(cid) == 0)
+    if (cid == NULL)
         return elog(TMAN_ECORE, "no current task id set");
     if (hookact("sync", cenv, cid))
         return elog(TMAN_EHOOK, "could not execute hook");
@@ -166,8 +166,8 @@ int core_id_sync(void)
 
 int core_id_set(char *env, char *id, struct bunit *unit)
 {
-    id  = id != NULL ? id : state_getcid();
-    env = env != NULL ? env : state_getcenv();
+    id  = id != NULL ? id : column_getcid();
+    env = env != NULL ? env : column_getcenv();
 
     if (env[0] == '\0')
         return elog(1, "no current environment");
@@ -215,7 +215,7 @@ int core_id_move(char *id, char *dst, char *src)
 {
     char dstid[BUFSIZ] = {0};
 
-    src = src ? src : state_getcenv();
+    src = src ? src : column_getcenv();
     sprintf(dstid, "%s/%s/%s", tmanfs.task, dst, id);
 
     if (!_envext(dst))
@@ -231,10 +231,10 @@ int core_id_move(char *id, char *dst, char *src)
 
     if (imove(tmanfs.task, id, dst, src))
         return elog(1, "%s: could not move task to %s", id, dst);
-    else if (strcmp(state_getcid(), id) == 0)
-        return state_delcid();
-    else if (strcmp(state_getpid(), id) == 0)
-        return !state_swapids() && !state_delcid();
+    else if (strcmp(column_getcid(), id) == 0)
+        return column_delcid();
+    else if (strcmp(column_getpid(), id) == 0)
+        return !column_swapid() && !column_delcid();
     return TMAN_OK;
 }
 
@@ -353,7 +353,7 @@ int core_env_add(char *env, struct tman_env_add_opt *opt)
         return elog(1, "%s: illegal task env name", env);
     else if (emkdir(tmanfs.task, env))
         return elog(1, "%s: could not create env directory", env);
-    return state_env_add(env);
+    return column_addcenv(env);
 }
 
 int core_env_list()
@@ -363,7 +363,7 @@ int core_env_list()
 
 int core_env_prev()
 {
-    return state_env_swap();
+    return column_swapenv();
 }
 
 int core_env_use(char *env)
@@ -372,5 +372,5 @@ int core_env_use(char *env)
         return elog(1, "env name required");
     else if (!_envext(env))
         return elog(1, "%s: env does not exist", env);
-    return state_env_add(env);
+    return column_addcenv(env);
 }

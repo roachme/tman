@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include <string.h>
 
+#include "common.h"
 #include "tman.h"
 #include "column.h"
 
@@ -17,7 +18,7 @@
 #define TMANTASK "/home/roach/trash/tman/tasks"
 #endif
 
-struct env envs[NENV];
+char envs[NENV][ENVSIZ];
 
 char *formpath(char *dst, char *fmt, ...)
 {
@@ -58,6 +59,19 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
 };
 
 struct taskids taskids;      /* tasks per environment */
+
+static int envsave()
+{
+    FILE *fp = fopen(tmanfs.fstate, "w");
+
+    if (fp == NULL)
+        return elog(1, "could not save env state\n");
+
+    for (int i = 0; i < NENV; ++i) {
+        fprintf(fp, "%s\n", envs[i]);
+    }
+    return fclose(fp);
+}
 
 /* column_markid: will be needed by tman `list' command */
 struct column column_getmark(char *id)
@@ -186,7 +200,7 @@ int column_envinit()
         elog(1, "could not open env state file %s\n", envpath);
 
     for (int i = 0; fgets(line, BUFSIZ, fp) != NULL && i < NENV; ++i)
-        sscanf(line, "%s", envs[i].name);
+        sscanf(line, "%s", envs[i]);
     return fclose(fp);
 }
 
@@ -197,7 +211,7 @@ int column_markid(char *id)
     char *cenv = column_getcenv();
     char idpath[BUFSIZ];
 
-    if (envs[CENV].name[0] == '\0')
+    if (envs[CENV][0] == '\0')
         return elog(1, "column_markid: no current env set");
 
     sprintf(idpath, "%s/%s/%s/.tman/col", tmanfs.task, cenv, id);
@@ -215,7 +229,7 @@ int column_markid(char *id)
 
 char *column_getcid()
 {
-    if (envs[CENV].name[0] == '\0') {
+    if (envs[CENV][0] == '\0') {
         fprintf(stderr, "current env not set\n");
         return NULL;
     }
@@ -227,7 +241,7 @@ char *column_getcid()
 
 char *column_getpid()
 {
-    if (envs[CENV].name[0] == '\0') {
+    if (envs[CENV][0] == '\0') {
         fprintf(stderr, "current env not set\n");
         return NULL;
     }
@@ -241,7 +255,7 @@ int column_addcid(char *id)
 {
     int idfound = FALSE;
 
-    if (envs[CENV].name[0] == '\0') {
+    if (envs[CENV][0] == '\0') {
         fprintf(stderr, "current env not set\n");
         return 1;
     }
@@ -374,19 +388,52 @@ int column_moveid(char *id, char *tag)
 
 char *column_getcenv()
 {
-    return envs[CENV].name;
+    return envs[CENV];
+}
+
+char *column_getpenv()
+{
+    return envs[PENV];
 }
 
 int column_delcenv()
 {
-    return 0;
+    strncpy(envs[CENV], envs[PENV], ENVSIZ);
+    memset(envs[PENV], 0, sizeof(envs[PENV]));
+    // TODO: if new current env exists then load its task IDs.
+    // Otherwise clear task IDs.
+    if (envs[CENV][0] != '\0')
+        load(envs[CENV]);
+    else
+        memset(&taskids, 0, sizeof(taskids));
+    return envsave();
+}
+
+int column_delpenv()
+{
+    memset(envs[PENV], 0, sizeof(envs[PENV]));
+    return envsave();
+}
+
+int column_swapenv()
+{
+    char tmp[ENVSIZ];
+
+    if (strlen(envs[CENV]) == 0 || strlen(envs[CENV]) == 0)
+        return elog(1, "current or previous env not set");
+    strncpy(tmp, envs[CENV], ENVSIZ);
+    strncpy(envs[CENV], envs[PENV], ENVSIZ);
+    strncpy(envs[PENV], tmp, ENVSIZ);
+    /* Save new current env and load its task IDs */
+    return !(envsave() == 0 && load(envs[CENV]) == 0);
 }
 
 int column_addcenv(char *env)
 {
-    envs[PENV] = envs[CENV];
-    strcpy(envs[PENV].name, env);
-    return 0;
+    strncpy(envs[PENV], envs[CENV], ENVSIZ);
+    strncpy(envs[CENV], env, ENVSIZ);
+    /* Save new current env and load its task IDs */
+    return !(envsave() == 0 && load(env) == 0);
 }
 
 #ifdef MYTEST
