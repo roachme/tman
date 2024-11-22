@@ -8,19 +8,15 @@
 int tman_col(int argc, char **argv)
 {
     int c;
+    char *col;
     int status;
-    struct tman_mcol_opt opt = { .col = NULL, .env = NULL, .force = 0, .help = 0, };
+    int help = 0;
+    char *newcid, *oldcid = column_getcid();
 
-    while ((c = getopt(argc, argv, ":c:e:fh")) != -1) {
+    while ((c = getopt(argc, argv, ":h")) != -1) {
         switch (c) {
-            case 'c':
-                opt.col = optarg; break;
-            case 'e':
-                opt.env = optarg; break;
-            case 'f':
-                opt.force = 1; break;
             case 'h':
-                opt.help = 1; break;
+                help = 1; break;
             case ':':
                 return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
             default:
@@ -28,15 +24,16 @@ int tman_col(int argc, char **argv)
         }
     }
 
-    if (opt.help == 1)
-        return help_usage("add");
-    else if (opt.col == NULL)
+    if (help == 1)
+        return help_usage("col");
+    else if ((col = argv[optind++]) == NULL)
         return elog(1, "gotta specify column to move a task to");
 
     for (int i = optind; i < argc; ++i)
-        status = core_id_movecol(opt.env, argv[i], opt.col);
+        status = core_id_movecol(NULL, argv[i], col);
 
     if (optind == argc) /* operate on current task id */
-        status = core_id_movecol(opt.env, NULL, opt.col);
+        status = core_id_movecol(NULL, NULL, col);
+
     return status;
 }

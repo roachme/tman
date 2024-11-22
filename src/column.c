@@ -52,10 +52,11 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
 // user define columns (gotta read 'em from config file
     { .prio = 4, .mark = '>', .tag = "revw" },
     { .prio = 5, .mark = '$', .tag = "test" },
+    { .prio = 6, .mark = '!', .tag = "lock" },
 // user define columns (gotta read 'em from config file
 
 // FIXME: should be the last prio in table
-    { .prio = 6, .mark = '-', .tag = "done" },
+    { .prio = 7, .mark = '-', .tag = "done" },
 };
 
 struct taskids taskids;      /* tasks per environment */
@@ -362,25 +363,33 @@ int column_moveid(char *id, char *tag)
     // TODO: check that it's the same tag,
     // so no need to rewrite to file.
 
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 8; ++i)
         if (strcmp(coltab[i].tag, tag) == 0)
             tagfound = TRUE;
 
     if (tagfound == FALSE)
         return elog(1, "%s: no such column in env", tag);
 
+    // TODO: should we change directory if current task ID is moved?
     for (int i = 0; i < taskids.idx; ++i) {
         if (strcmp(taskids.ids[i].id, id) == 0) {
-            if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
-                return column_delcid();
-            else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
-                return column_delpid();
+            if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
+                /* Update curr & prev task IDs and then move to column */
+                column_delcid();
+                taskids.ids[i].isset = TRUE;
+                taskids.ids[i].col = column_setmark(tag);
+            }
+            else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0) {
+                /* Update prev task IDs and then move to column */
+                column_delpid();
+                taskids.ids[i].isset = TRUE;
+                taskids.ids[i].col = column_setmark(tag);
+            }
             else {
                 taskids.ids[i].isset = TRUE;
                 taskids.ids[i].col = column_setmark(tag);
-                save();
             }
-            return 0;
+            return save();
         }
     }
     return elog(1, "could not find id : %s", id);
@@ -400,8 +409,6 @@ int column_delcenv()
 {
     strncpy(envs[CENV], envs[PENV], ENVSIZ);
     memset(envs[PENV], 0, sizeof(envs[PENV]));
-    // TODO: if new current env exists then load its task IDs.
-    // Otherwise clear task IDs.
     if (envs[CENV][0] != '\0')
         load(envs[CENV]);
     else
