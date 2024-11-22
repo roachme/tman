@@ -23,7 +23,6 @@
 #define LPGNSIZ     80
 
 #define NCOLUMNS    10
-#define TAGSIZ      4
 
 struct ilist {
     char id[IDSIZ + 1];
@@ -47,6 +46,7 @@ int core_currdir();
 /* Task ID stuff */
 int core_id_prev(void);
 int core_id_sync(void);
+int core_id_movecol(char *env, char *id, char *tag);
 int core_id_add (char *id, struct tman_add_opt *opt);
 int core_id_del (char *id, struct tman_del_opt *opt);
 int core_id_move(char *id, char *dst, char *src);

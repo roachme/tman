@@ -29,6 +29,8 @@ enum tman_errno {
 #define PATHSIZ         4096
 #define HELPDESC        100
 
+#define TAGSIZ      4
+
 int _chkid(char *id);
 int _chkenv(char *env);
 

@@ -22,30 +22,6 @@ const char *usermarks = {
     "& review 1",
 };
 
-// TODO: gotta read user defined marks from config.
-static struct column getmark(char *col)
-{
-    int i;
-    const struct column marks[] = {
-        { .mark = '*', .tag = "curr", .level = 0 },
-        { .mark = '^', .tag = "prev", .level = 1 },
-        { .mark = '+', .tag = "blog", .level = 2 },
-        // TODO: user defined columns:
-        // NOTE: to add a new one update unit.c check()
-        { .mark = '&', .tag = "revw", .level = 3 },
-        { .mark = '$', .tag = "test", .level = 4 },
-        // TODO: user defined columns
-        { .mark = '-', .tag = "done", .level = 5 },
-        { .mark = '?', .tag = "ukwn", .level = 6 },
-    };
-    int nmarks = sizeof(marks) / sizeof(marks[0]);
-
-    for (i = 0; i < nmarks; ++i)
-        if (strcmp(col, marks[i].tag) == 0)
-            return marks[i];
-    return marks[--i];
-}
-
 static int _envext(char *env)
 {
     char pathname[PATHSIZ];
@@ -62,7 +38,7 @@ static int _idext(char *env, char *id)
 
 int core_currdir()
 {
-    printf("%s/%s/%s\n", tmanfs.task, state_getcenv(), state_getcid());
+    printf("%s/%s/%s\n", tmanfs.task, column_getcenv(), column_getcid());
     return 0;
 }
 
@@ -76,15 +52,19 @@ int core_init(const char *cmd)
     // TODO: Find a better way to check that util's inited.
     if (FCHK(tmanfs.finit))
         return elog(1, "not inited");
+    else if (column_init())
+        return elog(1, "column_init: error: could not init");
     return state_init();
 }
 
 int core_id_add(char *id, struct tman_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
-    char *cenv = state_getcenv();
+    char *cenv = column_getcenv();
     opt->env = opt->env != NULL ? opt->env : cenv;
 
+    elog(1, "cenv: %s", cenv);
+    elog(1, "opt->env: %s", opt->env);
     if (opt->env[0] == '\0')
         return elog(1, "no current environment");
     else if (!_envext(opt->env))
@@ -104,25 +84,29 @@ int core_id_add(char *id, struct tman_add_opt *opt)
     else if (hookact("add", opt->env, id))
         return elog(1, "could not execute hook");
 
-    if (column_mark(opt->env, id)) {
+    if (column_markid(id)) {
         return elog(1, "column_mark: failed");
-    } else if (column_loadids(opt->env)) {
-        return elog(1, "column_loadids: failed");
-    } else if (strcmp(opt->env, cenv) == 0 && column_addcid(id)) {
-        return elog(1, "column_addcid: failed");
-    } else if (column_saveids(opt->env) != 0) {
-        return elog(1, "column_saveids: failed");
     }
+
+    int res1, res2;
+    if ((res1 = strcmp(opt->env, cenv)) == 0 ) {
+        elog(1, "NOTE: mark %s as curr", id);
+        if ((res2 = column_addcid(id) != 0))
+            return elog(1, "column_addcid: failed");
+    } else
+        elog(1, "NO CURR ENV: pro'ly a failure");
+    //elog(1, "strcmp: %d", res1);
+    //elog(1, "column_addcid: %d", res2);
     return TMAN_OK;
 }
 
 int core_id_del(char *id, struct tman_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
-    char *cid = state_getcid();
-    char *pid = state_getpid();
+    char *cid = column_getcid();
+    char *pid = column_getpid();
     id  = id != NULL ? id : cid;
-    opt->env = opt->env != NULL ? opt->env : state_getcenv();
+    opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
     if (opt->env[0] == '\0')
         return elog(1, "no current environment");
@@ -145,11 +129,11 @@ int core_id_del(char *id, struct tman_del_opt *opt)
 
     // TODO: simplify this
     if (strcmp(cid, id) == 0) {
-        if (state_delcid() != 0)
+        if (column_delcid() != 0)
             return elog(1, "could not delete current task id");
     }
     else if (strcmp(pid, id) == 0) {
-        if (state_delpid() != 0)
+        if (column_delpid() != 0)
             return elog(1, "could not delete previous task id");
     }
 
@@ -158,10 +142,10 @@ int core_id_del(char *id, struct tman_del_opt *opt)
 
 int core_id_prev(void)
 {
-    char *cid  = state_getcid();
-    char *cenv = state_getcenv();
+    char *cid  = column_getcid();
+    char *cenv = column_getcenv();
 
-    if (state_swapids())
+    if (column_swapid())
         return TMAN_ECORE;
     if (hookact("prev", cenv, cid))
         return elog(TMAN_EHOOK, "could not execute hook");
@@ -170,8 +154,8 @@ int core_id_prev(void)
 
 int core_id_sync(void)
 {
-    char *cid  = state_getcid();
-    char *cenv = state_getcenv();
+    char *cid  = column_getcid();
+    char *cenv = column_getcenv();
 
     if (strlen(cid) == 0)
         return elog(TMAN_ECORE, "no current task id set");
@@ -204,7 +188,7 @@ int core_id_set(char *env, char *id, struct bunit *unit)
 // int core_id_add(char *id, struct tman_add_opt *opt)
 int core_id_use(char *id, struct tman_use_opt *opt)
 {
-    opt->env = opt->env != NULL ? opt->env : state_getcenv();
+    opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
     if (opt->env[0] == '\0')
         return elog(1, "no current environment");
@@ -216,7 +200,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
         return elog(1, "task id required");
     else if (!_idext(opt->env, id))
         return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
-    else if (opt->env != state_getcenv()) {
+    else if (opt->env != column_getcenv()) {
         fprintf(stderr, "trynna switch to task in another env\n");
         fprintf(stderr, "under development\n");
         return 1;
@@ -224,7 +208,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
 
     // TODO: it can't switch to task in non-current env.
     // Cuz it gotta switch env first.
-    return state_addcid(id);
+    return column_addcid(id);
 }
 
 int core_id_move(char *id, char *dst, char *src)
@@ -261,7 +245,7 @@ int core_id_move(char *id, char *dst, char *src)
 struct list *core_id_list(struct list *list, char *env)
 {
     char pathname[PATHSIZ];
-    char *cenv = state_getcenv();
+    char *cenv = column_getcenv();
     env = env ? env : cenv;
     sprintf(pathname, "%s/%s", tmanfs.task, env);
     DIR *ids = opendir(pathname);
@@ -296,7 +280,7 @@ struct list *core_id_list(struct list *list, char *env)
 
         strcpy(list->ilist[i].id, ent->d_name);
         strcpy(list->ilist[i].desc, bunit.pair[4].val);
-        list->ilist[i].col = getmark(bunit.pair[5].val);
+        list->ilist[i].col = column_getmark(list->ilist[i].id);
         ++i;
     }
     list->num = i;
@@ -304,21 +288,40 @@ struct list *core_id_list(struct list *list, char *env)
     return list;
 }
 
+int core_id_movecol(char *env, char *id, char *tag)
+{
+    id = id ? id : column_getcid();
+    env = env ? env : column_getcenv();
+
+    if (env[0] == '\0')
+        return elog(1, "no current env set");
+    else if (!_chkenv(env))
+        return elog(1, "%s: illegal task env name", env);
+    else if (id == NULL)
+        return elog(1, "no current id set");
+    else if (!_idext(env, id))
+        return elog(1, "%s: no such task id", id);
+    else if (!_chkid(id))
+        return elog(1, "%s: illegal task id name", id);
+
+    return column_moveid(id, tag);
+}
+
 struct units *core_id_cat(struct units *units, char *env, char *id)
 {
-    id = id ? id : state_getcid();
-    env = env ? env : state_getcenv();
+    id = id ? id : column_getcid();
+    env = env ? env : column_getcenv();
 
-    if (!env) {
-        elog(1, "no current environment");
+    if (env[0] == '\0') {
+        elog(1, "no Current environment");
         return NULL;
     }
     else if (!_envext(env)) {
         elog(1, "%s: no such env name", env);
         return NULL;
     }
-    else if (!id || strlen(id) == 0) {
-        elog(1, "no current task id");
+    else if (id[0] == '\0') {
+        elog(1, "no current Task id");
         return NULL;
     }
     else if (!_idext(env, id)) {
