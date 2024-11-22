@@ -9,29 +9,8 @@
 #include <string.h>
 
 #include "tman.h"
+#include "column.h"
 #include "common.h"
-
-/* Limits */
-#define NCOLTAB         20 /* Number of task per environment */
-#define NCOLUMNS        10 /* Number of columns per environment, 3 defaults included */
-
-#define MAXCOLTAB       20
-#define TAGSIZ          4
-#define MARKDEF         "blog"
-#define MARKCURR        "curr"
-#define MARKPREV        "prev"
-
-
-struct column {
-    char mark;
-    int level;
-    char tag[TAGSIZ + 1];
-};
-
-struct coltab {
-    char id[20];
-    struct column col;
-};
 
 struct coltab coltab[NCOLTAB];
 
@@ -78,6 +57,7 @@ int column_loadids(char *env)
         }
 
         fgets(line, BUFSIZ, fp);
+        coltab[colidx].isset = 1;
         sscanf(line, "%*s : %s", coltab[colidx].col.tag);
         strcpy(coltab[colidx].id, dir->d_name);
         ++colidx;
@@ -107,6 +87,9 @@ int column_saveids(char *env)
 
     for (int i = 0; i < NCOLTAB; ++i) {
         char *id = coltab[i].id;
+
+        if (coltab[i].isset == 0)
+            continue;
 
         // TODO:BEGIN move it to a function
         sprintf(fname, "%s/%s/%s/.tman/col", tmanfs.task, env, id);

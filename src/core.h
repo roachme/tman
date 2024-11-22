@@ -3,6 +3,7 @@
 
 #include "unit.h"
 #include "common.h"
+#include "column.h"
 #include "bin/add.h"
 #include "bin/del.h"
 #include "bin/use.h"
@@ -23,12 +24,6 @@
 
 #define NCOLUMNS    10
 #define TAGSIZ      4
-
-struct column {
-    char mark;
-    int level;
-    char tag[TAGSIZ + 1];
-};
 
 struct ilist {
     char id[IDSIZ + 1];
