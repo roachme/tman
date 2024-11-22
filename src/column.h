@@ -1,39 +1,82 @@
 #ifndef TMAN_COLUMN_H
 #define TMAN_COLUMN_H
 
+// Gotta define 4 default columns: curr, prev, blog, done
 
-/* Limits */
-#define NCOLTAB         20 /* Number of task per environment */
-#define NCOLUMNS        10 /* Number of columns per environment, 3 defaults included */
+#define CENV        0
+#define PENV        1
+#define MARKDEF     "blog"
+#define MARKCURR    "curr"
+#define MARKPREV    "prev"
 
-#define MAXCOLTAB       20
-#define TAGSIZ          4
-#define MARKDEF         "blog"
-#define MARKCURR        "curr"
-#define MARKPREV        "prev"
+#define TRUE        1
+#define FALSE       0
 
+
+#define NENV        2  /* number of 'special' environments */
+#define NTASKS      50 /* number of tasks per environment */
+#define NCOLUMNS    10 /* number of columns per environment */
+
+#ifdef MYTEST
+
+#define IDSIZ       10 /* size of task id */
+#define ENVSIZ      10 /* size of environment name */
+#define TAGSIZ      10 /* size of column tag */
+
+#endif
+
+
+/*
+static char *COLUMNS[] = {
+//  env  mark tag prio
+    "test * curr 0",
+};
+*/
 
 struct column {
+    int prio;
     char mark;
-    int level;
-    char tag[TAGSIZ + 1];
+    char tag[TAGSIZ+1];
 };
 
-struct coltab {
+struct taskid {
     int isset;
-    char id[20];
+    char id[IDSIZ];
     struct column col;
 };
 
+struct taskids {
+    int idx;
+    struct taskid ids[NTASKS];
+};
 
-int column_loadids(char *env);
-int column_saveids(char *env);
+struct env {
+    char curr[IDSIZ+1];
+    char prev[IDSIZ+1];
+    char name[ENVSIZ+1];
+};
 
-int column_init(char *env);
-int column_delpid(void);
-int column_delcid(void);
-int column_swapids(void);
-int column_mark(char *env, char *id); /* mark newly added task with blog column */
+int column_show(void);
+int column_moveid(char *id, char *tag);
+struct column column_getmark(char *id);
+
+int column_init();
+int column_getids(void);        /* get all task IDs in environment */
+int column_markid(char *id);    /* add a new task ID's col file */
+
+char *column_getcid();
+char *column_getpid();
+int column_delcid();
+int column_delpid();
+int column_swapid();
 int column_addcid(char *id);
+
+int column_envinit();
+char *column_getcenv();
+int column_getpenv();
+int column_delcenv();
+int column_delpenv();
+int column_swapenv();
+int column_addcenv(char *env);
 
 #endif

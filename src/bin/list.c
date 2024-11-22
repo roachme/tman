@@ -16,7 +16,7 @@ static int compare(const void *aa, const void *bb)
 {
     struct ilist *a = (struct ilist*)aa;
     struct ilist *b = (struct ilist*)bb;
-    return (a->col.level - b->col.level);
+    return (a->col.prio - b->col.prio);
 }
 
 static int pretty_list(char *env, struct tman_list *opt)
