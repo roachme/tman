@@ -69,8 +69,8 @@ static char *cmdgen(struct hook *hook, char *env, char *id)
 
 int hookact(char *cmd, char *env, char *id)
 {
-    for (int i = 0; i < config.hooknum; ++i) {
-        struct hook *hook = &config.hooks[i];
+    for (int i = 0; i < config.hooks.size; ++i) {
+        struct hook *hook = &config.hooks.hook[i];
         if (strcmp(cmd, hook->cmd) == 0)
             system(cmdgen(hook, env, id));
     }
@@ -82,8 +82,8 @@ struct punit *hookcat(struct punit *unit, char *env, char *id)
     char line[BUFSIZ] = {0};
     int pidx = 0; // cuz a plugin can output more than one lines
 
-    for (int i = 0; i < config.hooknum; ++i) {
-        struct hook *hook = &config.hooks[i];
+    for (int i = 0; i < config.hooks.size; ++i) {
+        struct hook *hook = &config.hooks.hook[i];
         if (strcmp(hook->cmd, "cat") != 0)
             continue;
 
@@ -106,8 +106,8 @@ char *hookls(char *pgnout, char *env, char *id)
     char *prefix = "";
     char line[BUFSIZ] = {0};
 
-    for (int i = 0; i < config.hooknum; ++i) {
-        struct hook *hook = &config.hooks[i];
+    for (int i = 0; i < config.hooks.size; ++i) {
+        struct hook *hook = &config.hooks.hook[i];
         if (strcmp(hook->cmd, "list") != 0)
             continue;
 

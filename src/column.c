@@ -43,6 +43,11 @@ int elog(int status, char *fmt, ...)
 #endif
 
 
+struct columns {
+    int size;
+    struct column col;
+};
+
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 0, .mark = '?', .tag = "uknw" },
     { .prio = 1, .mark = '*', .tag = "curr" },

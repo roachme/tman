@@ -2,10 +2,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include "common.h"
+#include "core.h"
 #include "osdep.h"
 #include "config.h"
 
-struct config config;
+// TODO: gotta define default columns: curr, prev, blog, done
+// TODO: gotta add config checker so a program doesn't fail.
+
+struct config config = {
+    //.coldefs.coldef[0] = { .prio = 0, },
+};
 
 static int parsepath(char *path)
 {
@@ -14,13 +20,30 @@ static int parsepath(char *path)
     return 0;
 }
 
-static int parsehook(const char *hookname, struct hook *hookcmd)
+static int parse_hook(const char *hookname, struct hooks *hooks)
 {
+    int i = hooks->size;
     const char *delim = " =\n";
-    strcpy(hookcmd->hook, hookname);
-    strcpy(hookcmd->cmd, strtok(NULL, delim));
-    strcpy(hookcmd->pgname, strtok(NULL, delim));
-    strcpy(hookcmd->pgncmd, strtok(NULL, delim));
+    strcpy(hooks->hook[i].hook, hookname);
+    strcpy(hooks->hook[i].cmd, strtok(NULL, delim));
+    strcpy(hooks->hook[i].pgname, strtok(NULL, delim));
+    strcpy(hooks->hook[i].pgncmd, strtok(NULL, delim));
+    ++hooks->size;
+    return 0;
+}
+
+static int parse_coldefs(struct coldefs *coldefs)
+{
+    char *prio;
+    int i = coldefs->size;
+    const char *delim = " =\n";
+
+    strcpy(coldefs->coldef[i].env, strtok(NULL, delim));
+    strcpy(&coldefs->coldef[i].mark, strtok(NULL, delim));
+    strcpy(coldefs->coldef[i].tag, strtok(NULL, delim));
+    prio = strtok(NULL, delim);
+    if (prio != NULL)
+        coldefs->coldef[i].prio = atoi(prio);
     return 0;
 }
 
@@ -39,27 +62,23 @@ int parseconf(const char *fname)
         token = strtok(line, delim);
         if (!token || strlen(token) == 0 || token[0] == '\n' || token[0] == '#')
             continue;
-
-        if (config.hooknum >= CONF_MAXHOOK)
+        else if (config.hooks.size >= CONF_MAXHOOK)
             return elog(1, "Too many hooks in config");
-
-        hook = &config.hooks[config.hooknum];
+        else if (config.coldefs.size >= CONF_MAXCOLDEF)
+            return elog(1, "Too many columns per env in config");
 
         if (strcmp(token, "TMANBASE") == 0)
             parsepath(config.base);
         else if (strcmp(token, "TMANPGNINS") == 0)
             parsepath(config.pgnins);
-        else if (strcmp(token, "HOOKCMD") == 0) {
-            parsehook(token, hook);
-            ++config.hooknum;
-        }
-        else if (strcmp(token, "HOOKCAT") == 0) {
-            parsehook(token, hook);
-            ++config.hooknum;
-        }
-        else if (strcmp(token, "HOOKLIST") == 0) {
-            parsehook(token, hook);
-            ++config.hooknum;
+        else if (strcmp(token, "HOOKCMD") == 0)
+            parse_hook(token, &config.hooks);
+        else if (strcmp(token, "HOOKCAT") == 0)
+            parse_hook(token, &config.hooks);
+        else if (strcmp(token, "HOOKLIST") == 0)
+            parse_hook(token, &config.hooks);
+        else if (strcmp(token, "COLUMN") == 0) {
+            parse_coldefs(&config.coldefs);
         }
         else {
             fprintf(stderr, "not found %s: unknown variable\n", token);
