@@ -43,7 +43,7 @@ struct column {
 
 struct taskid {
     int isset;
-    char id[IDSIZ];
+    char id[IDSIZ+1];
     struct column col;
 };
 
