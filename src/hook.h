@@ -2,6 +2,7 @@
 #define HOOK_H
 
 #include "unit.h"
+#include "limit.h"
 
 #define HOOKSIZ     1000
 
@@ -15,6 +16,10 @@ struct hook {
     char pgnopt[10];
 };
 
+struct hooks {
+    int size;
+    struct hook hook[NHOOKS];
+};
 
 int isplugin(const char *pgn);
 int plugin(int argc, char **argv);

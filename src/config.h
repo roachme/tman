@@ -14,16 +14,6 @@
 #define CONF_MAXBASE    256
 #define CONF_MAXPGNINS  256
 
-struct hooks {
-    int size;
-    struct hook hook[CONF_MAXHOOK];
-};
-
-struct columns {
-    int size;
-    struct column column[NCOLUMNS];
-};
-
 struct config {
     char base[100];
     char pgnins[100];

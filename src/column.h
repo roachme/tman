@@ -16,8 +16,6 @@
 
 
 #define NENV        2  /* number of 'special' environments */
-#define NTASKS      50 /* number of tasks per environment */
-#define NCOLUMNS    10 /* number of columns per environment */
 
 struct column {
     int prio;
@@ -35,6 +33,11 @@ struct taskid {
 struct taskids {
     int idx;
     struct taskid ids[NTASKS];
+};
+
+struct columns {
+    int size;
+    struct column column[NCOLUMNS];
 };
 
 struct env {
