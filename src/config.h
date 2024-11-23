@@ -14,31 +14,24 @@
 #define CONF_MAXBASE    256
 #define CONF_MAXPGNINS  256
 
-struct coldef {
-    int prio;
-    char mark;
-    char env[ENVSIZ];
-    char tag[TAGSIZ];
-};
-
-struct coldefs {
-    int size;
-    struct coldef coldef[NCOLUMNS];
-};
-
 struct hooks {
     int size;
     struct hook hook[CONF_MAXHOOK];
 };
 
-extern struct config config;
+struct columns {
+    int size;
+    struct column column[NCOLUMNS];
+};
 
 struct config {
     char base[100];
     char pgnins[100];
     struct hooks hooks;
-    struct coldefs coldefs;
+    struct columns columns;
 };
+
+extern struct config config;
 
 int config_init(void);
 

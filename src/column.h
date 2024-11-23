@@ -22,6 +22,7 @@
 struct column {
     int prio;
     char mark;
+    char env[ENVSIZ];
     char tag[TAGSIZ+1];
 };
 

@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "common.h"
-#include "core.h"
 #include "osdep.h"
 #include "config.h"
 
@@ -32,18 +31,18 @@ static int parse_hook(const char *hookname, struct hooks *hooks)
     return 0;
 }
 
-static int parse_coldefs(struct coldefs *coldefs)
+static int parse_columns(struct columns *columns)
 {
     char *prio;
-    int i = coldefs->size;
+    int i = columns->size;
     const char *delim = " =\n";
 
-    strcpy(coldefs->coldef[i].env, strtok(NULL, delim));
-    strcpy(&coldefs->coldef[i].mark, strtok(NULL, delim));
-    strcpy(coldefs->coldef[i].tag, strtok(NULL, delim));
+    strcpy(columns->column[i].env, strtok(NULL, delim));
+    strcpy(&columns->column[i].mark, strtok(NULL, delim));
+    strcpy(columns->column[i].tag, strtok(NULL, delim));
     prio = strtok(NULL, delim);
     if (prio != NULL)
-        coldefs->coldef[i].prio = atoi(prio);
+        columns->column[i].prio = atoi(prio);
     return 0;
 }
 
@@ -64,7 +63,7 @@ int parseconf(const char *fname)
             continue;
         else if (config.hooks.size >= CONF_MAXHOOK)
             return elog(1, "Too many hooks in config");
-        else if (config.coldefs.size >= CONF_MAXCOLDEF)
+        else if (config.columns.size >= CONF_MAXCOLDEF)
             return elog(1, "Too many columns per env in config");
 
         if (strcmp(token, "TMANBASE") == 0)
@@ -78,7 +77,7 @@ int parseconf(const char *fname)
         else if (strcmp(token, "HOOKLIST") == 0)
             parse_hook(token, &config.hooks);
         else if (strcmp(token, "COLUMN") == 0) {
-            parse_coldefs(&config.coldefs);
+            parse_columns(&config.columns);
         }
         else {
             fprintf(stderr, "not found %s: unknown variable\n", token);
