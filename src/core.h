@@ -22,8 +22,6 @@
 #define LBINSIZ     80
 #define LPGNSIZ     80
 
-#define NCOLUMNS    10
-
 struct ilist {
     char id[IDSIZ + 1];
     char pgn[LPGNSIZ + 1];

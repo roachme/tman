@@ -23,11 +23,6 @@ char *formpath(char *dst, char *fmt, ...)
     return dst;
 }
 
-struct columns {
-    int size;
-    struct column col;
-};
-
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 0, .mark = '?', .tag = "uknw" },
     { .prio = 1, .mark = '*', .tag = "curr" },
