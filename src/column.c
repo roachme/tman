@@ -12,12 +12,6 @@
 #include "tman.h"
 #include "column.h"
 
-
-#ifdef MYTEST
-#define TMANDB "/home/roach/trash/tman/.tman"
-#define TMANTASK "/home/roach/trash/tman/tasks"
-#endif
-
 char envs[NENV][ENVSIZ];
 
 char *formpath(char *dst, char *fmt, ...)
@@ -28,20 +22,6 @@ char *formpath(char *dst, char *fmt, ...)
     va_end(arg);
     return dst;
 }
-
-#ifdef MYTEST
-int elog(int status, char *fmt, ...)
-{
-    va_list arg;
-    va_start(arg, fmt);
-    fprintf(stderr, "%s: ", "tman");
-    vfprintf(stderr, fmt, arg);
-    fprintf(stderr, "\n");
-    va_end(arg);
-    return status;
-}
-#endif
-
 
 struct columns {
     int size;
@@ -447,18 +427,3 @@ int column_addcenv(char *env)
     /* Save new current env and load its task IDs */
     return !(envsave() == 0 && load(env) == 0);
 }
-
-#ifdef MYTEST
-int main(int arcg, char **argv)
-{
-    column_init();
-    load("test");
-    show();
-    //column_delcid();
-    column_swapid();
-    //column_addcid("test1");
-    //column_addcid("test2");
-    show();
-    return 0;
-}
-#endif

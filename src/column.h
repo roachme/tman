@@ -19,22 +19,6 @@
 #define NTASKS      50 /* number of tasks per environment */
 #define NCOLUMNS    10 /* number of columns per environment */
 
-#ifdef MYTEST
-
-#define IDSIZ       10 /* size of task id */
-#define ENVSIZ      10 /* size of environment name */
-#define TAGSIZ      10 /* size of column tag */
-
-#endif
-
-
-/*
-static char *COLUMNS[] = {
-//  env  mark tag prio
-    "test * curr 0",
-};
-*/
-
 struct column {
     int prio;
     char mark;
