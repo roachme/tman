@@ -26,7 +26,7 @@ static int load_specids(char *type, char *env)
     char denv[500];
     struct dirent *dir;
 
-    sprintf(denv, "%s/%s", tmanfs.task, env);
+    sprintf(denv, "%s/%s", tmanfs.base, env);
 
     if ((dp = opendir(denv)) == NULL) {
         fprintf(stderr, "could not open env dir %s\n", denv);

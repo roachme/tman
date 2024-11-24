@@ -15,7 +15,6 @@ struct tmanstruct {
     char db[TMANPATHSIZE];          /* directory for tman metadata */
     char cfg[TMANPATHSIZE];         /* directory for config files */
     char pgn[TMANPATHSIZE];         /* directory for plugin data */
-    char task[TMANPATHSIZE];        /* directory for task tasks */
     char base[TMANPATHSIZE];        /* directory for all stuff above */
     char pgnins[TMANPATHSIZE];      /* directory for installed plugins */
 
