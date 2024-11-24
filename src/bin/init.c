@@ -13,8 +13,8 @@ int tman_init(int argc, char **argv)
 
     if (MKDIR(tmanfs.base))
         return elog(1, "could not create directory %s", tmanfs.base);
-    else if (MKDIR(tmanfs.task))
-        return elog(1, "could not create directory %s", tmanfs.task);
+    else if (MKDIR(tmanfs.base))
+        return elog(1, "could not create directory %s", tmanfs.base);
     else if (MKDIR(tmanfs.pgn))
         return elog(1, "could not create directory %s", tmanfs.pgn);
     else if (MKDIR(tmanfs.pgnins))

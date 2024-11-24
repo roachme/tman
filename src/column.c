@@ -85,7 +85,7 @@ static int load(char *env)
     char idpath[BUFSIZ + 1];
     char envpath[BUFSIZ + 1];
 
-    if ((dp = opendir(formpath(envpath, "%s/%s", tmanfs.task, env))) == NULL) {
+    if ((dp = opendir(formpath(envpath, "%s/%s", tmanfs.base, env))) == NULL) {
         fprintf(stderr, "could not open env dir: %s\n", envpath);
         return 1;
     }
@@ -137,7 +137,7 @@ static int _save(char *env, char *id, char *tag)
     FILE *fp;
     char envpath[BUFSIZ];
 
-    sprintf(envpath, "%s/%s/%s/.tman/col", tmanfs.task, env, id);
+    sprintf(envpath, "%s/%s/%s/.tman/col", tmanfs.base, env, id);
     if ((fp = fopen(envpath, "w")) == NULL)
         return elog(1, "could not save %s", envpath);
 
@@ -195,7 +195,7 @@ int column_markid(char *id)
     if (envs[CENV][0] == '\0')
         return elog(1, "column_markid: no current env set");
 
-    sprintf(idpath, "%s/%s/%s/.tman/col", tmanfs.task, cenv, id);
+    sprintf(idpath, "%s/%s/%s/.tman/col", tmanfs.base, cenv, id);
     if ((fp = fopen(idpath, "w")) == NULL) {
         return elog(1, "could not create col file: %s\n", idpath);
     }

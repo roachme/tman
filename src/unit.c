@@ -161,7 +161,7 @@ static int _save(char *fname)
 int unit_add(char *env, char *id)
 {
     char fname[PATHSIZ + 1];
-    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
+    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.base, env, id);
 
     genunit(env, id);
     return _save(fname);
@@ -175,7 +175,7 @@ int unit_del(char *env, char *id)
 struct bunit *unit_get(struct bunit *u, char *env, char *id)
 {
     char fname[PATHSIZ + 1];
-    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
+    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.base, env, id);
 
     if (_load(fname, u)) {
         elog(1, "_load: failed");
@@ -200,7 +200,7 @@ struct bunit *unit_get(struct bunit *u, char *env, char *id)
 int unit_set(char *env, char *id, struct bunit *bunit)
 {
     char fname[PATHSIZ + 1];
-    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
+    sprintf(fname, "%s/%s/%s/.tman/unit", tmanfs.base, env, id);
 
     if (_load(fname, NULL))
         return 1;
@@ -222,7 +222,7 @@ int unit_set(char *env, char *id, struct bunit *bunit)
 int unit_set2(char *env, char *id, char *key, char *val)
 {
     char funit[1000];
-    sprintf(funit, "%s/%s/%s/.tman/unit", tmanfs.task, env, id);
+    sprintf(funit, "%s/%s/%s/.tman/unit", tmanfs.base, env, id);
     FILE *fp;
 
     if (_load(funit, NULL)) {
