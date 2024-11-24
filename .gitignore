@@ -5,3 +5,4 @@ prof.txt
 tests
 tman_prof
 *.o
+.tman/
