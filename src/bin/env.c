@@ -70,7 +70,7 @@ int _env_list(int argc, char **argv)
         return elog(1, "could not open task directory\n");
 
     while ((ent = readdir(edir)) != NULL) {
-        if ((strcmp(ent->d_name, ".") == 0) || (strcmp(ent->d_name, "..") == 0))
+        if (ent->d_name[0] == '.'  || ent->d_type != DT_DIR)
             continue;
 
         // TODO: simplify this logic
@@ -80,7 +80,7 @@ int _env_list(int argc, char **argv)
             mark = '^';
         else
             mark = '+';
-        printf("[%c] %-10s [%s] %s\n", mark, ent->d_name, "roach", "some env desc");
+        printf("%c %-10s [%s] %s\n", mark, ent->d_name, "roach", "some env desc");
     }
     return 1;
 }
