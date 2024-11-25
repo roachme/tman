@@ -141,6 +141,12 @@ static size_t helpsize = sizeof(help) / sizeof(help[0]);
 
 int help_list_commands(void)
 {
+    printf("Usage: %s [OBJECT] COMMAND [OPITONS]... [ID]...\n", PROGRAM);
+    printf("    Where OBJECT := { id | env | pgm }\n");
+    printf("    Where COMMAND is one of the builtin commands\n");
+    printf("    Where ID is task ID\n");
+    printf("Try '" PROGRAM " help COMMAND' for more info.\n\n");
+
     printf("System:\n");
     for (int i = 0; i < helpsize; ++i)
         if (strcmp(help[i].tag, TAGSYSTEM) == 0)
@@ -160,6 +166,7 @@ int help_list_commands(void)
     for (int i = 0; i < helpsize; ++i)
         if (strcmp(help[i].tag, TAGINFO) == 0)
             printf("  %-6s - %s\n", help[i].name, help[i].sdesc);
+
     return 1;
 }
 
