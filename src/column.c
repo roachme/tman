@@ -276,7 +276,7 @@ int column_delcid(void)
     for (int i = 0; i < taskids.idx; ++i)
         if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
             cidfound = TRUE;
-            taskids.ids[i].isset = TRUE;
+            taskids.ids[i].isset = FALSE;
             taskids.ids[i].col = column_setmark(MARKDEF);
         }
 
