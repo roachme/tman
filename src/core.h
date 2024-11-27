@@ -57,7 +57,7 @@ struct units *core_id_cat (struct units *units, char *env, char *id);
 /* Task environment stuff */
 int core_env_prev();
 int core_env_add (char *env, struct tman_env_add_opt *opt);
-int core_env_del (char *env);
+int core_env_del (char *env, struct tman_env_del_opt *opt);
 int core_env_set (char *env);
 int core_env_use (char *env);
 

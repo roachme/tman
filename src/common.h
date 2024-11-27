@@ -6,8 +6,10 @@
 
 #include "limit.h"
 
-#define PROGRAM "tman"
-#define VERSION "v0.0.1"
+#define PROGRAM     "tman"
+#define VERSION     "v0.0.1"
+#define TRUE        1
+#define FALSE       0
 
 extern struct tmanstruct tmanfs;
 
