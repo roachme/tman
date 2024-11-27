@@ -43,10 +43,9 @@ int _env_add(int argc, char **argv)
     if (optind == argc)
         return elog(1, "task env required");
 
-    for (int i = optind; i < argc; ++i) {
+    for (int i = optind; i < argc; ++i)
         status = core_env_add(argv[i], &opt);
-    }
-    return status == 0 ? core_currdir() : 1;
+    return status == TMAN_OK ? core_currdir() : 1;
 }
 
 // roach: maybe it'll be useful
@@ -57,7 +56,36 @@ int _env_cat(int argc, char **argv)
 
 int _env_del(int argc, char **argv)
 {
-    return 0;
+    char c;
+    int o_strict = 0;
+    int status;
+    int showpath = FALSE;
+    char *old_cenv = column_getcenv();
+    char *old_penv = column_getpenv();
+    struct tman_env_del_opt opt;
+
+    while ((c = getopt(argc, argv, ":f")) != -1) {
+        switch (c) {
+            case 'f':
+                opt.force = 1; break ;
+            case ':':
+                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
+        }
+    }
+
+    for (int i = optind; i < argc; ++i)
+        status = core_env_del(argv[i], &opt);
+    if (optind == argc) /* delete current task id */
+        status = core_env_del(NULL, &opt);
+
+    // TODO: update current directory if current env got deleted.
+    if (strcpy(old_cenv, column_getcenv())) {
+        showpath = TRUE;
+    }
+
+    return status == TMAN_OK && showpath == TRUE ? core_currdir() : 1;
 }
 
 int _env_list(int argc, char **argv)

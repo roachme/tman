@@ -60,6 +60,7 @@ int column_delcid();
 int column_delpid();
 int column_swapid();
 int column_addcid(char *id);
+int column_delspec(char *id);
 
 int column_envinit();
 char *column_getcenv();

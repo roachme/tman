@@ -7,7 +7,6 @@
 #include "tman.h"
 #include "unit.h"
 #include "osdep.h"
-#include "state.h"
 #include "common.h"
 #include "config.h"
 
@@ -44,8 +43,8 @@ int plugin(int argc, char **argv)
         }
     }
 
-    id = argc > 4 ? argv[4] : state_getcid();
-    env = argc > 5 ? argv[5] : state_getcenv();
+    id = argc > 4 ? argv[4] : column_getcid();
+    env = argc > 5 ? argv[5] : column_getcenv();
 
     // TODO: check that ID and env exist.
     if (env[0] == '\0')

@@ -16,11 +16,6 @@
 #include "column.h"
 #include "osdep.h"
 
-const char *usermarks = {
-// mark tag level
-    "& review 1",
-};
-
 static int _envext(char *env)
 {
     char pathname[PATHSIZ];
@@ -63,8 +58,6 @@ int core_id_add(char *id, struct tman_add_opt *opt)
     char *cenv = column_getcenv();
     opt->env = opt->env != NULL ? opt->env : cenv;
 
-    elog(1, "cenv: %s", cenv);
-    elog(1, "opt->env: %s", opt->env);
     if (opt->env[0] == '\0')
         return elog(1, "no current environment");
     else if (!_envext(opt->env))
@@ -90,13 +83,10 @@ int core_id_add(char *id, struct tman_add_opt *opt)
 
     int res1, res2;
     if ((res1 = strcmp(opt->env, cenv)) == 0 ) {
-        elog(1, "NOTE: mark %s as curr", id);
         if ((res2 = column_addcid(id) != 0))
             return elog(1, "column_addcid: failed");
     } else
         elog(1, "NO CURR ENV: pro'ly a failure");
-    //elog(1, "strcmp: %d", res1);
-    //elog(1, "column_addcid: %d", res2);
     return TMAN_OK;
 }
 
@@ -126,17 +116,8 @@ int core_id_del(char *id, struct tman_del_opt *opt)
         return elog(1, "%s: could not delete task unit", id);
     else if (irmdir(tmanfs.base, opt->env, id))
         return elog(1, "%s: could not delete task directory", id);
-
-    // TODO: simplify this
-    if (strcmp(cid, id) == 0) {
-        if (column_delcid() != 0)
-            return elog(1, "could not delete current task id");
-    }
-    else if (strcmp(pid, id) == 0) {
-        if (column_delpid() != 0)
-            return elog(1, "could not delete previous task id");
-    }
-
+    else if (column_delspec(id))
+        return elog(1, "%s: could not update special task IDs", id);
     return TMAN_OK;
 }
 
@@ -295,15 +276,10 @@ int core_id_movecol(char *env, char *id, char *tag)
 
     if (env[0] == '\0')
         return elog(1, "no current env set");
-    else if (!_chkenv(env))
-        return elog(1, "%s: illegal task env name", env);
     else if (id == NULL)
         return elog(1, "no current id set");
     else if (!_idext(env, id))
         return elog(1, "%s: no such task id", id);
-    else if (!_chkid(id))
-        return elog(1, "%s: illegal task id name", id);
-
     return column_moveid(id, tag);
 }
 
@@ -354,6 +330,19 @@ int core_env_add(char *env, struct tman_env_add_opt *opt)
     else if (emkdir(tmanfs.base, env))
         return elog(1, "%s: could not create env directory", env);
     return column_addcenv(env);
+}
+
+int core_env_del(char *env, struct tman_env_del_opt *opt)
+{
+    env = env ? env : column_getcenv();
+
+    if (env[0] == '\0')
+        return elog(1, "no current env set");
+    else if (!_envext(env))
+        return elog(1, "%s: no such env", env);
+    else if (ermdir(tmanfs.base, env))
+        return elog(1, "%s: could not delete env directory", env);
+    return column_delcenv();
 }
 
 int core_env_list()

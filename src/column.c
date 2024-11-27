@@ -333,6 +333,26 @@ int column_swapid()
     return save();
 }
 
+/*
+ * @return 0 - current or previous deleted. or no need to delete.
+ * @return 1 - if could not delete special task ID
+*/
+int column_delspec(char *id)
+{
+    char *cid = column_getcid();
+    char *pid = column_getpid();
+
+    if (strcmp(cid, id) == 0) {
+        if (column_delcid() != 0)
+            return elog(1, "could not delete current task id");
+    }
+    else if (strcmp(pid, id) == 0) {
+        if (column_delpid() != 0)
+            return elog(1, "could not delete previous task id");
+    }
+    return 0;
+}
+
 int column_moveid(char *id, char *tag)
 {
     int tagfound = FALSE;
