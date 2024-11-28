@@ -123,13 +123,11 @@ int core_id_del(char *id, struct tman_del_opt *opt)
 
 int core_id_prev(void)
 {
-    char *cid  = column_getcid();
-    char *cenv = column_getcenv();
-
     if (column_swapid())
         return TMAN_ECORE;
-    if (hookact("prev", cenv, cid))
+    if (hookact("prev", column_getcenv(), column_getcid())) {
         return elog(TMAN_EHOOK, "could not execute hook");
+    }
     return TMAN_OK;
 }
 
