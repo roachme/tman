@@ -53,7 +53,7 @@ int tman_initfs()
     sprintf(tmanfs.db,     "%s/%s", tmanfs.base, ".tman");
     sprintf(tmanfs.finit,  "%s/%s", tmanfs.db,   "inited");
     sprintf(tmanfs.fstate, "%s/%s", tmanfs.db,   "state");
-    sprintf(tmanfs.pgn,    "%s/%s", tmanfs.base, "pgns");
+    sprintf(tmanfs.pgn,    "%s/%s", tmanfs.base, ".pgn");
     sprintf(tmanfs.pgnins, "%s",    config.pgnins);
     return 0;
 }

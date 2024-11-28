@@ -227,7 +227,7 @@ char *column_getpid()
         return NULL;
     }
     for (int i = 0; i < taskids.idx; ++i)
-        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
+        if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
             return taskids.ids[i].id;
     return NULL;
 }
