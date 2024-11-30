@@ -54,6 +54,11 @@ int core_init(const char *cmd)
 
 int core_id_add(char *id, struct tman_add_opt *opt)
 {
+    // FIXME: fix support to add a task to non-current environment.
+    /* err: {
+          tman: could not create col file: /home/roach/trash/tman/test/work2/.tman/col
+          tman: column_mark: failed
+    } */
     // TODO: Add support to pass unit values into unit_add()
     char *cenv = column_getcenv();
     opt->env = opt->env != NULL ? opt->env : cenv;
@@ -79,6 +84,8 @@ int core_id_add(char *id, struct tman_add_opt *opt)
     else if (column_markid(id))
         return elog(1, "column_mark: failed");
 
+    // FIXME: the logic below might change when I add support to add
+    // non-current environment.
     if (opt->noswitch == FALSE && strcmp(opt->env, cenv) == 0 && column_addcid(id) != 0)
         return elog(1, "column_addcid: failed");
     return TMAN_OK;
