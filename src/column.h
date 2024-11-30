@@ -50,7 +50,7 @@ int column_show(void);
 int column_moveid(char *id, char *tag);
 struct column column_getmark(char *id);
 
-int column_init();
+int column_init(char *env);
 int column_getids(void);        /* get all task IDs in environment */
 int column_markid(char *id);    /* add a new task ID's col file */
 

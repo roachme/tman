@@ -47,7 +47,7 @@ int core_init(const char *cmd)
     // TODO: Find a better way to check that util's inited.
     if (FCHK(tmanfs.finit))
         return elog(1, "not inited");
-    else if (column_init())
+    else if (column_init(NULL))
         return elog(1, "column_init: error: could not init");
     return 0;
 }
@@ -125,9 +125,9 @@ int core_id_prev(void)
 {
     if (column_swapid())
         return TMAN_ECORE;
-    if (hookact("prev", column_getcenv(), column_getcid())) {
+    // BENCHMARK: consumes lots of time to execute.
+    if (hookact("prev", column_getcenv(), column_getcid()))
         return elog(TMAN_EHOOK, "could not execute hook");
-    }
     return TMAN_OK;
 }
 
@@ -242,15 +242,19 @@ struct list *core_id_list(struct list *list, char *env)
         elog(1, "%s: could not read environment", env);
         return NULL;
     }
+    else if (column_init(env) != 0) {
+        elog(1, "column_init failed with %s", env);
+        return NULL;
+    }
 
     // actual logic goes here
     size_t i = 0;
     struct bunit bunit;
-    while ((ent = readdir(ids)) != NULL && i < LSIZE) {
-        if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..") || ent->d_type != DT_DIR)
+    while (i < LSIZE && (ent = readdir(ids)) != NULL) {
+        if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
         if (unit_get(&bunit, env, ent->d_name) == NULL) {
-            fprintf(stderr, "core_id_list %s: failde to get units\n", ent->d_name);
+            fprintf(stderr, "core_id_list %s: failed to get units\n", ent->d_name);
             continue;
         }
         if (!hookls(list->ilist[i].pgn, env, ent->d_name)) {

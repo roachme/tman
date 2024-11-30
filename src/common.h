@@ -32,10 +32,13 @@ enum tman_errno {
 #define PATHSIZ         4096
 #define HELPDESC        100
 
+#define FMTSTATE        "%s/state"
+#define FMTCOL           "%s/%s/%s/.tman/col"
 
 
 int _chkid(char *id);
 int _chkenv(char *env);
+char *formpath(char *dst, char *fmt, ...);
 
 int elog(int status, char *fmt, ...);
 int wlog(char *fmt, ...);

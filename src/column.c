@@ -32,49 +32,7 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
 
 struct taskids taskids;      /* tasks per environment */
 
-char *formpath(char *dst, char *fmt, ...)
-{
-    va_list arg;
-    va_start(arg, fmt);
-    vsprintf(dst, fmt, arg);
-    va_end(arg);
-    return dst;
-}
-
-static int _tagext(char *tag)
-{
-    // TOTO: replace magic number with correct size
-    for (int i = 0; i < 8; ++i)
-        if (strcmp(coltab[i].tag, tag) == 0)
-            return TRUE;
-    return FALSE;
-}
-
-static int envsave()
-{
-    FILE *fp = fopen(tmanfs.fstate, "w");
-
-    if (fp == NULL)
-        return elog(1, "could not save env state\n");
-
-    for (int i = 0; i < NENV; ++i) {
-        fprintf(fp, "%s\n", envs[i]);
-    }
-    return fclose(fp);
-}
-
-/* column_markid: will be needed by tman `list' command */
-struct column column_getmark(char *id)
-{
-    int colsiz = sizeof(coltab) / sizeof(coltab[0]);
-
-    for (int i = 0; i < taskids.idx; ++i)
-        if (strcmp(id, taskids.ids[i].id) == 0)
-            return taskids.ids[i].col;
-    return coltab[0];
-}
-
-struct column column_setmark(char *tag)
+static struct column column_setmark(char *tag)
 {
     int colsiz = sizeof(coltab) / sizeof(coltab[0]);
 
@@ -84,61 +42,16 @@ struct column column_setmark(char *tag)
     return coltab[0];
 }
 
-static int load(char *env)
+static int envsave()
 {
     FILE *fp;
-    DIR *dp;
-    char tag[TAGSIZ + 1];
-    struct dirent *dir;
-    char line[BUFSIZ + 1];
-    char idpath[BUFSIZ + 1];
-    char envpath[BUFSIZ + 1];
 
-    if ((dp = opendir(formpath(envpath, "%s/%s", tmanfs.base, env))) == NULL) {
-        fprintf(stderr, "could not open env dir: %s\n", envpath);
-        return 1;
-    }
+    if ((fp = fopen(tmanfs.fstate, "w")) == NULL)
+        return elog(1, "could not save env state");
 
-    memset(&taskids, 0, sizeof(taskids));
-    for (taskids.idx = 0; (dir = readdir(dp)) != NULL && taskids.idx < NTASKS; ++taskids.idx) {
-        if (dir->d_name[0] == '.' || dir->d_type != DT_DIR) {
-            --taskids.idx; /* don't count this one */
-            continue;
-        }
-
-        char *id = dir->d_name;
-        if ((fp = fopen(formpath(idpath, "%s/%s/.tman/col", envpath, id), "r")) == NULL) {
-            fprintf(stderr, "could not open col file: %s\n", idpath);
-            continue;
-        }
-
-        fgets(line, BUFSIZ, fp);
-        sscanf(line, "%*s : %4s\n", tag);
-
-        taskids.ids[taskids.idx].col = column_setmark(tag);
-        strcpy(taskids.ids[taskids.idx].id, dir->d_name);
-        fclose(fp);
-    }
-    if (taskids.idx >= NTASKS)
-        elog(1, "tasks limit in environment: %d", NTASKS);
-    return closedir(dp);
-}
-
-int column_show(void)
-{
-    char *cenv = column_getcenv();
-    int ncoltab = sizeof(coltab) / sizeof(coltab[0]);
-
-    if (cenv[0] == '\0')
-        return elog(1, "show:err: no curr env set");
-
-    // FIXME: replace magic number with actual size of coltab
-    for (int i = 0; i < 7; ++i)
-        for (int k = 0; k < taskids.idx; ++k)
-            if (strcmp(coltab[i].tag, taskids.ids[k].col.tag) == 0)
-                printf("%c %s : %s\n", taskids.ids[k].col.mark, taskids.ids[k].id, taskids.ids[k].col.tag);
-    printf("\n");
-    return 0;
+    for (int i = 0; i < NENV; ++i)
+        fprintf(fp, "%s\n", envs[i]);
+    return fclose(fp);
 }
 
 static int _save(char *env, char *id, char *tag)
@@ -169,21 +82,99 @@ static int save(void)
     return 0;
 }
 
-static int _moveid(struct taskid *taskid, char *tag)
+static int _setcol(struct taskid *taskid, char *tag)
 {
     taskid->isset = TRUE;
     taskid->col = column_setmark(tag);
-    return save();
+    return 0;
 }
 
-int column_init()
+static struct taskid _getcol(struct taskids *taskids, int idx)
+{
+    return taskids->ids[idx];
+}
+
+static int _tagext(char *tag)
+{
+    // TOTO: replace magic number with correct size
+    for (int i = 0; i < 8; ++i)
+        if (strcmp(coltab[i].tag, tag) == 0)
+            return TRUE;
+    return FALSE;
+}
+
+/* column_markid: will be needed by tman `list' command */
+struct column column_getmark(char *id)
+{
+    int colsiz = sizeof(coltab) / sizeof(coltab[0]);
+
+    for (int i = 0; i < taskids.idx; ++i)
+        if (strcmp(id, taskids.ids[i].id) == 0)
+            return taskids.ids[i].col;
+    return coltab[0];
+}
+
+static int load(char *env)
+{
+    FILE *fp;
+    DIR *dp;
+    char tag[TAGSIZ + 1];
+    struct dirent *dir;
+    char line[BUFSIZ + 1];
+    char idpath[BUFSIZ + 1];
+    char envpath[BUFSIZ + 1];
+
+    if ((dp = opendir(formpath(envpath, "%s/%s", tmanfs.base, env))) == NULL) {
+        fprintf(stderr, "could not open env dir: %s\n", envpath);
+        return 1;
+    }
+
+    memset(&taskids, 0, sizeof(taskids));
+    for ( ; (dir = readdir(dp)) != NULL && taskids.idx < NTASKS; ++taskids.idx) {
+        if (dir->d_name[0] == '.' || dir->d_type != DT_DIR) {
+            --taskids.idx; /* don't count this one */
+            continue;
+        }
+        else if ((fp = fopen(formpath(idpath, "%s/%s/.tman/col", envpath, dir->d_name), "r")) == NULL) {
+            fprintf(stderr, "could not open col file: %s\n", idpath);
+            continue;
+        }
+
+        fscanf(fp, "%*s : %4s\n", tag);
+        taskids.ids[taskids.idx].col = column_setmark(tag);
+        strcpy(taskids.ids[taskids.idx].id, dir->d_name);
+        fclose(fp);
+    }
+    if (taskids.idx >= NTASKS)
+        elog(1, "tasks limit in environment: %d", NTASKS);
+    return closedir(dp);
+}
+
+int column_show(void)
 {
     char *cenv = column_getcenv();
+    int ncoltab = sizeof(coltab) / sizeof(coltab[0]);
 
+    if (cenv[0] == '\0')
+        return elog(1, "show:err: no curr env set");
+
+    // FIXME: replace magic number with actual size of coltab
+    for (int i = 0; i < 7; ++i)
+        for (int k = 0; k < taskids.idx; ++k)
+            if (strcmp(coltab[i].tag, taskids.ids[k].col.tag) == 0)
+                printf("%c %s : %s\n", taskids.ids[k].col.mark, taskids.ids[k].id, taskids.ids[k].col.tag);
+    printf("\n");
+    return 0;
+}
+
+int column_init(char *env)
+{
     if (column_envinit() != 0)
         return elog(1, "err: column_envinit");
-    if (cenv[0] != '\0')
-        return load(cenv);
+
+    env = env != NULL ? env : column_getcenv();
+    if (env[0] != '\0')
+        return load(env);
     return 0;
 }
 
@@ -193,8 +184,8 @@ int column_envinit()
     char line[BUFSIZ];
     char envpath[BUFSIZ];
 
-    if ((fp = fopen(formpath(envpath, "%s/state", tmanfs.db), "r")) == NULL)
-        elog(1, "could not open env state file %s\n", envpath);
+    if ((fp = fopen(formpath(envpath, FMTSTATE, tmanfs.db), "r")) == NULL)
+        return elog(1, "could not open env state file %s\n", envpath);
 
     for (int i = 0; i < NENV && fgets(line, BUFSIZ, fp) != NULL; ++i)
         sscanf(line, "%s", envs[i]);
@@ -211,11 +202,11 @@ int column_markid(char *id)
     if (envs[CENV][0] == '\0')
         return elog(1, "column_markid: no current env set");
 
-    sprintf(idpath, "%s/%s/%s/.tman/col", tmanfs.base, cenv, id);
-    if ((fp = fopen(idpath, "w")) == NULL) {
+    sprintf(idpath, FMTCOL, tmanfs.base, cenv, id);
+    if ((fp = fopen(idpath, "w")) == NULL)
         return elog(1, "could not create col file: %s\n", idpath);
-    }
 
+    // FIXME: add a bound checker.
     strcpy(taskids.ids[taskids.idx].id, id);
     taskids.ids[taskids.idx].col = column_setmark(MARKDEF);
     ++taskids.idx;
@@ -323,28 +314,14 @@ int column_delpid()
 
 int column_swapid()
 {
-    int cidfound = FALSE;
-    int pidfound = FALSE;
-
-    /* Find current and previous task IDs */
-    for (int i = 0; i < taskids.idx; ++i) {
-        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
-            cidfound = TRUE;
-        if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
-            pidfound = TRUE;
-    }
-    if (cidfound == FALSE || pidfound == FALSE)
+    if (column_getcid() == NULL || column_getpid() == NULL)
         return elog(1, "current or previous task ID(s) not found");
 
-    /* Swap current and previous task IDs */
     for (int i = 0; i < taskids.idx; ++i) {
-        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
-            taskids.ids[i].isset = TRUE;
-            taskids.ids[i].col = column_setmark(MARKPREV);
-        } else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0) {
-            taskids.ids[i].isset = TRUE;
-            taskids.ids[i].col = column_setmark(MARKCURR);
-        }
+        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
+            _setcol(&taskids.ids[i], MARKPREV);
+        else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
+            _setcol(&taskids.ids[i], MARKCURR);
     }
     return save();
 }
@@ -386,7 +363,7 @@ int column_moveid(char *id, char *tag)
                 column_delcid();
             else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
                 column_delpid();
-            return _moveid(&taskids.ids[i], tag);
+            return _setcol(&taskids.ids[i], tag);
         }
     }
     return elog(1, "could not find id : %s", id);

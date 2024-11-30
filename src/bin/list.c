@@ -24,7 +24,7 @@ static int pretty_list(char *env, struct tman_list *opt)
     struct list list;
 
     memset(&list, 0, sizeof(list));
-    if (!core_id_list(&list, env)) {
+    if (core_id_list(&list, env) == NULL) {
         // error: envname not found
         return 1;
     }
@@ -77,10 +77,8 @@ int tman_list(int argc, char **argv)
     if (opt.help == 1)
         return tman_list_usage();
 
-    for (int i = optind; i < argc; ++i) {
-        char *env = argv[i];
-        status = pretty_list(env, &opt);
-    }
+    for (int i = optind; i < argc; ++i)
+        status = pretty_list(argv[i], &opt);
 
     /* if no arguments passed then list current env */
     return optind < argc ? status : pretty_list(NULL, &opt);
