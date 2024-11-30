@@ -16,6 +16,7 @@ struct tman_add_opt {
     char *env;      /* environment to add a task to */
     int force;      /* ignore existent task ID */
     int help;       /* Show command usage */
+    int noswitch;   /* Do switch to task (set by default) */
 };
 
 int tman_add(int argc, char **argv);

@@ -43,7 +43,8 @@ struct help help[] = {
                  "If current environment is not set then throw an error.\n\n"
                  "  -e      specify an environment to add a task to\n"
                  "  -f      do not output error message if task aleady exists\n"
-                 "  -h      show this help and exis"
+                 "  -h      show this help and exit\n"
+                 "  -n      don't switch to newly created task (default is false)"
     },
     {
         .tag = TAGBASIC,
@@ -53,7 +54,7 @@ struct help help[] = {
         .desc  = "With no option `-e' add a new task to current environment.\n"
                  "COLUMN is column to move a task to\n"
                  "If current environment is not set then throw an error.\n\n"
-                 "  -h      show this help and exis"
+                 "  -h      show this help and exit"
     },
     {
         .tag = TAGBASIC,

@@ -76,17 +76,11 @@ int core_id_add(char *id, struct tman_add_opt *opt)
         return elog(1, "%s: could not create task unit", id);
     else if (hookact("add", opt->env, id))
         return elog(1, "could not execute hook");
-
-    if (column_markid(id)) {
+    else if (column_markid(id))
         return elog(1, "column_mark: failed");
-    }
 
-    int res1, res2;
-    if ((res1 = strcmp(opt->env, cenv)) == 0 ) {
-        if ((res2 = column_addcid(id) != 0))
-            return elog(1, "column_addcid: failed");
-    } else
-        elog(1, "NO CURR ENV: pro'ly a failure");
+    if (opt->noswitch == FALSE && strcmp(opt->env, cenv) == 0 && column_addcid(id) != 0)
+        return elog(1, "column_addcid: failed");
     return TMAN_OK;
 }
 
