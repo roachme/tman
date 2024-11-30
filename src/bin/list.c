@@ -44,7 +44,6 @@ static int pretty_list(char *env, struct tman_list *opt)
 int tman_list(int argc, char **argv)
 {
     char c;
-    int help = 0;
     int status;
     struct tman_list opt = { .spec = 1, };
 

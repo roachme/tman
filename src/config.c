@@ -50,7 +50,6 @@ int parseconf(const char *fname)
 {
     char line[BUFSIZ];
     char *token = NULL;
-    struct hook *hook;
     const char *delim = " =\n";
     FILE *fp = fopen(fname, "r");
 

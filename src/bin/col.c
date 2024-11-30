@@ -12,7 +12,6 @@ int tman_col(int argc, char **argv)
     int status;
     int help = 0;
     int list = 0;
-    char *newcid, *oldcid = column_getcid();
 
     while ((c = getopt(argc, argv, ":hl")) != -1) {
         switch (c) {

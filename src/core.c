@@ -95,7 +95,6 @@ int core_id_del(char *id, struct tman_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
     char *cid = column_getcid();
-    char *pid = column_getpid();
     id  = id != NULL ? id : cid;
     opt->env = opt->env != NULL ? opt->env : column_getcenv();
 

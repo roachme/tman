@@ -12,16 +12,7 @@
 #include "tman.h"
 #include "column.h"
 
-char envs[NENV][ENVSIZ];
-
-char *formpath(char *dst, char *fmt, ...)
-{
-    va_list arg;
-    va_start(arg, fmt);
-    vsprintf(dst, fmt, arg);
-    va_end(arg);
-    return dst;
-}
+char envs[NENV][ENVSIZ + 1];
 
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 0, .mark = '?', .tag = "uknw" },
@@ -40,6 +31,24 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
 };
 
 struct taskids taskids;      /* tasks per environment */
+
+char *formpath(char *dst, char *fmt, ...)
+{
+    va_list arg;
+    va_start(arg, fmt);
+    vsprintf(dst, fmt, arg);
+    va_end(arg);
+    return dst;
+}
+
+static int _tagext(char *tag)
+{
+    // TOTO: replace magic number with correct size
+    for (int i = 0; i < 8; ++i)
+        if (strcmp(coltab[i].tag, tag) == 0)
+            return TRUE;
+    return FALSE;
+}
 
 static int envsave()
 {
@@ -104,7 +113,7 @@ static int load(char *env)
         }
 
         fgets(line, BUFSIZ, fp);
-        sscanf(line, "%*s : %10s\n", tag);
+        sscanf(line, "%*s : %4s\n", tag);
 
         taskids.ids[taskids.idx].col = column_setmark(tag);
         strcpy(taskids.ids[taskids.idx].id, dir->d_name);
@@ -160,6 +169,13 @@ static int save(void)
     return 0;
 }
 
+static int _moveid(struct taskid *taskid, char *tag)
+{
+    taskid->isset = TRUE;
+    taskid->col = column_setmark(tag);
+    return save();
+}
+
 int column_init()
 {
     char *cenv = column_getcenv();
@@ -180,7 +196,7 @@ int column_envinit()
     if ((fp = fopen(formpath(envpath, "%s/state", tmanfs.db), "r")) == NULL)
         elog(1, "could not open env state file %s\n", envpath);
 
-    for (int i = 0; fgets(line, BUFSIZ, fp) != NULL && i < NENV; ++i)
+    for (int i = 0; i < NENV && fgets(line, BUFSIZ, fp) != NULL; ++i)
         sscanf(line, "%s", envs[i]);
     return fclose(fp);
 }
@@ -355,41 +371,22 @@ int column_delspec(char *id)
 
 int column_moveid(char *id, char *tag)
 {
-    int tagfound = FALSE;
-
     if(strcmp(tag, MARKCURR) == 0 || strcmp(tag, MARKPREV) == 0)
         return elog(1, "column_moveid: cant move to curr or prev column");
 
-    // TODO: check that it's the same tag,
-    // so no need to rewrite to file.
-
-    for (int i = 0; i < 8; ++i)
-        if (strcmp(coltab[i].tag, tag) == 0)
-            tagfound = TRUE;
-
-    if (tagfound == FALSE)
+    if (_tagext(tag) == FALSE)
         return elog(1, "%s: no such column in env", tag);
 
     // TODO: should we change directory if current task ID is moved?
     for (int i = 0; i < taskids.idx; ++i) {
         if (strcmp(taskids.ids[i].id, id) == 0) {
-            if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
-                /* Update curr & prev task IDs and then move to column */
+            if (strcmp(taskids.ids[i].col.tag, tag) == 0)
+                return 0;
+            else if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
                 column_delcid();
-                taskids.ids[i].isset = TRUE;
-                taskids.ids[i].col = column_setmark(tag);
-            }
-            else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0) {
-                /* Update prev task IDs and then move to column */
+            else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
                 column_delpid();
-                taskids.ids[i].isset = TRUE;
-                taskids.ids[i].col = column_setmark(tag);
-            }
-            else {
-                taskids.ids[i].isset = TRUE;
-                taskids.ids[i].col = column_setmark(tag);
-            }
-            return save();
+            return _moveid(&taskids.ids[i], tag);
         }
     }
     return elog(1, "could not find id : %s", id);
