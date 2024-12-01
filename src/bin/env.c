@@ -60,8 +60,8 @@ int _env_del(int argc, char **argv)
     int o_strict = 0;
     int status;
     int showpath = FALSE;
-    char *old_cenv = column_getcenv();
-    char *old_penv = column_getpenv();
+    char *old_cenv = state_getcenv();
+    char *old_penv = state_getpenv();
     struct tman_env_del_opt opt;
 
     while ((c = getopt(argc, argv, ":f")) != -1) {
@@ -81,7 +81,7 @@ int _env_del(int argc, char **argv)
         status = core_env_del(NULL, &opt);
 
     // TODO: update current directory if current env got deleted.
-    if (strcpy(old_cenv, column_getcenv())) {
+    if (strcpy(old_cenv, state_getcenv())) {
         showpath = TRUE;
     }
 
@@ -102,9 +102,9 @@ int _env_list(int argc, char **argv)
             continue;
 
         // TODO: simplify this logic
-        if (strcmp(column_getcenv(), ent->d_name) == 0)
+        if (strcmp(state_getcenv(), ent->d_name) == 0)
             mark = '*';
-        else if (strcmp(column_getpenv(), ent->d_name) == 0)
+        else if (strcmp(state_getpenv(), ent->d_name) == 0)
             mark = '^';
         else
             mark = '+';

@@ -46,7 +46,6 @@ struct env {
     char name[ENVSIZ+1];
 };
 
-int column_show(void);
 int column_moveid(char *id, char *tag);
 struct column column_getmark(char *id);
 
@@ -63,11 +62,11 @@ int column_addcid(char *id);
 int column_delspec(char *id);
 
 int column_envinit();
-char *column_getcenv();
-char *column_getpenv();
-int column_delcenv();
-int column_delpenv();
-int column_swapenv();
+char *state_getcenv();
+char *state_getpenv();
+int state_delcenv();
+int state_delpenv();
+int state_swapenvs();
 int column_addcenv(char *env);
 
 #endif

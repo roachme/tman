@@ -8,8 +8,9 @@
 #include <dirent.h>
 #include <string.h>
 
-#include "common.h"
 #include "tman.h"
+#include "state.h"
+#include "common.h"
 #include "column.h"
 
 char envs[NENV][ENVSIZ + 1];
@@ -30,7 +31,7 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 7, .mark = '-', .tag = "done" },
 };
 
-struct taskids taskids;      /* tasks per environment */
+static struct taskids taskids;      /* tasks per environment */
 
 static struct column column_setmark(char *tag)
 {
@@ -69,7 +70,7 @@ static int _save(char *env, char *id, char *tag)
 
 static int save(void)
 {
-    char *cenv = column_getcenv();
+    char *cenv = state_getcenv();
 
     if (cenv[0] == '\0')
         return elog(1, "save: no current env set");
@@ -86,6 +87,11 @@ static int _setcol(struct taskid *taskid, char *tag)
 {
     taskid->isset = TRUE;
     taskid->col = column_setmark(tag);
+    return 0;
+}
+
+static int _setcolid(char *id, char *tag)
+{
     return 0;
 }
 
@@ -114,65 +120,68 @@ struct column column_getmark(char *id)
     return coltab[0];
 }
 
+static int _reset()
+{
+    memset(&taskids, 0, sizeof(taskids));
+    return 0;
+}
+
 static int load(char *env)
 {
-    FILE *fp;
+    int i;
     DIR *dp;
+    FILE *fp;
     char tag[TAGSIZ + 1];
     struct dirent *dir;
     char line[BUFSIZ + 1];
     char idpath[BUFSIZ + 1];
     char envpath[BUFSIZ + 1];
 
-    if ((dp = opendir(formpath(envpath, "%s/%s", tmanfs.base, env))) == NULL) {
-        fprintf(stderr, "could not open env dir: %s\n", envpath);
-        return 1;
-    }
+    if (_reset())
+        return elog(1, "could not reset taskids");
+    else if (formpath(envpath, "%s/%s", tmanfs.base, env) == NULL)
+        return elog(1, "%s: could not form path for task env", env);
+    else if ((dp = opendir(envpath)) == NULL)
+        return elog(1, "could not open env dir: %s\n", envpath);
 
-    memset(&taskids, 0, sizeof(taskids));
-    for ( ; (dir = readdir(dp)) != NULL && taskids.idx < NTASKS; ++taskids.idx) {
+    for (i = 0; (dir = readdir(dp)) != NULL && taskids.idx < NTASKS; ++i) {
         if (dir->d_name[0] == '.' || dir->d_type != DT_DIR) {
-            --taskids.idx; /* don't count this one */
+            --i; /* don't count this one */
             continue;
-        }
-        else if ((fp = fopen(formpath(idpath, "%s/%s/.tman/col", envpath, dir->d_name), "r")) == NULL) {
-            fprintf(stderr, "could not open col file: %s\n", idpath);
+        } else if (formpath(idpath, "%s/%s/.tman/col", envpath, dir->d_name) == NULL) {
+            elog(1, "%s: could not form path for task id", dir->d_name);
+            continue;
+        } else if ((fp = fopen(idpath, "r")) == NULL) {
+            elog(1, "could not open col file: %s\n", idpath);
             continue;
         }
 
         fscanf(fp, "%*s : %4s\n", tag);
-        taskids.ids[taskids.idx].col = column_setmark(tag);
-        strcpy(taskids.ids[taskids.idx].id, dir->d_name);
+        taskids.ids[i].col = column_setmark(tag);
+        strcpy(taskids.ids[i].id, dir->d_name);
+
+        // Load env/task state
+        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
+            state_setcid(taskids.ids[i].id);
+        else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
+            state_setpid(taskids.ids[i].id);
+
         fclose(fp);
     }
-    if (taskids.idx >= NTASKS)
+    if (i >= NTASKS)
         elog(1, "tasks limit in environment: %d", NTASKS);
+    taskids.idx = i;
     return closedir(dp);
-}
-
-int column_show(void)
-{
-    char *cenv = column_getcenv();
-    int ncoltab = sizeof(coltab) / sizeof(coltab[0]);
-
-    if (cenv[0] == '\0')
-        return elog(1, "show:err: no curr env set");
-
-    // FIXME: replace magic number with actual size of coltab
-    for (int i = 0; i < 7; ++i)
-        for (int k = 0; k < taskids.idx; ++k)
-            if (strcmp(coltab[i].tag, taskids.ids[k].col.tag) == 0)
-                printf("%c %s : %s\n", taskids.ids[k].col.mark, taskids.ids[k].id, taskids.ids[k].col.tag);
-    printf("\n");
-    return 0;
 }
 
 int column_init(char *env)
 {
     if (column_envinit() != 0)
         return elog(1, "err: column_envinit");
+    else if (state_init(tmanfs.fstate, tmanfs.db))
+        return 1;
 
-    env = env != NULL ? env : column_getcenv();
+    env = env != NULL ? env : state_getcenv();
     if (env[0] != '\0')
         return load(env);
     return 0;
@@ -196,7 +205,7 @@ int column_envinit()
 int column_markid(char *id)
 {
     FILE *fp;
-    char *cenv = column_getcenv();
+    char *cenv = state_getcenv();
     char idpath[BUFSIZ];
 
     if (envs[CENV][0] == '\0')
@@ -215,63 +224,31 @@ int column_markid(char *id)
     return fclose(fp);
 }
 
-char *column_getcid()
-{
-    if (envs[CENV][0] == '\0') {
-        fprintf(stderr, "current env not set\n");
-        return NULL;
-    }
-    for (int i = 0; i < taskids.idx; ++i)
-        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
-            return taskids.ids[i].id;
-    return NULL;
-}
-
-char *column_getpid()
-{
-    if (envs[CENV][0] == '\0') {
-        fprintf(stderr, "current env not set\n");
-        return NULL;
-    }
-    for (int i = 0; i < taskids.idx; ++i)
-        if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
-            return taskids.ids[i].id;
-    return NULL;
-}
-
 int column_addcid(char *id)
 {
     int idfound = FALSE;
 
-    if (envs[CENV][0] == '\0') {
-        fprintf(stderr, "current env not set\n");
-        return 1;
-    }
+    if (envs[CENV][0] == '\0')
+        return elog(1, "current env not set");
 
-    /* Move previous task ID to default column, i.e. blog */
-    for (int i = 0; i < taskids.idx; ++i)
+    for (int i = 0; i < taskids.idx; ++i) {
         if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0) {
             taskids.ids[i].isset = TRUE;
             taskids.ids[i].col = column_setmark(MARKDEF);
         }
-
-    /* Move old current task ID to previous column */
-    for (int i = 0; i < taskids.idx; ++i)
-        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
+        else if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
             taskids.ids[i].isset = TRUE;
             taskids.ids[i].col = column_setmark(MARKPREV);
         }
-
-    /* Move new task ID to current column */
-    for (int i = 0; i < taskids.idx; ++i)
-        if (strcmp(taskids.ids[i].id, id) == 0) {
+        else if (strcmp(taskids.ids[i].id, id) == 0) {
             idfound = TRUE;
             taskids.ids[i].isset = TRUE;
             taskids.ids[i].col = column_setmark(MARKCURR);
         }
+    }
 
     if (idfound)
-        return save();
+        return !(state_addcid(id) == 0 && save() == 0);
     return elog(1, "no such task ID: %s", id);
 }
 
@@ -279,23 +256,20 @@ int column_delcid(void)
 {
     int cidfound = FALSE;
 
-    /* Move current task ID to deafult column */
-    for (int i = 0; i < taskids.idx; ++i)
+    for (int i = 0; i < taskids.idx; ++i) {
         if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
             cidfound = TRUE;
             taskids.ids[i].isset = FALSE;
             taskids.ids[i].col = column_setmark(MARKDEF);
         }
-
-    /* Move previous task ID to current column */
-    for (int i = 0; i < taskids.idx; ++i)
-        if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0) {
+        else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0) {
             taskids.ids[i].isset = TRUE;
             taskids.ids[i].col = column_setmark(MARKCURR);
         }
+    }
 
     if (cidfound == TRUE)
-        return save();
+        return !(state_delcid() == 0 && save() == 0);
     return elog(1, "no current ID is set to delete: %d", cidfound);
 }
 
@@ -306,7 +280,7 @@ int column_delpid()
         if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
             taskids.ids[i].isset = TRUE;
             taskids.ids[i].col = column_setmark(MARKDEF);
-            return save();
+            return !(state_delpid() == 0 && save() == 0);
         }
 
     return elog(1, "no previous ID is set to delete");
@@ -314,16 +288,22 @@ int column_delpid()
 
 int column_swapid()
 {
-    if (column_getcid() == NULL || column_getpid() == NULL)
-        return elog(1, "current or previous task ID(s) not found");
+    int cidfound = FALSE;
+    int pidfound = FALSE;
 
     for (int i = 0; i < taskids.idx; ++i) {
-        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
+        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
+            cidfound = TRUE;
             _setcol(&taskids.ids[i], MARKPREV);
-        else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
+        }
+        else if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0) {
+            pidfound = TRUE;
             _setcol(&taskids.ids[i], MARKCURR);
+        }
     }
-    return save();
+    if (cidfound == TRUE && pidfound == TRUE)
+        return !(state_swapids() == 0 && save() == 0);
+    return 1;
 }
 
 /*
@@ -332,9 +312,10 @@ int column_swapid()
 */
 int column_delspec(char *id)
 {
-    char *cid = column_getcid();
-    char *pid = column_getpid();
+    char *cid = state_getcid();
+    char *pid = state_getpid();
 
+    // TODO: Gotta check that `id' is not NULL.
     if (strcmp(cid, id) == 0) {
         if (column_delcid() != 0)
             return elog(1, "could not delete current task id");
@@ -369,50 +350,12 @@ int column_moveid(char *id, char *tag)
     return elog(1, "could not find id : %s", id);
 }
 
-char *column_getcenv()
+int column_swapenvs()
 {
-    return envs[CENV];
-}
-
-char *column_getpenv()
-{
-    return envs[PENV];
-}
-
-int column_delcenv()
-{
-    strncpy(envs[CENV], envs[PENV], ENVSIZ);
-    memset(envs[PENV], 0, sizeof(envs[PENV]));
-    if (envs[CENV][0] != '\0')
-        load(envs[CENV]);
-    else
-        memset(&taskids, 0, sizeof(taskids));
-    return envsave();
-}
-
-int column_delpenv()
-{
-    memset(envs[PENV], 0, sizeof(envs[PENV]));
-    return envsave();
-}
-
-int column_swapenv()
-{
-    char tmp[ENVSIZ];
-
-    if (strlen(envs[CENV]) == 0 || strlen(envs[CENV]) == 0)
-        return elog(1, "current or previous env not set");
-    strncpy(tmp, envs[CENV], ENVSIZ);
-    strncpy(envs[CENV], envs[PENV], ENVSIZ);
-    strncpy(envs[PENV], tmp, ENVSIZ);
-    /* Save new current env and load its task IDs */
-    return !(envsave() == 0 && load(envs[CENV]) == 0);
+    return !(state_swapenvs() == 0 && load(envs[CENV]) == 0);
 }
 
 int column_addcenv(char *env)
 {
-    strncpy(envs[PENV], envs[CENV], ENVSIZ);
-    strncpy(envs[CENV], env, ENVSIZ);
-    /* Save new current env and load its task IDs */
-    return !(envsave() == 0 && load(env) == 0);
+    return !(state_addcenv(env) == 0 && load(env) == 0);
 }

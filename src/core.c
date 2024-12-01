@@ -8,6 +8,7 @@
 
 #include "dir.h"
 #include "tman.h"
+#include "state.h"
 #include "core.h"
 #include "unit.h"
 #include "hook.h"
@@ -32,8 +33,8 @@ static int _idext(char *env, char *id)
 
 int core_currdir()
 {
-    char *cid = column_getcid();
-    printf("%s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");
+    char *cid = state_getcid();
+    printf("%s/%s/%s\n", tmanfs.base, state_getcenv(), cid ? cid : "");
     return 0;
 }
 
@@ -60,7 +61,7 @@ int core_id_add(char *id, struct tman_add_opt *opt)
           tman: column_mark: failed
     } */
     // TODO: Add support to pass unit values into unit_add()
-    char *cenv = column_getcenv();
+    char *cenv = state_getcenv();
     opt->env = opt->env != NULL ? opt->env : cenv;
 
     if (opt->env[0] == '\0')
@@ -94,9 +95,9 @@ int core_id_add(char *id, struct tman_add_opt *opt)
 int core_id_del(char *id, struct tman_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
-    char *cid = column_getcid();
+    char *cid = state_getcid();
     id  = id != NULL ? id : cid;
-    opt->env = opt->env != NULL ? opt->env : column_getcenv();
+    opt->env = opt->env != NULL ? opt->env : state_getcenv();
 
     if (opt->env[0] == '\0')
         return elog(1, "no current environment");
@@ -126,15 +127,15 @@ int core_id_prev(void)
     if (column_swapid())
         return TMAN_ECORE;
     // BENCHMARK: consumes lots of time to execute.
-    if (hookact("prev", column_getcenv(), column_getcid()))
+    if (hookact("prev", state_getcenv(), state_getcid()))
         return elog(TMAN_EHOOK, "could not execute hook");
     return TMAN_OK;
 }
 
 int core_id_sync(void)
 {
-    char *cid  = column_getcid();
-    char *cenv = column_getcenv();
+    char *cid  = state_getcid();
+    char *cenv = state_getcenv();
 
     if (cid == NULL)
         return elog(TMAN_ECORE, "no current task id set");
@@ -145,8 +146,8 @@ int core_id_sync(void)
 
 int core_id_set(char *env, char *id, struct bunit *unit)
 {
-    id  = id != NULL ? id : column_getcid();
-    env = env != NULL ? env : column_getcenv();
+    id  = id != NULL ? id : state_getcid();
+    env = env != NULL ? env : state_getcenv();
 
     if (env[0] == '\0')
         return elog(1, "no current environment");
@@ -167,7 +168,7 @@ int core_id_set(char *env, char *id, struct bunit *unit)
 // int core_id_add(char *id, struct tman_add_opt *opt)
 int core_id_use(char *id, struct tman_use_opt *opt)
 {
-    opt->env = opt->env != NULL ? opt->env : column_getcenv();
+    opt->env = opt->env != NULL ? opt->env : state_getcenv();
 
     if (opt->env[0] == '\0')
         return elog(1, "no current environment");
@@ -179,7 +180,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
         return elog(1, "task id required");
     else if (!_idext(opt->env, id))
         return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
-    else if (opt->env != column_getcenv()) {
+    else if (opt->env != state_getcenv()) {
         fprintf(stderr, "trynna switch to task in another env\n");
         fprintf(stderr, "under development\n");
         return 1;
@@ -194,7 +195,7 @@ int core_id_move(char *id, char *dst, char *src)
 {
     char dstid[BUFSIZ] = {0};
 
-    src = src ? src : column_getcenv();
+    src = src ? src : state_getcenv();
     sprintf(dstid, "%s/%s/%s", tmanfs.base, dst, id);
 
     if (!_envext(dst))
@@ -210,9 +211,9 @@ int core_id_move(char *id, char *dst, char *src)
 
     if (imove(tmanfs.base, id, dst, src))
         return elog(1, "%s: could not move task to %s", id, dst);
-    else if (strcmp(column_getcid(), id) == 0)
+    else if (strcmp(state_getcid(), id) == 0)
         return column_delcid();
-    else if (strcmp(column_getpid(), id) == 0)
+    else if (strcmp(state_getpid(), id) == 0)
         return !column_swapid() && !column_delcid();
     return TMAN_OK;
 }
@@ -224,7 +225,7 @@ int core_id_move(char *id, char *dst, char *src)
 struct list *core_id_list(struct list *list, char *env)
 {
     char pathname[PATHSIZ];
-    char *cenv = column_getcenv();
+    char *cenv = state_getcenv();
     env = env ? env : cenv;
     sprintf(pathname, "%s/%s", tmanfs.base, env);
     DIR *ids = opendir(pathname);
@@ -273,8 +274,8 @@ struct list *core_id_list(struct list *list, char *env)
 
 int core_id_movecol(char *env, char *id, char *tag)
 {
-    id = id ? id : column_getcid();
-    env = env ? env : column_getcenv();
+    id = id ? id : state_getcid();
+    env = env ? env : state_getcenv();
 
     if (env[0] == '\0')
         return elog(1, "no current env set");
@@ -287,8 +288,8 @@ int core_id_movecol(char *env, char *id, char *tag)
 
 struct units *core_id_cat(struct units *units, char *env, char *id)
 {
-    id = id ? id : column_getcid();
-    env = env ? env : column_getcenv();
+    id = id ? id : state_getcid();
+    env = env ? env : state_getcenv();
 
     if (env[0] == '\0') {
         elog(1, "no Current environment");
@@ -336,7 +337,7 @@ int core_env_add(char *env, struct tman_env_add_opt *opt)
 
 int core_env_del(char *env, struct tman_env_del_opt *opt)
 {
-    env = env ? env : column_getcenv();
+    env = env ? env : state_getcenv();
 
     if (env[0] == '\0')
         return elog(1, "no current env set");
@@ -344,7 +345,7 @@ int core_env_del(char *env, struct tman_env_del_opt *opt)
         return elog(1, "%s: no such env", env);
     else if (ermdir(tmanfs.base, env))
         return elog(1, "%s: could not delete env directory", env);
-    return column_delcenv();
+    return state_delcenv();
 }
 
 int core_env_list()
@@ -354,7 +355,7 @@ int core_env_list()
 
 int core_env_prev()
 {
-    return column_swapenv();
+    return state_swapenvs();
 }
 
 int core_env_use(char *env)
