@@ -64,7 +64,7 @@ int core_id_add(char *id, struct tman_add_opt *opt)
     char *cenv = state_getcenv();
     opt->env = opt->env != NULL ? opt->env : cenv;
 
-    if (opt->env[0] == '\0')
+    if (opt->env == NULL)
         return elog(1, "no current environment");
     else if (!_envext(opt->env))
         return elog(1, "%s: no such environment", opt->env);
@@ -84,11 +84,8 @@ int core_id_add(char *id, struct tman_add_opt *opt)
         return elog(1, "could not execute hook");
     else if (column_markid(id))
         return elog(1, "column_mark: failed");
-
-    // FIXME: the logic below might change when I add support to add
-    // non-current environment.
-    if (opt->noswitch == FALSE && strcmp(opt->env, cenv) == 0 && column_addcid(id) != 0)
-        return elog(1, "column_addcid: failed");
+    else if (opt->noswitch == FALSE && strcmp(opt->env, cenv) == 0)
+        return column_addcid(id);
     return TMAN_OK;
 }
 
@@ -99,11 +96,11 @@ int core_id_del(char *id, struct tman_del_opt *opt)
     id  = id != NULL ? id : cid;
     opt->env = opt->env != NULL ? opt->env : state_getcenv();
 
-    if (opt->env[0] == '\0')
+    if (opt->env == NULL)
         return elog(1, "no current environment");
     else if (!_envext(opt->env))
         return elog(1, "%s: no such environment", opt->env);
-    else if (id[0] == '\0')
+    else if (id == NULL)
         return elog(1, "no current task id");
     else if (!_idext(opt->env, id)) {
         if (opt->force == 0)
@@ -149,11 +146,11 @@ int core_id_set(char *env, char *id, struct bunit *unit)
     id  = id != NULL ? id : state_getcid();
     env = env != NULL ? env : state_getcenv();
 
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "no current environment");
     else if (!_envext(env))
         return elog(1, "%s: no such environment", env);
-    else if (id[0] == '\0')
+    else if (id == NULL)
         return elog(1, "no current task id");
     else if (!_idext(env, id))
         return elog(1, "%s: no such task id", id);
@@ -170,13 +167,13 @@ int core_id_use(char *id, struct tman_use_opt *opt)
 {
     opt->env = opt->env != NULL ? opt->env : state_getcenv();
 
-    if (opt->env[0] == '\0')
+    if (opt->env == NULL)
         return elog(1, "no current environment");
     if (!_envext(opt->env))
         return elog(1, "%s: no such env", opt->env);
     else if (!_chkenv(opt->env))
         return elog(1, "%s: illegal task env name", opt->env);
-    else if (id[0] == '\0')
+    else if (id == NULL)
         return elog(1, "task id required");
     else if (!_idext(opt->env, id))
         return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
@@ -277,7 +274,7 @@ int core_id_movecol(char *env, char *id, char *tag)
     id = id ? id : state_getcid();
     env = env ? env : state_getcenv();
 
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "no current env set");
     else if (id == NULL)
         return elog(1, "no current id set");
@@ -291,16 +288,16 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
     id = id ? id : state_getcid();
     env = env ? env : state_getcenv();
 
-    if (env[0] == '\0') {
-        elog(1, "no Current environment");
+    if (env == NULL) {
+        elog(1, "no current environment");
         return NULL;
     }
     else if (!_envext(env)) {
         elog(1, "%s: no such env name", env);
         return NULL;
     }
-    else if (id[0] == '\0') {
-        elog(1, "no current Task id");
+    else if (id == NULL) {
+        elog(1, "no current task id");
         return NULL;
     }
     else if (!_idext(env, id)) {
@@ -321,7 +318,7 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
 
 int core_env_add(char *env, struct tman_env_add_opt *opt)
 {
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "env name required");
     else if (_envext(env)) {
         if (opt->force == 0)
@@ -339,7 +336,7 @@ int core_env_del(char *env, struct tman_env_del_opt *opt)
 {
     env = env ? env : state_getcenv();
 
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "no current env set");
     else if (!_envext(env))
         return elog(1, "%s: no such env", env);

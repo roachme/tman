@@ -13,8 +13,6 @@
 #include "common.h"
 #include "column.h"
 
-char envs[NENV][ENVSIZ + 1];
-
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 0, .mark = '?', .tag = "uknw" },
     { .prio = 1, .mark = '*', .tag = "curr" },
@@ -41,18 +39,6 @@ static struct column column_setmark(char *tag)
         if (strcmp(tag, coltab[i].tag) == 0)
             return coltab[i];
     return coltab[0];
-}
-
-static int envsave()
-{
-    FILE *fp;
-
-    if ((fp = fopen(tmanfs.fstate, "w")) == NULL)
-        return elog(1, "could not save env state");
-
-    for (int i = 0; i < NENV; ++i)
-        fprintf(fp, "%s\n", envs[i]);
-    return fclose(fp);
 }
 
 static int _save(char *env, char *id, char *tag)
@@ -176,29 +162,13 @@ static int load(char *env)
 
 int column_init(char *env)
 {
-    if (column_envinit() != 0)
-        return elog(1, "err: column_envinit");
-    else if (state_init(tmanfs.fstate, tmanfs.db))
+    if (state_init(tmanfs.fstate, tmanfs.db))
         return 1;
 
     env = env != NULL ? env : state_getcenv();
     if (env[0] != '\0')
         return load(env);
     return 0;
-}
-
-int column_envinit()
-{
-    FILE *fp;
-    char line[BUFSIZ];
-    char envpath[BUFSIZ];
-
-    if ((fp = fopen(formpath(envpath, FMTSTATE, tmanfs.db), "r")) == NULL)
-        return elog(1, "could not open env state file %s\n", envpath);
-
-    for (int i = 0; i < NENV && fgets(line, BUFSIZ, fp) != NULL; ++i)
-        sscanf(line, "%s", envs[i]);
-    return fclose(fp);
 }
 
 /* column_markid: Add a new task ID's col file */
@@ -208,7 +178,7 @@ int column_markid(char *id)
     char *cenv = state_getcenv();
     char idpath[BUFSIZ];
 
-    if (envs[CENV][0] == '\0')
+    if (state_getcenv() == NULL)
         return elog(1, "column_markid: no current env set");
 
     sprintf(idpath, FMTCOL, tmanfs.base, cenv, id);
@@ -228,7 +198,7 @@ int column_addcid(char *id)
 {
     int idfound = FALSE;
 
-    if (envs[CENV][0] == '\0')
+    if (state_getcenv() == NULL)
         return elog(1, "current env not set");
 
     for (int i = 0; i < taskids.idx; ++i) {
@@ -352,7 +322,7 @@ int column_moveid(char *id, char *tag)
 
 int column_swapenvs()
 {
-    return !(state_swapenvs() == 0 && load(envs[CENV]) == 0);
+    return !(state_swapenvs() == 0 && load(state_getcenv()) == 0);
 }
 
 int column_addcenv(char *env)
