@@ -20,14 +20,14 @@ static int _envext(char *env)
 {
     char pathname[PATHSIZ];
     sprintf(pathname, "%s/%s", tmanfs.base, env);
-    return !DCHK(pathname);
+    return ISDIR(pathname);
 }
 
 static int _idext(char *env, char *id)
 {
     char pathname[PATHSIZ];
     sprintf(pathname, "%s/%s/%s", tmanfs.base, env, id);
-    return !DCHK(pathname);
+    return ISDIR(pathname);
 }
 
 int core_currdir()
@@ -45,7 +45,7 @@ int core_init(const char *cmd)
         return 0;
 
     // TODO: Find a better way to check that util's inited.
-    if (FCHK(tmanfs.finit))
+    if (ISFILE(tmanfs.finit) == FALSE)
         return elog(1, "not inited");
     else if (column_init())
         return elog(1, "column_init: error: could not init");

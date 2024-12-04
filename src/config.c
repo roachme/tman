@@ -97,7 +97,7 @@ int config_init(void)
     sprintf(configs[1], "%s/.config/%s/%s.cfg", homedir, PROGRAM, PROGRAM);
 
     for (int i = 0; i < NUMCONFIG; ++i) {
-        if (FCHK(configs[i]) == 0) {
+        if (ISFILE(configs[i]) == TRUE) {
             fconfig = configs[i];
             break;
         }
