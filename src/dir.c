@@ -34,9 +34,8 @@ int imove(char *base, char *id, char *dstenv, char *srcenv) {
   sprintf(new_path, "%s/%s/%s", base, dstenv, id);
   sprintf(old_path, "%s/%s/%s", base, srcenv, id);
 
-  if (!FCHK(new_path)) {
+  if (ISFILE(new_path))
     return 1;
-  }
   return MOVE(old_path, new_path);
 }
 

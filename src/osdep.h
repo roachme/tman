@@ -5,7 +5,7 @@ int MKDIR(char *path);
 int RMDIR(char *path);
 int MOVE(char *src, char *dst);
 int TOUCH(char *path);
-int FCHK(char *fname);
-int DCHK(char *fname);
+int ISFILE(char *fname);
+int ISDIR(char *fname);
 
 #endif

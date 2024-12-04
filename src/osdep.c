@@ -31,16 +31,16 @@ int TOUCH(char *path)
     return system(cmd);
 }
 
-int FCHK(char *fname)
+int ISFILE(char *fname)
 {
     char cmd[BUFSIZ];
     sprintf(cmd, "test -f %s", fname);
-    return system(cmd);
+    return system(cmd) == EXIT_SUCCESS;
 }
 
-int DCHK(char *fname)
+int ISDIR(char *fname)
 {
     char cmd[BUFSIZ];
     sprintf(cmd, "test -d %s", fname);
-    return system(cmd);
+    return system(cmd) == EXIT_SUCCESS;
 }
