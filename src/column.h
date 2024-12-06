@@ -1,21 +1,15 @@
 #ifndef TMAN_COLUMN_H
 #define TMAN_COLUMN_H
 
+#include "env.h"
 #include "common.h"
 
 // Gotta define 4 default columns: curr, prev, blog, done
 
-#define CENV        0
-#define PENV        1
 #define MARKDEF     "blog"
 #define MARKCURR    "curr"
 #define MARKPREV    "prev"
 
-#define TRUE        1
-#define FALSE       0
-
-
-#define NENV        2  /* number of 'special' environments */
 
 struct column {
     int prio;

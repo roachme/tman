@@ -193,7 +193,7 @@ int core_id_move(char *id, char *dst, char *src)
 
     if (!_envext(dst))
         return elog(1, "no such destination env");
-    else if (!src || strlen(src) == 0)
+    else if (!src || src == NULL)
         return elog(1, "no current env set");
     else if (!_envext(src))
         return elog(1, "no such source env");
@@ -224,7 +224,7 @@ struct list *core_id_list(struct list *list, char *env)
     DIR *ids = opendir(pathname);
     struct dirent *ent;
 
-    if (strlen(env) == 0) {
+    if (env == NULL) {
         elog(1, "no current environment set");
         return NULL;
     }
