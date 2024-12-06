@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <getopt.h>
 
+#include "env.h"
 #include "limit.h"
 
 #define PROGRAM     "tman"
@@ -23,15 +24,17 @@ enum tman_errno {
     TMAN_EPGN   = 6,    /* Failed to execute plugin */
 };
 
+#define TRUE            1
+#define FALSE           0
+
 #define IDSIZ           20
+#define TAGSIZ          4
 #define CMDSIZ          5
 #define PGNSIZ          10
-#define ENVSIZ          20
 #define TIDSIZ          20
 #define PATHSIZ         4096
 #define HELPDESC        100
 
-#define TAGSIZ      4
 
 int _chkid(char *id);
 int _chkenv(char *env);

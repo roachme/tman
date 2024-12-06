@@ -92,6 +92,8 @@ int _env_list(int argc, char **argv)
 {
     char mark = '+';
     struct dirent *ent;
+    char *cenv = column_getcenv();
+    char *penv = column_getpenv();
     DIR *edir = opendir(tmanfs.base);
 
     if (!edir)
@@ -102,21 +104,24 @@ int _env_list(int argc, char **argv)
             continue;
 
         // TODO: simplify this logic
-        if (strcmp(column_getcenv(), ent->d_name) == 0)
+        if (cenv != NULL && strcmp(column_getcenv(), ent->d_name) == 0)
             mark = '*';
-        else if (strcmp(column_getpenv(), ent->d_name) == 0)
+        else if (penv != NULL && strcmp(column_getpenv(), ent->d_name) == 0)
             mark = '^';
         else
             mark = '+';
         printf("%c %-10s [%s] %s\n", mark, ent->d_name, "roach", "some env desc");
     }
+    closedir(edir);
     return 1;
 }
 
 int _env_prev(int argc, char **argv)
 {
-    if (core_env_prev() != 0)
+    if (core_env_prev()) {
+        elog(1, "bin.env: env_prev failed");
         return 1;
+    }
     return core_currdir();
 }
 
@@ -130,7 +135,7 @@ int _env_use(int argc, char **argv)
     char *env = argc > 1 ? argv[1] : NULL;
 
     if (core_env_use(env))
-        return 1;
+        return elog(1, "could not switch to env '%s'", env);
     return core_currdir();
 }
 

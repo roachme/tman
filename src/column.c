@@ -8,11 +8,10 @@
 #include <dirent.h>
 #include <string.h>
 
-#include "common.h"
 #include "tman.h"
+#include "env.h"
+#include "common.h"
 #include "column.h"
-
-char envs[NENV][ENVSIZ];
 
 char *formpath(char *dst, char *fmt, ...)
 {
@@ -40,19 +39,6 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
 };
 
 struct taskids taskids;      /* tasks per environment */
-
-static int envsave()
-{
-    FILE *fp = fopen(tmanfs.fstate, "w");
-
-    if (fp == NULL)
-        return elog(1, "could not save env state\n");
-
-    for (int i = 0; i < NENV; ++i) {
-        fprintf(fp, "%s\n", envs[i]);
-    }
-    return fclose(fp);
-}
 
 /* column_markid: will be needed by tman `list' command */
 struct column column_getmark(char *id)
@@ -162,27 +148,13 @@ static int save(void)
 
 int column_init()
 {
-    char *cenv = column_getcenv();
+    char *cenv;
 
-    if (column_envinit() != 0)
+    if (env_init(tmanfs.fstate) != 0)
         return elog(1, "err: column_envinit");
-    if (cenv[0] != '\0')
+    if ((cenv = env_getcurr()) != NULL)
         return load(cenv);
     return 0;
-}
-
-int column_envinit()
-{
-    FILE *fp;
-    char line[BUFSIZ];
-    char envpath[BUFSIZ];
-
-    if ((fp = fopen(formpath(envpath, "%s/state", tmanfs.db), "r")) == NULL)
-        elog(1, "could not open env state file %s\n", envpath);
-
-    for (int i = 0; fgets(line, BUFSIZ, fp) != NULL && i < NENV; ++i)
-        sscanf(line, "%s", envs[i]);
-    return fclose(fp);
 }
 
 /* column_markid: Add a new task ID's col file */
@@ -192,7 +164,7 @@ int column_markid(char *id)
     char *cenv = column_getcenv();
     char idpath[BUFSIZ];
 
-    if (envs[CENV][0] == '\0')
+    if (env_getcurr() == NULL)
         return elog(1, "column_markid: no current env set");
 
     sprintf(idpath, "%s/%s/%s/.tman/col", tmanfs.base, cenv, id);
@@ -210,7 +182,7 @@ int column_markid(char *id)
 
 char *column_getcid()
 {
-    if (envs[CENV][0] == '\0') {
+    if (env_getcurr() == NULL) {
         fprintf(stderr, "current env not set\n");
         return NULL;
     }
@@ -222,7 +194,7 @@ char *column_getcid()
 
 char *column_getpid()
 {
-    if (envs[CENV][0] == '\0') {
+    if (env_getcurr() == NULL) {
         fprintf(stderr, "current env not set\n");
         return NULL;
     }
@@ -236,7 +208,7 @@ int column_addcid(char *id)
 {
     int idfound = FALSE;
 
-    if (envs[CENV][0] == '\0') {
+    if (env_getcurr() == NULL) {
         fprintf(stderr, "current env not set\n");
         return 1;
     }
@@ -397,48 +369,42 @@ int column_moveid(char *id, char *tag)
 
 char *column_getcenv()
 {
-    return envs[CENV];
+    return env_getcurr();
 }
 
 char *column_getpenv()
 {
-    return envs[PENV];
+    return env_getprev();
 }
 
 int column_delcenv()
 {
-    strncpy(envs[CENV], envs[PENV], ENVSIZ);
-    memset(envs[PENV], 0, sizeof(envs[PENV]));
-    if (envs[CENV][0] != '\0')
-        load(envs[CENV]);
-    else
-        memset(&taskids, 0, sizeof(taskids));
-    return envsave();
+    char *cenv;
+
+    if (env_delcenv())
+        return 1;
+    if ((cenv = env_getcurr()) != NULL)
+        return load(cenv);
+    return 0;
 }
 
 int column_delpenv()
 {
-    memset(envs[PENV], 0, sizeof(envs[PENV]));
-    return envsave();
+    char *cenv;
+
+    if (env_delpenv())
+        return 1;
+    if ((cenv = env_getcurr()) != NULL)
+        return load(cenv);
+    return 0;
 }
 
 int column_swapenv()
 {
-    char tmp[ENVSIZ];
-
-    if (strlen(envs[CENV]) == 0 || strlen(envs[CENV]) == 0)
-        return elog(1, "current or previous env not set");
-    strncpy(tmp, envs[CENV], ENVSIZ);
-    strncpy(envs[CENV], envs[PENV], ENVSIZ);
-    strncpy(envs[PENV], tmp, ENVSIZ);
-    /* Save new current env and load its task IDs */
-    return !(envsave() == 0 && load(envs[CENV]) == 0);
+    return !(env_swapenvs() == 0 && load(env_getcurr()) == 0);
 }
 
 int column_addcenv(char *env)
 {
-    strncpy(envs[PENV], envs[CENV], ENVSIZ);
-    strncpy(envs[CENV], env, ENVSIZ);
-    /* Save new current env and load its task IDs */
-    return !(envsave() == 0 && load(env) == 0);
+    return !(env_addcenv(env) == 0 && load(env) == 0);
 }
