@@ -8,6 +8,7 @@
 #define NENVITEM    1  /* number of environment items per line */
 
 int env_init(char *fstate);
+int env_reset(void);
 char *env_getcurr();
 char *env_getprev();
 int env_delcenv(void);
