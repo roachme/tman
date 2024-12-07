@@ -241,7 +241,7 @@ struct list *core_id_list(struct list *list, char *env)
     size_t i = 0;
     struct bunit bunit;
     while ((ent = readdir(ids)) != NULL && i < LSIZE) {
-        if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..") || ent->d_type != DT_DIR)
+        if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
         if (unit_get(&bunit, env, ent->d_name) == NULL) {
             fprintf(stderr, "core_id_list %s: failde to get units\n", ent->d_name);
