@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include <string.h>
 
 #include "env.h"
@@ -33,8 +34,9 @@ static int envsave(void)
 
 int env_init(char *fstate)
 {
-    if ((envfile = fstate) == NULL)
-        return 1;
+    envfile = fstate;
+
+    assert(fstate != NULL && "env state file not passed or NULL");
     return envload();
 }
 
