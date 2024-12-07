@@ -34,12 +34,6 @@ struct columns {
     struct column column[NCOLUMNS];
 };
 
-struct env {
-    char curr[IDSIZ+1];
-    char prev[IDSIZ+1];
-    char name[ENVSIZ+1];
-};
-
 int column_show(void);
 int column_moveid(char *id, char *tag);
 struct column column_getmark(char *id);
