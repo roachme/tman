@@ -38,6 +38,13 @@ int env_init(char *fstate)
     return envload();
 }
 
+int env_reset(void)
+{
+    for (int i = 0; i < NENV; ++i)
+        memset(envs[i], 0, ENVSIZ);
+    return 0;
+}
+
 char *env_getcurr()
 {
     if (envs[CENV][0] == '\0')
