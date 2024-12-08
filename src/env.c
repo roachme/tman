@@ -14,7 +14,7 @@
 static char *envfile;
 static char envs[NENV][ENVSIZ + 1];
 
-static int envload(void)
+static int load(void)
 {
     FILE *fp;
 
@@ -26,7 +26,7 @@ static int envload(void)
     return fclose(fp);
 }
 
-static int envsave(void)
+static int save(void)
 {
     FILE *fp;
 
@@ -43,7 +43,7 @@ int env_init(char *fstate)
     envfile = fstate;
 
     assert(fstate != NULL && "env state file not passed or NULL");
-    return envload();
+    return load();
 }
 
 int env_reset(void)
@@ -73,20 +73,20 @@ int env_addcenv(char *env)
         return 1;
     strncpy(envs[PENV], envs[CENV], ENVSIZ);
     strncpy(envs[CENV], env, ENVSIZ);
-    return envsave();
+    return save();
 }
 
 int env_delcenv(void)
 {
     strncpy(envs[CENV], envs[PENV], ENVSIZ);
     memset(envs[PENV], 0, ENVSIZ);
-    return envsave();
+    return save();
 }
 
 int env_delpenv(void)
 {
     memset(envs[PENV], 0, ENVSIZ);
-    return envsave();
+    return save();
 }
 
 int env_swapenvs(void)
@@ -98,5 +98,5 @@ int env_swapenvs(void)
     strncpy(tmp, envs[CENV], ENVSIZ);
     strncpy(envs[CENV], envs[PENV], ENVSIZ);
     strncpy(envs[PENV], tmp, ENVSIZ);
-    return envsave();
+    return save();
 }
