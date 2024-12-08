@@ -1,3 +1,9 @@
+/*
+ * Module for 'special' environment names - current and previous.
+ * Save these environment names to be able to switch between them.
+ * They also can be used as defaults.
+*/
+
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
