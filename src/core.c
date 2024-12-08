@@ -217,13 +217,14 @@ int core_id_move(char *id, char *dst, char *src)
 */
 struct list *core_id_list(struct list *list, char *env)
 {
-    char pathname[PATHSIZ + 1];
-    char *cenv = column_getcenv();
-    env = env ? env : cenv;
-    sprintf(pathname, "%s/%s", tmanfs.base, env);
-    DIR *ids = opendir(pathname);
+    DIR *ids;
+    size_t i = 0;
     struct dirent *ent;
+    struct bunit bunit;
+    char pathname[PATHSIZ + 1];
+    env = env ? env : column_getcenv();
 
+    sprintf(pathname, "%s/%s", tmanfs.base, env);
     if (env == NULL) {
         elog(1, "no current environment set");
         return NULL;
@@ -232,14 +233,11 @@ struct list *core_id_list(struct list *list, char *env)
         elog(1, "%s: no such environment", env);
         return NULL;
     }
-    else if (!ids) {
+    else if ((ids = opendir(pathname)) == NULL) {
         elog(1, "%s: could not read environment", env);
         return NULL;
     }
 
-    // actual logic goes here
-    size_t i = 0;
-    struct bunit bunit;
     while ((ent = readdir(ids)) != NULL && i < LSIZE) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
