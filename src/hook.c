@@ -49,7 +49,7 @@ int plugin(int argc, char **argv)
     // TODO: check that ID and env exist.
     if (env == NULL)
         return elog(1, "no current env set");
-    else if (id[0] == '\0')
+    else if (id == NULL)
         return elog(1, "no current id set");
 
     // pgname ENV ID base subcmd [OPTION]..
