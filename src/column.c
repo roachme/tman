@@ -279,17 +279,7 @@ int column_delpid()
 
 int column_swapid()
 {
-    int cidfound = FALSE;
-    int pidfound = FALSE;
-
-    /* Find current and previous task IDs */
-    for (int i = 0; i < taskids.idx; ++i) {
-        if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0)
-            cidfound = TRUE;
-        if (strcmp(taskids.ids[i].col.tag, MARKPREV) == 0)
-            pidfound = TRUE;
-    }
-    if (cidfound == FALSE || pidfound == FALSE)
+    if (column_getcid() == NULL || column_getpid() == NULL)
         return elog(1, "current or previous task ID(s) not found");
 
     /* Swap current and previous task IDs */
