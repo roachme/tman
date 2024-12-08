@@ -71,10 +71,8 @@ static int load(char *env)
     char idpath[BUFSIZ + 1];
     char envpath[BUFSIZ + 1];
 
-    if ((dp = opendir(formpath(envpath, "%s/%s", tmanfs.base, env))) == NULL) {
-        fprintf(stderr, "could not open env dir: %s\n", envpath);
-        return 1;
-    }
+    if ((dp = opendir(formpath(envpath, "%s/%s", tmanfs.base, env))) == NULL)
+        return elog(1, "could not open env dir: %s", envpath);
 
     memset(&taskids, 0, sizeof(taskids));
     for (taskids.idx = 0; (dir = readdir(dp)) != NULL && taskids.idx < NTASKS; ++taskids.idx) {
@@ -85,7 +83,7 @@ static int load(char *env)
 
         char *id = dir->d_name;
         if ((fp = fopen(formpath(idpath, "%s/%s/.tman/col", envpath, id), "r")) == NULL) {
-            fprintf(stderr, "could not open col file: %s\n", idpath);
+            elog(1, "could not open col file: %s", idpath);
             continue;
         }
 
@@ -183,7 +181,7 @@ int column_markid(char *id)
 char *column_getcid()
 {
     if (env_getcurr() == NULL) {
-        fprintf(stderr, "current env not set\n");
+        elog(1, "current env not set");
         return NULL;
     }
     for (int i = 0; i < taskids.idx; ++i)
@@ -195,7 +193,7 @@ char *column_getcid()
 char *column_getpid()
 {
     if (env_getcurr() == NULL) {
-        fprintf(stderr, "current env not set\n");
+        elog(1, "current env not set");
         return NULL;
     }
     for (int i = 0; i < taskids.idx; ++i)
@@ -209,7 +207,7 @@ int column_addcid(char *id)
     int idfound = FALSE;
 
     if (env_getcurr() == NULL) {
-        fprintf(stderr, "current env not set\n");
+        elog(1, "current env not set");
         return 1;
     }
 
@@ -266,14 +264,12 @@ int column_delcid(void)
 
 int column_delpid()
 {
-    /* Move previous task ID to deafult column */
     for (int i = 0; i < taskids.idx; ++i)
         if (strcmp(taskids.ids[i].col.tag, MARKCURR) == 0) {
             taskids.ids[i].isset = TRUE;
             taskids.ids[i].col = column_setmark(MARKDEF);
             return save();
         }
-
     return elog(1, "no previous ID is set to delete");
 }
 
