@@ -18,14 +18,14 @@
 
 static int _envext(char *env)
 {
-    char pathname[PATHSIZ];
+    char pathname[PATHSIZ + 1];
     sprintf(pathname, "%s/%s", tmanfs.base, env);
     return ISDIR(pathname);
 }
 
 static int _idext(char *env, char *id)
 {
-    char pathname[PATHSIZ];
+    char pathname[PATHSIZ + 1];
     sprintf(pathname, "%s/%s/%s", tmanfs.base, env, id);
     return ISDIR(pathname);
 }
@@ -217,7 +217,7 @@ int core_id_move(char *id, char *dst, char *src)
 */
 struct list *core_id_list(struct list *list, char *env)
 {
-    char pathname[PATHSIZ];
+    char pathname[PATHSIZ + 1];
     char *cenv = column_getcenv();
     env = env ? env : cenv;
     sprintf(pathname, "%s/%s", tmanfs.base, env);
