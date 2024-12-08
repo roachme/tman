@@ -13,15 +13,6 @@
 #include "common.h"
 #include "column.h"
 
-char *formpath(char *dst, char *fmt, ...)
-{
-    va_list arg;
-    va_start(arg, fmt);
-    vsprintf(dst, fmt, arg);
-    va_end(arg);
-    return dst;
-}
-
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 0, .mark = '?', .tag = "uknw" },
     { .prio = 1, .mark = '*', .tag = "curr" },
