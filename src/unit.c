@@ -128,7 +128,7 @@ static int genunit(char *env, char *id)
 static int _load(char *fname, struct bunit *unt)
 {
     int i;
-    char line[BUFSIZ];
+    char line[BUFSIZ + 1];
     FILE *fp = fopen(fname, "r");
     unt = unt ? unt : &unit;
 

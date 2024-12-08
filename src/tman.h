@@ -12,15 +12,15 @@ typedef struct builtin {
 // roach: gotta either make it clear or get rid of this limitation.
 #define TMANPATHSIZE    1024
 struct tmanstruct {
-    char db[TMANPATHSIZE];          /* directory for tman metadata */
-    char cfg[TMANPATHSIZE];         /* directory for config files */
-    char pgn[TMANPATHSIZE];         /* directory for plugin data */
-    char base[TMANPATHSIZE];        /* directory for all stuff above */
-    char pgnins[TMANPATHSIZE];      /* directory for installed plugins */
+    char db[TMANPATHSIZE + 1];          /* directory for tman metadata */
+    char cfg[TMANPATHSIZE + 1];         /* directory for config files */
+    char pgn[TMANPATHSIZE + 1];         /* directory for plugin data */
+    char base[TMANPATHSIZE + 1];        /* directory for all stuff above */
+    char pgnins[TMANPATHSIZE + 1];      /* directory for installed plugins */
 
-    char fcfg[TMANPATHSIZE];        /* system config file */
-    char finit[TMANPATHSIZE];       /* file that tells that tman is inited */
-    char fstate[TMANPATHSIZE];      /* file to store tman task state */
+    char fcfg[TMANPATHSIZE + 1];        /* system config file */
+    char finit[TMANPATHSIZE + 1];       /* file that tells that tman is inited */
+    char fstate[TMANPATHSIZE + 1];      /* file to store tman task state */
 };
 
 int tman_cfg (int argc, char **argv);
