@@ -38,6 +38,7 @@ enum tman_errno {
 
 int _chkid(char *id);
 int _chkenv(char *env);
+char *formpath(char *dst, char *fmt, ...);
 
 int elog(int status, char *fmt, ...);
 int wlog(char *fmt, ...);

@@ -2,6 +2,15 @@
 #include <ctype.h>
 #include "common.h"
 
+char *formpath(char *dst, char *fmt, ...)
+{
+    va_list arg;
+    va_start(arg, fmt);
+    vsprintf(dst, fmt, arg);
+    va_end(arg);
+    return dst;
+}
+
 /*
     @return 0 - failed
     @return 1 - ok
