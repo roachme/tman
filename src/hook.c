@@ -47,7 +47,7 @@ int plugin(int argc, char **argv)
     env = argc > 5 ? argv[5] : column_getcenv();
 
     // TODO: check that ID and env exist.
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "no current env set");
     else if (id[0] == '\0')
         return elog(1, "no current id set");
