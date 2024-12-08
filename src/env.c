@@ -19,7 +19,7 @@ static int load(void)
     FILE *fp;
 
     if ((fp  = fopen(envfile, "r")) == NULL)
-        return elog(1, "could not load env state\n");
+        return elog(1, "could not load env state");
 
     for (int i = 0; i < NENV && fscanf(fp, "%s", envs[i]) == NENVITEM; ++i)
         ;
@@ -31,7 +31,7 @@ static int save(void)
     FILE *fp;
 
     if ((fp  = fopen(envfile, "w")) == NULL)
-        return elog(1, "could not save env state\n");
+        return elog(1, "could not save env state");
 
     for (int i = 0; i < NENV && envs[i][0] != '\0'; ++i)
         fprintf(fp, "%s\n", envs[i]);
