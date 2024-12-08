@@ -107,7 +107,7 @@ static int save(void)
 {
     char *cenv = column_getcenv();
 
-    if (cenv[0] == '\0')
+    if (cenv == NULL)
         return elog(1, "save: no current env set");
 
     for (int i = 0; i < taskids.idx; ++i)

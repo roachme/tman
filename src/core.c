@@ -58,7 +58,7 @@ int core_id_add(char *id, struct tman_add_opt *opt)
     char *cenv = column_getcenv();
     opt->env = opt->env != NULL ? opt->env : cenv;
 
-    if (opt->env[0] == '\0')
+    if (opt->env == NULL)
         return elog(1, "no current environment");
     else if (!_envext(opt->env))
         return elog(1, "%s: no such environment", opt->env);
@@ -92,7 +92,7 @@ int core_id_del(char *id, struct tman_del_opt *opt)
     id  = id != NULL ? id : cid;
     opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
-    if (opt->env[0] == '\0')
+    if (opt->env == NULL)
         return elog(1, "no current environment");
     else if (!_envext(opt->env))
         return elog(1, "%s: no such environment", opt->env);
@@ -142,7 +142,7 @@ int core_id_set(char *env, char *id, struct bunit *unit)
     id  = id != NULL ? id : column_getcid();
     env = env != NULL ? env : column_getcenv();
 
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "no current environment");
     else if (!_envext(env))
         return elog(1, "%s: no such environment", env);
@@ -163,7 +163,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
 {
     opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
-    if (opt->env[0] == '\0')
+    if (opt->env == NULL)
         return elog(1, "no current environment");
     if (!_envext(opt->env))
         return elog(1, "%s: no such env", opt->env);
@@ -266,7 +266,7 @@ int core_id_movecol(char *env, char *id, char *tag)
     id = id ? id : column_getcid();
     env = env ? env : column_getcenv();
 
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "no current env set");
     else if (id == NULL)
         return elog(1, "no current id set");
@@ -280,7 +280,7 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
     id = id ? id : column_getcid();
     env = env ? env : column_getcenv();
 
-    if (env[0] == '\0') {
+    if (env == NULL) {
         elog(1, "no Current environment");
         return NULL;
     }
@@ -310,7 +310,7 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
 
 int core_env_add(char *env, struct tman_env_add_opt *opt)
 {
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "env name required");
     else if (_envext(env)) {
         if (opt->force == 0)
@@ -328,7 +328,7 @@ int core_env_del(char *env, struct tman_env_del_opt *opt)
 {
     env = env ? env : column_getcenv();
 
-    if (env[0] == '\0')
+    if (env == NULL)
         return elog(1, "no current env set");
     else if (!_envext(env))
         return elog(1, "%s: no such env", env);
