@@ -10,9 +10,6 @@
 
 #include "bin/env.h"
 
-#define DESCSIZ         80
-#define PGNOUTSCSIZ     80
-
 #define LISTBIN 4
 #define LISTPGN 40
 #define LISTBINUN 50
