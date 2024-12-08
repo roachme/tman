@@ -6,7 +6,7 @@
 #include "common.h"
 
 static char *envfile;
-static char envs[NENV][ENVSIZ];
+static char envs[NENV][ENVSIZ + 1];
 
 static int envload(void)
 {

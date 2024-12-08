@@ -14,13 +14,13 @@
 struct column {
     int prio;
     char mark;
-    char env[ENVSIZ];
-    char tag[TAGSIZ+1];
+    char env[ENVSIZ + 1];
+    char tag[TAGSIZ + 1];
 };
 
 struct taskid {
     int isset;
-    char id[IDSIZ+1];
+    char id[IDSIZ + 1];
     struct column col;
 };
 

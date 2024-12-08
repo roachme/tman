@@ -30,11 +30,7 @@ enum tman_errno {
 #define IDSIZ           20
 #define TAGSIZ          4
 #define CMDSIZ          5
-#define PGNSIZ          10
-#define TIDSIZ          20
 #define PATHSIZ         4096
-#define HELPDESC        100
-
 
 int _chkid(char *id);
 int _chkenv(char *env);
