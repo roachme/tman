@@ -96,7 +96,7 @@ int core_id_del(char *id, struct tman_del_opt *opt)
         return elog(1, "no current environment");
     else if (!_envext(opt->env))
         return elog(1, "%s: no such environment", opt->env);
-    else if (id[0] == '\0')
+    else if (id == NULL)
         return elog(1, "no current task id");
     else if (!_idext(opt->env, id)) {
         if (opt->force == 0)
@@ -146,7 +146,7 @@ int core_id_set(char *env, char *id, struct bunit *unit)
         return elog(1, "no current environment");
     else if (!_envext(env))
         return elog(1, "%s: no such environment", env);
-    else if (id[0] == '\0')
+    else if (id == NULL)
         return elog(1, "no current task id");
     else if (!_idext(env, id))
         return elog(1, "%s: no such task id", id);
@@ -169,7 +169,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
         return elog(1, "%s: no such env", opt->env);
     else if (!_chkenv(opt->env))
         return elog(1, "%s: illegal task env name", opt->env);
-    else if (id[0] == '\0')
+    else if (id == NULL)
         return elog(1, "task id required");
     else if (!_idext(opt->env, id))
         return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
@@ -288,7 +288,7 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
         elog(1, "%s: no such env name", env);
         return NULL;
     }
-    else if (id[0] == '\0') {
+    else if (id == NULL) {
         elog(1, "no current Task id");
         return NULL;
     }
