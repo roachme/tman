@@ -79,7 +79,7 @@ static int load(char *env)
         }
 
         fgets(line, BUFSIZ, fp);
-        sscanf(line, "%*s : %10s\n", tag);
+        sscanf(line, "%*s : %4s\n", tag);
 
         taskids.ids[taskids.idx].col = column_setmark(tag);
         strcpy(taskids.ids[taskids.idx].id, dir->d_name);
