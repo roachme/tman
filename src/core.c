@@ -34,7 +34,7 @@ int core_currdir()
 {
     char *cid = column_getcid();
     printf("%s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");
-    return 0;
+    return TMAN_OK;
 }
 
 int core_init(const char *cmd)
@@ -42,14 +42,14 @@ int core_init(const char *cmd)
     if (strncmp(cmd, "init", CMDSIZ) == 0
         || strncmp(cmd, "help", CMDSIZ) == 0
         || strncmp(cmd, "ver", CMDSIZ) == 0)
-        return 0;
+        return TMAN_OK;
 
     // TODO: Find a better way to check that util's inited.
     if (ISFILE(tmanfs.finit) == FALSE)
         return elog(1, "not inited");
     else if (column_init())
         return elog(1, "column_init: error: could not init");
-    return 0;
+    return TMAN_OK;
 }
 
 int core_id_add(char *id, struct tman_add_opt *opt)
