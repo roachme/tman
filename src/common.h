@@ -12,6 +12,9 @@
 #define TRUE        1
 #define FALSE       0
 
+#define DESCSIZ         80
+#define PGNOUTSCSIZ     80
+
 extern struct tmanstruct tmanfs;
 
 enum tman_errno {
