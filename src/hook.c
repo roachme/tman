@@ -11,7 +11,7 @@
 #include "config.h"
 
 
-static char fullcmd[HOOKSIZ];
+static char fullcmd[HOOKSIZ + 1];
 
 int isplugin(const char *pgn)
 {
@@ -27,7 +27,7 @@ int isplugin(const char *pgn)
 int plugin(int argc, char **argv)
 {
     char c;
-    char pgn[BUFSIZ];
+    char pgn[BUFSIZ + 1];
     char path[PATHSIZ + 1];
     char *name = argc > 1 ? argv[1] : "";
     char *subcmd = argc > 2 ? argv[2] : "";
@@ -78,7 +78,7 @@ int hookact(char *cmd, char *env, char *id)
 
 struct punit *hookcat(struct punit *unit, char *env, char *id)
 {
-    char line[BUFSIZ] = {0};
+    char line[BUFSIZ + 1] = {0};
     int pidx = 0; // cuz a plugin can output more than one lines
 
     for (int i = 0; i < config.hooks.size; ++i) {
@@ -103,7 +103,7 @@ struct punit *hookcat(struct punit *unit, char *env, char *id)
 char *hookls(char *pgnout, char *env, char *id)
 {
     char *prefix = "";
-    char line[BUFSIZ] = {0};
+    char line[BUFSIZ + 1] = {0};
 
     for (int i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];

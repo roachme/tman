@@ -186,7 +186,7 @@ int core_id_use(char *id, struct tman_use_opt *opt)
 
 int core_id_move(char *id, char *dst, char *src)
 {
-    char dstid[BUFSIZ] = {0};
+    char dstid[BUFSIZ + 1] = {0};
 
     src = src ? src : column_getcenv();
     sprintf(dstid, "%s/%s/%s", tmanfs.base, dst, id);

@@ -48,7 +48,7 @@ static int parse_columns(struct columns *columns)
 
 int parseconf(const char *fname)
 {
-    char line[BUFSIZ];
+    char line[BUFSIZ + 1];
     char *token = NULL;
     struct hook *hook;
     const char *delim = " =\n";

@@ -93,7 +93,7 @@ static int load(char *env)
 static int _save(char *env, char *id, char *tag)
 {
     FILE *fp;
-    char envpath[BUFSIZ];
+    char envpath[BUFSIZ + 1];
 
     sprintf(envpath, "%s/%s/%s/.tman/col", tmanfs.base, env, id);
     if ((fp = fopen(envpath, "w")) == NULL)
@@ -134,7 +134,7 @@ int column_markid(char *id)
 {
     FILE *fp;
     char *cenv = column_getcenv();
-    char idpath[BUFSIZ];
+    char idpath[BUFSIZ + 1];
 
     if (env_getcurr() == NULL)
         return elog(1, "column_markid: no current env set");
