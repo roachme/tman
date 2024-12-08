@@ -99,23 +99,6 @@ static int load(char *env)
     return closedir(dp);
 }
 
-int column_show(void)
-{
-    char *cenv = column_getcenv();
-    int ncoltab = sizeof(coltab) / sizeof(coltab[0]);
-
-    if (cenv[0] == '\0')
-        return elog(1, "show:err: no curr env set");
-
-    // FIXME: replace magic number with actual size of coltab
-    for (int i = 0; i < 7; ++i)
-        for (int k = 0; k < taskids.idx; ++k)
-            if (strcmp(coltab[i].tag, taskids.ids[k].col.tag) == 0)
-                printf("%c %s : %s\n", taskids.ids[k].col.mark, taskids.ids[k].id, taskids.ids[k].col.tag);
-    printf("\n");
-    return 0;
-}
-
 static int _save(char *env, char *id, char *tag)
 {
     FILE *fp;
