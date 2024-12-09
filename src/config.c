@@ -89,22 +89,17 @@ int parseconf(const char *fname)
 
 int config_init(void)
 {
-    char *fconfig = NULL;
     char *homedir = getenv("HOME");
     char configs[NUMCONFIG][MAXCONFIG] = {0};
-
-    sprintf(configs[0], "%s/.%s/%s.cfg", homedir, PROGRAM, PROGRAM);
-    sprintf(configs[1], "%s/.config/%s/%s.cfg", homedir, PROGRAM, PROGRAM);
+    const char cfgfmts[NUMCONFIG][MAXCONFIG] = {
+        "%s/.%s/%s.cfg",
+        "%s/.config/%s/%s.cfg",
+    };
 
     for (int i = 0; i < NUMCONFIG; ++i) {
-        if (ISFILE(configs[i]) == TRUE) {
-            fconfig = configs[i];
-            break;
-        }
+        sprintf(configs[i], cfgfmts[i], homedir, PROGRAM, PROGRAM);
+        if (ISFILE(configs[i]))
+            return parseconf(configs[i]);
     }
-
-    if (fconfig == NULL)
-        return elog(1, "could not find system config file");
-
-    return parseconf(fconfig);
+    return elog(1, "could not find system config file");
 }
