@@ -80,7 +80,7 @@ int parseconf(const char *fname)
             parse_columns(&config.columns);
         }
         else {
-            fprintf(stderr, "not found %s: unknown variable\n", token);
+            elog(1, "not found %s: unknown variable", token);
             return 1;
         }
     }
