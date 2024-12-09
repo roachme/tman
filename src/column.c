@@ -58,7 +58,6 @@ static int load(char *env)
     DIR *dp;
     char tag[TAGSIZ + 1];
     struct dirent *dir;
-    char line[BUFSIZ + 1];
     char idpath[BUFSIZ + 1];
     char envpath[BUFSIZ + 1];
 
@@ -78,9 +77,7 @@ static int load(char *env)
             continue;
         }
 
-        fgets(line, BUFSIZ, fp);
-        sscanf(line, "%*s : %4s\n", tag);
-
+        fscanf(fp, "%*s : %4s\n", tag);
         taskids.ids[taskids.idx].col = column_setmark(tag);
         strcpy(taskids.ids[taskids.idx].id, dir->d_name);
         fclose(fp);
