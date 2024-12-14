@@ -95,14 +95,10 @@ int parseconf(const char *fname)
             retcode = parse_hook(token, &config.hooks);
         else if (strcmp(token, "HOOKLIST") == 0)
             retcode = parse_hook(token, &config.hooks);
-        else if (strcmp(token, "COLUMN") == 0) {
+        else if (strcmp(token, "COLUMN") == 0)
             retcode = parse_columns(&config.columns);
-        }
-        else {
-            elog(1, "not found %s: unknown variable", token);
-            fclose(fp);
-            return 1;
-        }
+        else
+            retcode = elog(1, "not found %s: unknown variable", token);
     }
     fclose(fp);
     return retcode;
