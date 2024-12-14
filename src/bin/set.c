@@ -1,14 +1,13 @@
 #include <string.h>
-
 #include "../core.h"
-#include "../common.h"
 
 int tman_set(int argc, char **argv)
 {
     char c;
     int idx;
+    int atleast_one_key_set;
     char *env = NULL, *id = NULL;
-    struct bunit bunit = {};
+    struct unitbin units[NKEYS] = { 0 };
 
     /*
 Options:
@@ -22,35 +21,35 @@ Options:
         switch (c) {
             case 'i':
                 idx = 0;
-                ++bunit.size;
-                if (bunit.pair[idx].isset) break;
-                strcpy(bunit.pair[idx].key, "id");
-                strcpy(bunit.pair[idx].val, optarg);
-                bunit.pair[idx].isset = 1;
+                if (units[idx].isset) break;
+                atleast_one_key_set = TRUE;
+                strcpy(units[idx].key, "id");
+                strcpy(units[idx].val, optarg);
+                units[idx].isset = 1;
                 break;
             case 'p':
                 idx = 1;
-                ++bunit.size;
-                if (bunit.pair[idx].isset) break;
-                strcpy(bunit.pair[idx].key, "prio");
-                strcpy(bunit.pair[idx].val, optarg);
-                bunit.pair[idx].isset = 1;
+                if (units[idx].isset) break;
+                atleast_one_key_set = TRUE;
+                strcpy(units[idx].key, "prio");
+                strcpy(units[idx].val, optarg);
+                units[idx].isset = 1;
                 break;
             case 't':
                 idx = 2;
-                ++bunit.size;
-                if (bunit.pair[idx].isset) break;
-                strcpy(bunit.pair[idx].key, "type");
-                strcpy(bunit.pair[idx].val, optarg);
-                bunit.pair[idx].isset = 1;
+                if (units[idx].isset) break;
+                atleast_one_key_set = TRUE;
+                strcpy(units[idx].key, "type");
+                strcpy(units[idx].val, optarg);
+                units[idx].isset = 1;
                 break;
             case 'd':
                 idx = 4;
-                ++bunit.size;
-                if (bunit.pair[idx].isset) break;
-                strcpy(bunit.pair[idx].key, "desc");
-                strcpy(bunit.pair[idx].val, optarg);
-                bunit.pair[idx].isset = 1;
+                if (units[idx].isset) break;
+                atleast_one_key_set = TRUE;
+                strcpy(units[idx].key, "desc");
+                strcpy(units[idx].val, optarg);
+                units[idx].isset = 1;
                 break;
             case ':':
                 return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
@@ -59,18 +58,14 @@ Options:
         }
     }
 
-    if (bunit.size == 0)
+    if (atleast_one_key_set == FALSE)
         return elog(1, "gotta supply one of the options");
 
     if (optind == argc) {
-        core_id_set(env, id, &bunit);
-        return 1;
+        core_id_set(env, id, units);
     }
-
     for (int i = optind; i < argc; ++i) {
-        id = argv[i];
-        core_id_set(env, id, &bunit);
+        core_id_set(env, argv[i], units);
     }
     return 1;
 }
-

@@ -78,13 +78,15 @@ int hookact(char *cmd, char *env, char *id)
     return 0;
 }
 
-struct punit *hookcat(struct punit *unit, char *env, char *id)
+struct unitpgn *hookcat(struct unitpgn *unitpgn, char *env, char *id)
 {
+    char key[KEYSIZ + 1];
+    char val[VALSIZ + 1];
     char line[BUFSIZ + 1] = {0};
     int pidx = 0; // cuz a plugin can output more than one lines
 
     if (config.nohooks == TRUE)
-        return unit;
+        return unitpgn;
     for (int i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];
         if (strcmp(hook->cmd, "cat") != 0)
@@ -93,15 +95,15 @@ struct punit *hookcat(struct punit *unit, char *env, char *id)
         FILE *pipe = popen(cmdgen(hook, env, id), "r");
         if (!pipe) {
             elog(1, "hookcat: failed: '%s'", fullcmd);
-            return NULL;
+            continue;
         }
-        for ( ; fgets(line, BUFSIZ, pipe); ++pidx) {
-            sscanf(line, "%s : %[^\n]s", unit->pair[pidx].key, unit->pair[pidx].val);
-            ++unit->size;
+        while (fgets(line, BUFSIZ, pipe)) {
+            sscanf(line, "%s : %[^\n]s", key, val);
+            unitpgn = unit_addpgn(unitpgn, key, val);
         }
         pclose(pipe);
     }
-    return unit;
+    return unitpgn;
 }
 
 char *hookls(char *pgnout, char *env, char *id)

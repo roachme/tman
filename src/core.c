@@ -55,6 +55,7 @@ int core_init(const char *cmd)
 int core_id_add(char *id, struct tman_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
+    struct unitbin units[NKEYS] = {0};
     char *cenv = column_getcenv();
     opt->env = opt->env != NULL ? opt->env : cenv;
 
@@ -72,7 +73,7 @@ int core_id_add(char *id, struct tman_add_opt *opt)
 
     if (imkdir(tmanfs.base, opt->env, id) != 0)
         return elog(1, "%s: could not create task directory", id);
-    else if (unit_add(opt->env, id) != 0)
+    else if (unit_addbin(opt->env, id, units) != 0)
         return elog(1, "%s: could not create task unit", id);
     else if (hookact("add", opt->env, id))
         return elog(1, "could not execute hook");
@@ -106,7 +107,7 @@ int core_id_del(char *id, struct tman_del_opt *opt)
 
     if (hookact("del", opt->env, id))
         return elog(1, "could not execute hook");
-    else if (unit_del(opt->env, id))
+    else if (unit_delbin(opt->env, id))
         return elog(1, "%s: could not delete task unit", id);
     else if (irmdir(tmanfs.base, opt->env, id))
         return elog(1, "%s: could not delete task directory", id);
@@ -137,7 +138,7 @@ int core_id_sync(void)
     return TMAN_OK;
 }
 
-int core_id_set(char *env, char *id, struct bunit *unit)
+int core_id_set(char *env, char *id, struct unitbin *unit)
 {
     id  = id != NULL ? id : column_getcid();
     env = env != NULL ? env : column_getcenv();
@@ -150,7 +151,7 @@ int core_id_set(char *env, char *id, struct bunit *unit)
         return elog(1, "no current task id");
     else if (!id_exists(env, id))
         return elog(1, "%s: no such task id", id);
-    else if (unit_set(env, id, unit))
+    else if (unit_setbin(env, id, unit))
         return elog(1, "%s: could not set unit values", id);
 
     // TODO: change task directory if id unit was changed
@@ -220,7 +221,7 @@ struct list *core_id_list(struct list *list, char *env)
     DIR *ids;
     size_t i = 0;
     struct dirent *ent;
-    struct bunit bunit;
+    struct unitbin bunit[NKEYS];
     char pathname[PATHSIZ + 1];
     env = env ? env : column_getcenv();
 
@@ -241,16 +242,15 @@ struct list *core_id_list(struct list *list, char *env)
     while ((ent = readdir(ids)) != NULL && i < LSIZE) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
-        if (unit_get(&bunit, env, ent->d_name) == NULL) {
+        if (unit_getbin(bunit, env, ent->d_name) == NULL) {
             fprintf(stderr, "core_id_list %s: failde to get units\n", ent->d_name);
             continue;
         }
         if (!hookls(list->ilist[i].pgn, env, ent->d_name)) {
             fprintf(stderr, "core_id_list %s: failed to get hookls output\n", ent->d_name);
         }
-
         strcpy(list->ilist[i].id, ent->d_name);
-        strcpy(list->ilist[i].desc, bunit.pair[4].val);
+        strcpy(list->ilist[i].desc, bunit[4].val);
         list->ilist[i].col = column_getmark(list->ilist[i].id);
         ++i;
     }
@@ -295,14 +295,13 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
         return NULL;
     }
 
-    if (unit_get(&units->bin, env, id) == NULL) {
-        elog(1, "core_id_cat: failed to get builtn units");
-        return NULL;
-    }
-    if (hookcat(&units->pgn, env, id) == NULL) {
+    // TODO: don't wanna lose plugin units if builtin ones
+    // failed to parse. But gotta make user return value
+    // make any sense for caller.
+    if ((units->pgn = hookcat(units->pgn, env, id)) == NULL)
         elog(1, "core_id_cat: failed to get plugin units");
-        return NULL;
-    }
+    if (unit_getbin(units->bin, env, id) == NULL)
+        elog(1, "core_id_cat: failed to get builtn units");
     return units;
 }
 
