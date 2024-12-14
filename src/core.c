@@ -16,14 +16,14 @@
 #include "column.h"
 #include "osdep.h"
 
-static int _envext(char *env)
+static int env_exists(char *env)
 {
     char pathname[PATHSIZ + 1];
     sprintf(pathname, "%s/%s", tmanfs.base, env);
     return ISDIR(pathname);
 }
 
-static int _idext(char *env, char *id)
+static int id_exists(char *env, char *id)
 {
     char pathname[PATHSIZ + 1];
     sprintf(pathname, "%s/%s/%s", tmanfs.base, env, id);
@@ -60,11 +60,11 @@ int core_id_add(char *id, struct tman_add_opt *opt)
 
     if (opt->env == NULL)
         return elog(1, "no current environment");
-    else if (!_envext(opt->env))
+    else if (!env_exists(opt->env))
         return elog(1, "%s: no such environment", opt->env);
     else if (!_chkid(id))
         return elog(1, "%s: illegal task id name", id);
-    else if (_idext(opt->env, id)) {
+    else if (id_exists(opt->env, id)) {
         if (opt->force == 0)
             elog(TMAN_ADD_IDEXT, "%s: task id already exists", id);
         return TMAN_ADD_IDEXT;
@@ -94,11 +94,11 @@ int core_id_del(char *id, struct tman_del_opt *opt)
 
     if (opt->env == NULL)
         return elog(1, "no current environment");
-    else if (!_envext(opt->env))
+    else if (!env_exists(opt->env))
         return elog(1, "%s: no such environment", opt->env);
     else if (id == NULL)
         return elog(1, "no current task id");
-    else if (!_idext(opt->env, id)) {
+    else if (!id_exists(opt->env, id)) {
         if (opt->force == 0)
             elog(TMAN_DEL_NOID, "%s: no such task id", id);
         return TMAN_DEL_NOID;
@@ -144,11 +144,11 @@ int core_id_set(char *env, char *id, struct bunit *unit)
 
     if (env == NULL)
         return elog(1, "no current environment");
-    else if (!_envext(env))
+    else if (!env_exists(env))
         return elog(1, "%s: no such environment", env);
     else if (id == NULL)
         return elog(1, "no current task id");
-    else if (!_idext(env, id))
+    else if (!id_exists(env, id))
         return elog(1, "%s: no such task id", id);
     else if (unit_set(env, id, unit))
         return elog(1, "%s: could not set unit values", id);
@@ -165,13 +165,13 @@ int core_id_use(char *id, struct tman_use_opt *opt)
 
     if (opt->env == NULL)
         return elog(1, "no current environment");
-    if (!_envext(opt->env))
+    if (!env_exists(opt->env))
         return elog(1, "%s: no such env", opt->env);
     else if (!_chkenv(opt->env))
         return elog(1, "%s: illegal task env name", opt->env);
     else if (id == NULL)
         return elog(1, "task id required");
-    else if (!_idext(opt->env, id))
+    else if (!id_exists(opt->env, id))
         return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
     else if (opt->env != column_getcenv()) {
         fprintf(stderr, "trynna switch to task in another env\n");
@@ -191,15 +191,15 @@ int core_id_move(char *id, char *dst, char *src)
     src = src ? src : column_getcenv();
     sprintf(dstid, "%s/%s/%s", tmanfs.base, dst, id);
 
-    if (!_envext(dst))
+    if (!env_exists(dst))
         return elog(1, "no such destination env");
     else if (!src || src == NULL)
         return elog(1, "no current env set");
-    else if (!_envext(src))
+    else if (!env_exists(src))
         return elog(1, "no such source env");
-    else if (!_idext(src, id))
+    else if (!id_exists(src, id))
         return elog(1, "cannot access '%s': no such task id", id);
-    else if (_idext(dst, id))
+    else if (id_exists(dst, id))
         return elog(1, "cannot move '%s': task id exists in env '%s'", id, dst);
 
     if (imove(tmanfs.base, id, dst, src))
@@ -229,7 +229,7 @@ struct list *core_id_list(struct list *list, char *env)
         elog(1, "no current environment set");
         return NULL;
     }
-    else if (!_envext(env)) {
+    else if (!env_exists(env)) {
         elog(1, "%s: no such environment", env);
         return NULL;
     }
@@ -268,7 +268,7 @@ int core_id_movecol(char *env, char *id, char *tag)
         return elog(1, "no current env set");
     else if (id == NULL)
         return elog(1, "no current id set");
-    else if (!_idext(env, id))
+    else if (!id_exists(env, id))
         return elog(1, "%s: no such task id", id);
     return column_moveid(id, tag);
 }
@@ -282,7 +282,7 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
         elog(1, "no Current environment");
         return NULL;
     }
-    else if (!_envext(env)) {
+    else if (!env_exists(env)) {
         elog(1, "%s: no such env name", env);
         return NULL;
     }
@@ -290,7 +290,7 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
         elog(1, "no current Task id");
         return NULL;
     }
-    else if (!_idext(env, id)) {
+    else if (!id_exists(env, id)) {
         elog(1, "%s: no such task id", id);
         return NULL;
     }
@@ -310,7 +310,7 @@ int core_env_add(char *env, struct tman_env_add_opt *opt)
 {
     if (env == NULL)
         return elog(1, "env name required");
-    else if (_envext(env)) {
+    else if (env_exists(env)) {
         if (opt->force == 0)
             elog(1, "%s: env already exists", env);
         return TMAN_ECORE;
@@ -328,7 +328,7 @@ int core_env_del(char *env, struct tman_env_del_opt *opt)
 
     if (env == NULL)
         return elog(1, "no current env set");
-    else if (!_envext(env))
+    else if (!env_exists(env))
         return elog(1, "%s: no such env", env);
     else if (ermdir(tmanfs.base, env))
         return elog(1, "%s: could not delete env directory", env);
@@ -349,7 +349,7 @@ int core_env_use(char *env)
 {
     if (env == NULL)
         return elog(1, "env name required");
-    else if (!_envext(env))
+    else if (!env_exists(env))
         return elog(1, "%s: env does not exist", env);
     return column_addcenv(env);
 }
