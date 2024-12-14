@@ -9,7 +9,6 @@
 
 #include "tman.h"
 #include "core.h"
-#include "hook.h"
 #include "help.h"
 #include "config.h"
 #include "common.h"

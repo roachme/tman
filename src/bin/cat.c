@@ -2,6 +2,7 @@
 
 #include "cat.h"
 #include "../core.h"
+#include "../unit.h"
 
 static int tman_cat_usage(void)
 {
@@ -13,18 +14,24 @@ static int tman_cat_usage(void)
 
 static int pretty_cat(char *env, char *id, char *key)
 {
-    struct units units;
-    memset(&units, 0, sizeof(units));
+    struct unitpgn *tmp;
+    struct unitpgn *unitpgn;
+    struct units units = { 0 };
 
     if (core_id_cat(&units, env, id) == NULL) {
         return 1;
     }
 
-    for (int i = 0; i < units.bin.size; ++i) {
-        printf("%-7s : %s\n", units.bin.pair[i].key, units.bin.pair[i].val);
-    }
-    for (int i = 0; i < units.pgn.size; ++i) {
-        printf("%-7s : %s\n", units.pgn.pair[i].key, units.pgn.pair[i].val);
+    for (int i = 0; i < NKEYS; ++i)
+        if (units.bin[i].isset)
+            printf("%-7s : %s\n", units.bin[i].key, units.bin[i].val);
+
+    unitpgn = units.pgn;
+    while (unitpgn != NULL) {
+        printf("%-7s : %s\n", unitpgn->node.key, unitpgn->node.val);
+        tmp = unitpgn;
+        unitpgn = unitpgn->next;
+        unit_delpgn(tmp);
     }
     return TMAN_NOPATH;
 }

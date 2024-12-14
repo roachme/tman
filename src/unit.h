@@ -1,38 +1,32 @@
-#ifndef UNIT_H
-#define UNIT_H
+#ifndef TMAN_UNIT_H
+#define TMAN_UNIT_H
 
-#define MAXUBIN     5   /* number of builtin unit values */
-#define MAXUPGN     10  /* number of plugin unit values */
-#define UKEYSIZ     10  /* max size of unit key */
-#define UVALSIZ     80  /* max size of unit value */
+#define NKEYS       5
+#define KEYSIZ      10
+#define VALSIZ      80 /* this big cuz of task description */
 
-struct pair {
+struct unitbin {
     int isset;
-    char key[UKEYSIZ + 1];
-    char val[UVALSIZ + 1];
+    char key[KEYSIZ + 1];
+    char val[VALSIZ + 1];
 };
 
-struct bunit {
-    int size;
-    struct pair pair[MAXUBIN];
+struct unitpgn {
+    struct unitbin node;
+    struct unitpgn *next;
 };
 
-struct punit {
-    int size;
-    struct pair pair[MAXUPGN];
-};
-
-/* Keep builtin and plugin units separately, this way it's
- * easier to save 'em into the separate unit files.  */
 struct units {
-    struct bunit bin;
-    struct punit pgn;
+    struct unitpgn *pgn;
+    struct unitbin bin[NKEYS];
 };
 
-int unit_add(char *env, char *id);
-int unit_del(char *env, char *id);
-struct bunit *unit_get(struct bunit *u, char *env, char *id);
-int unit_set(char *env, char *id, struct bunit *bunit);
-int unit_set2(char *env, char *id, char *key, char *val);
+int unit_addbin(char *env, char *id, struct unitbin *units);
+int unit_setbin(char *env, char *id, struct unitbin *units);
+struct unitbin *unit_getbin(struct unitbin *units, char *env, char *id);
+int unit_delbin(char *env, char *id);
+
+struct unitpgn *unit_addpgn(struct unitpgn *head, char *key, char *val);
+int unit_delpgn(struct unitpgn *pgn);
 
 #endif

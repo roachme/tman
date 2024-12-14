@@ -45,7 +45,7 @@ int core_id_movecol(char *env, char *id, char *tag);
 int core_id_add (char *id, struct tman_add_opt *opt);
 int core_id_del (char *id, struct tman_del_opt *opt);
 int core_id_move(char *id, char *dst, char *src);
-int core_id_set (char *env, char *id, struct bunit *bunit);
+int core_id_set (char *env, char *id, struct unitbin *unitbin);
 int core_id_use (char *id, struct tman_use_opt *opt);
 
 struct units *core_id_cat (struct units *units, char *env, char *id);
