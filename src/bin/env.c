@@ -97,7 +97,7 @@ int _env_list(int argc, char **argv)
     DIR *edir = opendir(tmanfs.base);
 
     if (!edir)
-        return elog(1, "could not open task directory\n");
+        return elog(1, "could not open task directory");
 
     while ((ent = readdir(edir)) != NULL) {
         if (ent->d_name[0] == '.'  || ent->d_type != DT_DIR)
