@@ -151,7 +151,7 @@ static int _save(char *fname)
     FILE *fp = fopen(fname, "w");
 
     if (!fp)
-        return elog(1, "could not open file %s\n", fname);
+        return elog(1, "could not open file %s", fname);
 
     for (int i = 0; i < MAXUBIN; ++i)
         fprintf(fp, "%s : %s\n", unit.pair[i].key, unit.pair[i].val);

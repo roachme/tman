@@ -138,7 +138,7 @@ int column_markid(char *id)
 
     sprintf(idpath, "%s/%s/%s/.tman/col", tmanfs.base, cenv, id);
     if ((fp = fopen(idpath, "w")) == NULL) {
-        return elog(1, "could not create col file: %s\n", idpath);
+        return elog(1, "could not create col file: %s", idpath);
     }
 
     strcpy(taskids.ids[taskids.idx].id, id);
