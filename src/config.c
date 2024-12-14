@@ -9,7 +9,7 @@
 // TODO: gotta add config checker so a program doesn't fail.
 
 struct config config = {
-    //.coldefs.coldef[0] = { .prio = 0, },
+    .nohooks = FALSE,
 };
 
 static int parsepath(char *path)
@@ -17,6 +17,22 @@ static int parsepath(char *path)
     const char *delim = " =\n";
     strcpy(path, strtok(NULL, delim));
     return 0;
+}
+
+static int parse_nohooks(const char *confkey, int *nohooks)
+{
+    const char *delim = " =\n";
+    char *confval = strtok(NULL, delim);
+
+    if (strncmp(confval, "1", 1) == 0) {
+        *nohooks = TRUE;
+        return 0;
+    }
+    else if (strncmp(confval, "0", 1) == 0) {
+        *nohooks = FALSE;
+        return 0;
+    }
+    return elog(1, "'%s': invalid nohooks value", confval);
 }
 
 static int parse_hook(const char *hookname, struct hooks *hooks)
@@ -48,6 +64,7 @@ static int parse_columns(struct columns *columns)
 
 int parseconf(const char *fname)
 {
+    int retcode = 0;
     char line[BUFSIZ + 1];
     char *token = NULL;
     struct hook *hook;
@@ -57,7 +74,7 @@ int parseconf(const char *fname)
     if (!fp)
         return elog(1, "could not open config file");
 
-    while (fgets(line, BUFSIZ, fp) != NULL) {
+    while (retcode == 0 && fgets(line, BUFSIZ, fp) != NULL) {
         token = strtok(line, delim);
         if (!token || strlen(token) == 0 || token[0] == '\n' || token[0] == '#')
             continue;
@@ -67,17 +84,19 @@ int parseconf(const char *fname)
             return elog(1, "Too many columns per env in config");
 
         if (strcmp(token, "TMANBASE") == 0)
-            parsepath(config.base);
+            retcode = parsepath(config.base);
         else if (strcmp(token, "TMANPGNINS") == 0)
-            parsepath(config.pgnins);
+            retcode = parsepath(config.pgnins);
+        else if (strcmp(token, "NOHOOKS") == 0)
+            retcode = parse_nohooks(token, &config.nohooks);
         else if (strcmp(token, "HOOKCMD") == 0)
-            parse_hook(token, &config.hooks);
+            retcode = parse_hook(token, &config.hooks);
         else if (strcmp(token, "HOOKCAT") == 0)
-            parse_hook(token, &config.hooks);
+            retcode = parse_hook(token, &config.hooks);
         else if (strcmp(token, "HOOKLIST") == 0)
-            parse_hook(token, &config.hooks);
+            retcode = parse_hook(token, &config.hooks);
         else if (strcmp(token, "COLUMN") == 0) {
-            parse_columns(&config.columns);
+            retcode = parse_columns(&config.columns);
         }
         else {
             elog(1, "not found %s: unknown variable", token);
@@ -85,7 +104,8 @@ int parseconf(const char *fname)
             return 1;
         }
     }
-    return fclose(fp);
+    fclose(fp);
+    return retcode;
 }
 
 int config_init(void)
