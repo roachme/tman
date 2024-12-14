@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "unit.h"
 #include "column.h"
+#include "common.h"
 
 #define NUMCONFIG       2
 #define MAXCONFIG       256
@@ -15,6 +16,7 @@
 #define CONF_MAXPGNINS  256
 
 struct config {
+    int nohooks;            /* execute no hooks from config */
     char base[100];
     char pgnins[100];
     struct hooks hooks;
