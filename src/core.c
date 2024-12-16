@@ -298,8 +298,10 @@ struct units *core_id_cat(struct units *units, char *env, char *id)
     // TODO: don't wanna lose plugin units if builtin ones
     // failed to parse. But gotta make user return value
     // make any sense for caller.
-    if ((units->pgn = hookcat(units->pgn, env, id)) == NULL)
-        elog(1, "core_id_cat: failed to get plugin units");
+
+    /* No need to check return value because there might case
+     * that no hooks are defined or executed */
+    units->pgn = hookcat(units->pgn, env, id);
     if (unit_getbin(units->bin, env, id) == NULL)
         elog(1, "core_id_cat: failed to get builtn units");
     return units;
