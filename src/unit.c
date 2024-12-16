@@ -188,13 +188,19 @@ static int save(const char *fname)
 static int genitems(char *env, char *id)
 {
     int idx = 0;
+    char buff[BUFSIZ + 1];
+    time_t rawtime = time(NULL);
+    const char timefmt[] = "%Y%m%d";
+    struct tm *timeinfo = localtime(&rawtime);
     char desc[VALSIZ + 1] = "generated description for task ";
+
+    strftime(buff, BUFSIZ, timefmt, timeinfo);
 
     /* TODO: delete item `id' from future releases */
     genitem(idx++, "id", id);
     genitem(idx++, "prio", "mid");
     genitem(idx++, "type", "hotfix");
-    genitem(idx++, "date", "12122023");
+    genitem(idx++, "date", buff);
     genitem(idx++, "desc", strncat(desc, id, VALSIZ));
     return save(genpath(env, id));
 }
