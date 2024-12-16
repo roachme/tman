@@ -9,7 +9,7 @@
 // TODO: gotta add config checker so a program doesn't fail.
 
 struct config config = {
-    .nohooks = FALSE,
+    .usehooks = TRUE,
 };
 
 static int parsepath(char *path)
@@ -19,20 +19,20 @@ static int parsepath(char *path)
     return 0;
 }
 
-static int parse_nohooks(const char *confkey, int *nohooks)
+static int parse_usehooks(const char *confkey, int *usehooks)
 {
     const char *delim = " =\n";
     char *confval = strtok(NULL, delim);
 
     if (strncmp(confval, "1", 1) == 0) {
-        *nohooks = TRUE;
+        *usehooks = TRUE;
         return 0;
     }
     else if (strncmp(confval, "0", 1) == 0) {
-        *nohooks = FALSE;
+        *usehooks = FALSE;
         return 0;
     }
-    return elog(1, "'%s': invalid nohooks value", confval);
+    return elog(1, "'%s': invalid usehooks value", confval);
 }
 
 static int parse_hook(const char *hookname, struct hooks *hooks)
@@ -87,8 +87,8 @@ int parseconf(const char *fname)
             retcode = parsepath(config.base);
         else if (strcmp(token, "TMANPGNINS") == 0)
             retcode = parsepath(config.pgnins);
-        else if (strcmp(token, "NOHOOKS") == 0)
-            retcode = parse_nohooks(token, &config.nohooks);
+        else if (strcmp(token, "USEHOOKS") == 0)
+            retcode = parse_usehooks(token, &config.usehooks);
         else if (strcmp(token, "HOOKCMD") == 0)
             retcode = parse_hook(token, &config.hooks);
         else if (strcmp(token, "HOOKCAT") == 0)
