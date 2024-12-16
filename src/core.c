@@ -246,6 +246,9 @@ struct list *core_id_list(struct list *list, char *env)
             fprintf(stderr, "core_id_list %s: failde to get units\n", ent->d_name);
             continue;
         }
+
+        /* TODO: remove check and warning because there might
+         * case when no hooks executed or defined and it's ok.  */
         if (!hookls(list->ilist[i].pgn, env, ent->d_name)) {
             fprintf(stderr, "core_id_list %s: failed to get hookls output\n", ent->d_name);
         }
