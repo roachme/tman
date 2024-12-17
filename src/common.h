@@ -19,6 +19,7 @@ extern struct tmanstruct tmanfs;
 
 enum tman_errno {
     TMAN_OK = 0,        /* OK, interpret output as path or output */
+    /* DELETE this one, cuz it's not part of core return codes */
     TMAN_INVOPT = 1,    /* Error, invalid option */
     TMAN_ECORE  = 2,    /* ?? Error in core execution (under consideration to include) */
     TMAN_EBIN   = 3,    /* Generic: failed to executed command */
