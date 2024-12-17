@@ -9,7 +9,7 @@ static int tman_cat_usage(void)
     const char *cmd = "cat";
     printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
     printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_NOPATH;
+    return TMAN_OK;
 }
 
 static int pretty_cat(char *env, char *id, char *key)
@@ -33,7 +33,7 @@ static int pretty_cat(char *env, char *id, char *key)
         unitpgn = unitpgn->next;
         unit_delpgn(tmp);
     }
-    return TMAN_NOPATH;
+    return TMAN_OK;
 }
 
 int tman_cat(int argc, char **argv)

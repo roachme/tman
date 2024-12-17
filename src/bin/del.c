@@ -7,7 +7,7 @@ int tman_del_usage(void)
     const char *cmd = "del";
     printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
     printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_NOPATH;
+    return TMAN_OK;
 }
 
 int tman_del(int argc, char **argv)

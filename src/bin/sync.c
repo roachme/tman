@@ -6,7 +6,7 @@ static int tman_sync_usage(void)
     const char *cmd = "sync";
     printf("Usage: %s %s [OPTION]\n", PROGRAM, cmd);
     printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_NOPATH;
+    return TMAN_OK;
 }
 
 int tman_sync(int argc, char **argv)

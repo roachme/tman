@@ -9,7 +9,7 @@ static int tman_list_usage(void)
     const char *cmd = "help";
     printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
     printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_NOPATH;
+    return TMAN_OK;
 }
 
 static int compare(const void *aa, const void *bb)
@@ -38,7 +38,7 @@ static int pretty_list(char *env, struct tman_list *opt)
         printf("%c %-10s [%s] %s\n", item.col.mark, item.id, item.pgn, item.desc);
     }
 
-    return 1;
+    return TMAN_OK;
 }
 
 int tman_list(int argc, char **argv)

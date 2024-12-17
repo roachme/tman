@@ -7,7 +7,7 @@ int tman_use_usage(void)
     const char *cmd = "use";
     printf("Usage: %s %s [OPTION]... ID\n", PROGRAM, cmd);
     printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_NOPATH;
+    return TMAN_OK;
 }
 
 int tman_use(int argc, char **argv)
