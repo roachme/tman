@@ -36,5 +36,5 @@ int tman_use(int argc, char **argv)
 
     if ((status = core_id_use(argv[optind], &opt)) != 0)
         return status;
-    return core_currdir();
+    return core_pwd();
 }

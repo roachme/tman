@@ -30,7 +30,7 @@ static int id_exists(char *env, char *id)
     return ISDIR(pathname);
 }
 
-int core_currdir()
+int core_pwd()
 {
     char *cid = column_getcid();
     printf("PWD: %s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");

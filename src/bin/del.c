@@ -43,5 +43,5 @@ int tman_del(int argc, char **argv)
     // FIXME: when delete task ID from non-current env,
     // it switches to current task in current env.
     // BUT should not change user's CWD at all.
-    return status == TMAN_OK ? core_currdir() : status;
+    return status == TMAN_OK ? core_pwd() : status;
 }
