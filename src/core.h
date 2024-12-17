@@ -35,7 +35,7 @@ struct list *core_id_list(struct list *list, char *env);
 
 
 int core_init(const char *cmd);
-int core_currdir();
+int core_pwd();
 
 
 /* Task ID stuff */

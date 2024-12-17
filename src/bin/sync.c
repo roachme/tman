@@ -28,5 +28,5 @@ int tman_sync(int argc, char **argv)
 
     if (help == 1)
         return tman_sync_usage();
-    return (status = core_id_sync()) == TMAN_OK ? core_currdir() : status;
+    return (status = core_id_sync()) == TMAN_OK ? core_pwd() : status;
 }

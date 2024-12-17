@@ -45,7 +45,7 @@ int _env_add(int argc, char **argv)
 
     for (int i = optind; i < argc; ++i)
         status = core_env_add(argv[i], &opt);
-    return status == TMAN_OK ? core_currdir() : 1;
+    return status == TMAN_OK ? core_pwd() : 1;
 }
 
 // roach: maybe it'll be useful
@@ -85,7 +85,7 @@ int _env_del(int argc, char **argv)
         showpath = TRUE;
     }
 
-    return status == TMAN_OK && showpath == TRUE ? core_currdir() : 1;
+    return status == TMAN_OK && showpath == TRUE ? core_pwd() : 1;
 }
 
 int _env_list(int argc, char **argv)
@@ -122,7 +122,7 @@ int _env_prev(int argc, char **argv)
         elog(1, "bin.env: env_prev failed");
         return 1;
     }
-    return core_currdir();
+    return core_pwd();
 }
 
 int _env_set(int argc, char **argv)
@@ -136,7 +136,7 @@ int _env_use(int argc, char **argv)
 
     if (core_env_use(env))
         return elog(1, "could not switch to env '%s'", env);
-    return core_currdir();
+    return core_pwd();
 }
 
 int tman_env(int argc, char **argv)

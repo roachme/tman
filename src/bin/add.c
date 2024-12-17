@@ -49,5 +49,5 @@ int tman_add(int argc, char **argv)
 
     for (int i = optind; i < argc; ++i)
         status = core_id_add(argv[i], &opt);
-    return status == TMAN_OK ? core_currdir() : status;
+    return status == TMAN_OK ? core_pwd() : status;
 }
