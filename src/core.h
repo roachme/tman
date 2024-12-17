@@ -31,33 +31,29 @@ struct list {
     size_t capac;
     struct ilist ilist[LSIZE];
 };
-struct list *core_id_list(struct list *list, char *env);
 
-
+/* Generic util functions.  */
+int core_pwd(void);
 int core_init(const char *cmd);
-int core_pwd();
+struct help *core_id_help(const char *cmd);
 
-
-/* Task ID stuff */
+/* Task ID functions.  */
 int core_id_prev(void);
 int core_id_sync(void);
 int core_id_movecol(char *env, char *id, char *tag);
-int core_id_add (char *id, struct tman_add_opt *opt);
-int core_id_del (char *id, struct tman_del_opt *opt);
+int core_id_add(char *env, char *id, struct tman_add_opt *opt);
+int core_id_del(char *env, char *id, struct tman_del_opt *opt);
 int core_id_move(char *id, char *dst, char *src);
-int core_id_set (char *env, char *id, struct unitbin *unitbin);
-int core_id_use (char *id, struct tman_use_opt *opt);
+int core_id_set(char *env, char *id, struct unitbin *unitbin);
+int core_id_use(char *env, char *id, struct tman_use_opt *opt);
+struct units *core_id_cat(char *env, char *id, struct units *units);
+struct list *core_id_list(struct list *list, char *env);
 
-struct units *core_id_cat (struct units *units, char *env, char *id);
-
-
-/* Task environment stuff */
-int core_env_prev();
-int core_env_add (char *env, struct tman_env_add_opt *opt);
-int core_env_del (char *env, struct tman_env_del_opt *opt);
-int core_env_set (char *env);
-int core_env_use (char *env);
-
-struct help *core_id_help(char *cmd);
+/* Task environment functions.  */
+int core_env_prev(void);
+int core_env_add(char *env, struct tman_env_add_opt *opt);
+int core_env_del(char *env, struct tman_env_del_opt *opt);
+int core_env_set(char *env);
+int core_env_use(char *env);
 
 #endif

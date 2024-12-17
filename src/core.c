@@ -52,7 +52,7 @@ int core_init(const char *cmd)
     return TMAN_OK;
 }
 
-int core_id_add(char *id, struct tman_add_opt *opt)
+int core_id_add(char *env, char *id, struct tman_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
     struct unitbin units[NKEYS] = {0};
@@ -85,7 +85,7 @@ int core_id_add(char *id, struct tman_add_opt *opt)
     return TMAN_OK;
 }
 
-int core_id_del(char *id, struct tman_del_opt *opt)
+int core_id_del(char *env, char *id, struct tman_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
     char *cid = column_getcid();
@@ -159,8 +159,8 @@ int core_id_set(char *env, char *id, struct unitbin *unit)
     return TMAN_OK;
 }
 
-// int core_id_add(char *id, struct tman_add_opt *opt)
-int core_id_use(char *id, struct tman_use_opt *opt)
+// TODO: add support to switch to task in another environment.
+int core_id_use(char *env, char *id, struct tman_use_opt *opt)
 {
     opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
@@ -276,7 +276,7 @@ int core_id_movecol(char *env, char *id, char *tag)
     return column_moveid(id, tag);
 }
 
-struct units *core_id_cat(struct units *units, char *env, char *id)
+struct units *core_id_cat(char *env, char *id, struct units *units)
 {
     id = id ? id : column_getcid();
     env = env ? env : column_getcenv();

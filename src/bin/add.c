@@ -48,6 +48,6 @@ int tman_add(int argc, char **argv)
         return elog(TMAN_ADD_IDREQ, "task id required");
 
     for (int i = optind; i < argc; ++i)
-        status = core_id_add(argv[i], &opt);
+        status = core_id_add(opt.env, argv[i], &opt);
     return status == TMAN_OK ? core_pwd() : status;
 }
