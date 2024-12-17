@@ -34,7 +34,7 @@ int tman_use(int argc, char **argv)
     else if (optind == argc)
         return elog(TMAN_USE_IDREQ, "task id required");
 
-    if ((status = core_id_use(argv[optind], &opt)) != 0)
+    if ((status = core_id_use(NULL, argv[optind], &opt)) != 0)
         return status;
     return core_pwd();
 }

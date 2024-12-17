@@ -35,10 +35,10 @@ int tman_del(int argc, char **argv)
         return tman_del_usage();
 
     for (int i = optind; i < argc; ++i)
-        status = core_id_del(argv[i], &opt);
+        status = core_id_del(opt.env, argv[i], &opt);
 
     if (optind == argc) /* delete current task id */
-        status = core_id_del(NULL, &opt);
+        status = core_id_del(opt.env, NULL, &opt);
 
     // FIXME: when delete task ID from non-current env,
     // it switches to current task in current env.
