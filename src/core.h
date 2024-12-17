@@ -4,11 +4,15 @@
 #include "unit.h"
 #include "common.h"
 #include "column.h"
-#include "bin/add.h"
-#include "bin/del.h"
-#include "bin/use.h"
+#include "osdep.h"
+#include "help.h"
 
-#include "bin/env.h"
+// TODO: get rid of 'em. Use generic structure for options and
+// return value in ubus in OpenWrt does.
+#include "../cli/add.h"
+#include "../cli/del.h"
+#include "../cli/use.h"
+#include "../cli/env.h"
 
 #define LISTBIN 4
 #define LISTPGN 40

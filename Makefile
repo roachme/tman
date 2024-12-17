@@ -1,8 +1,8 @@
 PROGRAM=_tman
 CC=gcc
-SRCS=$(wildcard src/*.c src/bin/*.c)
+SRCS=$(wildcard src/*.c cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
-CFLAGS=-I src
+CFLAGS=-I src -I cli
 
 all: $(PROGRAM)
 .PHONY: clean $(PROGRAM)
@@ -19,13 +19,13 @@ clean:
 
 chk:
 	clear
-	cppcheck --std=c89 --enable=all --language=c src/bin/*.c src/*.c
+	cppcheck --std=c89 --enable=all --language=c cli/*.c src/*.c
 
 valgrind:
 	valgrind  --track-origins=yes --leak-check=full --show-leak-kinds=all ./_tman
 
 lnum:
-	find src -name '*.c' | grep -v bin |  xargs wc -l
+	find src -name '*.c' |  xargs wc -l
 
 #build:
 #	#gcc -g -Wall src/*.h src/*.c -o tman

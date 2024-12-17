@@ -1,9 +1,7 @@
 #include <stdio.h>
 
 #include "col.h"
-#include "../core.h"
-#include "../help.h"
-#include "../common.h"
+#include "../src/core.h"
 
 int tman_col(int argc, char **argv)
 {
