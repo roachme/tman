@@ -1,6 +1,5 @@
 #include "del.h"
-#include "../common.h"
-#include "../core.h"
+#include "../src/core.h"
 
 int tman_del_usage(void)
 {

@@ -2,9 +2,7 @@
 #include <stdlib.h>
 
 #include "add.h"
-#include "../core.h"
-#include "../help.h"
-#include "../common.h"
+#include "../src/core.h"
 
 static int tman_add_usage(void)
 {

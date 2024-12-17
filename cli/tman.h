@@ -1,7 +1,7 @@
 #ifndef TMAN_H
 #define TMAN_H
 
-#include "common.h"
+#include "../src/common.h"
 
 typedef struct builtin {
     char name[CMDSIZ + 1];

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "list.h"
-#include "../core.h"
+#include "../src/core.h"
 
 static int tman_list_usage(void)
 {

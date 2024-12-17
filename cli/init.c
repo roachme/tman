@@ -1,9 +1,7 @@
-#include <stdlib.h>
 #include <unistd.h>
 
 #include "init.h"
-#include "../osdep.h"
-#include "../common.h"
+#include "../src/core.h"
 
 int tman_init(int argc, char **argv)
 {

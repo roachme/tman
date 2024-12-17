@@ -8,10 +8,10 @@
 #include <sys/stat.h>
 
 #include "tman.h"
-#include "core.h"
-#include "help.h"
-#include "config.h"
-#include "common.h"
+#include "../src/core.h"
+#include "../src/help.h"
+#include "../src/config.h"
+#include "../src/common.h"
 
 struct tmanstruct tmanfs;
 
