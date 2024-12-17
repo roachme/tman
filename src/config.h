@@ -7,7 +7,7 @@
 #include "common.h"
 
 #define NUMCONFIG       2
-#define MAXCONFIG       256
+#define CONFIGSIZ       256
 
 // FIXME: add an expression max_hookact + max_hookcat + max_hookls
 #define CONF_MAXHOOK    10
