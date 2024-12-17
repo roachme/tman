@@ -107,8 +107,8 @@ int parseconf(const char *fname)
 int config_init(void)
 {
     char *homedir = getenv("HOME");
-    char configs[NUMCONFIG][MAXCONFIG] = {0};
-    const char cfgfmts[NUMCONFIG][MAXCONFIG] = {
+    char configs[NUMCONFIG][CONFIGSIZ + 1] = { 0 };
+    const char cfgfmts[NUMCONFIG][CONFIGSIZ + 1] = {
         "%s/.%s/%s.cfg",
         "%s/.config/%s/%s.cfg",
     };
