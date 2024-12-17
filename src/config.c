@@ -11,17 +11,16 @@
 struct config config = {
     .usehooks = TRUE,
 };
+static const char *delim = " =\n";
 
 static int parsepath(char *path)
 {
-    const char *delim = " =\n";
     strcpy(path, strtok(NULL, delim));
     return 0;
 }
 
 static int parse_usehooks(const char *confkey, int *usehooks)
 {
-    const char *delim = " =\n";
     char *confval = strtok(NULL, delim);
 
     if (strncmp(confval, "1", 1) == 0) {
@@ -38,7 +37,6 @@ static int parse_usehooks(const char *confkey, int *usehooks)
 static int parse_hook(const char *hookname, struct hooks *hooks)
 {
     int i = hooks->size;
-    const char *delim = " =\n";
     strcpy(hooks->hook[i].hook, hookname);
     strcpy(hooks->hook[i].cmd, strtok(NULL, delim));
     strcpy(hooks->hook[i].pgname, strtok(NULL, delim));
@@ -51,7 +49,6 @@ static int parse_columns(struct columns *columns)
 {
     char *prio;
     int i = columns->size;
-    const char *delim = " =\n";
 
     strcpy(columns->column[i].env, strtok(NULL, delim));
     strcpy(&columns->column[i].mark, strtok(NULL, delim));
@@ -62,13 +59,12 @@ static int parse_columns(struct columns *columns)
     return 0;
 }
 
-int parseconf(const char *fname)
+static int parseconf(const char *fname)
 {
     int retcode = 0;
     char line[BUFSIZ + 1];
     char *token = NULL;
     struct hook *hook;
-    const char *delim = " =\n";
     FILE *fp = fopen(fname, "r");
 
     if (!fp)
