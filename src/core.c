@@ -33,7 +33,7 @@ static int id_exists(char *env, char *id)
 int core_currdir()
 {
     char *cid = column_getcid();
-    printf("%s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");
+    printf("PWD: %s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");
     return TMAN_OK;
 }
 
