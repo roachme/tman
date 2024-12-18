@@ -53,7 +53,7 @@ int tman_cli_help(int argc, char **argv)
 int tman_cli_ver(int argc, char **argv)
 {
     printf("%s: %s\n", PROGRAM, VERSION);
-    return 1;
+    return TMAN_OK;
 }
 
 int main(int argc, char **argv)
