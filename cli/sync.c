@@ -11,14 +11,15 @@ static int tman_cli_sync_usage(void)
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_sync(int argc, char **argv)
 {
-    char c;
-    int help = 0;
-    int status;
+    char c, *errfmt;
+    int showhelp, status;
 
+    showhelp = FALSE;
+    errfmt =  "cannot sync: %s";
     while ((c = getopt(argc, argv, ":h")) != -1) {
         switch (c) {
             case 'h':
-                help = 1; break;
+                showhelp = TRUE; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -26,7 +27,9 @@ int tman_cli_sync(int argc, char **argv)
         }
     }
 
-    if (help == 1)
+    if (showhelp == TRUE)
         return tman_cli_sync_usage();
-    return (status = tman_id_sync()) == TMAN_OK ? tman_pwd() : status;
+    if ((status = tman_id_sync()) != TMAN_OK)
+        return elog(status, errfmt, tman_get_errmsg());
+    return tman_pwd();
 }
