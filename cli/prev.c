@@ -3,7 +3,7 @@
 
 int tman_prev(int argc, char **argv)
 {
-    if (core_id_prev())
+    if (tman_id_prev())
         return elog(1, "no previous task is set");
-    return core_pwd();
+    return tman_pwd();
 }

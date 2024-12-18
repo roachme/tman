@@ -35,10 +35,10 @@ int tman_col(int argc, char **argv)
         return elog(1, "gotta specify column to move a task to");
 
     for (int i = optind; i < argc; ++i)
-        status = core_id_movecol(NULL, argv[i], col);
+        status = tman_id_movecol(NULL, argv[i], col);
 
     if (optind == argc) /* operate on current task id */
-        status = core_id_movecol(NULL, NULL, col);
+        status = tman_id_movecol(NULL, NULL, col);
 
     return status;
 }

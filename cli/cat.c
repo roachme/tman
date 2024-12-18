@@ -17,7 +17,7 @@ static int pretty_cat(char *env, char *id, char *key)
     struct unitpgn *unitpgn;
     struct units units = { 0 };
 
-    if (core_id_cat(env, id, &units) == NULL) {
+    if (tman_id_cat(env, id, &units) == NULL) {
         return 1;
     }
 
