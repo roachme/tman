@@ -1,11 +1,10 @@
-#ifndef CORE_H
-#define CORE_H
+#ifndef TMAN_H
+#define TMAN_H
 
 #include "unit.h"
 #include "common.h"
 #include "column.h"
 #include "osdep.h"
-#include "help.h"
 
 // TODO: get rid of 'em. Use generic structure for options and
 // return value in ubus in OpenWrt does.
@@ -14,14 +13,16 @@
 #include "../cli/use.h"
 #include "../cli/env.h"
 
-#define LISTBIN 4
-#define LISTPGN 40
-#define LISTBINUN 50
+#define LISTBIN         4
+#define CMDSIZ          5
+#define LISTPGN         40
+#define LISTBINUN       50
+#define TMANPATHSIZE    1024
 
-#define LSIZE       50
-#define LBINNUM     2
-#define LBINSIZ     80
-#define LPGNSIZ     80
+#define LSIZE           50
+#define LBINNUM         2
+#define LBINSIZ         80
+#define LPGNSIZ         80
 
 struct ilist {
     char id[IDSIZ + 1];
@@ -36,9 +37,25 @@ struct list {
     struct ilist ilist[LSIZE];
 };
 
+struct tmanstruct {
+    char db[TMANPATHSIZE + 1];          /* directory for tman metadata */
+    char cfg[TMANPATHSIZE + 1];         /* directory for config files */
+    char pgn[TMANPATHSIZE + 1];         /* directory for plugin data */
+    char base[TMANPATHSIZE + 1];        /* directory for all stuff above */
+    char pgnins[TMANPATHSIZE + 1];      /* directory for installed plugins */
+
+    char fcfg[TMANPATHSIZE + 1];        /* system config file */
+    char finit[TMANPATHSIZE + 1];       /* file that tells that tman is inited */
+    char fstate[TMANPATHSIZE + 1];      /* file to store tman task state */
+};
+
+extern struct tmanstruct tmanfs;
+
 /* Generic util functions.  */
 int core_pwd(void);
 int core_init(const char *cmd);
+int core_isplugin(const char *pgn);
+int core_plugin_exec(int argc, char **argv);
 struct help *core_id_help(const char *cmd);
 
 /* Task ID functions.  */

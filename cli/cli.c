@@ -1,19 +1,7 @@
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <unistd.h>
-#include <sys/stat.h>
 
-#include "tman.h"
-#include "../src/core.h"
-#include "../src/help.h"
-#include "../src/config.h"
-#include "../src/common.h"
-
-struct tmanstruct tmanfs;
+#include "cli.h"
+#include "../src/tman.h"
 
 builtin_t builtins[] = {
     /* system commands */
@@ -45,24 +33,11 @@ builtin_t builtins[] = {
 
 int builtin_size = sizeof(builtins) / sizeof(builtins[0]);
 
-int tman_initfs()
-{
-    // TODO: Add a varible for task db as well.
-    sprintf(tmanfs.base,   "%s",    config.base);
-    sprintf(tmanfs.db,     "%s/%s", tmanfs.base, ".tman");
-    sprintf(tmanfs.finit,  "%s/%s", tmanfs.db,   "inited");
-    sprintf(tmanfs.fstate, "%s/%s", tmanfs.db,   "state");
-    sprintf(tmanfs.pgn,    "%s/%s", tmanfs.base, ".pgn");
-    sprintf(tmanfs.pgnins, "%s",    config.pgnins);
-    return 0;
-}
-
 int tman_help(int argc, char **argv)
 {
     char c;
     char *cmd;
     char *key = NULL;
-    char o_desc = false;
 
     while ((c = getopt(argc, argv, "dk:")) != -1) {
         switch (c) {
@@ -85,19 +60,15 @@ int main(int argc, char **argv)
 {
     const char *cmd = argc > 1 ? argv[1] : "list";
 
-    if (config_init())
-        return elog(1, "failed to parse system config file");
-
-    /* init util for a command. Not all of 'em need initialization */
-    if (tman_initfs() != 1 && core_init(cmd))
+    if (core_init(cmd))
         return 1;
 
     for (int i = 0; i < builtin_size; ++i)
         if (strcmp(cmd, builtins[i].name) == 0)
             return builtins[i].func(argc - 1, argv + 1);
 
-    if (isplugin(cmd))
-        return plugin(argc, argv);
+    if (core_isplugin(cmd))
+        return core_plugin_exec(argc, argv);
 
     return elog(1, "cannot access '%s': no such command or plugin", cmd);
 }

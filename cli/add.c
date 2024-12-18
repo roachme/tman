@@ -2,7 +2,8 @@
 #include <stdlib.h>
 
 #include "add.h"
-#include "../src/core.h"
+#include "cli.h"
+#include "../src/tman.h"
 
 static int tman_add_usage(void)
 {

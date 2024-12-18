@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "cat.h"
-#include "../src/core.h"
+#include "../src/tman.h"
 
 static int tman_cat_usage(void)
 {

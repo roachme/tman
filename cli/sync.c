@@ -1,4 +1,4 @@
-#include "../src/core.h"
+#include "../src/tman.h"
 
 static int tman_sync_usage(void)
 {

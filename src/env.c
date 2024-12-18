@@ -9,7 +9,7 @@
 #include <string.h>
 
 #include "env.h"
-#include "common.h"
+#include "../src/tman.h"
 
 static char *envfile;
 static char envs[NENV][ENVSIZ + 1];
