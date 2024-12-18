@@ -23,7 +23,7 @@ const struct tman_err_codes errcodes[NERRCODE] = {
 
     { .err = TMAN_EREQRID,     .desc = "task ID required" },
     { .err = TMAN_EMISSID,     .desc = "task ID does not exist" },
-    { .err = TMAN_EILLEGID,    .desc = "illegal task ID name" },
+    { .err = TMAN_EILLEGID,    .desc = "illegal task ID" },
     { .err = TMAN_ENOCURRID,   .desc = "no current task ID" },
     { .err = TMAN_ENOPREVID,   .desc = "no previous task ID" },
     { .err = TMAN_ENOSUCHID,   .desc = "no such task ID" },
