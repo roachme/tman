@@ -1,27 +1,13 @@
-#include <unistd.h>
-
 #include "init.h"
-#include "../src/tman.h"
+#include "cli.h"
 
 int tman_cli_init(int argc, char **argv)
 {
-    /* Generic check */
-    if (access(tmanfs.finit, F_OK) == 0)
-        return 0;
+    int status;
+    char *errfmt;
 
-    if (MKDIR(tmanfs.base))
-        return elog(1, "could not create directory %s", tmanfs.base);
-    else if (MKDIR(tmanfs.base))
-        return elog(1, "could not create directory %s", tmanfs.base);
-    else if (MKDIR(tmanfs.pgn))
-        return elog(1, "could not create directory %s", tmanfs.pgn);
-    else if (MKDIR(tmanfs.pgnins))
-        return elog(1, "could not create directory %s", tmanfs.pgnins);
-    else if (MKDIR(tmanfs.db))
-        return elog(1, "could not create directory %s", tmanfs.db);
-    else if (TOUCH(tmanfs.fstate))
-        return elog(1, "could not create file %s", tmanfs.fstate);
-    else if (TOUCH(tmanfs.finit))
-        return elog(1, "could not create init file %s", tmanfs.finit);
-    return 0;
+    errfmt = "could not make core filesystem: %s";
+    if ((status = tman_mkfs()) != TMAN_OK)
+        return elog(status, errfmt, tman_strerror());
+    return TMAN_OK;
 }
