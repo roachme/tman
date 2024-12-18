@@ -14,6 +14,7 @@
 #include "common.h"
 #include "column.h"
 #include "osdep.h"
+#include "errmod.h"
 #include "config.h"
 
 // TODO: Make NOT global.
@@ -79,28 +80,28 @@ int tman_id_add(char *env, char *id, struct tman_cli_add_opt *opt)
     opt->env = opt->env != NULL ? opt->env : cenv;
 
     if (opt->env == NULL)
-        return elog(1, "no current environment");
+        return emod_set(TMAN_ENOCURRENV);
     else if (!env_exists(opt->env))
-        return elog(1, "%s: no such environment", opt->env);
+        return emod_set(TMAN_ENOSUCHENV);
     else if (!_chkid(id))
-        return elog(1, "%s: illegal task id name", id);
-    else if (id_exists(opt->env, id)) {
-        if (opt->force == 0)
-            elog(TMAN_ADD_IDEXT, "%s: task id already exists", id);
-        return TMAN_ADD_IDEXT;
-    }
+        return emod_set(TMAN_EILLEGID);
+    else if (id_exists(opt->env, id))
+        return emod_set(TMAN_EIDEXISTS);
 
     if (imkdir(tmanfs.base, opt->env, id) != 0)
-        return elog(1, "%s: could not create task directory", id);
+        return emod_set(TMAN_ETASKMKDIR);
     else if (unit_addbin(opt->env, id, units) != 0)
-        return elog(1, "%s: could not create task unit", id);
+        return emod_set(TMAN_ETASKMKUNIT);
     else if (hookact("add", opt->env, id))
-        return elog(1, "could not execute hook");
-    else if (column_markid(id))
-        return elog(1, "column_mark: failed");
-
-    if (opt->noswitch == FALSE && strcmp(opt->env, cenv) == 0 && column_addcid(id) != 0)
-        return elog(1, "column_addcid: failed");
+        return emod_set(TMAN_EHOOK);
+    else if (column_markid(id)) {
+        elog(1, "column_mark: failed");
+        return emod_set(TMAN_NODEF_ERR);
+    }
+    if (opt->noswitch == FALSE && strcmp(opt->env, cenv) == 0 && column_addcid(id) != 0) {
+        elog(1, "column_addcid: failed");
+        return emod_set(TMAN_NODEF_ERR);
+    }
     return TMAN_OK;
 }
 
@@ -113,35 +114,33 @@ int tman_id_del(char *env, char *id, struct tman_cli_del_opt *opt)
     opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
     if (opt->env == NULL)
-        return elog(1, "no current environment");
+        return emod_set(TMAN_ENOCURRENV);
     else if (!env_exists(opt->env))
-        return elog(1, "%s: no such environment", opt->env);
+        return emod_set(TMAN_ENOSUCHENV);
     else if (id == NULL)
-        return elog(1, "no current task id");
-    else if (!id_exists(opt->env, id)) {
-        if (opt->force == 0)
-            elog(TMAN_DEL_NOID, "%s: no such task id", id);
-        return TMAN_DEL_NOID;
-    }
+        return emod_set(TMAN_ENOCURRID);
+    else if (!id_exists(opt->env, id))
+        return emod_set(TMAN_EIDEXISTS);
 
     if (hookact("del", opt->env, id))
-        return elog(1, "could not execute hook");
+        return emod_set(TMAN_EHOOK);
     else if (unit_delbin(opt->env, id))
-        return elog(1, "%s: could not delete task unit", id);
+        return emod_set(TMAN_ETASKRMUNIT);
     else if (irmdir(tmanfs.base, opt->env, id))
-        return elog(1, "%s: could not delete task directory", id);
-    else if (column_delspec(id))
-        return elog(1, "%s: could not update special task IDs", id);
+        return emod_set(TMAN_ETASKRMDIR);
+    else if (column_delspec(id)) {
+        elog(1, "%s: could not update special task IDs", id);
+        return emod_set(TMAN_NODEF_ERR);
+    }
     return TMAN_OK;
 }
 
 int tman_id_prev(void)
 {
     if (column_swapid())
-        return TMAN_ECORE;
-    if (hookact("prev", column_getcenv(), column_getcid())) {
-        return elog(TMAN_EHOOK, "could not execute hook");
-    }
+        return emod_set(TMAN_ENOPREVID);
+    if (hookact("prev", column_getcenv(), column_getcid()))
+        return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
 
@@ -151,9 +150,9 @@ int tman_id_sync(void)
     char *cenv = column_getcenv();
 
     if (cid == NULL)
-        return elog(TMAN_ECORE, "no current task id set");
+        return emod_set(TMAN_ENOCURRID);
     if (hookact("sync", cenv, cid))
-        return elog(TMAN_EHOOK, "could not execute hook");
+        return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
 
@@ -163,15 +162,17 @@ int tman_id_set(char *env, char *id, struct unitbin *unit)
     env = env != NULL ? env : column_getcenv();
 
     if (env == NULL)
-        return elog(1, "no current environment");
+        return emod_set(TMAN_ENOCURRENV);
     else if (!env_exists(env))
-        return elog(1, "%s: no such environment", env);
+        return emod_set(TMAN_ENOSUCHENV);
     else if (id == NULL)
-        return elog(1, "no current task id");
+        return emod_set(TMAN_ENOCURRENV);
     else if (!id_exists(env, id))
-        return elog(1, "%s: no such task id", id);
-    else if (unit_setbin(env, id, unit))
-        return elog(1, "%s: could not set unit values", id);
+        return emod_set(TMAN_ENOSUCHID);
+    else if (unit_setbin(env, id, unit)) {
+        elog(1, "%s: could not set unit values", id);
+        return emod_set(TMAN_NODEF_ERR);
+    }
 
     // TODO: change task directory if id unit was changed
     // TODO: update task id status as well.
@@ -184,19 +185,19 @@ int tman_id_use(char *env, char *id, struct tman_cli_use_opt *opt)
     opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
     if (opt->env == NULL)
-        return elog(1, "no current environment");
+        return emod_set(TMAN_ENOCURRENV);
     if (!env_exists(opt->env))
-        return elog(1, "%s: no such env", opt->env);
+        return emod_set(TMAN_ENOSUCHENV);
     else if (!_chkenv(opt->env))
-        return elog(1, "%s: illegal task env name", opt->env);
+        return emod_set(TMAN_EILLEGENV);
     else if (id == NULL)
-        return elog(1, "task id required");
+        return emod_set(TMAN_EREQRID);
     else if (!id_exists(opt->env, id))
-        return elog(1, "cannot access '%s': no such task ID in env '%s'", id, opt->env);
+        return emod_set(TMAN_EMISSID);
     else if (opt->env != column_getcenv()) {
         fprintf(stderr, "trynna switch to task in another env\n");
         fprintf(stderr, "under development\n");
-        return 1;
+        return emod_set(TMAN_NODEF_ERR);
     }
 
     // TODO: it can't switch to task in non-current env.
@@ -211,19 +212,29 @@ int tman_id_move(char *id, char *dst, char *src)
     src = src ? src : column_getcenv();
     sprintf(dstid, "%s/%s/%s", tmanfs.base, dst, id);
 
-    if (!env_exists(dst))
-        return elog(1, "no such destination env");
-    else if (!src || src == NULL)
-        return elog(1, "no current env set");
-    else if (!env_exists(src))
-        return elog(1, "no such source env");
+    if (!env_exists(dst)) {
+        elog(1, "no such destination env");
+        return emod_set(TMAN_NODEF_ERR);
+    }
+    else if (!src || src == NULL) {
+        elog(1, "no current env set");
+        return emod_set(TMAN_NODEF_ERR);
+    }
+    else if (!env_exists(src)) {
+        elog(1, "no such source env");
+        return emod_set(TMAN_NODEF_ERR);
+    }
     else if (!id_exists(src, id))
-        return elog(1, "cannot access '%s': no such task id", id);
-    else if (id_exists(dst, id))
-        return elog(1, "cannot move '%s': task id exists in env '%s'", id, dst);
+        emod_set(TMAN_ENOSUCHID);
+    else if (id_exists(dst, id)) {
+        elog(1, "cannot move '%s': task id exists in env '%s'", id, dst);
+        return emod_set(TMAN_NODEF_ERR);
+    }
 
-    if (imove(tmanfs.base, id, dst, src))
-        return elog(1, "%s: could not move task to %s", id, dst);
+    if (imove(tmanfs.base, id, dst, src)) {
+        elog(1, "%s: could not move task to %s", id, dst);
+        return emod_set(TMAN_NODEF_ERR);
+    }
     else if (strcmp(column_getcid(), id) == 0)
         return column_delcid();
     else if (strcmp(column_getpid(), id) == 0)
@@ -246,15 +257,16 @@ struct list *tman_id_list(struct list *list, char *env)
 
     sprintf(pathname, "%s/%s", tmanfs.base, env);
     if (env == NULL) {
-        elog(1, "no current environment set");
+        emod_set(TMAN_ENOCURRENV);
         return NULL;
     }
     else if (!env_exists(env)) {
-        elog(1, "%s: no such environment", env);
+        emod_set(TMAN_ENOSUCHENV);
         return NULL;
     }
     else if ((ids = opendir(pathname)) == NULL) {
         elog(1, "%s: could not read environment", env);
+        emod_set(TMAN_NODEF_ERR);
         return NULL;
     }
 
@@ -287,11 +299,11 @@ int tman_id_col(char *env, char *id, char *tag)
     env = env ? env : column_getcenv();
 
     if (env == NULL)
-        return elog(1, "no current env set");
+        return emod_set(TMAN_ENOCURRENV);
     else if (id == NULL)
-        return elog(1, "no current id set");
+        return emod_set(TMAN_ENOCURRID);
     else if (!id_exists(env, id))
-        return elog(1, "%s: no such task id", id);
+        return emod_set(TMAN_ENOSUCHID);
     return column_moveid(id, tag);
 }
 
@@ -301,7 +313,7 @@ struct units *tman_id_cat(char *env, char *id, struct units *units)
     env = env ? env : column_getcenv();
 
     if (env == NULL) {
-        elog(1, "no Current environment");
+        emod_set(TMAN_ENOCURRENV);
         return NULL;
     }
     else if (!env_exists(env)) {
@@ -309,11 +321,11 @@ struct units *tman_id_cat(char *env, char *id, struct units *units)
         return NULL;
     }
     else if (id == NULL) {
-        elog(1, "no current Task id");
+        emod_set(TMAN_ENOCURRID);
         return NULL;
     }
     else if (!id_exists(env, id)) {
-        elog(1, "%s: no such task id", id);
+        emod_set(TMAN_ENOSUCHID);
         return NULL;
     }
 
@@ -332,16 +344,15 @@ struct units *tman_id_cat(char *env, char *id, struct units *units)
 int tman_env_add(char *env, struct tman_cli_env_add_opt *opt)
 {
     if (env == NULL)
-        return elog(1, "env name required");
-    else if (env_exists(env)) {
-        if (opt->force == 0)
-            elog(1, "%s: env already exists", env);
-        return TMAN_ECORE;
-    }
+        return emod_set(TMAN_EREQRENV);
+    else if (env_exists(env))
+        return emod_set(TMAN_EENVEXISTS);
     else if (!_chkenv(env))
-        return elog(1, "%s: illegal task env name", env);
-    else if (emkdir(tmanfs.base, env))
-        return elog(1, "%s: could not create env directory", env);
+        return emod_set(TMAN_EILLEGENV);
+    else if (emkdir(tmanfs.base, env)) {
+        elog(1, "%s: could not create env directory", env);
+        return emod_set(TMAN_NODEF_ERR);
+    }
     return column_addcenv(env);
 }
 
@@ -350,11 +361,13 @@ int tman_env_del(char *env, struct tman_cli_env_del_opt *opt)
     env = env ? env : column_getcenv();
 
     if (env == NULL)
-        return elog(1, "no current env set");
+        return emod_set(TMAN_ENOCURRENV);
     else if (!env_exists(env))
-        return elog(1, "%s: no such env", env);
-    else if (ermdir(tmanfs.base, env))
-        return elog(1, "%s: could not delete env directory", env);
+        return emod_set(TMAN_ENOSUCHENV);
+    else if (ermdir(tmanfs.base, env)) {
+        elog(1, "%s: could not delete env directory", env);
+        return emod_set(TMAN_NODEF_ERR);
+    }
     return column_delcenv();
 }
 
@@ -371,9 +384,9 @@ int tman_env_prev()
 int tman_env_use(char *env)
 {
     if (env == NULL)
-        return elog(1, "env name required");
+        return emod_set(TMAN_EREQRENV);
     else if (!env_exists(env))
-        return elog(1, "%s: env does not exist", env);
+        return emod_set(TMAN_ENOSUCHENV);
     return column_addcenv(env);
 }
 
@@ -385,4 +398,9 @@ int tman_isplugin(const char *pgn)
 int tman_plugin(int argc, char **argv)
 {
     return plugin(argc, argv);
+}
+
+char *tman_get_errmsg(void)
+{
+    return emod_get();
 }

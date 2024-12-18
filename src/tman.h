@@ -5,6 +5,7 @@
 #include "common.h"
 #include "column.h"
 #include "osdep.h"
+#include "errmod.h"
 
 // TODO: get rid of 'em. Use generic structure for options and
 // return value in ubus in OpenWrt does.
@@ -49,10 +50,17 @@ struct tmanstruct {
     char fstate[TMANPATHSIZE + 1];      /* file to store tman task state */
 };
 
+/* Generic tman structure used by all(?) API functions.  */
+typedef struct context {
+    struct list list;
+    struct units units;
+} ctx;
+
 extern struct tmanstruct tmanfs;
 
 /* Generic util functions.  */
 int tman_pwd(void);
+char *tman_get_errmsg(void);
 int tman_init(const char *cmd);
 int tman_isplugin(const char *pgn);
 int tman_plugin(int argc, char **argv);
@@ -68,6 +76,9 @@ int tman_id_set(char *env, char *id, struct unitbin *unitbin);
 int tman_id_use(char *env, char *id, struct tman_cli_use_opt *opt);
 struct units *tman_id_cat(char *env, char *id, struct units *units);
 struct list *tman_id_list(struct list *list, char *env);
+
+int tman_id_free(void);
+int tman_env_free(void);
 
 /* Task environment functions.  */
 int tman_env_prev(void);

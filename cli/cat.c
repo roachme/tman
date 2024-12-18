@@ -35,6 +35,7 @@ static int pretty_cat(char *env, char *id, char *key)
     return TMAN_OK;
 }
 
+// TODO: Find a good error message in case option fails.  */
 int tman_cli_cat(int argc, char **argv)
 {
     char c;
@@ -48,9 +49,9 @@ int tman_cli_cat(int argc, char **argv)
             case 'f': opt.force = 1; break;
             case 'k': opt.key = optarg; break;
             case ':':
-                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+                return elog(1, "option `-%c' requires an argument", optopt);
             default:
-                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
+                return elog(1, "invalid option `%c'", optopt);
         }
     }
 
