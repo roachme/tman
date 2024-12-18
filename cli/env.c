@@ -25,7 +25,7 @@ int _env_add(int argc, char **argv)
     char c;
     int o_strict = 0;
     int status;
-    struct tman_env_add_opt opt;
+    struct tman_cli_env_add_opt opt;
 
     while ((c = getopt(argc, argv, ":f")) != -1) {
         switch (c) {
@@ -60,7 +60,7 @@ int _env_del(int argc, char **argv)
     int showpath = FALSE;
     char *old_cenv = column_getcenv();
     char *old_penv = column_getpenv();
-    struct tman_env_del_opt opt;
+    struct tman_cli_env_del_opt opt;
 
     while ((c = getopt(argc, argv, ":f")) != -1) {
         switch (c) {
@@ -137,7 +137,7 @@ int _env_use(int argc, char **argv)
     return tman_pwd();
 }
 
-int tman_env(int argc, char **argv)
+int tman_cli_env(int argc, char **argv)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

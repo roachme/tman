@@ -1,7 +1,7 @@
 #include "use.h"
 #include "../src/tman.h"
 
-int tman_use_usage(void)
+int tman_cli_use_usage(void)
 {
     const char *cmd = "use";
     printf("Usage: %s %s [OPTION]... ID\n", PROGRAM, cmd);
@@ -9,11 +9,11 @@ int tman_use_usage(void)
     return TMAN_OK;
 }
 
-int tman_use(int argc, char **argv)
+int tman_cli_use(int argc, char **argv)
 {
     char c;
     int status;
-    struct tman_use_opt opt = { .env = NULL, .help = 0, };
+    struct tman_cli_use_opt opt = { .env = NULL, .help = 0, };
 
     while ((c = getopt(argc, argv, ":e:h")) != -1) {
         switch (c) {
@@ -29,7 +29,7 @@ int tman_use(int argc, char **argv)
     }
 
     if (opt.help == 1)
-        return tman_use_usage();
+        return tman_cli_use_usage();
     else if (optind == argc)
         return elog(TMAN_USE_IDREQ, "task id required");
 

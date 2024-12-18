@@ -4,7 +4,7 @@
 #include "list.h"
 #include "../src/tman.h"
 
-static int tman_list_usage(void)
+static int tman_cli_list_usage(void)
 {
     const char *cmd = "help";
     printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
@@ -19,7 +19,7 @@ static int compare(const void *aa, const void *bb)
     return (a->col.prio - b->col.prio);
 }
 
-static int pretty_list(char *env, struct tman_list *opt)
+static int pretty_list(char *env, struct tman_cli_list *opt)
 {
     struct list list;
 
@@ -41,12 +41,12 @@ static int pretty_list(char *env, struct tman_list *opt)
     return TMAN_OK;
 }
 
-int tman_list(int argc, char **argv)
+int tman_cli_list(int argc, char **argv)
 {
     char c;
     int help = 0;
     int status;
-    struct tman_list opt = { .spec = 1, };
+    struct tman_cli_list opt = { .spec = 1, };
 
     /*
         -A - list all (even done tasks)
@@ -76,7 +76,7 @@ int tman_list(int argc, char **argv)
     // TODO: check that option don't conflict with each other.
 
     if (opt.help == 1)
-        return tman_list_usage();
+        return tman_cli_list_usage();
 
     for (int i = optind; i < argc; ++i) {
         char *env = argv[i];

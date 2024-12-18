@@ -11,25 +11,25 @@ typedef struct builtin {
     int (*func)(int argc, char **argv);
 } builtin_t;
 
-int tman_cfg (int argc, char **argv);
-int tman_chk (int argc, char **argv);
-int tman_init(int argc, char **argv);
-int tman_pgm (int argc, char **argv);
+int tman_cli_cfg (int argc, char **argv);
+int tman_cli_chk (int argc, char **argv);
+int tman_cli_init(int argc, char **argv);
+int tman_cli_pgm (int argc, char **argv);
 
-int tman_add (int argc, char **argv);
-int tman_col (int argc, char **argv);
-int tman_del (int argc, char **argv);
-int tman_prev(int argc, char **argv);
-int tman_set (int argc, char **argv);
-int tman_use (int argc, char **argv);
+int tman_cli_add (int argc, char **argv);
+int tman_cli_col (int argc, char **argv);
+int tman_cli_del (int argc, char **argv);
+int tman_cli_prev(int argc, char **argv);
+int tman_cli_set (int argc, char **argv);
+int tman_cli_use (int argc, char **argv);
 
-int tman_env (int argc, char **argv);
-int tman_move(int argc, char **argv);
-int tman_sync(int argc, char **argv);
+int tman_cli_env (int argc, char **argv);
+int tman_cli_move(int argc, char **argv);
+int tman_cli_sync(int argc, char **argv);
 
-int tman_cat (int argc, char **argv);
-int tman_help(int argc, char **argv);
-int tman_list(int argc, char **argv);
-int tman_ver (int argc, char **argv);
+int tman_cli_cat (int argc, char **argv);
+int tman_cli_help(int argc, char **argv);
+int tman_cli_list(int argc, char **argv);
+int tman_cli_ver (int argc, char **argv);
 
 #endif

@@ -2,7 +2,7 @@
 #include "../src/tman.h"
 
 
-int tman_move(int argc, char **argv)
+int tman_cli_move(int argc, char **argv)
 {
     char c;
     char *srcenv = NULL;

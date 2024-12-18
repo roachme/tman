@@ -1,7 +1,7 @@
 #include "del.h"
 #include "../src/tman.h"
 
-int tman_del_usage(void)
+int tman_cli_del_usage(void)
 {
     const char *cmd = "del";
     printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
@@ -9,11 +9,11 @@ int tman_del_usage(void)
     return TMAN_OK;
 }
 
-int tman_del(int argc, char **argv)
+int tman_cli_del(int argc, char **argv)
 {
     char c;
     int status;
-    struct tman_del_opt opt = { .env = NULL, .force = 0, .help = 0,};
+    struct tman_cli_del_opt opt = { .env = NULL, .force = 0, .help = 0,};
 
     while ((c = getopt(argc, argv, ":e:fh")) != -1) {
         switch (c) {
@@ -31,7 +31,7 @@ int tman_del(int argc, char **argv)
     }
 
     if (opt.help == 1)
-        return tman_del_usage();
+        return tman_cli_del_usage();
 
     for (int i = optind; i < argc; ++i)
         status = tman_id_del(opt.env, argv[i], &opt);

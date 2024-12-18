@@ -5,7 +5,7 @@
 #include "cli.h"
 #include "../src/tman.h"
 
-static int tman_add_usage(void)
+static int tman_cli_add_usage(void)
 {
     const char *cmd = "add";
     printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
@@ -13,11 +13,11 @@ static int tman_add_usage(void)
     return TMAN_OK;
 }
 
-int tman_add(int argc, char **argv)
+int tman_cli_add(int argc, char **argv)
 {
     int c;
     int status;
-    struct tman_add_opt opt = {
+    struct tman_cli_add_opt opt = {
         .env = NULL,
         .force = FALSE,
         .help = FALSE,

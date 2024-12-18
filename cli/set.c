@@ -1,7 +1,7 @@
 #include <string.h>
 #include "../src/tman.h"
 
-int tman_set(int argc, char **argv)
+int tman_cli_set(int argc, char **argv)
 {
     char c;
     int idx;

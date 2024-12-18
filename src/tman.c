@@ -45,7 +45,7 @@ static int tman_initfs()
     return 0;
 }
 
-int tman_init_core(const char *cmd)
+int tman_init(const char *cmd)
 {
     if (config_init())
         return elog(1, "failed to parse system config file");
@@ -71,7 +71,7 @@ int tman_pwd()
     return TMAN_OK;
 }
 
-int tman_id_add(char *env, char *id, struct tman_add_opt *opt)
+int tman_id_add(char *env, char *id, struct tman_cli_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
     struct unitbin units[NKEYS] = {0};
@@ -104,7 +104,7 @@ int tman_id_add(char *env, char *id, struct tman_add_opt *opt)
     return TMAN_OK;
 }
 
-int tman_id_del(char *env, char *id, struct tman_del_opt *opt)
+int tman_id_del(char *env, char *id, struct tman_cli_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
     char *cid = column_getcid();
@@ -179,7 +179,7 @@ int tman_id_set(char *env, char *id, struct unitbin *unit)
 }
 
 // TODO: add support to switch to task in another environment.
-int tman_id_use(char *env, char *id, struct tman_use_opt *opt)
+int tman_id_use(char *env, char *id, struct tman_cli_use_opt *opt)
 {
     opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
@@ -281,7 +281,7 @@ struct list *tman_id_list(struct list *list, char *env)
     return list;
 }
 
-int tman_id_movecol(char *env, char *id, char *tag)
+int tman_id_col(char *env, char *id, char *tag)
 {
     id = id ? id : column_getcid();
     env = env ? env : column_getcenv();
@@ -329,7 +329,7 @@ struct units *tman_id_cat(char *env, char *id, struct units *units)
     return units;
 }
 
-int tman_env_add(char *env, struct tman_env_add_opt *opt)
+int tman_env_add(char *env, struct tman_cli_env_add_opt *opt)
 {
     if (env == NULL)
         return elog(1, "env name required");
@@ -345,7 +345,7 @@ int tman_env_add(char *env, struct tman_env_add_opt *opt)
     return column_addcenv(env);
 }
 
-int tman_env_del(char *env, struct tman_env_del_opt *opt)
+int tman_env_del(char *env, struct tman_cli_env_del_opt *opt)
 {
     env = env ? env : column_getcenv();
 
@@ -382,7 +382,7 @@ int tman_isplugin(const char *pgn)
     return isplugin(pgn);
 }
 
-int tman_plugin_exec(int argc, char **argv)
+int tman_plugin(int argc, char **argv)
 {
     return plugin(argc, argv);
 }

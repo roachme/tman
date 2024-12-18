@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-int tman_cfg(int argc, char **argv)
+int tman_cli_cfg(int argc, char **argv)
 {
-    printf("tman_cfg: under development\n");
+    printf("tman_cli_cfg: under development\n");
     return 1;
 }

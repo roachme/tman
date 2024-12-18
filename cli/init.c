@@ -3,7 +3,7 @@
 #include "init.h"
 #include "../src/tman.h"
 
-int tman_init(int argc, char **argv)
+int tman_cli_init(int argc, char **argv)
 {
     /* Generic check */
     if (access(tmanfs.finit, F_OK) == 0)

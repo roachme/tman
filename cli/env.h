@@ -1,31 +1,31 @@
 #ifndef ENV_H
 #define ENV_H
 
-struct tman_env_add_opt {
+struct tman_cli_env_add_opt {
     int force;
 };
 
-struct tman_env_cat_opt {
+struct tman_cli_env_cat_opt {
     int force;
 };
 
-struct tman_env_del_opt {
+struct tman_cli_env_del_opt {
     int force;
 };
 
-struct tman_env_list_opt {
+struct tman_cli_env_list_opt {
     int force;
 };
 
-struct tman_env_prev_opt {
+struct tman_cli_env_prev_opt {
     int force;
 };
 
-struct tman_env_set_opt {
+struct tman_cli_env_set_opt {
     int force;
 };
 
-struct tman_env_use_opt {
+struct tman_cli_env_use_opt {
     int force;
 };
 

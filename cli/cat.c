@@ -3,7 +3,7 @@
 #include "cat.h"
 #include "../src/tman.h"
 
-static int tman_cat_usage(void)
+static int tman_cli_cat_usage(void)
 {
     const char *cmd = "cat";
     printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
@@ -35,11 +35,11 @@ static int pretty_cat(char *env, char *id, char *key)
     return TMAN_OK;
 }
 
-int tman_cat(int argc, char **argv)
+int tman_cli_cat(int argc, char **argv)
 {
     char c;
     int status;
-    struct tman_cat_opt opt = { .env = NULL, .help = 0, .force = 0, };
+    struct tman_cli_cat_opt opt = { .env = NULL, .help = 0, .force = 0, };
 
     while ((c = getopt(argc, argv, ":e:fhk")) != -1) {
         switch (c) {
@@ -55,7 +55,7 @@ int tman_cat(int argc, char **argv)
     }
 
     if (opt.help == 1)
-        return tman_cat_usage();
+        return tman_cli_cat_usage();
 
     for (int i = optind; i < argc; ++i)
         status = pretty_cat(opt.env, argv[i], opt.key);
