@@ -34,7 +34,8 @@ int tman_cli_use(int argc, char **argv)
     else if (optind == argc)
         return elog(TMAN_USE_IDREQ, "task id required");
 
-    if ((status = tman_id_use(NULL, argv[optind], &opt)) != 0)
-        return status;
+    if ((status = tman_id_use(NULL, argv[optind], &opt)) != TMAN_OK) {
+        return elog(status, "cannot switch to '%s': %s", argv[optind], tman_get_errmsg());
+    }
     return tman_pwd();
 }
