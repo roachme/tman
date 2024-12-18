@@ -60,15 +60,15 @@ int main(int argc, char **argv)
 {
     const char *cmd = argc > 1 ? argv[1] : "list";
 
-    if (core_init(cmd))
+    if (tman_init_core(cmd))
         return 1;
 
     for (int i = 0; i < builtin_size; ++i)
         if (strcmp(cmd, builtins[i].name) == 0)
             return builtins[i].func(argc - 1, argv + 1);
 
-    if (core_isplugin(cmd))
-        return core_plugin_exec(argc, argv);
+    if (tman_isplugin(cmd))
+        return tman_plugin_exec(argc, argv);
 
     return elog(1, "cannot access '%s': no such command or plugin", cmd);
 }

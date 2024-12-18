@@ -62,10 +62,10 @@ Options:
         return elog(1, "gotta supply one of the options");
 
     if (optind == argc) {
-        core_id_set(env, id, units);
+        tman_id_set(env, id, units);
     }
     for (int i = optind; i < argc; ++i) {
-        core_id_set(env, argv[i], units);
+        tman_id_set(env, argv[i], units);
     }
     return 1;
 }

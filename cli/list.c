@@ -24,7 +24,7 @@ static int pretty_list(char *env, struct tman_list *opt)
     struct list list;
 
     memset(&list, 0, sizeof(list));
-    if (!core_id_list(&list, env)) {
+    if (!tman_id_list(&list, env)) {
         // error: envname not found
         return 1;
     }

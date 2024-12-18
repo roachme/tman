@@ -45,7 +45,7 @@ static int tman_initfs()
     return 0;
 }
 
-int core_init(const char *cmd)
+int tman_init_core(const char *cmd)
 {
     if (config_init())
         return elog(1, "failed to parse system config file");
@@ -64,14 +64,14 @@ int core_init(const char *cmd)
     return TMAN_OK;
 }
 
-int core_pwd()
+int tman_pwd()
 {
     char *cid = column_getcid();
     printf("PWD: %s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");
     return TMAN_OK;
 }
 
-int core_id_add(char *env, char *id, struct tman_add_opt *opt)
+int tman_id_add(char *env, char *id, struct tman_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
     struct unitbin units[NKEYS] = {0};
@@ -104,7 +104,7 @@ int core_id_add(char *env, char *id, struct tman_add_opt *opt)
     return TMAN_OK;
 }
 
-int core_id_del(char *env, char *id, struct tman_del_opt *opt)
+int tman_id_del(char *env, char *id, struct tman_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
     char *cid = column_getcid();
@@ -135,7 +135,7 @@ int core_id_del(char *env, char *id, struct tman_del_opt *opt)
     return TMAN_OK;
 }
 
-int core_id_prev(void)
+int tman_id_prev(void)
 {
     if (column_swapid())
         return TMAN_ECORE;
@@ -145,7 +145,7 @@ int core_id_prev(void)
     return TMAN_OK;
 }
 
-int core_id_sync(void)
+int tman_id_sync(void)
 {
     char *cid  = column_getcid();
     char *cenv = column_getcenv();
@@ -157,7 +157,7 @@ int core_id_sync(void)
     return TMAN_OK;
 }
 
-int core_id_set(char *env, char *id, struct unitbin *unit)
+int tman_id_set(char *env, char *id, struct unitbin *unit)
 {
     id  = id != NULL ? id : column_getcid();
     env = env != NULL ? env : column_getcenv();
@@ -179,7 +179,7 @@ int core_id_set(char *env, char *id, struct unitbin *unit)
 }
 
 // TODO: add support to switch to task in another environment.
-int core_id_use(char *env, char *id, struct tman_use_opt *opt)
+int tman_id_use(char *env, char *id, struct tman_use_opt *opt)
 {
     opt->env = opt->env != NULL ? opt->env : column_getcenv();
 
@@ -204,7 +204,7 @@ int core_id_use(char *env, char *id, struct tman_use_opt *opt)
     return column_addcid(id);
 }
 
-int core_id_move(char *id, char *dst, char *src)
+int tman_id_move(char *id, char *dst, char *src)
 {
     char dstid[BUFSIZ + 1] = {0};
 
@@ -235,7 +235,7 @@ int core_id_move(char *id, char *dst, char *src)
  @param env char * | NULL (then list the current env)
  @return struct item * | NULL (if error happened)
 */
-struct list *core_id_list(struct list *list, char *env)
+struct list *tman_id_list(struct list *list, char *env)
 {
     DIR *ids;
     size_t i = 0;
@@ -262,14 +262,14 @@ struct list *core_id_list(struct list *list, char *env)
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
         if (unit_getbin(bunit, env, ent->d_name) == NULL) {
-            fprintf(stderr, "core_id_list %s: failde to get units\n", ent->d_name);
+            fprintf(stderr, "tman_id_list %s: failde to get units\n", ent->d_name);
             continue;
         }
 
         /* TODO: remove check and warning because there might
          * case when no hooks executed or defined and it's ok.  */
         if (!hookls(list->ilist[i].pgn, env, ent->d_name)) {
-            fprintf(stderr, "core_id_list %s: failed to get hookls output\n", ent->d_name);
+            fprintf(stderr, "tman_id_list %s: failed to get hookls output\n", ent->d_name);
         }
         strcpy(list->ilist[i].id, ent->d_name);
         strcpy(list->ilist[i].desc, bunit[4].val);
@@ -281,7 +281,7 @@ struct list *core_id_list(struct list *list, char *env)
     return list;
 }
 
-int core_id_movecol(char *env, char *id, char *tag)
+int tman_id_movecol(char *env, char *id, char *tag)
 {
     id = id ? id : column_getcid();
     env = env ? env : column_getcenv();
@@ -295,7 +295,7 @@ int core_id_movecol(char *env, char *id, char *tag)
     return column_moveid(id, tag);
 }
 
-struct units *core_id_cat(char *env, char *id, struct units *units)
+struct units *tman_id_cat(char *env, char *id, struct units *units)
 {
     id = id ? id : column_getcid();
     env = env ? env : column_getcenv();
@@ -325,11 +325,11 @@ struct units *core_id_cat(char *env, char *id, struct units *units)
      * that no hooks are defined or executed */
     units->pgn = hookcat(units->pgn, env, id);
     if (unit_getbin(units->bin, env, id) == NULL)
-        elog(1, "core_id_cat: failed to get builtn units");
+        elog(1, "tman_id_cat: failed to get builtn units");
     return units;
 }
 
-int core_env_add(char *env, struct tman_env_add_opt *opt)
+int tman_env_add(char *env, struct tman_env_add_opt *opt)
 {
     if (env == NULL)
         return elog(1, "env name required");
@@ -345,7 +345,7 @@ int core_env_add(char *env, struct tman_env_add_opt *opt)
     return column_addcenv(env);
 }
 
-int core_env_del(char *env, struct tman_env_del_opt *opt)
+int tman_env_del(char *env, struct tman_env_del_opt *opt)
 {
     env = env ? env : column_getcenv();
 
@@ -363,12 +363,12 @@ int core_env_list()
     return TMAN_OK;
 }
 
-int core_env_prev()
+int tman_env_prev()
 {
     return column_swapenv();
 }
 
-int core_env_use(char *env)
+int tman_env_use(char *env)
 {
     if (env == NULL)
         return elog(1, "env name required");
@@ -377,12 +377,12 @@ int core_env_use(char *env)
     return column_addcenv(env);
 }
 
-int core_isplugin(const char *pgn)
+int tman_isplugin(const char *pgn)
 {
     return isplugin(pgn);
 }
 
-int core_plugin_exec(int argc, char **argv)
+int tman_plugin_exec(int argc, char **argv)
 {
     return plugin(argc, argv);
 }

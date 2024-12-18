@@ -42,8 +42,8 @@ int _env_add(int argc, char **argv)
         return elog(1, "task env required");
 
     for (int i = optind; i < argc; ++i)
-        status = core_env_add(argv[i], &opt);
-    return status == TMAN_OK ? core_pwd() : 1;
+        status = tman_env_add(argv[i], &opt);
+    return status == TMAN_OK ? tman_pwd() : 1;
 }
 
 // roach: maybe it'll be useful
@@ -74,16 +74,16 @@ int _env_del(int argc, char **argv)
     }
 
     for (int i = optind; i < argc; ++i)
-        status = core_env_del(argv[i], &opt);
+        status = tman_env_del(argv[i], &opt);
     if (optind == argc) /* delete current task id */
-        status = core_env_del(NULL, &opt);
+        status = tman_env_del(NULL, &opt);
 
     // TODO: update current directory if current env got deleted.
     if (strcpy(old_cenv, column_getcenv())) {
         showpath = TRUE;
     }
 
-    return status == TMAN_OK && showpath == TRUE ? core_pwd() : 1;
+    return status == TMAN_OK && showpath == TRUE ? tman_pwd() : 1;
 }
 
 int _env_list(int argc, char **argv)
@@ -116,11 +116,11 @@ int _env_list(int argc, char **argv)
 
 int _env_prev(int argc, char **argv)
 {
-    if (core_env_prev()) {
+    if (tman_env_prev()) {
         elog(1, "bin.env: env_prev failed");
         return 1;
     }
-    return core_pwd();
+    return tman_pwd();
 }
 
 int _env_set(int argc, char **argv)
@@ -132,9 +132,9 @@ int _env_use(int argc, char **argv)
 {
     char *env = argc > 1 ? argv[1] : NULL;
 
-    if (core_env_use(env))
+    if (tman_env_use(env))
         return elog(1, "could not switch to env '%s'", env);
-    return core_pwd();
+    return tman_pwd();
 }
 
 int tman_env(int argc, char **argv)

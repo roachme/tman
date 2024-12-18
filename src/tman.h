@@ -52,29 +52,28 @@ struct tmanstruct {
 extern struct tmanstruct tmanfs;
 
 /* Generic util functions.  */
-int core_pwd(void);
-int core_init(const char *cmd);
-int core_isplugin(const char *pgn);
-int core_plugin_exec(int argc, char **argv);
-struct help *core_id_help(const char *cmd);
+int tman_pwd(void);
+int tman_init_core(const char *cmd);
+int tman_isplugin(const char *pgn);
+int tman_plugin_exec(int argc, char **argv);
 
 /* Task ID functions.  */
-int core_id_prev(void);
-int core_id_sync(void);
-int core_id_movecol(char *env, char *id, char *tag);
-int core_id_add(char *env, char *id, struct tman_add_opt *opt);
-int core_id_del(char *env, char *id, struct tman_del_opt *opt);
-int core_id_move(char *id, char *dst, char *src);
-int core_id_set(char *env, char *id, struct unitbin *unitbin);
-int core_id_use(char *env, char *id, struct tman_use_opt *opt);
-struct units *core_id_cat(char *env, char *id, struct units *units);
-struct list *core_id_list(struct list *list, char *env);
+int tman_id_prev(void);
+int tman_id_sync(void);
+int tman_id_movecol(char *env, char *id, char *tag);
+int tman_id_add(char *env, char *id, struct tman_add_opt *opt);
+int tman_id_del(char *env, char *id, struct tman_del_opt *opt);
+int tman_id_move(char *id, char *dst, char *src);
+int tman_id_set(char *env, char *id, struct unitbin *unitbin);
+int tman_id_use(char *env, char *id, struct tman_use_opt *opt);
+struct units *tman_id_cat(char *env, char *id, struct units *units);
+struct list *tman_id_list(struct list *list, char *env);
 
 /* Task environment functions.  */
-int core_env_prev(void);
-int core_env_add(char *env, struct tman_env_add_opt *opt);
-int core_env_del(char *env, struct tman_env_del_opt *opt);
-int core_env_set(char *env);
-int core_env_use(char *env);
+int tman_env_prev(void);
+int tman_env_add(char *env, struct tman_env_add_opt *opt);
+int tman_env_del(char *env, struct tman_env_del_opt *opt);
+int tman_env_set(char *env);
+int tman_env_use(char *env);
 
 #endif

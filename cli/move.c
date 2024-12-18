@@ -23,7 +23,7 @@ int tman_move(int argc, char **argv)
     dstenv = argv[--argc];
     for (int i = optind; i < argc; ++i) {
         char *id = argv[i];
-        core_id_move(id, dstenv, srcenv);
+        tman_id_move(id, dstenv, srcenv);
     }
 
     return 1;
