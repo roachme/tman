@@ -122,7 +122,7 @@ int tman_id_del(char *env, char *id, struct tman_id_del_opt *opt)
     else if (id == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (!id_exists(env, id))
-        return emod_set(TMAN_EIDEXISTS);
+        return emod_set(TMAN_ENOSUCHID);
 
     if (hookact("del", env, id))
         return emod_set(TMAN_EHOOK);
