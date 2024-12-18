@@ -245,7 +245,7 @@ int column_delpid()
 int column_swapid()
 {
     if (column_getcid() == NULL || column_getpid() == NULL)
-        return elog(1, "current or previous task ID(s) not found");
+        return 1;
 
     /* Swap current and previous task IDs */
     for (int i = 0; i < taskids.idx; ++i) {
