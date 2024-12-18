@@ -5,9 +5,8 @@
 #include <dirent.h>
 
 #include "env.h"
-// TODO: use only core.h
-#include "tman.h"
-#include "../src/core.h"
+#include "cli.h"
+#include "../src/tman.h"
 
 builtin_t envcmds[] = {
     { .name = "add",  .func = &_env_add  },

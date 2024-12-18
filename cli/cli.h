@@ -1,27 +1,15 @@
-#ifndef TMAN_H
-#define TMAN_H
+#ifndef CLI_H
+#define CLI_H
 
-#include "../src/common.h"
+#define CMDSIZ          5
+
+#include "help.h"
 
 typedef struct builtin {
     char name[CMDSIZ + 1];
     int setuplvl;
     int (*func)(int argc, char **argv);
 } builtin_t;
-
-// roach: gotta either make it clear or get rid of this limitation.
-#define TMANPATHSIZE    1024
-struct tmanstruct {
-    char db[TMANPATHSIZE + 1];          /* directory for tman metadata */
-    char cfg[TMANPATHSIZE + 1];         /* directory for config files */
-    char pgn[TMANPATHSIZE + 1];         /* directory for plugin data */
-    char base[TMANPATHSIZE + 1];        /* directory for all stuff above */
-    char pgnins[TMANPATHSIZE + 1];      /* directory for installed plugins */
-
-    char fcfg[TMANPATHSIZE + 1];        /* system config file */
-    char finit[TMANPATHSIZE + 1];       /* file that tells that tman is inited */
-    char fstate[TMANPATHSIZE + 1];      /* file to store tman task state */
-};
 
 int tman_cfg (int argc, char **argv);
 int tman_chk (int argc, char **argv);

@@ -32,7 +32,6 @@ enum tman_errno {
 
 #define IDSIZ           20
 #define TAGSIZ          4
-#define CMDSIZ          5
 #define PATHSIZ         4096
 
 int _chkid(char *id);

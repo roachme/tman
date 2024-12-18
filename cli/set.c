@@ -1,5 +1,5 @@
 #include <string.h>
-#include "../src/core.h"
+#include "../src/tman.h"
 
 int tman_set(int argc, char **argv)
 {

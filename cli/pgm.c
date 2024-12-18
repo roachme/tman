@@ -1,7 +1,10 @@
+#include <stdio.h>
 #include <string.h>
 
 #include "pgm.h"
-#include "tman.h"
+// TODO: remove the header below
+#include "cli.h"
+#include "../src/tman.h"
 
 builtin_t pgmcmds[] = {
     { .name = "chk",  .func = &_pgm_chk  },

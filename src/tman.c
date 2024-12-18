@@ -8,13 +8,16 @@
 
 #include "dir.h"
 #include "tman.h"
-#include "core.h"
 #include "unit.h"
 #include "hook.h"
 #include "unit.h"
 #include "common.h"
 #include "column.h"
 #include "osdep.h"
+#include "config.h"
+
+// TODO: Make NOT global.
+struct tmanstruct tmanfs;
 
 static int env_exists(char *env)
 {
@@ -30,25 +33,41 @@ static int id_exists(char *env, char *id)
     return ISDIR(pathname);
 }
 
-int core_pwd()
+static int tman_initfs()
 {
-    char *cid = column_getcid();
-    printf("PWD: %s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");
-    return TMAN_OK;
+    // TODO: Add a variable for task db as well.
+    sprintf(tmanfs.base,   "%s",    config.base);
+    sprintf(tmanfs.db,     "%s/%s", tmanfs.base, ".tman");
+    sprintf(tmanfs.finit,  "%s/%s", tmanfs.db,   "inited");
+    sprintf(tmanfs.fstate, "%s/%s", tmanfs.db,   "state");
+    sprintf(tmanfs.pgn,    "%s/%s", tmanfs.base, ".pgn");
+    sprintf(tmanfs.pgnins, "%s",    config.pgnins);
+    return 0;
 }
 
 int core_init(const char *cmd)
 {
-    if (strncmp(cmd, "init", CMDSIZ) == 0
+    if (config_init())
+        return elog(1, "failed to parse system config file");
+    else if (tman_initfs())
+        return elog(1, "could not create filesystem variables");
+    else if (strncmp(cmd, "init", CMDSIZ) == 0
         || strncmp(cmd, "help", CMDSIZ) == 0
         || strncmp(cmd, "ver", CMDSIZ) == 0)
         return TMAN_OK;
 
     // TODO: Find a better way to check that util's inited.
-    if (ISFILE(tmanfs.finit) == FALSE)
+    else if (ISFILE(tmanfs.finit) == FALSE)
         return elog(1, "not inited");
     else if (column_init())
         return elog(1, "column_init: error: could not init");
+    return TMAN_OK;
+}
+
+int core_pwd()
+{
+    char *cid = column_getcid();
+    printf("PWD: %s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");
     return TMAN_OK;
 }
 
@@ -356,4 +375,14 @@ int core_env_use(char *env)
     else if (!env_exists(env))
         return elog(1, "%s: env does not exist", env);
     return column_addcenv(env);
+}
+
+int core_isplugin(const char *pgn)
+{
+    return isplugin(pgn);
+}
+
+int core_plugin_exec(int argc, char **argv)
+{
+    return plugin(argc, argv);
 }

@@ -1,5 +1,5 @@
 #include "prev.h"
-#include "../src/core.h"
+#include "../src/tman.h"
 
 int tman_prev(int argc, char **argv)
 {

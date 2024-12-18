@@ -9,8 +9,6 @@
 #include <string.h>
 
 #include "tman.h"
-#include "env.h"
-#include "common.h"
 #include "column.h"
 
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */

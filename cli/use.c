@@ -1,5 +1,5 @@
 #include "use.h"
-#include "../src/core.h"
+#include "../src/tman.h"
 
 int tman_use_usage(void)
 {
