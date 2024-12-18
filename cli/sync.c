@@ -30,6 +30,6 @@ int tman_cli_sync(int argc, char **argv)
     if (showhelp == TRUE)
         return tman_cli_sync_usage();
     if ((status = tman_id_sync()) != TMAN_OK)
-        return elog(status, errfmt, tman_get_errmsg());
+        return elog(status, errfmt, tman_strerror());
     return tman_pwd();
 }

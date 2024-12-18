@@ -54,7 +54,7 @@ int tman_cli_add(int argc, char **argv)
     for (i = optind; i < argc; ++i) {
         if ((status = tman_id_add(env, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_get_errmsg());
+                elog(status, errfmt, argv[i], tman_strerror());
             if (force == FALSE)
                 break;
         }
