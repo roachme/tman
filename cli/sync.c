@@ -1,6 +1,6 @@
 #include "../src/tman.h"
 
-static int tman_sync_usage(void)
+static int tman_cli_sync_usage(void)
 {
     const char *cmd = "sync";
     printf("Usage: %s %s [OPTION]\n", PROGRAM, cmd);
@@ -8,7 +8,7 @@ static int tman_sync_usage(void)
     return TMAN_OK;
 }
 
-int tman_sync(int argc, char **argv)
+int tman_cli_sync(int argc, char **argv)
 {
     char c;
     int help = 0;
@@ -26,6 +26,6 @@ int tman_sync(int argc, char **argv)
     }
 
     if (help == 1)
-        return tman_sync_usage();
+        return tman_cli_sync_usage();
     return (status = tman_id_sync()) == TMAN_OK ? tman_pwd() : status;
 }

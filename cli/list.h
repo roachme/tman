@@ -7,7 +7,7 @@
    -c - specify what column to list
    -s - default: list only current & previous (maybe?)
    */
-struct tman_list {
+struct tman_cli_list {
     int all;
     int almost;
     char *col;

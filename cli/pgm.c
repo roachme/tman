@@ -25,7 +25,7 @@ int _pgm_list(int argc, char **argv)
     return 1;
 }
 
-int tman_pgm(int argc, char **argv)
+int tman_cli_pgm(int argc, char **argv)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 
