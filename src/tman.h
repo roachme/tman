@@ -75,6 +75,7 @@ int tman_pwd(void);
 int tman_id_free(void);
 int tman_env_free(void);
 const char *tman_strerror(void);
+int tman_mkfs(void);
 int tman_init(const char *cmd);
 int tman_isplugin(const char *pgn);
 int tman_plugin(int argc, char **argv);

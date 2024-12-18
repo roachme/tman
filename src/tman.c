@@ -34,7 +34,7 @@ static int id_exists(char *env, char *id)
     return ISDIR(pathname);
 }
 
-static int tman_initfs()
+static int mkfs_vars()
 {
     // TODO: Add a variable for task db as well.
     sprintf(tmanfs.base,   "%s",    config.base);
@@ -43,19 +43,40 @@ static int tman_initfs()
     sprintf(tmanfs.fstate, "%s/%s", tmanfs.db,   "state");
     sprintf(tmanfs.pgn,    "%s/%s", tmanfs.base, ".pgn");
     sprintf(tmanfs.pgnins, "%s",    config.pgnins);
-    return 0;
+    return TMAN_OK;
 }
 
 int tman_mkfs(void)
 {
-    return 0;
+    int status;
+
+    if ((status = config_init()) != TMAN_OK)
+        return status;
+    else if ((status = mkfs_vars()) != TMAN_OK)
+        return status;
+
+    if (MKDIR(tmanfs.base))
+        return elog(1, "could not create directory %s", tmanfs.base);
+    else if (MKDIR(tmanfs.base))
+        return elog(1, "could not create directory %s", tmanfs.base);
+    else if (MKDIR(tmanfs.pgn))
+        return elog(1, "could not create directory %s", tmanfs.pgn);
+    else if (MKDIR(tmanfs.pgnins))
+        return elog(1, "could not create directory %s", tmanfs.pgnins);
+    else if (MKDIR(tmanfs.db))
+        return elog(1, "could not create directory %s", tmanfs.db);
+    else if (TOUCH(tmanfs.fstate))
+        return elog(1, "could not create file %s", tmanfs.fstate);
+    else if (TOUCH(tmanfs.finit))
+        return elog(1, "could not create init file %s", tmanfs.finit);
+    return TMAN_OK;
 }
 
 int tman_init(const char *cmd)
 {
     if (config_init())
         return elog(1, "failed to parse system config file");
-    else if (tman_initfs())
+    else if (mkfs_vars())
         return elog(1, "could not create filesystem variables");
     else if (strncmp(cmd, "init", CMDSIZ) == 0
         || strncmp(cmd, "help", CMDSIZ) == 0

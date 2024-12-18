@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include "errmod.h"
 #include "common.h"
 #include "osdep.h"
 #include "config.h"
@@ -70,7 +72,7 @@ static int parseconf(const char *fname)
     if (!fp)
         return elog(1, "could not open config file");
 
-    while (retcode == 0 && fgets(line, BUFSIZ, fp) != NULL) {
+    while (retcode == TMAN_OK && fgets(line, BUFSIZ, fp) != NULL) {
         token = strtok(line, delim);
         if (!token || strlen(token) == 0 || token[0] == '\n' || token[0] == '#')
             continue;
@@ -93,8 +95,10 @@ static int parseconf(const char *fname)
             retcode = parse_hook(token, &config.hooks);
         else if (strcmp(token, "COLUMN") == 0)
             retcode = parse_columns(&config.columns);
-        else
-            retcode = elog(1, "not found %s: unknown variable", token);
+        else {
+            retcode = TMAN_ECONF;
+            break;
+        }
     }
     fclose(fp);
     return retcode;

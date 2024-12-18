@@ -9,6 +9,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_OK] = "OK",
 
     [TMAN_ECORE] =       "error happened in core",
+    [TMAN_ECONF] =       "error to parse config",
     [TMAN_EHOOK] =       "failed to execute hook",
     [TMAN_EPGN] =        "failed to execute plugin command",
 

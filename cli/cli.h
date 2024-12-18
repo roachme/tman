@@ -4,6 +4,7 @@
 #define CMDSIZ          5
 
 #include "help.h"
+#include "../src/tman.h"
 
 typedef struct builtin {
     char name[CMDSIZ + 1];

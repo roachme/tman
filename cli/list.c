@@ -24,8 +24,8 @@ static int pretty_list(char *env, struct tman_cli_list *opt)
     struct list list;
 
     memset(&list, 0, sizeof(list));
-    if (!tman_id_list(&list, env)) {
-        // error: envname not found
+    if (tman_id_list(&list, env) == NULL) {
+        elog(1, "could not list task IDs: %s", tman_strerror());
         return 1;
     }
 
