@@ -402,7 +402,7 @@ int tman_plugin(int argc, char **argv)
     return plugin(argc, argv);
 }
 
-char *tman_get_errmsg(void)
+const char *tman_strerror(void)
 {
-    return emod_get();
+    return emod_strerror();
 }

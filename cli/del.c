@@ -42,7 +42,7 @@ int tman_cli_del(int argc, char **argv)
     for (i = optind; i < argc; ++i) {
         if ((status = tman_id_del(env, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_get_errmsg());
+                elog(status, errfmt, argv[i], tman_strerror());
             if (force == TRUE)
                 break;
         }
@@ -52,7 +52,7 @@ int tman_cli_del(int argc, char **argv)
         if ((status = tman_id_del(env, id, &opt)) != TMAN_OK) {
             if (quiet == FALSE) {
                 // TODO: shows null if no current task ID set.
-                elog(status, errfmt, id, tman_get_errmsg());
+                elog(status, errfmt, id, tman_strerror());
             }
         }
     }

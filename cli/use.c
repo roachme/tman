@@ -38,7 +38,7 @@ int tman_cli_use(int argc, char **argv)
         return elog(TMAN_USE_IDREQ, "task id required");
 
     if ((status = tman_id_use(env, argv[optind], &opt)) != TMAN_OK) {
-        return elog(status, errfmt, argv[optind], tman_get_errmsg());
+        return elog(status, errfmt, argv[optind], tman_strerror());
     }
     return tman_pwd();
 }

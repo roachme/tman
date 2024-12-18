@@ -32,6 +32,7 @@ enum tman_err_enum {
     TMAN_ETASKRMUNIT,
 
     TMAN_NODEF_ERR,
+    __TMAN_STATUS_LAST
 };
 
 struct tman_err_codes {
@@ -40,7 +41,7 @@ struct tman_err_codes {
 };
 
 int emod_reset(void);
-char *emod_get(void);
+const char *emod_strerror(void);
 int emod_set(int err);
 
 #endif

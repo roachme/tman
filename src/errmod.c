@@ -5,38 +5,36 @@
 static int errcode = TMAN_OK;
 static char errmsg[ERRMSGSIZ + 1];
 
-/* roach: Do NOT change order, cuz it breaks error messages.  */
-const struct tman_err_codes errcodes[NERRCODE] = {
-    { .err = TMAN_OK, .desc = "OK" },
+const char *errcodes[__TMAN_STATUS_LAST] = {
+    [TMAN_OK] = "OK",
 
-    { .err = TMAN_ECORE,        .desc = "error happened in core" },
-    { .err = TMAN_EHOOK,        .desc = "failed to execute hook" },
-    { .err = TMAN_EPGN,         .desc = "failed to execute plugin command" },
+    [TMAN_ECORE] =       "error happened in core",
+    [TMAN_EHOOK] =       "failed to execute hook",
+    [TMAN_EPGN] =        "failed to execute plugin command",
 
-    { .err = TMAN_EREQRENV,    .desc = "task environment name required" },
-    { .err = TMAN_EMISSENV,    .desc = "task environment name does not exist" },
-    { .err = TMAN_EILLEGENV,   .desc = "illegal environment name" },
-    { .err = TMAN_ENOCURRENV,  .desc = "no current task environment" },
-    { .err = TMAN_ENOPREVENV,  .desc = "no previous task environment" },
-    { .err = TMAN_ENOSUCHENV,  .desc = "no such task environment" },
-    { .err = TMAN_EENVEXISTS,  .desc = "task environment already exists" },
+    [TMAN_EREQRENV] =    "task environment name required",
+    [TMAN_EMISSENV] =    "task environment name does not exist",
+    [TMAN_EILLEGENV] =   "illegal environment name",
+    [TMAN_ENOCURRENV] =  "no current task environment",
+    [TMAN_ENOPREVENV] =  "no previous task environment",
+    [TMAN_ENOSUCHENV] =  "no such task environment",
+    [TMAN_EENVEXISTS] =  "task environment already exists",
 
-    { .err = TMAN_EREQRID,     .desc = "task ID required" },
-    { .err = TMAN_EMISSID,     .desc = "task ID does not exist" },
-    { .err = TMAN_EILLEGID,    .desc = "illegal task ID" },
-    { .err = TMAN_ENOCURRID,   .desc = "no current task ID" },
-    { .err = TMAN_ENOPREVID,   .desc = "no previous task ID" },
-    { .err = TMAN_ENOSUCHID,   .desc = "no such task ID" },
-    { .err = TMAN_EIDEXISTS,   .desc = "task ID already exists" },
+    [TMAN_EREQRID] =     "task ID required",
+    [TMAN_EMISSID] =     "task ID does not exist",
+    [TMAN_EILLEGID] =    "illegal task ID",
+    [TMAN_ENOCURRID] =   "no current task ID",
+    [TMAN_ENOPREVID] =   "no previous task ID",
+    [TMAN_ENOSUCHID] =   "no such task ID",
+    [TMAN_EIDEXISTS] =   "task ID already exists",
 
-    { .err = TMAN_ETASKMKDIR,  .desc = "could not create task directory" },
-    { .err = TMAN_ETASKRMDIR,  .desc = "could not delete task directory" },
-    { .err = TMAN_ETASKMKUNIT, .desc = "could not create task unit" },
-    { .err = TMAN_ETASKRMUNIT, .desc = "could not delete task unit" },
-
+    [TMAN_ETASKMKDIR] =  "could not create task directory",
+    [TMAN_ETASKRMDIR] =  "could not delete task directory",
+    [TMAN_ETASKMKUNIT] = "could not create task unit",
+    [TMAN_ETASKRMUNIT] = "could not delete task unit",
 
     /* Not yet defined error messages.  */
-    { .err = TMAN_NODEF_ERR,   .desc = "not yet defined error messages" },
+    [TMAN_NODEF_ERR] = "not yet defined error messages",
 };
 
 int emod_reset(void)
@@ -48,12 +46,16 @@ int emod_reset(void)
 int emod_set(int err)
 {
     errcode = err;
-    //fprintf(stderr, "emod_set: %d\n", errcode);
+    if (errcode < 0 || errcode >= __TMAN_STATUS_LAST)
+        errcode = -1;
     return errcode;
 }
 
-char *emod_get(void)
+const char *emod_strerror(void)
 {
-    //fprintf(stderr, "emod_get: %d\n", errcode);
-    return strncpy(errmsg, errcodes[errcode].desc, ERRMSGSIZ);
+    static char errmsg[ERRMSGSIZ + 1];
+
+    if (errcode < 0 || errcode >= __TMAN_STATUS_LAST)
+        strncpy(errmsg, "internal unknown error", ERRMSGSIZ);
+    return strncpy(errmsg, errcodes[errcode], ERRMSGSIZ);
 }
