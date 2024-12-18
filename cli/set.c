@@ -18,6 +18,7 @@ Options:
     -s      set task status.
     -t      set task type. Values: [bugfix|hotfix|feature]
     */
+    atleast_one_key_set = FALSE;
     while ((c = getopt(argc, argv, ":d:i:p:t:")) != -1) {
         switch (c) {
             case 'i':

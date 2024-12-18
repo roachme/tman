@@ -12,16 +12,19 @@ int tman_cli_use_usage(void)
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_use(int argc, char **argv)
 {
-    char c;
-    int status;
-    struct tman_cli_use_opt opt = { .env = NULL, .help = 0, };
+    char c, *errfmt, *env;
+    int showhelp, status;
+    struct tman_id_use_opt opt;
 
+    env = NULL;
+    showhelp = FALSE;
+    errfmt = "cannot switch to '%s': %s";
     while ((c = getopt(argc, argv, ":e:h")) != -1) {
         switch (c) {
             case 'e':
-                opt.env = optarg; break ;
+                env = optarg; break ;
             case 'h':
-                opt.help = 1; break ;
+                showhelp = 1; break ;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -29,13 +32,13 @@ int tman_cli_use(int argc, char **argv)
         }
     }
 
-    if (opt.help == 1)
+    if (showhelp == 1)
         return tman_cli_use_usage();
     else if (optind == argc)
         return elog(TMAN_USE_IDREQ, "task id required");
 
-    if ((status = tman_id_use(NULL, argv[optind], &opt)) != TMAN_OK) {
-        return elog(status, "cannot switch to '%s': %s", argv[optind], tman_get_errmsg());
+    if ((status = tman_id_use(env, argv[optind], &opt)) != TMAN_OK) {
+        return elog(status, errfmt, argv[optind], tman_get_errmsg());
     }
     return tman_pwd();
 }

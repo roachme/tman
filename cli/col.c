@@ -7,19 +7,17 @@
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_col(int argc, char **argv)
 {
-    int c;
-    char *col;
-    int status;
-    int help = 0;
-    int list = 0;
-    char *newcid, *oldcid = column_getcid();
+    char *env, *col;
+    int i, c, status, showhelp, showlist;
 
+    env = NULL;
+    showhelp = showlist = FALSE;
     while ((c = getopt(argc, argv, ":hl")) != -1) {
         switch (c) {
             case 'h':
-                help = 1; break;
+                showhelp = TRUE; break;
             case 'l':
-                list = 1; break;
+                showlist = TRUE; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -27,19 +25,19 @@ int tman_cli_col(int argc, char **argv)
         }
     }
 
-    if (help == 1)
+    if (showhelp == 1)
         return help_usage("col");
-    else if (list == 1) {
+    else if (showlist == 1) {
         printf("show list of columns\n");
-        return 1;
+        return TMAN_OK;
     } else if ((col = argv[optind++]) == NULL)
         return elog(1, "gotta specify column to move a task to");
 
-    for (int i = optind; i < argc; ++i)
-        status = tman_id_col(NULL, argv[i], col);
+    for (i = optind; i < argc; ++i)
+        status = tman_id_col(env, argv[i], col);
 
     if (optind == argc) /* operate on current task id */
-        status = tman_id_col(NULL, NULL, col);
+        status = tman_id_col(env, NULL, col);
 
     return status;
 }

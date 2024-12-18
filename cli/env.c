@@ -25,13 +25,14 @@ int _env_add(int argc, char **argv)
 {
     char c;
     int o_strict = 0;
-    int status;
-    struct tman_cli_env_add_opt opt;
+    int force, status;
+    struct tman_env_add_opt opt;
 
+    force = FALSE;
     while ((c = getopt(argc, argv, ":f")) != -1) {
         switch (c) {
             case 'f':
-                opt.force = 1; break ;
+                force = 1; break ;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -57,16 +58,17 @@ int _env_del(int argc, char **argv)
 {
     char c;
     int o_strict = 0;
-    int status;
+    int force, status;
     int showpath = FALSE;
     char *old_cenv = column_getcenv();
     char *old_penv = column_getpenv();
-    struct tman_cli_env_del_opt opt;
+    struct tman_env_del_opt opt;
 
+    force = FALSE;
     while ((c = getopt(argc, argv, ":f")) != -1) {
         switch (c) {
             case 'f':
-                opt.force = 1; break ;
+                force = 1; break ;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
