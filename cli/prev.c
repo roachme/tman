@@ -3,7 +3,11 @@
 
 int tman_cli_prev(int argc, char **argv)
 {
-    if (tman_id_prev())
-        return elog(1, "no previous task is set");
+    int status;
+    char *errfmt;
+
+    errfmt =  "cannot switch: %s";
+    if ((status = tman_id_prev()) != TMAN_OK)
+        return elog(1, errfmt, tman_get_errmsg());
     return tman_pwd();
 }
