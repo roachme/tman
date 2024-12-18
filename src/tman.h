@@ -71,7 +71,7 @@ struct tman_env_use_opt {
 };
 
 /* Generic tman structure used by all(?) API functions.  */
-typedef struct context {
+typedef struct tman_context {
     struct list list;
     struct units units;
 } ctx;
@@ -80,6 +80,8 @@ extern struct tmanstruct tmanfs;
 
 /* Generic util functions.  */
 int tman_pwd(void);
+int tman_id_free(void);
+int tman_env_free(void);
 char *tman_get_errmsg(void);
 int tman_init(const char *cmd);
 int tman_isplugin(const char *pgn);
@@ -97,14 +99,12 @@ int tman_id_use(char *env, char *id, struct tman_id_use_opt *opt);
 struct units *tman_id_cat(char *env, char *id, struct units *units);
 struct list *tman_id_list(struct list *list, char *env);
 
-int tman_id_free(void);
-int tman_env_free(void);
-
 /* Task environment functions.  */
 int tman_env_prev(void);
 int tman_env_add(char *env, struct tman_env_add_opt *opt);
 int tman_env_del(char *env, struct tman_env_del_opt *opt);
 int tman_env_set(char *env);
+int tman_env_list(void);
 int tman_env_use(char *env);
 
 #endif
