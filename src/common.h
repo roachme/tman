@@ -28,7 +28,7 @@ int _chkid(char *id);
 int _chkenv(char *env);
 char *formpath(char *dst, char *fmt, ...);
 
-int elog(int status, char *fmt, ...);
+int elog(int status, const char *fmt, ...);
 int wlog(char *fmt, ...);
 int ilog(char *fmt, ...);
 int dlog(char *fmt, ...);
