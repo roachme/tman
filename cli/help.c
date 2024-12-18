@@ -41,7 +41,6 @@ struct help help[] = {
         .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
         .sdesc = "Add a new task into environment",
         .desc  = "With no option `-e' add a new task to current environment.\n"
-                 "If current environment is not set then throw an error.\n\n"
                  "  -e      specify an environment to add a task to\n"
                  "  -f      do not interrupt if task exists, process others\n"
                  "  -h      show this help and exit\n"
@@ -55,7 +54,6 @@ struct help help[] = {
         .sdesc = "Move a task to a column",
         .desc  = "With no option `-e' add a new task to current environment.\n"
                  "COLUMN is column to move a task to\n"
-                 "If current environment is not set then throw an error.\n\n"
                  "  -h      show this help and exit"
     },
     {
@@ -64,7 +62,11 @@ struct help help[] = {
         .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
                  "Try '" PROGRAM " help del' for more info.",
         .sdesc = "Delete the task from the environment",
-        .desc  = "del description",
+        .desc  = "With no option `-e' delete task from current environment.\n"
+                 "  -e      specify an environment to add a task to\n"
+                 "  -f      do not interrupt if task does not exist, process others\n"
+                 "  -h      show this help and exit\n"
+                 "  -q      do not write anything to standard error output"
     },
     {
         .tag = TAGBASIC,
