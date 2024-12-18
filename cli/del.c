@@ -12,11 +12,11 @@ int tman_cli_del_usage(void)
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_del(int argc, char **argv)
 {
-    char c, *env, *errfmt;
+    char c, *env, *id, *errfmt;
     struct tman_id_del_opt opt = { };
     int i, force, quiet, showhelp, status;
 
-    env =  NULL;
+    env = id =  NULL;
     force = quiet = showhelp = FALSE;
     errfmt = "cannot delete task '%s': %s";
     while ((c = getopt(argc, argv, ":e:fhq")) != -1) {
@@ -49,9 +49,11 @@ int tman_cli_del(int argc, char **argv)
     }
 
     if (optind == argc) { /* delete current task id */
-        if ((status = tman_id_del(env, argv[i], &opt)) != TMAN_OK) {
-            if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_get_errmsg());
+        if ((status = tman_id_del(env, id, &opt)) != TMAN_OK) {
+            if (quiet == FALSE) {
+                // TODO: shows null if no current task ID set.
+                elog(status, errfmt, id, tman_get_errmsg());
+            }
         }
     }
 
