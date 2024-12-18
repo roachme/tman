@@ -72,23 +72,42 @@ int tman_mkfs(void)
     return TMAN_OK;
 }
 
-int tman_init(const char *cmd)
+struct tman_context *tman_init(const char *cmd)
 {
-    if (config_init())
-        return elog(1, "failed to parse system config file");
-    else if (mkfs_vars())
-        return elog(1, "could not create filesystem variables");
+    struct tman_context *ctx;
+
+    if ((ctx = malloc(sizeof(struct tman_context))) == NULL)
+        return NULL;
+
+    if (config_init()) {
+        elog(1, "failed to parse system config file");
+        tman_deinit(ctx);
+        return NULL;
+    }
+    else if (mkfs_vars()) {
+        elog(1, "could not create filesystem variables");
+        tman_deinit(ctx);
+        return NULL;
+    }
     else if (strncmp(cmd, "init", CMDSIZ) == 0
         || strncmp(cmd, "help", CMDSIZ) == 0
-        || strncmp(cmd, "ver", CMDSIZ) == 0)
-        return TMAN_OK;
+        || strncmp(cmd, "ver", CMDSIZ) == 0) {
+        tman_deinit(ctx);
+        return NULL;
+    }
 
     // TODO: Find a better way to check that util's inited.
-    else if (ISFILE(tmanfs.finit) == FALSE)
-        return elog(1, "not inited");
-    else if (column_init())
-        return elog(1, "column_init: error: could not init");
-    return TMAN_OK;
+    else if (ISFILE(tmanfs.finit) == FALSE) {
+        elog(1, "not inited");
+        tman_deinit(ctx);
+        return NULL;
+    }
+    else if (column_init()) {
+        elog(1, "column_init: error: could not init");
+        tman_deinit(ctx);
+        return NULL;
+    }
+    return ctx;
 }
 
 int tman_pwd()
@@ -431,4 +450,10 @@ int tman_plugin(int argc, char **argv)
 const char *tman_strerror(void)
 {
     return emod_strerror();
+}
+
+int tman_deinit(struct tman_context *ctx)
+{
+    free(ctx);
+    return TMAN_OK;
 }
