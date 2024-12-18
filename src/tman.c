@@ -46,6 +46,11 @@ static int tman_initfs()
     return 0;
 }
 
+int tman_mkfs(void)
+{
+    return 0;
+}
+
 int tman_init(const char *cmd)
 {
     if (config_init())
