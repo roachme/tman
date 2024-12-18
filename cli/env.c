@@ -20,6 +20,7 @@ builtin_t envcmds[] = {
 
 int envcmd_size = sizeof(envcmds) / sizeof(envcmds[0]);
 
+// TODO: Find a good error message in case option fails.  */
 int _env_add(int argc, char **argv)
 {
     char c;
@@ -32,9 +33,9 @@ int _env_add(int argc, char **argv)
             case 'f':
                 opt.force = 1; break ;
             case ':':
-                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+                return elog(1, "option `-%c' requires an argument", optopt);
             default:
-                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
+                return elog(1, "invalid option `%c'", optopt);
         }
     }
 
@@ -67,9 +68,9 @@ int _env_del(int argc, char **argv)
             case 'f':
                 opt.force = 1; break ;
             case ':':
-                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+                return elog(1, "option `-%c' requires an argument", optopt);
             default:
-                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
+                return elog(1, "invalid option `%c'", optopt);
         }
     }
 

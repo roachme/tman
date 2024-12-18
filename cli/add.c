@@ -13,9 +13,10 @@ static int tman_cli_add_usage(void)
     return TMAN_OK;
 }
 
+// TODO: Find a good error message in case option fails.  */
 int tman_cli_add(int argc, char **argv)
 {
-    int c;
+    int i, c;
     int status;
     struct tman_cli_add_opt opt = {
         .env = NULL,
@@ -35,18 +36,23 @@ int tman_cli_add(int argc, char **argv)
             case 'n':
                 opt.noswitch = TRUE; break;
             case ':':
-                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+                return elog(1, "option `-%c' requires an argument", optopt);
             default:
-                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
+                return elog(1, "invalid option `%c'", optopt);
         }
     }
 
     if (opt.help == TRUE)
         return help_usage("add");
-    else if (optind == argc)
-        return elog(TMAN_ADD_IDREQ, "task id required");
+    else if (optind == argc) {
+        // TODO: find a good return code
+        return elog(1, "task id required");
+    }
 
-    for (int i = optind; i < argc; ++i)
-        status = tman_id_add(opt.env, argv[i], &opt);
+    for (i = optind; i < argc; ++i) {
+        if ((status = tman_id_add(opt.env, argv[i], &opt)) != TMAN_OK) {
+            elog(status, "cannot create '%s': %s", argv[i], tman_get_errmsg());
+        }
+    }
     return status == TMAN_OK ? tman_pwd() : status;
 }

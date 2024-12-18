@@ -1,12 +1,46 @@
 #ifndef TMAN_ERRMOD_H
 #define TMAN_ERRMOD_H
 
-#define ERRSIZ      100
+#define ERRMSGSIZ   100
 #define NERRCODE    50
 
-struct errcodes {
-    int err;
-    char desc[ERRSIZ + 1];
+enum tman_err_enum {
+    TMAN_OK,        /* OK, interpret output as path or output */
+    TMAN_ECORE,    /* ?? Error in core execution (under consideration to include) */
+    TMAN_EHOOK,    /* Failed to execute hook */
+    TMAN_EPGN,    /* Failed to execute plugin */
+
+    TMAN_EREQRENV,
+    TMAN_EMISSENV,
+    TMAN_EILLEGENV,
+    TMAN_ENOCURRENV,
+    TMAN_ENOPREVENV,
+    TMAN_ENOSUCHENV,
+    TMAN_EENVEXISTS,
+
+    TMAN_EREQRID,
+    TMAN_EMISSID,
+    TMAN_EILLEGID,
+    TMAN_ENOCURRID,
+    TMAN_ENOPREVID,
+    TMAN_ENOSUCHID,
+    TMAN_EIDEXISTS,
+
+    TMAN_ETASKMKDIR,
+    TMAN_ETASKRMDIR,
+    TMAN_ETASKMKUNIT,
+    TMAN_ETASKRMUNIT,
+
+    TMAN_NODEF_ERR,
 };
+
+struct tman_err_codes {
+    enum tman_err_enum err;
+    char desc[ERRMSGSIZ + 1];
+};
+
+int emod_reset(void);
+char *emod_get(void);
+int emod_set(int err);
 
 #endif

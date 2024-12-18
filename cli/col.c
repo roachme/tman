@@ -4,6 +4,7 @@
 #include "cli.h"
 #include "../src/tman.h"
 
+// TODO: Find a good error message in case option fails.  */
 int tman_cli_col(int argc, char **argv)
 {
     int c;
@@ -20,9 +21,9 @@ int tman_cli_col(int argc, char **argv)
             case 'l':
                 list = 1; break;
             case ':':
-                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+                return elog(1, "option `-%c' requires an argument", optopt);
             default:
-                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
+                return elog(1, "invalid option `%c'", optopt);
         }
     }
 

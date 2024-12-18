@@ -8,6 +8,7 @@ static int tman_cli_sync_usage(void)
     return TMAN_OK;
 }
 
+// TODO: Find a good error message in case option fails.  */
 int tman_cli_sync(int argc, char **argv)
 {
     char c;
@@ -19,9 +20,9 @@ int tman_cli_sync(int argc, char **argv)
             case 'h':
                 help = 1; break;
             case ':':
-                return elog(TMAN_INVOPT, "option `-%c' requires an argument", optopt);
+                return elog(1, "option `-%c' requires an argument", optopt);
             default:
-                return elog(TMAN_INVOPT, "invalid option `%c'", optopt);
+                return elog(1, "invalid option `%c'", optopt);
         }
     }
 
