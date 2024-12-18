@@ -16,25 +16,27 @@ static int tman_cli_add_usage(void)
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_add(int argc, char **argv)
 {
-    int i, c;
-    int status;
-    struct tman_cli_add_opt opt = {
-        .env = NULL,
-        .force = FALSE,
-        .help = FALSE,
-        .noswitch = FALSE
+    char *env, *errfmt;
+    int quiet, force, showhelp, status, i, c;
+    struct tman_id_add_opt opt = {
+        .noswitch = FALSE,
     };
 
-    while ((c = getopt(argc, argv, ":e:fhn")) != -1) {
+    env = NULL;
+    force = quiet = showhelp = FALSE;
+    errfmt = "cannot create task '%s': %s";
+    while ((c = getopt(argc, argv, ":e:fhnq")) != -1) {
         switch (c) {
             case 'e':
-                opt.env = optarg; break;
+                env = optarg; break;
             case 'f':
-                opt.force = TRUE; break;
+                force = TRUE; break;
             case 'h':
-                opt.help = TRUE; break;
+                showhelp = TRUE; break;
             case 'n':
                 opt.noswitch = TRUE; break;
+            case 'q':
+                quiet = TRUE; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -42,16 +44,19 @@ int tman_cli_add(int argc, char **argv)
         }
     }
 
-    if (opt.help == TRUE)
+    if (showhelp == TRUE)
         return help_usage("add");
     else if (optind == argc) {
         // TODO: find a good return code
-        return elog(1, "task id required");
+        return elog(1, errfmt, "NOID", "task ID required");
     }
 
     for (i = optind; i < argc; ++i) {
-        if ((status = tman_id_add(opt.env, argv[i], &opt)) != TMAN_OK) {
-            elog(status, "cannot create '%s': %s", argv[i], tman_get_errmsg());
+        if ((status = tman_id_add(env, argv[i], &opt)) != TMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, argv[i], tman_get_errmsg());
+            if (force == FALSE)
+                break;
         }
     }
     return status == TMAN_OK ? tman_pwd() : status;

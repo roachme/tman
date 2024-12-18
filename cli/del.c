@@ -12,18 +12,23 @@ int tman_cli_del_usage(void)
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_del(int argc, char **argv)
 {
-    char c;
-    int status;
-    struct tman_cli_del_opt opt = { .env = NULL, .force = 0, .help = 0,};
+    char c, *env, *errfmt;
+    struct tman_id_del_opt opt = { };
+    int i, force, quiet, showhelp, status;
 
-    while ((c = getopt(argc, argv, ":e:fh")) != -1) {
+    env =  NULL;
+    force = quiet = showhelp = FALSE;
+    errfmt = "cannot delete task '%s': %s";
+    while ((c = getopt(argc, argv, ":e:fhq")) != -1) {
         switch (c) {
             case 'e':
-                opt.env = optarg; break ;
+                env = optarg; break ;
             case 'f':
-                opt.force = 1; break ;
+                force = TRUE; break ;
             case 'h':
-                opt.help = 1; break ;
+                showhelp = TRUE; break ;
+            case 'q':
+                quiet = TRUE; break ;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -31,14 +36,24 @@ int tman_cli_del(int argc, char **argv)
         }
     }
 
-    if (opt.help == 1)
+    if (showhelp == TRUE)
         return tman_cli_del_usage();
 
-    for (int i = optind; i < argc; ++i)
-        status = tman_id_del(opt.env, argv[i], &opt);
+    for (i = optind; i < argc; ++i) {
+        if ((status = tman_id_del(env, argv[i], &opt)) != TMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, argv[i], tman_get_errmsg());
+            if (force == TRUE)
+                break;
+        }
+    }
 
-    if (optind == argc) /* delete current task id */
-        status = tman_id_del(opt.env, NULL, &opt);
+    if (optind == argc) { /* delete current task id */
+        if ((status = tman_id_del(env, argv[i], &opt)) != TMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, argv[i], tman_get_errmsg());
+        }
+    }
 
     // FIXME: when delete task ID from non-current env,
     // it switches to current task in current env.

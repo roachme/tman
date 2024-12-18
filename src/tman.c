@@ -72,61 +72,63 @@ int tman_pwd()
     return TMAN_OK;
 }
 
-int tman_id_add(char *env, char *id, struct tman_cli_add_opt *opt)
+int tman_id_add(char *env, char *id, struct tman_id_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
     struct unitbin units[NKEYS] = {0};
     char *cenv = column_getcenv();
-    opt->env = opt->env != NULL ? opt->env : cenv;
+    env = env != NULL ? env : cenv;
 
-    if (opt->env == NULL)
+    if (env == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (!env_exists(opt->env))
+    else if (!env_exists(env)) {
+        elog(1, "teetet '%s'", env);
         return emod_set(TMAN_ENOSUCHENV);
+    }
     else if (!_chkid(id))
         return emod_set(TMAN_EILLEGID);
-    else if (id_exists(opt->env, id))
+    else if (id_exists(env, id))
         return emod_set(TMAN_EIDEXISTS);
 
-    if (imkdir(tmanfs.base, opt->env, id) != 0)
+    if (imkdir(tmanfs.base, env, id) != 0)
         return emod_set(TMAN_ETASKMKDIR);
-    else if (unit_addbin(opt->env, id, units) != 0)
+    else if (unit_addbin(env, id, units) != 0)
         return emod_set(TMAN_ETASKMKUNIT);
-    else if (hookact("add", opt->env, id))
+    else if (hookact("add", env, id))
         return emod_set(TMAN_EHOOK);
     else if (column_markid(id)) {
         elog(1, "column_mark: failed");
         return emod_set(TMAN_NODEF_ERR);
     }
-    if (opt->noswitch == FALSE && strcmp(opt->env, cenv) == 0 && column_addcid(id) != 0) {
+    if (opt->noswitch == FALSE && strcmp(env, cenv) == 0 && column_addcid(id) != 0) {
         elog(1, "column_addcid: failed");
         return emod_set(TMAN_NODEF_ERR);
     }
     return TMAN_OK;
 }
 
-int tman_id_del(char *env, char *id, struct tman_cli_del_opt *opt)
+int tman_id_del(char *env, char *id, struct tman_id_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
     char *cid = column_getcid();
     char *pid = column_getpid();
     id  = id != NULL ? id : cid;
-    opt->env = opt->env != NULL ? opt->env : column_getcenv();
+    env = env != NULL ? env : column_getcenv();
 
-    if (opt->env == NULL)
+    if (env == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (!env_exists(opt->env))
+    else if (!env_exists(env))
         return emod_set(TMAN_ENOSUCHENV);
     else if (id == NULL)
         return emod_set(TMAN_ENOCURRID);
-    else if (!id_exists(opt->env, id))
+    else if (!id_exists(env, id))
         return emod_set(TMAN_EIDEXISTS);
 
-    if (hookact("del", opt->env, id))
+    if (hookact("del", env, id))
         return emod_set(TMAN_EHOOK);
-    else if (unit_delbin(opt->env, id))
+    else if (unit_delbin(env, id))
         return emod_set(TMAN_ETASKRMUNIT);
-    else if (irmdir(tmanfs.base, opt->env, id))
+    else if (irmdir(tmanfs.base, env, id))
         return emod_set(TMAN_ETASKRMDIR);
     else if (column_delspec(id)) {
         elog(1, "%s: could not update special task IDs", id);
@@ -180,21 +182,21 @@ int tman_id_set(char *env, char *id, struct unitbin *unit)
 }
 
 // TODO: add support to switch to task in another environment.
-int tman_id_use(char *env, char *id, struct tman_cli_use_opt *opt)
+int tman_id_use(char *env, char *id, struct tman_id_use_opt *opt)
 {
-    opt->env = opt->env != NULL ? opt->env : column_getcenv();
+    env = env != NULL ? env : column_getcenv();
 
-    if (opt->env == NULL)
+    if (env == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    if (!env_exists(opt->env))
+    if (!env_exists(env))
         return emod_set(TMAN_ENOSUCHENV);
-    else if (!_chkenv(opt->env))
+    else if (!_chkenv(env))
         return emod_set(TMAN_EILLEGENV);
     else if (id == NULL)
         return emod_set(TMAN_EREQRID);
-    else if (!id_exists(opt->env, id))
+    else if (!id_exists(env, id))
         return emod_set(TMAN_EMISSID);
-    else if (opt->env != column_getcenv()) {
+    else if (env != column_getcenv()) {
         fprintf(stderr, "trynna switch to task in another env\n");
         fprintf(stderr, "under development\n");
         return emod_set(TMAN_NODEF_ERR);
@@ -341,7 +343,7 @@ struct units *tman_id_cat(char *env, char *id, struct units *units)
     return units;
 }
 
-int tman_env_add(char *env, struct tman_cli_env_add_opt *opt)
+int tman_env_add(char *env, struct tman_env_add_opt *opt)
 {
     if (env == NULL)
         return emod_set(TMAN_EREQRENV);
@@ -356,7 +358,7 @@ int tman_env_add(char *env, struct tman_cli_env_add_opt *opt)
     return column_addcenv(env);
 }
 
-int tman_env_del(char *env, struct tman_cli_env_del_opt *opt)
+int tman_env_del(char *env, struct tman_env_del_opt *opt)
 {
     env = env ? env : column_getcenv();
 

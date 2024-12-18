@@ -43,9 +43,10 @@ struct help help[] = {
         .desc  = "With no option `-e' add a new task to current environment.\n"
                  "If current environment is not set then throw an error.\n\n"
                  "  -e      specify an environment to add a task to\n"
-                 "  -f      do not output error message if task aleady exists\n"
+                 "  -f      do not interrupt if task exists, process others\n"
                  "  -h      show this help and exit\n"
-                 "  -n      don't switch to newly created task (default is false)"
+                 "  -n      don't switch to newly created task (default is false)\n"
+                 "  -q      do not write anything to standard error output"
     },
     {
         .tag = TAGBASIC,

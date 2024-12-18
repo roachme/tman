@@ -39,7 +39,8 @@ int _chkenv(char *env)
             return 0;
     return isalnum(*--env);
 }
-int elog(int status, char *fmt, ...)
+
+int elog(int status, const char *fmt, ...)
 {
     va_list arg;
     va_start(arg, fmt);

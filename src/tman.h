@@ -50,6 +50,26 @@ struct tmanstruct {
     char fstate[TMANPATHSIZE + 1];      /* file to store tman task state */
 };
 
+struct tman_id_add_opt {
+    int noswitch;   /* Do switch to task (set by default) */
+};
+
+struct tman_id_del_opt {
+};
+
+struct tman_id_use_opt {
+};
+
+
+struct tman_env_add_opt {
+};
+
+struct tman_env_del_opt {
+};
+
+struct tman_env_use_opt {
+};
+
 /* Generic tman structure used by all(?) API functions.  */
 typedef struct context {
     struct list list;
@@ -69,11 +89,11 @@ int tman_plugin(int argc, char **argv);
 int tman_id_prev(void);
 int tman_id_sync(void);
 int tman_id_col(char *env, char *id, char *tag);
-int tman_id_add(char *env, char *id, struct tman_cli_add_opt *opt);
-int tman_id_del(char *env, char *id, struct tman_cli_del_opt *opt);
+int tman_id_add(char *env, char *id, struct tman_id_add_opt *opt);
+int tman_id_del(char *env, char *id, struct tman_id_del_opt *opt);
 int tman_id_move(char *id, char *dst, char *src);
 int tman_id_set(char *env, char *id, struct unitbin *unitbin);
-int tman_id_use(char *env, char *id, struct tman_cli_use_opt *opt);
+int tman_id_use(char *env, char *id, struct tman_id_use_opt *opt);
 struct units *tman_id_cat(char *env, char *id, struct units *units);
 struct list *tman_id_list(struct list *list, char *env);
 
@@ -82,8 +102,8 @@ int tman_env_free(void);
 
 /* Task environment functions.  */
 int tman_env_prev(void);
-int tman_env_add(char *env, struct tman_cli_env_add_opt *opt);
-int tman_env_del(char *env, struct tman_cli_env_del_opt *opt);
+int tman_env_add(char *env, struct tman_env_add_opt *opt);
+int tman_env_del(char *env, struct tman_env_del_opt *opt);
 int tman_env_set(char *env);
 int tman_env_use(char *env);
 
