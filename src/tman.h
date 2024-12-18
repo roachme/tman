@@ -7,13 +7,6 @@
 #include "osdep.h"
 #include "errmod.h"
 
-// TODO: get rid of 'em. Use generic structure for options and
-// return value in ubus in OpenWrt does.
-#include "../cli/add.h"
-#include "../cli/del.h"
-#include "../cli/use.h"
-#include "../cli/env.h"
-
 #define LISTBIN         4
 #define CMDSIZ          5
 #define LISTPGN         40
@@ -59,7 +52,6 @@ struct tman_id_del_opt {
 
 struct tman_id_use_opt {
 };
-
 
 struct tman_env_add_opt {
 };
