@@ -14,7 +14,6 @@ static int tman_cli_cat_usage(void)
 static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
 {
     struct unitpgn *unitpgn;
-    struct units units = { 0 };
     struct tman_id_cat_opt opt = { };
 
     if (tman_id_cat(ctx, env, id, &opt) != TMAN_OK) {

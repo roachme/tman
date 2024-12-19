@@ -18,7 +18,6 @@ static const builtin_t envcmds[] = {
 int _env_add(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int o_strict = 0;
     int force, status;
     struct tman_env_add_opt opt;
 
@@ -51,11 +50,10 @@ int _env_cat(int argc, char **argv, tman_ctx_t *ctx)
 int _env_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int o_strict = 0;
     int force, status;
     int showpath = FALSE;
     char *old_cenv = column_getcenv();
-    char *old_penv = column_getpenv();
+    //char *old_penv = column_getpenv();
     struct tman_env_del_opt opt;
 
     force = FALSE;
@@ -113,12 +111,12 @@ int _env_list(int argc, char **argv, tman_ctx_t *ctx)
 
 int _env_prev(int argc, char **argv, tman_ctx_t *ctx)
 {
+    int status;
     struct tman_env_prev_opt opt;
+    const char *errfmt = "cannot switch: %s";
 
-    if (tman_env_prev(ctx, &opt)) {
-        elog(1, "bin.env: env_prev failed");
-        return 1;
-    }
+    if ((status = tman_env_prev(ctx, &opt)) != TMAN_OK)
+        return elog(status, errfmt, tman_strerror());
     return tman_pwd();
 }
 
@@ -129,11 +127,16 @@ int _env_set(int argc, char **argv, tman_ctx_t *ctx)
 
 int _env_use(int argc, char **argv, tman_ctx_t *ctx)
 {
-    char *env = argc > 1 ? argv[1] : NULL;
+    int status;
+    char *env;
+    const char *errfmt = "cannot switch to '%s': %s";
     struct tman_env_use_opt opt;
 
-    if (tman_env_use(ctx, env, &opt))
-        return elog(1, "could not switch to env '%s'", env);
+    // TODO: throws error if switch to current env
+    if ((env = argv[1]) == NULL)
+        return elog(1, errfmt, "NOENV", "environment name required");
+    else if ((status = tman_env_use(ctx, env, &opt)) != TMAN_OK)
+        return elog(status, errfmt, env, tman_strerror());
     return tman_pwd();
 }
 

@@ -42,7 +42,6 @@ static int pretty_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int help = 0;
     int showhelp, status;
     struct tman_id_list_opt opt = { };
 

@@ -66,7 +66,6 @@ static int parseconf(const char *fname)
     int retcode = 0;
     char line[BUFSIZ + 1];
     char *token = NULL;
-    struct hook *hook;
     FILE *fp = fopen(fname, "r");
 
     if (!fp)
