@@ -196,9 +196,13 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
 
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 {
-    if (column_swapid())
+    if (column_getcid() == NULL)
+        return emod_set(TMAN_ENOCURRID);
+    else if (column_getcid() == NULL)
         return emod_set(TMAN_ENOPREVID);
-    if (hookact("prev", column_getcenv(), column_getcid()))
+    else if (column_swapid())
+        return emod_set(TMAN_ESWAPIDS);
+    else if (hookact("prev", column_getcenv(), column_getcid()))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
@@ -208,9 +212,11 @@ int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
     char *cid  = column_getcid();
     char *cenv = column_getcenv();
 
-    if (cid == NULL)
+    if (cenv == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    else if (cid == NULL)
         return emod_set(TMAN_ENOCURRID);
-    if (hookact("sync", cenv, cid))
+    else if (hookact("sync", cenv, cid))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
@@ -431,9 +437,12 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 
 int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt)
 {
-    if (column_swapenv()) {
+    if (column_getcenv() == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    if (column_getpenv() == NULL)
         return emod_set(TMAN_ENOPREVENV);
-    }
+    if (column_swapenv())
+        return emod_set(TMAN_ENOPREVENV);
     return TMAN_OK;
 }
 
