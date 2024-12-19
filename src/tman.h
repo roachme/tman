@@ -112,19 +112,15 @@ struct tman_env_use_opt {
 
 extern struct tmanstruct tmanfs;
 
-/* Generic util functions.  */
-struct tman_context *tman_init(void);
+/* Core functions.  */
 int tman_setup(int setuplvl);
+struct tman_context *tman_init(void);
 int tman_deinit(struct tman_context *ctx);
 
+/* Core util functions.  */
 int tman_pwd(void);
-int tman_id_free(void);
-int tman_env_free(void);
-const char *tman_strerror(void);
 int tman_mkfs(void);
-
-int tman_isplugin(const char *pgn);
-int tman_plugin(tman_ctx_t *ctx, int argc, char **argv, struct tman_pgn_opt *opt);
+const char *tman_strerror(void);
 
 /* Task ID functions.  */
 int tman_id_add (tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *opt);
@@ -145,5 +141,9 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt);
 int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt);
 int tman_env_set (tman_ctx_t *ctx, char *env, struct tman_env_set_opt *opt);
 int tman_env_use (tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt);
+
+/* Task plugin functions.  */
+int tman_isplugin(const char *pgn);
+int tman_plugin(tman_ctx_t *ctx, int argc, char **argv, struct tman_pgn_opt *opt);
 
 #endif

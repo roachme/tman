@@ -83,11 +83,11 @@ int tman_mkfs(void)
 struct tman_context *tman_init(void)
 {
     if (config_init()) {
-        elog(1, "failed to parse system config file");
+        emod_set(TMAN_ECONF);
         return NULL;
     }
     else if (mkfs_vars()) {
-        elog(1, "could not create filesystem variables");
+        emod_set(TMAN_ESYSVAR);
         return NULL;
     }
     return mkctx();
@@ -100,15 +100,6 @@ int tman_setup(int setuplvl)
     status = TMAN_OK;
     if (setuplvl == TMAN_SETUPSOFT)
         return TMAN_OK;
-    else if (setuplvl == TMAN_SETUPCHECK) {
-        //elog(1, "TMAN_SETUPCHECK '%s'", tmanfs.fstate);
-        if (ISFILE(tmanfs.finit) != TRUE) {
-            status = emod_set(TMAN_EINIT);
-        }
-    }
-
-    // TODO: get rid of it. NO fucking need at all.
-    // Use cuz of column_init(). Use ctx!!!
     else if (setuplvl == TMAN_SETUPHARD) {
         elog(1, "TMAN_SETUPHARD");
         if ((status = tman_mkfs()) != TMAN_OK) {
@@ -116,11 +107,17 @@ int tman_setup(int setuplvl)
             status = emod_set(TMAN_EINIT);
         }
     }
-
-    // TODO: get rid of it once ctx in use.
-    if (column_init()) {
-        elog(1, "column_init: error: could not init");
-        status = TMAN_NODEF_ERR;
+    else if (setuplvl == TMAN_SETUPCHECK) {
+        //elog(1, "TMAN_SETUPCHECK '%s'", tmanfs.fstate);
+        if (ISFILE(tmanfs.finit) != TRUE) {
+            status = emod_set(TMAN_EINIT);
+        }
+        // roach: is it a good idea to init module column in general
+        // and here?
+        else if (column_init()) {
+            elog(1, "column_init: error: could not init");
+            status = emod_set(TMAN_EINIT);
+        }
     }
     return status;
 }
@@ -252,11 +249,11 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
         return emod_set(TMAN_ENOCURRENV);
     if (!env_exists(taskenv))
         return emod_set(TMAN_ENOSUCHENV);
-    else if (!_chkenv(taskenv))
+    else if (_chkenv(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
     else if (taskid == NULL)
         return emod_set(TMAN_EREQRID);
-    else if (!id_exists(taskenv, taskid))
+    else if (id_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_EMISSID);
     else if (taskenv != column_getcenv()) {
         fprintf(stderr, "trynna switch to task in another env\n");
@@ -277,15 +274,13 @@ int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
     taskenv = src ? src : column_getcenv();
     sprintf(dstid, "%s/%s/%s", tmanfs.base, dst, id);
 
-    if (!env_exists(dst)) {
+    if (env_exists(dst) == FALSE) {
         elog(1, "no such destination env");
         return emod_set(TMAN_NODEF_ERR);
     }
-    else if (!taskenv || taskenv == NULL) {
-        elog(1, "no current env set");
-        return emod_set(TMAN_NODEF_ERR);
-    }
-    else if (!env_exists(taskenv)) {
+    else if (taskenv == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    else if (env_exists(taskenv) == FALSE) {
         elog(1, "no such source env");
         return emod_set(TMAN_NODEF_ERR);
     }
@@ -323,7 +318,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     sprintf(pathname, "%s/%s", tmanfs.base, taskenv);
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (!env_exists(taskenv))
+    else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
     else if ((ids = opendir(pathname)) == NULL) {
         elog(1, "%s: could not read environment", taskenv);
@@ -362,7 +357,7 @@ int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_
         return emod_set(TMAN_ENOCURRENV);
     else if (taskid == NULL)
         return emod_set(TMAN_ENOCURRID);
-    else if (!id_exists(taskenv, taskid))
+    else if (id_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
     return column_moveid(taskid, tag);
 }
@@ -404,7 +399,7 @@ int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
         return emod_set(TMAN_EREQRENV);
     else if (env_exists(taskenv))
         return emod_set(TMAN_EENVEXISTS);
-    else if (!_chkenv(taskenv))
+    else if (_chkenv(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
     else if (emkdir(tmanfs.base, taskenv)) {
         elog(1, "%s: could not create env directory", taskenv);
@@ -419,7 +414,7 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
 
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (!env_exists(taskenv))
+    else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
     else if (ermdir(tmanfs.base, taskenv)) {
         elog(1, "%s: could not delete env directory", taskenv);
@@ -449,7 +444,7 @@ int tman_env_use(tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt)
 
     if (taskenv == NULL)
         return emod_set(TMAN_EREQRENV);
-    else if (!env_exists(taskenv))
+    else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
     return column_addcenv(taskenv);
 }

@@ -40,7 +40,7 @@ int main(int argc, char **argv)
         if (strcmp(cmd, builtins[i].name) == 0) {
             cmdfound = TRUE;
             if ((status = tman_setup(builtins[i].setuplvl)) != TMAN_OK) {
-                elog(status, "setup failed: %s", tman_strerror());
+                elog(status, "%s", tman_strerror());
                 goto out;
             }
             status = builtins[i].func(argc - 1, argv + 1, ctx);
