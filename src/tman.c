@@ -311,7 +311,7 @@ int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
  @param env char * | NULL (then list the current env)
  @return struct item * | NULL (if error happened)
 */
-struct list *tman_id_list(tman_ctx_t *ctx, struct list *list, char *env, struct tman_id_list_opt *opt)
+int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 {
     DIR *ids;
     size_t i = 0;
@@ -321,18 +321,13 @@ struct list *tman_id_list(tman_ctx_t *ctx, struct list *list, char *env, struct 
     taskenv = env ? env : column_getcenv();
 
     sprintf(pathname, "%s/%s", tmanfs.base, taskenv);
-    if (taskenv == NULL) {
-        emod_set(TMAN_ENOCURRENV);
-        return NULL;
-    }
-    else if (!env_exists(taskenv)) {
-        emod_set(TMAN_ENOSUCHENV);
-        return NULL;
-    }
+    if (taskenv == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    else if (!env_exists(taskenv))
+        return emod_set(TMAN_ENOSUCHENV);
     else if ((ids = opendir(pathname)) == NULL) {
         elog(1, "%s: could not read environment", taskenv);
-        emod_set(TMAN_NODEF_ERR);
-        return NULL;
+        return emod_set(TMAN_NODEF_ERR);
     }
 
     while ((ent = readdir(ids)) != NULL && i < LSIZE) {
@@ -345,17 +340,17 @@ struct list *tman_id_list(tman_ctx_t *ctx, struct list *list, char *env, struct 
 
         /* TODO: remove check and warning because there might
          * case when no hooks executed or defined and it's ok.  */
-        if (!hookls(list->ilist[i].pgn, taskenv, ent->d_name)) {
+        if (!hookls(ctx->list.ilist[i].pgn, taskenv, ent->d_name)) {
             fprintf(stderr, "tman_id_list %s: failed to get hookls output\n", ent->d_name);
         }
-        strcpy(list->ilist[i].id, ent->d_name);
-        strcpy(list->ilist[i].desc, bunit[4].val);
-        list->ilist[i].col = column_getmark(list->ilist[i].id);
+        strcpy(ctx->list.ilist[i].id, ent->d_name);
+        strcpy(ctx->list.ilist[i].desc, bunit[4].val);
+        ctx->list.ilist[i].col = column_getmark(ctx->list.ilist[i].id);
         ++i;
     }
-    list->num = i;
+    ctx->list.num = i;
     closedir(ids);
-    return list;
+    return TMAN_OK;
 }
 
 int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt)
@@ -476,6 +471,13 @@ const char *tman_strerror(void)
 
 int tman_deinit(struct tman_context *ctx)
 {
+    struct unitpgn *pgn;
+
+    while (ctx->units.pgn) {
+        pgn = ctx->units.pgn;
+        ctx->units.pgn = ctx->units.pgn->next;
+        unit_delpgn(pgn);
+    }
     free(ctx);
     return TMAN_OK;
 }
