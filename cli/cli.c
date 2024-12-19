@@ -3,58 +3,25 @@
 #include "cli.h"
 #include "../src/tman.h"
 
-builtin_t builtins[] = {
-    /* system commands */
+static const builtin_t builtins[] = {
+    { .name = "add",  .func = &tman_cli_add  },
+    { .name = "cat",  .func = &tman_cli_cat  },
     { .name = "cfg",  .func = &tman_cli_cfg  },
     { .name = "chk",  .func = &tman_cli_chk  },
-    { .name = "init", .func = &tman_cli_init },
-
-    /* basic commands */
-    { .name = "add",  .func = &tman_cli_add  },
     { .name = "col",  .func = &tman_cli_col  },
     { .name = "del",  .func = &tman_cli_del  },
+    { .name = "env",  .func = &tman_cli_env  },
+    { .name = "help", .func = &tman_cli_help },
+    { .name = "init", .func = &tman_cli_init },
+    { .name = "list", .func = &tman_cli_list },
+    { .name = "move", .func = &tman_cli_move },
+    { .name = "pgm",  .func = &tman_cli_pgm  },
     { .name = "prev", .func = &tman_cli_prev },
     { .name = "set",  .func = &tman_cli_set  },
     { .name = "sync", .func = &tman_cli_sync },
     { .name = "use",  .func = &tman_cli_use  },
-
-    /* misc commands */
-    { .name = "env",  .func = &tman_cli_env  },
-    { .name = "pgm",  .func = &tman_cli_pgm  },
-    // maybe make a move command a env subcommand?
-    { .name = "move", .func = &tman_cli_move },
-
-    /* info commands */
-    { .name = "cat",  .func = &tman_cli_cat  },
-    { .name = "help", .func = &tman_cli_help },
-    { .name = "list", .func = &tman_cli_list },
     { .name = "ver",  .func = &tman_cli_ver  },
 };
-
-int builtin_size = sizeof(builtins) / sizeof(builtins[0]);
-
-int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
-{
-    char c;
-    char *cmd;
-    char *key = NULL;
-
-    while ((c = getopt(argc, argv, "dk:")) != -1) {
-        switch (c) {
-            case 'k':
-                key = optarg; break;
-        };
-    }
-
-    cmd = argv[optind];
-    return help_lookup(cmd);
-}
-
-int tman_cli_ver(int argc, char **argv, struct tman_context *ctx)
-{
-    printf("%s: %s\n", PROGRAM, VERSION);
-    return TMAN_OK;
-}
 
 int main(int argc, char **argv)
 {
@@ -69,7 +36,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    for (i = 0; i < builtin_size; ++i)
+    for (i = 0; i < ARRAY_SIZE(builtins); ++i)
         if (strcmp(cmd, builtins[i].name) == 0) {
             cmdfound = TRUE;
             status = builtins[i].func(argc - 1, argv + 1, ctx);

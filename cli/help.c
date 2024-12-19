@@ -202,3 +202,20 @@ int help_lookup(const char *cmd)
     }
     return elog(1, "cannot access '%s': command not found", cmd);
 }
+
+int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
+{
+    char c;
+    char *cmd;
+    char *key = NULL;
+
+    while ((c = getopt(argc, argv, "dk:")) != -1) {
+        switch (c) {
+            case 'k':
+                key = optarg; break;
+        };
+    }
+
+    cmd = argv[optind];
+    return help_lookup(cmd);
+}
