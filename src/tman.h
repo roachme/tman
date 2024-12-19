@@ -43,6 +43,12 @@ struct tmanstruct {
     char fstate[TMANPATHSIZE + 1];      /* file to store tman task state */
 };
 
+enum tman_setuplvl {
+    TMAN_SETUPSOFT,
+    TMAN_SETUPCHECK,
+    TMAN_SETUPHARD,
+};
+
 struct tman_id_add_opt {
     int noswitch;   /* Do switch to task (set by default) */
 };
@@ -104,7 +110,8 @@ typedef struct tman_context {
 extern struct tmanstruct tmanfs;
 
 /* Generic util functions.  */
-struct tman_context *tman_init(const char *cmd);
+struct tman_context *tman_init(void);
+int tman_setup(int setuplvl);
 int tman_deinit(struct tman_context *ctx);
 
 int tman_pwd(void);
