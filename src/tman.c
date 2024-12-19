@@ -100,7 +100,7 @@ int tman_setup(int setuplvl)
     if (setuplvl == TMAN_SETUPSOFT)
         return TMAN_OK;
     else if (setuplvl == TMAN_SETUPCHECK) {
-        elog(1, "TMAN_SETUPCHECK '%s'", tmanfs.fstate);
+        //elog(1, "TMAN_SETUPCHECK '%s'", tmanfs.fstate);
         if (ISFILE(tmanfs.finit) != TRUE) {
             status = emod_set(TMAN_EINIT);
         }
@@ -371,27 +371,20 @@ int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_
     return column_moveid(taskid, tag);
 }
 
-struct units *tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct units *units, struct tman_id_cat_opt *opt)
+int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *opt)
 {
+    int status;
     taskid = id ? id : column_getcid();
     taskenv = env ? env : column_getcenv();
 
-    if (taskenv == NULL) {
-        emod_set(TMAN_ENOCURRENV);
-        return NULL;
-    }
-    else if (!env_exists(taskenv)) {
-        elog(1, "%s: no such env name", taskenv);
-        return NULL;
-    }
-    else if (taskid == NULL) {
-        emod_set(TMAN_ENOCURRID);
-        return NULL;
-    }
-    else if (!id_exists(taskenv, taskid)) {
-        emod_set(TMAN_ENOSUCHID);
-        return NULL;
-    }
+    if (taskenv == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    else if (env_exists(taskenv) == FALSE)
+        return emod_set(TMAN_ENOSUCHENV);
+    else if (taskid == NULL)
+        return emod_set(TMAN_ENOCURRID);
+    else if (id_exists(taskenv, taskid) == FALSE)
+        return emod_set(TMAN_ENOSUCHID);
 
     // TODO: don't wanna lose plugin units if builtin ones
     // failed to parse. But gotta make user return value
@@ -399,10 +392,12 @@ struct units *tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct units *un
 
     /* No need to check return value because there might case
      * that no hooks are defined or executed */
-    units->pgn = hookcat(units->pgn, taskenv, taskid);
-    if (unit_getbin(units->bin, taskenv, taskid) == NULL)
+    ctx->units.pgn = hookcat(ctx->units.pgn, taskenv, taskid);
+    if (unit_getbin(ctx->units.bin, taskenv, taskid) == NULL) {
+        status = emod_set(TMAN_NODEF_ERR);
         elog(1, "tman_id_cat: failed to get builtn units");
-    return units;
+    }
+    return status;
 }
 
 int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
