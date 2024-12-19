@@ -1,8 +1,10 @@
 #include <string.h>
-#include "../src/tman.h"
+
+#include "set.h"
+#include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_set(int argc, char **argv)
+int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int idx;

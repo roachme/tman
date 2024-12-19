@@ -1,4 +1,4 @@
-#include "../src/tman.h"
+#include "cli.h"
 
 static int tman_cli_sync_usage(void)
 {
@@ -9,7 +9,7 @@ static int tman_cli_sync_usage(void)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_sync(int argc, char **argv)
+int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
 {
     char c, *errfmt;
     int showhelp, status;

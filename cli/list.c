@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "list.h"
-#include "../src/tman.h"
+#include "cli.h"
 
 static int tman_cli_list_usage(void)
 {
@@ -42,7 +42,7 @@ static int pretty_list(char *env, struct tman_cli_list *opt)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_list(int argc, char **argv)
+int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int help = 0;

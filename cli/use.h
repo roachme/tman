@@ -12,6 +12,4 @@ struct tman_cli_use_opt {
     int help;
 };
 
-int tman_cli_use(int argc, char **argv);
-
 #endif
