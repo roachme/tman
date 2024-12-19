@@ -18,15 +18,15 @@ static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
     struct units units = { 0 };
     struct tman_id_cat_opt opt = { };
 
-    if (tman_id_cat(ctx, env, id, &units, &opt) == NULL) {
+    if (tman_id_cat(ctx, env, id, &opt) != TMAN_OK) {
         return 1;
     }
 
     for (int i = 0; i < NKEYS; ++i)
-        if (units.bin[i].isset)
-            printf("%-7s : %s\n", units.bin[i].key, units.bin[i].val);
+        if (ctx->units.bin[i].isset)
+            printf("%-7s : %s\n", ctx->units.bin[i].key, ctx->units.bin[i].val);
 
-    unitpgn = units.pgn;
+    unitpgn = ctx->units.pgn;
     while (unitpgn != NULL) {
         printf("%-7s : %s\n", unitpgn->node.key, unitpgn->node.val);
         tmp = unitpgn;

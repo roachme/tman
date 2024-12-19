@@ -49,6 +49,15 @@ enum tman_setuplvl {
     TMAN_SETUPHARD,
 };
 
+/* Generic tman structure used by all(?) API functions.  */
+typedef struct tman_context {
+    struct list list;
+    struct units units;
+} tman_ctx_t;
+
+
+
+
 struct tman_id_add_opt {
     int noswitch;   /* Do switch to task (set by default) */
 };
@@ -101,12 +110,6 @@ struct tman_env_set_opt {
 struct tman_env_use_opt {
 };
 
-/* Generic tman structure used by all(?) API functions.  */
-typedef struct tman_context {
-    struct list list;
-    struct units units;
-} tman_ctx_t;
-
 extern struct tmanstruct tmanfs;
 
 /* Generic util functions.  */
@@ -126,7 +129,7 @@ int tman_plugin(tman_ctx_t *ctx, int argc, char **argv, struct tman_pgn_opt *opt
 /* Task ID functions.  */
 // TODO: for tman_id_list() and tman_id_cat() use ctx
 int tman_id_add (tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *opt);
-struct units *tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct units *units, struct tman_id_cat_opt *opt);
+int tman_id_cat (tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *opt);
 int tman_id_col (tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt);
 int tman_id_del (tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *opt);
 struct list *tman_id_list(tman_ctx_t *ctx, struct list *list, char *env, struct tman_id_list_opt *opt);
