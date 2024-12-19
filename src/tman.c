@@ -174,11 +174,11 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
 
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (!env_exists(taskenv))
+    else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
     else if (taskid == NULL)
         return emod_set(TMAN_ENOCURRID);
-    else if (!id_exists(taskenv, taskid))
+    else if (id_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
 
     if (hookact("del", taskenv, taskid))
@@ -228,11 +228,11 @@ int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, 
 
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (!env_exists(taskenv))
+    else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
     else if (taskid == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (!id_exists(taskenv, taskid))
+    else if (id_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
     else if (unit_setbin(taskenv, taskid, unitbin)) {
         elog(1, "%s: could not set unit values", taskid);
@@ -252,7 +252,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
 
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    if (!env_exists(taskenv))
+    if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
     else if (_chkenv(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
@@ -289,7 +289,7 @@ int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
         elog(1, "no such source env");
         return emod_set(TMAN_NODEF_ERR);
     }
-    else if (!id_exists(taskenv, taskid))
+    else if (id_exists(taskenv, taskid) == FALSE)
         emod_set(TMAN_ENOSUCHID);
     else if (id_exists(dst, taskid)) {
         elog(1, "cannot move '%s': task id exists in env '%s'", taskid, dst);
