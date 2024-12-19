@@ -58,29 +58,31 @@ int tman_cli_ver(int argc, char **argv, struct tman_context *ctx)
 
 int main(int argc, char **argv)
 {
-    int i, status, isbin, ispgn;
+    int i, status, cmdfound;
     struct tman_context *ctx;
     const char *cmd = argc > 1 ? argv[1] : "list";
 
     ctx = NULL;
-    isbin = ispgn = FALSE;
-
-    if ((ctx = tman_init(cmd)) == NULL)
+    cmdfound = FALSE;
+    if ((ctx = tman_init(cmd)) == NULL) {
         elog(1, "could not init util: %s", tman_strerror());
+        return 1;
+    }
 
     for (i = 0; i < builtin_size; ++i)
         if (strcmp(cmd, builtins[i].name) == 0) {
-            isbin = TRUE;
+            cmdfound = TRUE;
             status = builtins[i].func(argc - 1, argv + 1, ctx);
             break;
         }
-
-    if (isbin == FALSE && (status = tman_isplugin(cmd)) == TMAN_OK) {
-        ispgn = TRUE;
+    if (cmdfound == FALSE && (status = tman_isplugin(cmd)) == TMAN_OK) {
+        cmdfound = TRUE;
         status = tman_plugin(argc, argv);
     }
-    else if (isbin == FALSE && ispgn == FALSE)
+    if (cmdfound == FALSE) {
+        status = 1;
         elog(1, "cannot access '%s': no such command or plugin", cmd);
+    }
 
     tman_deinit(ctx);
     return status;
