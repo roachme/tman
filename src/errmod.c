@@ -30,6 +30,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_ENOPREVID] =   "no previous task ID",
     [TMAN_ENOSUCHID] =   "no such task ID",
     [TMAN_EIDEXISTS] =   "task ID already exists",
+    [TMAN_ESWAPIDS] =    "could not swapd current and previous IDs",
 
     [TMAN_ETASKMKDIR] =  "could not create task directory",
     [TMAN_ETASKRMDIR] =  "could not delete task directory",
