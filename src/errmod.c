@@ -9,7 +9,9 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_OK] = "OK",
 
     [TMAN_ECORE] =       "error happened in core",
-    [TMAN_EINIT] =       "FS not inited",
+    [TMAN_ESYSVAR] =     "could not fill system variables",
+    [TMAN_EINIT] =       "not inited",
+    [TMAN_EMKDIR] =      "could not make directory",
     [TMAN_ECONF] =       "error to parse config",
     [TMAN_EHOOK] =       "failed to execute hook",
     [TMAN_EPGN] =        "failed to execute plugin command",
