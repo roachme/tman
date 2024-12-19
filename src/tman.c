@@ -22,6 +22,16 @@ struct tmanstruct tmanfs;
 
 static char *taskenv, *taskid;
 
+static tman_ctx_t *mkctx()
+{
+    tman_ctx_t *ctx;
+
+    if ((ctx = malloc(sizeof(tman_ctx_t))) == NULL)
+        return NULL;
+
+    return ctx;
+}
+
 static int env_exists(char *env)
 {
     char pathname[PATHSIZ + 1];
@@ -52,11 +62,6 @@ int tman_mkfs(void)
 {
     int status;
 
-    if ((status = config_init()) != TMAN_OK)
-        return status;
-    else if ((status = mkfs_vars()) != TMAN_OK)
-        return status;
-
     if (MKDIR(tmanfs.base))
         return elog(1, "could not create directory %s", tmanfs.base);
     else if (MKDIR(tmanfs.base))
@@ -74,42 +79,49 @@ int tman_mkfs(void)
     return TMAN_OK;
 }
 
-struct tman_context *tman_init(const char *cmd)
+struct tman_context *tman_init(void)
 {
-    struct tman_context *ctx;
-
-    if ((ctx = malloc(sizeof(struct tman_context))) == NULL)
-        return NULL;
-
     if (config_init()) {
         elog(1, "failed to parse system config file");
-        tman_deinit(ctx);
         return NULL;
     }
     else if (mkfs_vars()) {
         elog(1, "could not create filesystem variables");
-        tman_deinit(ctx);
         return NULL;
     }
-    else if (strncmp(cmd, "init", CMDSIZ) == 0
-        || strncmp(cmd, "help", CMDSIZ) == 0
-        || strncmp(cmd, "ver", CMDSIZ) == 0) {
-        tman_deinit(ctx);
-        return NULL;
+    return mkctx();
+}
+
+int tman_setup(int setuplvl)
+{
+    int status;
+
+    status = TMAN_OK;
+    if (setuplvl == TMAN_SETUPSOFT)
+        return TMAN_OK;
+    else if (setuplvl == TMAN_SETUPCHECK) {
+        elog(1, "TMAN_SETUPCHECK '%s'", tmanfs.fstate);
+        if (ISFILE(tmanfs.finit) != TRUE) {
+            status = emod_set(TMAN_EINIT);
+        }
     }
 
-    // TODO: Find a better way to check that util's inited.
-    else if (ISFILE(tmanfs.finit) == FALSE) {
-        elog(1, "not inited");
-        tman_deinit(ctx);
-        return NULL;
+    // TODO: get rid of it. NO fucking need at all.
+    // Use cuz of column_init(). Use ctx!!!
+    else if (setuplvl == TMAN_SETUPHARD) {
+        elog(1, "TMAN_SETUPHARD");
+        if ((status = tman_mkfs()) != TMAN_OK) {
+            elog(1, "in tmat_setup");
+            status = emod_set(TMAN_EINIT);
+        }
     }
-    else if (column_init()) {
+
+    // TODO: get rid of it once ctx in use.
+    if (column_init()) {
         elog(1, "column_init: error: could not init");
-        tman_deinit(ctx);
-        return NULL;
+        status = TMAN_NODEF_ERR;
     }
-    return ctx;
+    return status;
 }
 
 int tman_pwd()
