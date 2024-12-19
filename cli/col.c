@@ -2,7 +2,6 @@
 
 #include "col.h"
 #include "cli.h"
-#include "../src/tman.h"
 
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_col(int argc, char **argv, struct tman_context *ctx)

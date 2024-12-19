@@ -1,5 +1,5 @@
 #include "prev.h"
-#include "../src/tman.h"
+#include "cli.h"
 
 static int tman_cli_prev_usage(void)
 {
@@ -9,7 +9,7 @@ static int tman_cli_prev_usage(void)
     return TMAN_OK;
 }
 
-int tman_cli_prev(int argc, char **argv)
+int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
 {
     char c, *errfmt;
     int showhelp, status;

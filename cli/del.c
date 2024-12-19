@@ -1,5 +1,5 @@
 #include "del.h"
-#include "../src/tman.h"
+#include "cli.h"
 
 int tman_cli_del_usage(void)
 {
@@ -10,7 +10,7 @@ int tman_cli_del_usage(void)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_del(int argc, char **argv)
+int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
 {
     char c, *env, *id, *errfmt;
     struct tman_id_del_opt opt = { };

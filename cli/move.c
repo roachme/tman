@@ -1,8 +1,7 @@
 #include "move.h"
-#include "../src/tman.h"
+#include "cli.h"
 
-
-int tman_cli_move(int argc, char **argv)
+int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     char *srcenv = NULL;

@@ -1,7 +1,6 @@
 #include <string.h>
 
 #include "cli.h"
-#include "../src/tman.h"
 
 static const builtin_t builtins[] = {
     { .name = "add",  .func = &tman_cli_add  },

@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../src/tman.h"
 #include "help.h"
+#include "cli.h"
 
 #define TAGSYSTEM   "bin-system"
 #define TAGBASIC    "bin-basic"

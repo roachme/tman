@@ -3,7 +3,6 @@
 
 #include "add.h"
 #include "cli.h"
-#include "../src/tman.h"
 
 static int tman_cli_add_usage(void)
 {

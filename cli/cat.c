@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "cat.h"
-#include "../src/tman.h"
+#include "cli.h"
 
 static int tman_cli_cat_usage(void)
 {
@@ -36,7 +36,7 @@ static int pretty_cat(char *env, char *id, char *key)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_cat(int argc, char **argv)
+int tman_cli_cat(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int status;
