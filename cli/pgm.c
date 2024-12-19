@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -12,13 +13,27 @@ static const builtin_t pgmcmds[] = {
 int _pgm_chk(int argc, char **argv, tman_ctx_t *ctx)
 {
     printf("check plugins\n");
-    return 1;
+    return TMAN_OK;
 }
 
 int _pgm_list(int argc, char **argv, tman_ctx_t *ctx)
 {
-    printf("list installed plugins\n");
-    return 1;
+    DIR *dir;
+    struct dirent *pgn;
+    const char *pgmfmt = "%s\t%s\t%s\n";
+    const char *pgmheader = "Name\tStatus\tDescription";
+
+    if ((dir = opendir(tmanfs.pgnins)) == NULL)
+        return elog(1, "could not open plugin directory");
+
+    printf("%s\n", pgmheader);
+    while ((pgn = readdir(dir)) != NULL) {
+        if (pgn->d_name[0] == '.' || pgn->d_type != DT_DIR)
+            continue;
+        printf(pgmfmt, pgn->d_name, "inst", "some plugin description");
+    }
+    closedir(dir);
+    return TMAN_OK;
 }
 
 int tman_cli_pgm(int argc, char **argv, tman_ctx_t *ctx)
