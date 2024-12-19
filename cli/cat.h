@@ -12,6 +12,4 @@ struct tman_cli_cat_opt {
     int help;       /* show command usage */
 };
 
-int tman_cli_cat(int argc, char **argv);
-
 #endif

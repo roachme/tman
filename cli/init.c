@@ -1,7 +1,7 @@
 #include "init.h"
 #include "cli.h"
 
-int tman_cli_init(int argc, char **argv)
+int tman_cli_init(int argc, char **argv, struct tman_context *ctx)
 {
     int status;
     char *errfmt;

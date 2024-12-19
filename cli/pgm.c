@@ -13,24 +13,24 @@ builtin_t pgmcmds[] = {
 
 int pgmcmd_size = sizeof(pgmcmds) / sizeof(pgmcmds[0]);
 
-int _pgm_chk(int argc, char **argv)
+int _pgm_chk(int argc, char **argv, struct tman_context *ctx)
 {
     printf("check plugins\n");
     return 1;
 }
 
-int _pgm_list(int argc, char **argv)
+int _pgm_list(int argc, char **argv, struct tman_context *ctx)
 {
     printf("list installed plugins\n");
     return 1;
 }
 
-int tman_cli_pgm(int argc, char **argv)
+int tman_cli_pgm(int argc, char **argv, struct tman_context *ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 
     for (int i = 0; i < pgmcmd_size; ++i)
         if (strncmp(cmd, pgmcmds[i].name, CMDSIZ) == 0)
-            return pgmcmds[i].func(argc - 1, argv + 1);
+            return pgmcmds[i].func(argc - 1, argv + 1, ctx);
     return elog(1, "no such pgm command '%s'", cmd);
 }

@@ -3,6 +3,4 @@
 
 #include "cli.h"
 
-extern struct tmanstruct tmanfs;
-
 #endif

@@ -8,6 +8,4 @@ struct tman_mcol_opt {
     int help;       /* Show command usage */
 };
 
-int tman_cli_col(int argc, char **argv);
-
 #endif

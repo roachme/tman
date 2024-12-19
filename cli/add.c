@@ -14,7 +14,7 @@ static int tman_cli_add_usage(void)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_add(int argc, char **argv)
+int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
 {
     char *env, *errfmt;
     int quiet, force, showhelp, status, i, c;
