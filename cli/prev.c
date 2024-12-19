@@ -9,10 +9,11 @@ static int tman_cli_prev_usage(void)
     return TMAN_OK;
 }
 
-int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_prev(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c, *errfmt;
     int showhelp, status;
+    struct tman_id_prev_opt opt;
 
     showhelp = FALSE;
     errfmt =  "cannot switch: %s";
@@ -29,7 +30,7 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
 
     if (showhelp == TRUE)
         return tman_cli_prev_usage();
-    if ((status = tman_id_prev()) != TMAN_OK)
+    if ((status = tman_id_prev(ctx, &opt)) != TMAN_OK)
         return elog(1, errfmt, tman_strerror());
     return tman_pwd();
 }

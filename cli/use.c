@@ -10,7 +10,7 @@ int tman_cli_use_usage(void)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_use(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_use(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c, *errfmt, *env;
     int showhelp, status;
@@ -37,7 +37,7 @@ int tman_cli_use(int argc, char **argv, struct tman_context *ctx)
     else if (optind == argc)
         return elog(TMAN_USE_IDREQ, "task id required");
 
-    if ((status = tman_id_use(env, argv[optind], &opt)) != TMAN_OK) {
+    if ((status = tman_id_use(ctx, env, argv[optind], &opt)) != TMAN_OK) {
         return elog(status, errfmt, argv[optind], tman_strerror());
     }
     return tman_pwd();

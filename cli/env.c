@@ -15,7 +15,7 @@ static const builtin_t envcmds[] = {
 };
 
 // TODO: Find a good error message in case option fails.  */
-int _env_add(int argc, char **argv, struct tman_context *ctx)
+int _env_add(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int o_strict = 0;
@@ -38,17 +38,17 @@ int _env_add(int argc, char **argv, struct tman_context *ctx)
         return elog(1, "task env required");
 
     for (int i = optind; i < argc; ++i)
-        status = tman_env_add(argv[i], &opt);
+        status = tman_env_add(ctx, argv[i], &opt);
     return status == TMAN_OK ? tman_pwd() : 1;
 }
 
 // roach: maybe it'll be useful
-int _env_cat(int argc, char **argv, struct tman_context *ctx)
+int _env_cat(int argc, char **argv, tman_ctx_t *ctx)
 {
     return 0;
 }
 
-int _env_del(int argc, char **argv, struct tman_context *ctx)
+int _env_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int o_strict = 0;
@@ -71,9 +71,9 @@ int _env_del(int argc, char **argv, struct tman_context *ctx)
     }
 
     for (int i = optind; i < argc; ++i)
-        status = tman_env_del(argv[i], &opt);
+        status = tman_env_del(ctx, argv[i], &opt);
     if (optind == argc) /* delete current task id */
-        status = tman_env_del(NULL, &opt);
+        status = tman_env_del(ctx, NULL, &opt);
 
     // TODO: update current directory if current env got deleted.
     if (strcpy(old_cenv, column_getcenv())) {
@@ -83,7 +83,7 @@ int _env_del(int argc, char **argv, struct tman_context *ctx)
     return status == TMAN_OK && showpath == TRUE ? tman_pwd() : 1;
 }
 
-int _env_list(int argc, char **argv, struct tman_context *ctx)
+int _env_list(int argc, char **argv, tman_ctx_t *ctx)
 {
     char mark = '+';
     struct dirent *ent;
@@ -111,30 +111,33 @@ int _env_list(int argc, char **argv, struct tman_context *ctx)
     return 1;
 }
 
-int _env_prev(int argc, char **argv, struct tman_context *ctx)
+int _env_prev(int argc, char **argv, tman_ctx_t *ctx)
 {
-    if (tman_env_prev()) {
+    struct tman_env_prev_opt opt;
+
+    if (tman_env_prev(ctx, &opt)) {
         elog(1, "bin.env: env_prev failed");
         return 1;
     }
     return tman_pwd();
 }
 
-int _env_set(int argc, char **argv, struct tman_context *ctx)
+int _env_set(int argc, char **argv, tman_ctx_t *ctx)
 {
     return 0;
 }
 
-int _env_use(int argc, char **argv, struct tman_context *ctx)
+int _env_use(int argc, char **argv, tman_ctx_t *ctx)
 {
     char *env = argc > 1 ? argv[1] : NULL;
+    struct tman_env_use_opt opt;
 
-    if (tman_env_use(env))
+    if (tman_env_use(ctx, env, &opt))
         return elog(1, "could not switch to env '%s'", env);
     return tman_pwd();
 }
 
-int tman_cli_env(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_env(int argc, char **argv, tman_ctx_t *ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

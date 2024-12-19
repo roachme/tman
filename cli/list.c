@@ -19,12 +19,12 @@ static int compare(const void *aa, const void *bb)
     return (a->col.prio - b->col.prio);
 }
 
-static int pretty_list(char *env, struct tman_cli_list *opt)
+static int pretty_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 {
     struct list list;
 
     memset(&list, 0, sizeof(list));
-    if (tman_id_list(&list, env) == NULL) {
+    if (tman_id_list(ctx, &list, env, opt) == NULL) {
         elog(1, "could not list task IDs: %s", tman_strerror());
         return 1;
     }
@@ -42,12 +42,12 @@ static int pretty_list(char *env, struct tman_cli_list *opt)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int help = 0;
-    int status;
-    struct tman_cli_list opt = { .spec = 1, };
+    int showhelp, status;
+    struct tman_id_list_opt opt = { };
 
     /*
         -A - list all (even done tasks)
@@ -55,18 +55,9 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
         -c - specify what column to list
         -s - default: list only current & previous (maybe?)
     */
+    showhelp = FALSE;
     while ((c = getopt(argc, argv, ":Aac:hs")) != -1) {
         switch (c) {
-            case 'A':
-                opt.all = 1; break;
-            case 'a':
-                opt.almost = 1; break;
-            case 'c':
-                opt.col = optarg; break;
-            case 'h':
-                opt.help = 1; break;
-            case 's':
-                opt.spec = 1; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -76,14 +67,14 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
 
     // TODO: check that option don't conflict with each other.
 
-    if (opt.help == 1)
+    if (showhelp == 1)
         return tman_cli_list_usage();
 
     for (int i = optind; i < argc; ++i) {
         char *env = argv[i];
-        status = pretty_list(env, &opt);
+        status = pretty_list(ctx, env, &opt);
     }
 
     /* if no arguments passed then list current env */
-    return optind < argc ? status : pretty_list(NULL, &opt);
+    return optind < argc ? status : pretty_list(ctx, NULL, &opt);
 }

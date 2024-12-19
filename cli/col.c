@@ -4,10 +4,11 @@
 #include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_col(int argc, char **argv, tman_ctx_t *ctx)
 {
     char *env, *col;
     int i, c, status, showhelp, showlist;
+    struct tman_id_col_opt opt;
 
     env = NULL;
     showhelp = showlist = FALSE;
@@ -33,10 +34,10 @@ int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
         return elog(1, "gotta specify column to move a task to");
 
     for (i = optind; i < argc; ++i)
-        status = tman_id_col(env, argv[i], col);
+        status = tman_id_col(ctx, env, argv[i], col, &opt);
 
     if (optind == argc) /* operate on current task id */
-        status = tman_id_col(env, NULL, col);
+        status = tman_id_col(ctx, env, NULL, col, &opt);
 
     return status;
 }

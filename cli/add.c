@@ -13,7 +13,7 @@ static int tman_cli_add_usage(void)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
 {
     char *env, *errfmt;
     int quiet, force, showhelp, status, i, c;
@@ -51,7 +51,7 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
     }
 
     for (i = optind; i < argc; ++i) {
-        if ((status = tman_id_add(env, argv[i], &opt)) != TMAN_OK) {
+        if ((status = tman_id_add(ctx, env, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
             if (force == FALSE)
