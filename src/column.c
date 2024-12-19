@@ -28,6 +28,13 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
 };
 
 struct taskids taskids;      /* tasks per environment */
+static char colpath[BUFSIZ + 1];
+
+static char *genpath(char *env, char *id)
+{
+    sprintf(colpath, "%s/%s/%s/.tman/col", tmanfs.base, env, id);
+    return colpath;
+}
 
 /* column_markid: will be needed by tman `list' command */
 struct column column_getmark(char *id)
@@ -86,11 +93,9 @@ static int load(char *env)
 static int _save(char *env, char *id, char *tag)
 {
     FILE *fp;
-    char envpath[BUFSIZ + 1];
 
-    sprintf(envpath, "%s/%s/%s/.tman/col", tmanfs.base, env, id);
-    if ((fp = fopen(envpath, "w")) == NULL)
-        return elog(1, "could not save %s", envpath);
+    if ((fp = fopen(genpath(env, id), "w")) == NULL)
+        return elog(1, "could not save %s", colpath);
 
     fprintf(fp, "col : %s\n", tag);
     return fclose(fp);
@@ -127,15 +132,11 @@ int column_markid(char *id)
 {
     FILE *fp;
     char *cenv = column_getcenv();
-    char idpath[BUFSIZ + 1];
 
     if (env_getcurr() == NULL)
         return elog(1, "column_markid: no current env set");
-
-    sprintf(idpath, "%s/%s/%s/.tman/col", tmanfs.base, cenv, id);
-    if ((fp = fopen(idpath, "w")) == NULL) {
-        return elog(1, "could not create col file: %s", idpath);
-    }
+    else if ((fp = fopen(genpath(cenv, id), "w")) == NULL)
+        return elog(1, "could not create col file: %s", colpath);
 
     strcpy(taskids.ids[taskids.idx].id, id);
     taskids.ids[taskids.idx].col = column_setmark(MARKDEF);
