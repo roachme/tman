@@ -1,11 +1,13 @@
 #ifndef OSDEP_H
 #define OSDEP_H
 
-int MKDIR(char *path);
-int RMDIR(char *path);
-int MOVE(char *src, char *dst);
-int TOUCH(char *path);
-int ISFILE(char *fname);
-int ISDIR(char *fname);
+#include "common.h"
+
+BOOL MKDIR(char *path);
+BOOL RMDIR(char *path);
+BOOL MOVE(char *src, char *dst);
+BOOL TOUCH(char *path);
+BOOL ISFILE(char *fname);
+BOOL ISDIR(char *fname);
 
 #endif

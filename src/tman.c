@@ -33,14 +33,14 @@ static tman_ctx_t *mkctx()
     return ctx;
 }
 
-static int env_exists(char *env)
+static BOOL env_exists(char *env)
 {
     char pathname[PATHSIZ + 1];
     sprintf(pathname, "%s/%s", tmanfs.base, env);
     return ISDIR(pathname);
 }
 
-static int id_exists(char *env, char *id)
+static BOOL id_exists(char *env, char *id)
 {
     char pathname[PATHSIZ + 1];
     sprintf(pathname, "%s/%s/%s", tmanfs.base, env, id);
