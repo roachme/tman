@@ -83,7 +83,6 @@ struct unitpgn *hookcat(struct unitpgn *unitpgn, char *env, char *id)
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
     char line[BUFSIZ + 1] = {0};
-    int pidx = 0; // cuz a plugin can output more than one lines
 
     if (config.usehooks == FALSE)
         return unitpgn;

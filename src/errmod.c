@@ -3,7 +3,6 @@
 #include "errmod.h"
 
 static int errcode = TMAN_OK;
-static char errmsg[ERRMSGSIZ + 1];
 
 const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_OK] = "OK",
@@ -41,12 +40,6 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_NODEF_ERR] = "not yet defined error messages",
 };
 
-int emod_reset(void)
-{
-    errcode = TMAN_OK;
-    return 0;
-}
-
 int emod_set(int err)
 {
     errcode = err;
@@ -60,6 +53,6 @@ const char *emod_strerror(void)
     static char errmsg[ERRMSGSIZ + 1];
 
     if (errcode < 0 || errcode >= __TMAN_STATUS_LAST)
-        strncpy(errmsg, "internal unknown error", ERRMSGSIZ);
+        return strncpy(errmsg, "internal unknown error", ERRMSGSIZ);
     return strncpy(errmsg, errcodes[errcode], ERRMSGSIZ);
 }

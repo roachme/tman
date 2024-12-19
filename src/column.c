@@ -32,8 +32,6 @@ struct taskids taskids;      /* tasks per environment */
 /* column_markid: will be needed by tman `list' command */
 struct column column_getmark(char *id)
 {
-    int colsiz = sizeof(coltab) / sizeof(coltab[0]);
-
     for (int i = 0; i < taskids.idx; ++i)
         if (strcmp(id, taskids.ids[i].id) == 0)
             return taskids.ids[i].col;

@@ -109,7 +109,7 @@ static int reset_units(void)
     int i;
 
     for (i = 0; i < NKEYS; ++i)
-        memset(&unitbin[i], 0, sizeof(unitbin) / sizeof(unitbin[0]));
+        memset(&unitbin[i], 0, sizeof(unitbin));
     return 0;
 }
 

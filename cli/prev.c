@@ -31,6 +31,6 @@ int tman_cli_prev(int argc, char **argv, tman_ctx_t *ctx)
     if (showhelp == TRUE)
         return tman_cli_prev_usage();
     if ((status = tman_id_prev(ctx, &opt)) != TMAN_OK)
-        return elog(1, errfmt, tman_strerror());
+        return elog(status, errfmt, tman_strerror());
     return tman_pwd();
 }

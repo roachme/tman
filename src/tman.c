@@ -61,7 +61,7 @@ static int mkfs_vars()
 
 int tman_mkfs(void)
 {
-    int status;
+    //int status;
 
     if (MKDIR(tmanfs.base))
         return elog(1, "could not create directory %s", tmanfs.base);
@@ -216,7 +216,7 @@ int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
     return TMAN_OK;
 }
 
-int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin)
+int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, struct tman_id_set_opt *opt)
 {
     taskid  = id != NULL ? id : column_getcid();
     taskenv = env != NULL ? env : column_getcenv();
@@ -315,12 +315,13 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     char pathname[PATHSIZ + 1];
     taskenv = env ? env : column_getcenv();
 
-    sprintf(pathname, "%s/%s", tmanfs.base, taskenv);
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    else if ((ids = opendir(pathname)) == NULL) {
+
+    sprintf(pathname, "%s/%s", tmanfs.base, taskenv);
+    if ((ids = opendir(pathname)) == NULL) {
         elog(1, "%s: could not read environment", taskenv);
         return emod_set(TMAN_NODEF_ERR);
     }
@@ -368,6 +369,7 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
     taskid = id ? id : column_getcid();
     taskenv = env ? env : column_getcenv();
 
+    status = TMAN_OK;
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
@@ -430,7 +432,10 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 
 int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt)
 {
-    return column_swapenv();
+    if (column_swapenv()) {
+        return emod_set(TMAN_ENOPREVENV);
+    }
+    return TMAN_OK;
 }
 
 int tman_env_set(tman_ctx_t *ctx, char *env, struct tman_env_set_opt *opt)
@@ -466,10 +471,8 @@ const char *tman_strerror(void)
 
 int tman_deinit(struct tman_context *ctx)
 {
-    struct unitpgn *pgn;
-
     while (ctx->units.pgn) {
-        pgn = ctx->units.pgn;
+        struct unitpgn *pgn = ctx->units.pgn;
         ctx->units.pgn = ctx->units.pgn->next;
         unit_delpgn(pgn);
     }
