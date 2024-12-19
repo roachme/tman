@@ -1,14 +1,10 @@
-#include <stdio.h>
-#include <unistd.h>
 #include <string.h>
-
 #include <dirent.h>
 
 #include "env.h"
 #include "cli.h"
-#include "../src/tman.h"
 
-builtin_t envcmds[] = {
+static const builtin_t envcmds[] = {
     { .name = "add",  .func = &_env_add  },
     { .name = "cat",  .func = &_env_cat  }, // under consideration
     { .name = "del",  .func = &_env_del  },
@@ -17,8 +13,6 @@ builtin_t envcmds[] = {
     { .name = "set",  .func = &_env_set  },
     { .name = "use",  .func = &_env_use  },
 };
-
-int envcmd_size = sizeof(envcmds) / sizeof(envcmds[0]);
 
 // TODO: Find a good error message in case option fails.  */
 int _env_add(int argc, char **argv, struct tman_context *ctx)
@@ -144,7 +138,7 @@ int tman_cli_env(int argc, char **argv, struct tman_context *ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 
-    for (int i = 0; i < envcmd_size; ++i)
+    for (int i = 0; i < ARRAY_SIZE(envcmds); ++i)
         if (strncmp(cmd, envcmds[i].name, CMDSIZ) == 0)
             return envcmds[i].func(argc - 1, argv + 1, ctx);
 

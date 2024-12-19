@@ -11,7 +11,6 @@ struct help {
     char desc[1000];
 };
 
-
 int help_usage(const char *cmd);
 int help_lookup(const char *cmd);
 

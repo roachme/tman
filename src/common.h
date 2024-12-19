@@ -15,6 +15,8 @@
 #define DESCSIZ         80
 #define PGNOUTSCSIZ     80
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
 extern struct tmanstruct tmanfs;
 
 #define TRUE            1
