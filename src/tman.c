@@ -133,20 +133,19 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
 {
     // TODO: Add support to pass unit values into unit_add()
     taskid  = id;
+    // TODO: maybe it's better to move units to ctx?
     struct unitbin units[NKEYS] = {0};
     char *cenv = column_getcenv();
     taskenv = env != NULL ? env : cenv;
 
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (!env_exists(taskenv)) {
-        elog(1, "teetet '%s'", taskenv);
+    else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    }
-    else if (!_chkid(taskid))
-        return emod_set(TMAN_EILLEGID);
-    else if (id_exists(taskenv, taskid))
+    else if (id_exists(taskenv, taskid) == TRUE)
         return emod_set(TMAN_EIDEXISTS);
+    else if (_chkid(taskid) == FALSE)
+        return emod_set(TMAN_EILLEGID);
 
     if (imkdir(tmanfs.base, taskenv, taskid) != 0)
         return emod_set(TMAN_ETASKMKDIR);
