@@ -9,19 +9,19 @@ static const builtin_t pgmcmds[] = {
     { .name = "list", .func = &_pgm_list },
 };
 
-int _pgm_chk(int argc, char **argv, struct tman_context *ctx)
+int _pgm_chk(int argc, char **argv, tman_ctx_t *ctx)
 {
     printf("check plugins\n");
     return 1;
 }
 
-int _pgm_list(int argc, char **argv, struct tman_context *ctx)
+int _pgm_list(int argc, char **argv, tman_ctx_t *ctx)
 {
     printf("list installed plugins\n");
     return 1;
 }
 
-int tman_cli_pgm(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_pgm(int argc, char **argv, tman_ctx_t *ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

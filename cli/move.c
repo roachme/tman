@@ -1,7 +1,7 @@
 #include "move.h"
 #include "cli.h"
 
-int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_move(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     char *srcenv = NULL;
@@ -22,7 +22,7 @@ int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
     dstenv = argv[--argc];
     for (int i = optind; i < argc; ++i) {
         char *id = argv[i];
-        tman_id_move(id, dstenv, srcenv);
+        tman_id_move(ctx, id, dstenv, srcenv);
     }
 
     return 1;

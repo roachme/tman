@@ -9,10 +9,11 @@ static int tman_cli_sync_usage(void)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c, *errfmt;
     int showhelp, status;
+    struct tman_id_sync_opt opt;
 
     showhelp = FALSE;
     errfmt =  "cannot sync: %s";
@@ -29,7 +30,7 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
 
     if (showhelp == TRUE)
         return tman_cli_sync_usage();
-    if ((status = tman_id_sync()) != TMAN_OK)
+    if ((status = tman_id_sync(ctx, &opt)) != TMAN_OK)
         return elog(status, errfmt, tman_strerror());
     return tman_pwd();
 }

@@ -11,13 +11,14 @@ static int tman_cli_cat_usage(void)
     return TMAN_OK;
 }
 
-static int pretty_cat(char *env, char *id, char *key)
+static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
 {
     struct unitpgn *tmp;
     struct unitpgn *unitpgn;
     struct units units = { 0 };
+    struct tman_id_cat_opt opt = { };
 
-    if (tman_id_cat(env, id, &units) == NULL) {
+    if (tman_id_cat(ctx, env, id, &units, &opt) == NULL) {
         return 1;
     }
 
@@ -36,7 +37,7 @@ static int pretty_cat(char *env, char *id, char *key)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_cat(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_cat(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int status;
@@ -59,8 +60,8 @@ int tman_cli_cat(int argc, char **argv, struct tman_context *ctx)
         return tman_cli_cat_usage();
 
     for (int i = optind; i < argc; ++i)
-        status = pretty_cat(opt.env, argv[i], opt.key);
+        status = pretty_cat(ctx, opt.env, argv[i], opt.key);
 
     /* if no arguments passed cat current task (if any) */
-    return optind < argc ? status : pretty_cat(opt.env, NULL, opt.key);
+    return optind < argc ? status : pretty_cat(ctx, opt.env, NULL, opt.key);
 }

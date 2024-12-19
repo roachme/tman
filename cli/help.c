@@ -203,7 +203,7 @@ int help_lookup(const char *cmd)
     return elog(1, "cannot access '%s': command not found", cmd);
 }
 
-int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     char *cmd;

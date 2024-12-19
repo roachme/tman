@@ -10,7 +10,7 @@ int tman_cli_del_usage(void)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c, *env, *id, *errfmt;
     struct tman_id_del_opt opt = { };
@@ -40,7 +40,7 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
         return tman_cli_del_usage();
 
     for (i = optind; i < argc; ++i) {
-        if ((status = tman_id_del(env, argv[i], &opt)) != TMAN_OK) {
+        if ((status = tman_id_del(ctx, env, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
             if (force == TRUE)
@@ -49,7 +49,7 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
     }
 
     if (optind == argc) { /* delete current task id */
-        if ((status = tman_id_del(env, id, &opt)) != TMAN_OK) {
+        if ((status = tman_id_del(ctx, env, id, &opt)) != TMAN_OK) {
             if (quiet == FALSE) {
                 // TODO: shows null if no current task ID set.
                 elog(status, errfmt, id, tman_strerror());

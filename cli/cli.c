@@ -24,9 +24,10 @@ static const builtin_t builtins[] = {
 
 int main(int argc, char **argv)
 {
+    tman_ctx_t *ctx;
     int i, status, cmdfound;
-    struct tman_context *ctx;
     const char *cmd = argc > 1 ? argv[1] : "list";
+    struct tman_pgn_opt pgnopt;
 
     ctx = NULL;
     cmdfound = FALSE;
@@ -43,7 +44,7 @@ int main(int argc, char **argv)
         }
     if (cmdfound == FALSE && (status = tman_isplugin(cmd)) == TMAN_OK) {
         cmdfound = TRUE;
-        status = tman_plugin(argc, argv);
+        status = tman_plugin(ctx, argc, argv, &pgnopt);
     }
     if (cmdfound == FALSE) {
         status = 1;

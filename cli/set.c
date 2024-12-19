@@ -4,13 +4,14 @@
 #include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_set(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int idx;
     int atleast_one_key_set;
     char *env = NULL, *id = NULL;
     struct unitbin units[NKEYS] = { 0 };
+    struct tman_id_set_opt opt;
 
     /*
 Options:
@@ -66,10 +67,10 @@ Options:
         return elog(1, "gotta supply one of the options");
 
     if (optind == argc) {
-        tman_id_set(env, id, units);
+        tman_id_set(ctx, env, id, units);
     }
     for (int i = optind; i < argc; ++i) {
-        tman_id_set(env, argv[i], units);
+        tman_id_set(ctx, env, argv[i], units);
     }
     return 1;
 }

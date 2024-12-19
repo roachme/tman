@@ -119,7 +119,7 @@ int tman_pwd()
     return TMAN_OK;
 }
 
-int tman_id_add(char *env, char *id, struct tman_id_add_opt *opt)
+int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
     taskid  = id;
@@ -155,7 +155,7 @@ int tman_id_add(char *env, char *id, struct tman_id_add_opt *opt)
     return TMAN_OK;
 }
 
-int tman_id_del(char *env, char *id, struct tman_id_del_opt *opt)
+int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
     char *cid = column_getcid();
@@ -185,7 +185,7 @@ int tman_id_del(char *env, char *id, struct tman_id_del_opt *opt)
     return TMAN_OK;
 }
 
-int tman_id_prev(void)
+int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 {
     if (column_swapid())
         return emod_set(TMAN_ENOPREVID);
@@ -194,7 +194,7 @@ int tman_id_prev(void)
     return TMAN_OK;
 }
 
-int tman_id_sync(void)
+int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
 {
     char *cid  = column_getcid();
     char *cenv = column_getcenv();
@@ -206,7 +206,7 @@ int tman_id_sync(void)
     return TMAN_OK;
 }
 
-int tman_id_set(char *env, char *id, struct unitbin *unit)
+int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin)
 {
     taskid  = id != NULL ? id : column_getcid();
     taskenv = env != NULL ? env : column_getcenv();
@@ -219,7 +219,7 @@ int tman_id_set(char *env, char *id, struct unitbin *unit)
         return emod_set(TMAN_ENOCURRENV);
     else if (!id_exists(taskenv, taskid))
         return emod_set(TMAN_ENOSUCHID);
-    else if (unit_setbin(taskenv, taskid, unit)) {
+    else if (unit_setbin(taskenv, taskid, unitbin)) {
         elog(1, "%s: could not set unit values", taskid);
         return emod_set(TMAN_NODEF_ERR);
     }
@@ -230,7 +230,7 @@ int tman_id_set(char *env, char *id, struct unitbin *unit)
 }
 
 // TODO: add support to switch to task in another environment.
-int tman_id_use(char *env, char *id, struct tman_id_use_opt *opt)
+int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *opt)
 {
     taskid = id;
     taskenv = env != NULL ? env : column_getcenv();
@@ -256,7 +256,7 @@ int tman_id_use(char *env, char *id, struct tman_id_use_opt *opt)
     return column_addcid(taskid);
 }
 
-int tman_id_move(char *id, char *dst, char *src)
+int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
 {
     char dstid[BUFSIZ + 1] = {0};
 
@@ -298,7 +298,7 @@ int tman_id_move(char *id, char *dst, char *src)
  @param env char * | NULL (then list the current env)
  @return struct item * | NULL (if error happened)
 */
-struct list *tman_id_list(struct list *list, char *env)
+struct list *tman_id_list(tman_ctx_t *ctx, struct list *list, char *env, struct tman_id_list_opt *opt)
 {
     DIR *ids;
     size_t i = 0;
@@ -345,7 +345,7 @@ struct list *tman_id_list(struct list *list, char *env)
     return list;
 }
 
-int tman_id_col(char *env, char *id, char *tag)
+int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt)
 {
     taskid = id ? id : column_getcid();
     taskenv = env ? env : column_getcenv();
@@ -359,7 +359,7 @@ int tman_id_col(char *env, char *id, char *tag)
     return column_moveid(taskid, tag);
 }
 
-struct units *tman_id_cat(char *env, char *id, struct units *units)
+struct units *tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct units *units, struct tman_id_cat_opt *opt)
 {
     taskid = id ? id : column_getcid();
     taskenv = env ? env : column_getcenv();
@@ -393,7 +393,7 @@ struct units *tman_id_cat(char *env, char *id, struct units *units)
     return units;
 }
 
-int tman_env_add(char *env, struct tman_env_add_opt *opt)
+int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 {
     taskenv = env;
 
@@ -410,7 +410,7 @@ int tman_env_add(char *env, struct tman_env_add_opt *opt)
     return column_addcenv(env);
 }
 
-int tman_env_del(char *env, struct tman_env_del_opt *opt)
+int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
 {
     taskenv = env ? env : column_getcenv();
 
@@ -425,17 +425,22 @@ int tman_env_del(char *env, struct tman_env_del_opt *opt)
     return column_delcenv();
 }
 
-int core_env_list()
+int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 {
     return TMAN_OK;
 }
 
-int tman_env_prev()
+int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt)
 {
     return column_swapenv();
 }
 
-int tman_env_use(char *env)
+int tman_env_set(tman_ctx_t *ctx, char *env, struct tman_env_set_opt *opt)
+{
+    return TMAN_OK;
+}
+
+int tman_env_use(tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt)
 {
     taskenv = env;
 
@@ -451,7 +456,7 @@ int tman_isplugin(const char *pgn)
     return isplugin(pgn);
 }
 
-int tman_plugin(int argc, char **argv)
+int tman_plugin(tman_ctx_t *ctx, int argc, char **argv, struct tman_pgn_opt *opt)
 {
     return plugin(argc, argv);
 }
