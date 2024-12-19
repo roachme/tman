@@ -29,6 +29,7 @@ static tman_ctx_t *mkctx()
     if ((ctx = malloc(sizeof(tman_ctx_t))) == NULL)
         return NULL;
 
+    memset(ctx, 0, sizeof(tman_ctx_t));
     return ctx;
 }
 
