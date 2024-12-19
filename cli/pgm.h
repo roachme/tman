@@ -1,7 +1,9 @@
 #ifndef PGM_H
 #define PGM_H
 
-int _pgm_chk(int argc, char **argv);
-int _pgm_list(int argc, char **argv);
+#include "cli.h"
+
+int _pgm_chk(int argc, char **argv, struct tman_context *ctx);
+int _pgm_list(int argc, char **argv, struct tman_context *ctx);
 
 #endif

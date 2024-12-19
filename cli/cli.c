@@ -33,7 +33,7 @@ builtin_t builtins[] = {
 
 int builtin_size = sizeof(builtins) / sizeof(builtins[0]);
 
-int tman_cli_help(int argc, char **argv)
+int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     char *cmd;
@@ -50,7 +50,7 @@ int tman_cli_help(int argc, char **argv)
     return help_lookup(cmd);
 }
 
-int tman_cli_ver(int argc, char **argv)
+int tman_cli_ver(int argc, char **argv, struct tman_context *ctx)
 {
     printf("%s: %s\n", PROGRAM, VERSION);
     return TMAN_OK;
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     for (i = 0; i < builtin_size; ++i)
         if (strcmp(cmd, builtins[i].name) == 0) {
             isbin = TRUE;
-            status = builtins[i].func(argc - 1, argv + 1);
+            status = builtins[i].func(argc - 1, argv + 1, ctx);
             break;
         }
 

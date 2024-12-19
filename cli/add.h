@@ -12,6 +12,4 @@ enum tman_cli_add_errno {
     TMAN_ADD_IDREQ = 21,     /* task ID required */
 };
 
-int tman_cli_add(int argc, char **argv);
-
 #endif

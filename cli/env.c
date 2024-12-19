@@ -21,7 +21,7 @@ builtin_t envcmds[] = {
 int envcmd_size = sizeof(envcmds) / sizeof(envcmds[0]);
 
 // TODO: Find a good error message in case option fails.  */
-int _env_add(int argc, char **argv)
+int _env_add(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int o_strict = 0;
@@ -49,12 +49,12 @@ int _env_add(int argc, char **argv)
 }
 
 // roach: maybe it'll be useful
-int _env_cat(int argc, char **argv)
+int _env_cat(int argc, char **argv, struct tman_context *ctx)
 {
     return 0;
 }
 
-int _env_del(int argc, char **argv)
+int _env_del(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int o_strict = 0;
@@ -89,7 +89,7 @@ int _env_del(int argc, char **argv)
     return status == TMAN_OK && showpath == TRUE ? tman_pwd() : 1;
 }
 
-int _env_list(int argc, char **argv)
+int _env_list(int argc, char **argv, struct tman_context *ctx)
 {
     char mark = '+';
     struct dirent *ent;
@@ -117,7 +117,7 @@ int _env_list(int argc, char **argv)
     return 1;
 }
 
-int _env_prev(int argc, char **argv)
+int _env_prev(int argc, char **argv, struct tman_context *ctx)
 {
     if (tman_env_prev()) {
         elog(1, "bin.env: env_prev failed");
@@ -126,12 +126,12 @@ int _env_prev(int argc, char **argv)
     return tman_pwd();
 }
 
-int _env_set(int argc, char **argv)
+int _env_set(int argc, char **argv, struct tman_context *ctx)
 {
     return 0;
 }
 
-int _env_use(int argc, char **argv)
+int _env_use(int argc, char **argv, struct tman_context *ctx)
 {
     char *env = argc > 1 ? argv[1] : NULL;
 
@@ -140,13 +140,13 @@ int _env_use(int argc, char **argv)
     return tman_pwd();
 }
 
-int tman_cli_env(int argc, char **argv)
+int tman_cli_env(int argc, char **argv, struct tman_context *ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 
     for (int i = 0; i < envcmd_size; ++i)
         if (strncmp(cmd, envcmds[i].name, CMDSIZ) == 0)
-            return envcmds[i].func(argc - 1, argv + 1);
+            return envcmds[i].func(argc - 1, argv + 1, ctx);
 
     return elog(1, "no such env command '%s'", cmd);
 }

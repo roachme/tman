@@ -5,7 +5,7 @@
 #include "../src/tman.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_col(int argc, char **argv)
+int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
 {
     char *env, *col;
     int i, c, status, showhelp, showlist;

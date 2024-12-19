@@ -11,6 +11,4 @@ struct tman_cli_del_opt {
     int help;       /* Show command usage */
 };
 
-int tman_cli_del(int argc, char **argv);
-
 #endif
