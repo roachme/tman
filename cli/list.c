@@ -21,20 +21,17 @@ static int compare(const void *aa, const void *bb)
 
 static int pretty_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 {
-    struct list list;
-
-    memset(&list, 0, sizeof(list));
-    if (tman_id_list(ctx, &list, env, opt) == NULL) {
+    if (tman_id_list(ctx, env, opt) != TMAN_OK) {
         elog(1, "could not list task IDs: %s", tman_strerror());
         return 1;
     }
 
     // sort list according to mark level
     // code goes here..
-    qsort((void*)list.ilist, list.num, sizeof(list.ilist[0]), compare);
+    qsort((void*)ctx->list.ilist, ctx->list.num, sizeof(ctx->list.ilist[0]), compare);
 
-    for (int i = 0; i < list.num; ++i) {
-        struct ilist item = list.ilist[i];
+    for (int i = 0; i < ctx->list.num; ++i) {
+        struct ilist item = ctx->list.ilist[i];
         printf("%c %-10s [%s] %s\n", item.col.mark, item.id, item.pgn, item.desc);
     }
 

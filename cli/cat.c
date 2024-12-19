@@ -13,7 +13,6 @@ static int tman_cli_cat_usage(void)
 
 static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
 {
-    struct unitpgn *tmp;
     struct unitpgn *unitpgn;
     struct units units = { 0 };
     struct tman_id_cat_opt opt = { };
@@ -29,9 +28,7 @@ static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
     unitpgn = ctx->units.pgn;
     while (unitpgn != NULL) {
         printf("%-7s : %s\n", unitpgn->node.key, unitpgn->node.val);
-        tmp = unitpgn;
         unitpgn = unitpgn->next;
-        unit_delpgn(tmp);
     }
     return TMAN_OK;
 }

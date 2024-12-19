@@ -127,12 +127,11 @@ int tman_isplugin(const char *pgn);
 int tman_plugin(tman_ctx_t *ctx, int argc, char **argv, struct tman_pgn_opt *opt);
 
 /* Task ID functions.  */
-// TODO: for tman_id_list() and tman_id_cat() use ctx
 int tman_id_add (tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *opt);
 int tman_id_cat (tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *opt);
 int tman_id_col (tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt);
 int tman_id_del (tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *opt);
-struct list *tman_id_list(tman_ctx_t *ctx, struct list *list, char *env, struct tman_id_list_opt *opt);
+int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt);
 int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src);
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt);
 int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin);
