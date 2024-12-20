@@ -46,7 +46,7 @@ int main(int argc, char **argv)
             status = builtins[i].func(argc - 1, argv + 1, ctx);
             goto out;
         }
-    if (cmdfound == FALSE && (status = tman_isplugin(cmd)) == TMAN_OK) {
+    if (cmdfound == FALSE && (status = tman_isplugin(cmd)) == TRUE) {
         cmdfound = TRUE;
         status = tman_plugin(ctx, argc, argv, &pgnopt);
     }
