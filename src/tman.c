@@ -151,16 +151,16 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_ETASKMKDIR);
     else if (unit_addbin(taskenv, taskid, units) != 0)
         return emod_set(TMAN_ETASKMKUNIT);
-    else if (hookact("add", taskenv, taskid))
-        return emod_set(TMAN_EHOOK);
     else if (column_markid(taskid)) {
         elog(1, "column_mark: failed");
         return emod_set(TMAN_NODEF_ERR);
     }
-    if (opt->noswitch == FALSE && strcmp(taskenv, cenv) == 0 && column_addcid(id) != 0) {
+    else if (opt->noswitch == FALSE && strcmp(taskenv, cenv) == 0 && column_addcid(id) != 0) {
         elog(1, "column_addcid: failed");
         return emod_set(TMAN_NODEF_ERR);
     }
+    else if (hookact("add", taskenv, taskid))
+        return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
 
