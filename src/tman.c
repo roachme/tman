@@ -8,6 +8,8 @@
 
 #include "dir.h"
 #include "tman.h"
+#include "env.h"
+#include "task.h"
 #include "unit.h"
 #include "hook.h"
 #include "unit.h"
@@ -124,8 +126,14 @@ int tman_setup(int setuplvl)
 
 int tman_pwd()
 {
-    char *cid = column_getcid();
-    printf("PWD: %s/%s/%s\n", tmanfs.base, column_getcenv(), cid ? cid : "");
+    char *cid, *cenv;
+
+    if ((cenv = env_getcurr()) == NULL) {
+        elog(1, "internal error: no current env set");
+        return 1;
+    }
+    cid = task_getcurr(cenv);
+    printf("PWD: %s/%s/%s\n", tmanfs.base, cenv, cid ? cid : "");
     return TMAN_OK;
 }
 
@@ -135,7 +143,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
     taskid  = id;
     // TODO: maybe it's better to move units to ctx?
     struct unitbin units[NKEYS] = {0};
-    char *cenv = column_getcenv();
+    char *cenv = env_getcurr();
     taskenv = env != NULL ? env : cenv;
 
     if (taskenv == NULL)
@@ -151,14 +159,10 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_ETASKMKDIR);
     else if (unit_addbin(taskenv, taskid, units) != 0)
         return emod_set(TMAN_ETASKMKUNIT);
-    else if (column_markid(taskid)) {
-        elog(1, "column_mark: failed");
-        return emod_set(TMAN_NODEF_ERR);
-    }
-    else if (opt->noswitch == FALSE && strcmp(taskenv, cenv) == 0 && column_addcid(id) != 0) {
-        elog(1, "column_addcid: failed");
-        return emod_set(TMAN_NODEF_ERR);
-    }
+    // TODO: add support to not mark task as current
+    // depending on option.
+    else if (task_add(taskenv, taskid, MARKCURR))
+        return emod_set(TMAN_EADDID);
     else if (hookact("add", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
@@ -183,38 +187,39 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
 
     if (hookact("del", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
+    else if (task_del(taskenv, taskid))
+        return emod_set(TMAN_EDELID);
     else if (unit_delbin(taskenv, taskid))
         return emod_set(TMAN_ETASKRMUNIT);
     else if (irmdir(tmanfs.base, taskenv, taskid))
         return emod_set(TMAN_ETASKRMDIR);
-    else if (column_delspec(taskid)) {
-        elog(1, "%s: could not update special task IDs", taskid);
-        return emod_set(TMAN_NODEF_ERR);
-    }
     return TMAN_OK;
 }
 
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 {
-    if (column_getcid() == NULL)
+    char *cenv;
+
+    if ((cenv = env_getcurr()) == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    else if (task_getcurr(cenv) == NULL)
         return emod_set(TMAN_ENOCURRID);
-    else if (column_getcid() == NULL)
+    else if (task_getprev(cenv) == NULL)
         return emod_set(TMAN_ENOPREVID);
-    else if (column_swapid())
+    else if (task_swap(cenv))
         return emod_set(TMAN_ESWAPIDS);
-    else if (hookact("prev", column_getcenv(), column_getcid()))
+    else if (hookact("prev", env_getcurr(), task_getcurr(cenv)))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
 
 int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
 {
-    char *cid  = column_getcid();
-    char *cenv = column_getcenv();
+    char *cid, *cenv;
 
-    if (cenv == NULL)
+    if ((cenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (cid == NULL)
+    else if ((cid = task_getcurr(cenv)) == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (hookact("sync", cenv, cid))
         return emod_set(TMAN_EHOOK);
@@ -248,7 +253,7 @@ int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, 
 int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *opt)
 {
     taskid = id;
-    taskenv = env != NULL ? env : column_getcenv();
+    taskenv = env != NULL ? env : env_getcurr();
 
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
@@ -260,7 +265,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
         return emod_set(TMAN_EREQRID);
     else if (id_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_EMISSID);
-    else if (taskenv != column_getcenv()) {
+    else if (taskenv != env_getcurr()) {
         fprintf(stderr, "trynna switch to task in another env\n");
         fprintf(stderr, "under development\n");
         return emod_set(TMAN_NODEF_ERR);
@@ -268,7 +273,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
 
     // TODO: it can't switch to task in non-current env.
     // Cuz it gotta switch env first.
-    return column_addcid(taskid);
+    return task_move(taskenv, taskid, MARKCURR);
 }
 
 int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
@@ -356,16 +361,19 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 
 int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt)
 {
-    taskid = id ? id : column_getcid();
-    taskenv = env ? env : column_getcenv();
+    char *cenv = env_getcurr();
+    taskenv = env ? env : cenv;
+    taskid = id ? id : task_getcurr(cenv);
 
+    // TODO: does not change CWD if curr task was moved.
+    // The problem in CLI command `col'.
     if (taskenv == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (taskid == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (id_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
-    return column_moveid(taskid, tag);
+    return task_move(taskenv, taskid, tag);
 }
 
 int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *opt)

@@ -24,6 +24,8 @@ enum tman_err_enum {
 
     TMAN_EREQRID,
     TMAN_EMISSID,
+    TMAN_EADDID,
+    TMAN_EDELID,
     TMAN_EILLEGID,
     TMAN_ENOCURRID,
     TMAN_ENOPREVID,
@@ -35,6 +37,7 @@ enum tman_err_enum {
     TMAN_ETASKRMDIR,
     TMAN_ETASKMKUNIT,
     TMAN_ETASKRMUNIT,
+    TMAN_ECOLNEXIST,
 
     TMAN_NODEF_ERR,
 

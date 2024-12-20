@@ -25,6 +25,8 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
 
     [TMAN_EREQRID] =     "task ID required",
     [TMAN_EMISSID] =     "task ID does not exist",
+    [TMAN_EADDID] =      "could not add task to column",
+    [TMAN_EDELID] =      "could not delete task to column",
     [TMAN_EILLEGID] =    "illegal task ID",
     [TMAN_ENOCURRID] =   "no current task ID",
     [TMAN_ENOPREVID] =   "no previous task ID",
@@ -36,6 +38,8 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_ETASKRMDIR] =  "could not delete task directory",
     [TMAN_ETASKMKUNIT] = "could not create task unit",
     [TMAN_ETASKRMUNIT] = "could not delete task unit",
+
+    [TMAN_ECOLNEXIST] =   "column does not exist",
 
     /* Not yet defined error messages.  */
     [TMAN_NODEF_ERR] = "not yet defined error messages",

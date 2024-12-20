@@ -8,6 +8,8 @@
 #include <dirent.h>
 #include <string.h>
 
+#include "common.h"
+#include "task.h"
 #include "tman.h"
 #include "column.h"
 
@@ -34,6 +36,16 @@ static char *genpath(char *env, char *id)
 {
     sprintf(colpath, "%s/%s/%s/.tman/col", tmanfs.base, env, id);
     return colpath;
+}
+
+int column_exists(char *col)
+{
+    int i;
+
+    for (i = 0; i < ARRAY_SIZE(coltab); ++i)
+        if (strncmp(col, coltab[i].tag, COLSIZ) == 0)
+            return TRUE;
+    return FALSE;
 }
 
 /* column_markid: will be needed by tman `list' command */
