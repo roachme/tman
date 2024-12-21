@@ -34,13 +34,6 @@ static int ISDIR(char *fname)
 }
 #endif
 
-static int id_exists(char *env, char *id)
-{
-    char pathname[PATHSIZ + 1];
-    sprintf(pathname, "%s/%s/%s", base, env, id);
-    return ISDIR(pathname);
-}
-
 static char *genpath(char *env)
 {
     sprintf(pathname, "%s/%s", base, env);
@@ -199,11 +192,18 @@ static int load_toggles(char *env)
     return TRUE;
 }
 
+int task_exists(char *env, char *id)
+{
+    char pathname[PATHSIZ + 1];
+    sprintf(pathname, "%s/%s/%s", tmanfs.base, env, id);
+    return ISDIR(pathname);
+}
+
 int task_add(char *env, char *id, char *col)
 {
     char *newcol = col != NULL ? col : MARKCURR;
 
-    if (id_exists(env, id) == FALSE)
+    if (task_exists(env, id) == FALSE)
         return 1;
     else if (column_exists(col) == FALSE) {
         fprintf(stderr, "column NOT exist: %s\n", col);
@@ -218,7 +218,7 @@ int task_add(char *env, char *id, char *col)
 
 int task_del(char *env, char *id)
 {
-    if (id_exists(env, id) == FALSE)
+    if (task_exists(env, id) == FALSE)
         return 1;
     else if (load_toggles(env) == FALSE)
         return 1;
@@ -232,7 +232,7 @@ int task_move(char *env, char *id, char *col)
 {
     fprintf(stderr, "task_move: start\n");
 
-    if (id_exists(env, id) == FALSE) {
+    if (task_exists(env, id) == FALSE) {
         fprintf(stderr, "task does NOT exist: %s\n", id);
         return 1;
     }

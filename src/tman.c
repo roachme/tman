@@ -42,13 +42,6 @@ static BOOL env_exists(char *env)
     return ISDIR(pathname);
 }
 
-static BOOL id_exists(char *env, char *id)
-{
-    char pathname[PATHSIZ + 1];
-    sprintf(pathname, "%s/%s/%s", tmanfs.base, env, id);
-    return ISDIR(pathname);
-}
-
 static int mkfs_vars()
 {
     // TODO: Add a variable for task db as well.
@@ -150,7 +143,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    else if (id_exists(taskenv, taskid) == TRUE)
+    else if (task_exists(taskenv, taskid) == TRUE)
         return emod_set(TMAN_EIDEXISTS);
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
@@ -182,7 +175,7 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
         return emod_set(TMAN_ENOSUCHENV);
     else if (taskid == NULL)
         return emod_set(TMAN_ENOCURRID);
-    else if (id_exists(taskenv, taskid) == FALSE)
+    else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
 
     if (hookact("del", taskenv, taskid))
@@ -237,7 +230,7 @@ int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, 
         return emod_set(TMAN_ENOSUCHENV);
     else if (taskid == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (id_exists(taskenv, taskid) == FALSE)
+    else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
     else if (unit_setbin(taskenv, taskid, unitbin)) {
         elog(1, "%s: could not set unit values", taskid);
@@ -263,7 +256,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
         return emod_set(TMAN_EILLEGENV);
     else if (taskid == NULL)
         return emod_set(TMAN_EREQRID);
-    else if (id_exists(taskenv, taskid) == FALSE)
+    else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_EMISSID);
     else if (taskenv != env_getcurr()) {
         fprintf(stderr, "trynna switch to task in another env\n");
@@ -294,9 +287,9 @@ int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
         elog(1, "no such source env");
         return emod_set(TMAN_NODEF_ERR);
     }
-    else if (id_exists(taskenv, taskid) == FALSE)
+    else if (task_exists(taskenv, taskid) == FALSE)
         emod_set(TMAN_ENOSUCHID);
-    else if (id_exists(dst, taskid)) {
+    else if (task_exists(dst, taskid)) {
         elog(1, "cannot move '%s': task id exists in env '%s'", taskid, dst);
         return emod_set(TMAN_NODEF_ERR);
     }
@@ -371,7 +364,7 @@ int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_
         return emod_set(TMAN_ENOCURRENV);
     else if (taskid == NULL)
         return emod_set(TMAN_ENOCURRID);
-    else if (id_exists(taskenv, taskid) == FALSE)
+    else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
     return task_move(taskenv, taskid, tag);
 }
@@ -389,7 +382,7 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
         return emod_set(TMAN_ENOSUCHENV);
     else if (taskid == NULL)
         return emod_set(TMAN_ENOCURRID);
-    else if (id_exists(taskenv, taskid) == FALSE)
+    else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
 
     // TODO: don't wanna lose plugin units if builtin ones
