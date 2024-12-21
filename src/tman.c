@@ -35,13 +35,6 @@ static tman_ctx_t *mkctx()
     return ctx;
 }
 
-static BOOL env_exists(char *env)
-{
-    char pathname[PATHSIZ + 1];
-    sprintf(pathname, "%s/%s", tmanfs.base, env);
-    return ISDIR(pathname);
-}
-
 static int mkfs_vars()
 {
     // TODO: Add a variable for task db as well.

@@ -118,6 +118,7 @@ static int _movetask(char *env, char *id, char *col)
 // TODO: delete `char *id' from API
 static int _delete_curr(char *env)
 {
+    fprintf(stderr, "_delete_curr: start\n");
     save_toggle(env, curr, MARKBLOG);
     if (prev[0] != '\0')
         save_toggle(env, prev, MARKCURR);
@@ -127,6 +128,7 @@ static int _delete_curr(char *env)
 // TODO: delete `char *id' from API
 static int _delete_prev(char *env)
 {
+    fprintf(stderr, "_delete_prev: start\n");
     save_toggle(env, prev, MARKBLOG);
     return reset_toggles();
 }
@@ -223,9 +225,14 @@ int task_del(char *env, char *id)
     else if (load_toggles(env) == FALSE)
         return 1;
 
-    if (strncmp(id, curr, IDSIZ) == 0)
+    if (strncmp(id, curr, IDSIZ) == 0) {
+        fprintf(stderr, "_delete_curr: id: %s\n", id);
         return _delete_curr(env);
-    return _delete_prev(env);
+    } else if (strncmp(id, prev, IDSIZ) == 0) {
+        return _delete_prev(env);
+    }
+    // TODO: not a special task ID, do nothing
+    return 0;
 }
 
 int task_move(char *env, char *id, char *col)

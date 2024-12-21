@@ -46,6 +46,13 @@ int env_init(char *fstate)
     return load();
 }
 
+int env_exists(char *env)
+{
+    char pathname[PATHSIZ + 1];
+    sprintf(pathname, "%s/%s", tmanfs.base, env);
+    return ISDIR(pathname);
+}
+
 int env_reset(void)
 {
     for (int i = 0; i < NENV; ++i)
