@@ -14,7 +14,6 @@
 #include "column.h"
 
 static char *base = tmanfs.base;
-static char pathname[PATHSIZ + 1];
 static char curr[IDSIZ + 1], prev[IDSIZ + 1];
 
 static int load_toggles(char *env)
@@ -142,9 +141,7 @@ static int _delete_prev(char *env)
 
 int task_exists(char *env, char *id)
 {
-    char pathname[PATHSIZ + 1];
-    sprintf(pathname, "%s/%s/%s", tmanfs.base, env, id);
-    return ISDIR(pathname);
+    return ISDIR(genpath_full(env, id));
 }
 
 int task_add(char *env, char *id, char *col)
