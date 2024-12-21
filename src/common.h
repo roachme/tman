@@ -31,6 +31,11 @@ int _chkid(char *id);
 int _chkenv(char *env);
 char *formpath(char *dst, char *fmt, ...);
 
+char *genpath_env(char *env);
+char *genpath_col(char *env, char *id);
+char *genpath_full(char *env, char *id);
+char *genpath_unit(char *env, char *id);
+
 int elog(int status, const char *fmt, ...);
 int wlog(char *fmt, ...);
 int ilog(char *fmt, ...);
