@@ -14,7 +14,6 @@
 #include "hook.h"
 #include "unit.h"
 #include "common.h"
-#include "column.h"
 #include "osdep.h"
 #include "errmod.h"
 #include "config.h"
@@ -100,12 +99,16 @@ int tman_setup(int setuplvl)
         if (ISFILE(tmanfs.finit) != TRUE) {
             status = emod_set(TMAN_EINIT);
         }
+        else if (env_init(tmanfs.fstate) != 0)
+            return elog(1, "err: column_envinit");
         // roach: is it a good idea to init module column in general
         // and here?
+        /*
         else if (column_init()) {
             elog(1, "column_init: error: could not init");
             status = emod_set(TMAN_EINIT);
         }
+        */
     }
     return status;
 }
@@ -126,13 +129,13 @@ int tman_pwd()
 int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *opt)
 {
     // TODO: Add support to pass unit values into unit_add()
+    taskenv = env;
     taskid  = id;
     // TODO: maybe it's better to move units to ctx?
     struct unitbin units[NKEYS] = {0};
     char *cenv = env_getcurr();
-    taskenv = env != NULL ? env : cenv;
 
-    if (taskenv == NULL)
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
@@ -157,16 +160,14 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
 int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *opt)
 {
     // FIXME: causes error when delete current task in previous env
-    char *cid = column_getcid();
-    char *pid = column_getpid();
-    taskid  = id != NULL ? id : cid;
-    taskenv = env != NULL ? env : column_getcenv();
+    taskenv = env;
+    taskid  = id;
 
-    if (taskenv == NULL)
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    else if (taskid == NULL)
+    else if (taskid == NULL && (taskid = task_getcurr(taskenv)) == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
@@ -214,14 +215,14 @@ int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
 
 int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, struct tman_id_set_opt *opt)
 {
-    taskid  = id != NULL ? id : column_getcid();
-    taskenv = env != NULL ? env : column_getcenv();
+    taskid  = id;
+    taskenv = env;
 
-    if (taskenv == NULL)
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    else if (taskid == NULL)
+    else if (taskid == NULL && (taskid = task_getcurr(taskenv)) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
@@ -264,6 +265,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
 
 int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
 {
+    /*
     char dstid[BUFSIZ + 1] = {0};
 
     taskid = id;
@@ -296,6 +298,8 @@ int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
     else if (strcmp(column_getpid(), taskid) == 0)
         return !column_swapid() && !column_delcid();
     return TMAN_OK;
+    */
+    return 0;
 }
 
 /*
@@ -309,9 +313,9 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     struct dirent *ent;
     struct unitbin bunit[NKEYS];
     char pathname[PATHSIZ + 1];
-    taskenv = env ? env : column_getcenv();
+    taskenv = env;
 
-    if (taskenv == NULL)
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
@@ -337,7 +341,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
         }
         strcpy(ctx->list.ilist[i].id, ent->d_name);
         strcpy(ctx->list.ilist[i].desc, bunit[4].val);
-        ctx->list.ilist[i].col = column_getmark(ctx->list.ilist[i].id);
+        ctx->list.ilist[i].col = column_getmark(taskenv, ctx->list.ilist[i].id);
         ++i;
     }
     ctx->list.num = i;
@@ -365,15 +369,15 @@ int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_
 int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *opt)
 {
     int status;
-    taskid = id ? id : column_getcid();
-    taskenv = env ? env : column_getcenv();
+    taskid = id;
+    taskenv = env;
 
     status = TMAN_OK;
-    if (taskenv == NULL)
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    else if (taskid == NULL)
+    else if (taskid == NULL && (taskid = task_getcurr(taskenv)) == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
@@ -406,14 +410,14 @@ int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
         elog(1, "%s: could not create env directory", taskenv);
         return emod_set(TMAN_NODEF_ERR);
     }
-    return column_addcenv(env);
+    return env_addcenv(env);
 }
 
 int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
 {
-    taskenv = env ? env : column_getcenv();
+    taskenv = env;
 
-    if (taskenv == NULL)
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
@@ -421,7 +425,7 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
         elog(1, "%s: could not delete env directory", taskenv);
         return emod_set(TMAN_NODEF_ERR);
     }
-    return column_delcenv();
+    return env_delcenv();
 }
 
 int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
@@ -431,11 +435,11 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 
 int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt)
 {
-    if (column_getcenv() == NULL)
+    if (env_getcurr() == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    if (column_getpenv() == NULL)
+    if (env_getprev() == NULL)
         return emod_set(TMAN_ENOPREVENV);
-    if (column_swapenv())
+    if (env_swapenvs())
         return emod_set(TMAN_ENOPREVENV);
     return TMAN_OK;
 }
@@ -453,7 +457,7 @@ int tman_env_use(tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt)
         return emod_set(TMAN_EREQRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    return column_addcenv(taskenv);
+    return env_addcenv(taskenv);
 }
 
 int tman_isplugin(const char *pgn)
