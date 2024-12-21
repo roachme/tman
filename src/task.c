@@ -1,3 +1,8 @@
+/*
+    Module to move task from column to column.
+    It also supports toggles, i.e. current and previous task IDs.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,55 +12,23 @@
 #include "task.h"
 #include "column.h"
 
-#define COLSIZ      10
-
-#define TRUE        1
-#define FALSE       0
-
-#ifdef MYTEST
-static char *base = "/home/roach/trash/tman";
-#endif
 static char *base = tmanfs.base;
-
 static char coltag[COLSIZ + 1];
 static char pathname[PATHSIZ + 1];
 static char curr[IDSIZ + 1], prev[IDSIZ + 1];
 
-
 static int load_toggles(char *env);
 static int save_toggle(char *env, char *id, char *col);
-
-#ifdef MYTEST
-static int ISDIR(char *fname)
-{
-    char cmd[BUFSIZ + 1];
-    sprintf(cmd, "test -d %s", fname);
-    return system(cmd) == EXIT_SUCCESS;
-}
-#endif
-
-static char *genpath(char *env)
-{
-    sprintf(pathname, "%s/%s", base, env);
-    return pathname;
-}
-
-static char *col_genpath(char *env, char *id)
-{
-    sprintf(pathname, "%s/%s/%s/.tman/col", base, env, id);
-    return pathname;
-}
 
 static int _fill_col_file(char *env, char *id, char *col)
 {
     FILE *fp;
 
-    if ((fp = fopen(col_genpath(env, id), "w")) == NULL)
+    if ((fp = fopen(genpath_col(env, id), "w")) == NULL)
         return 1;
     fprintf(fp, "col : %s\n", MARKBLOG);
     return fclose(fp);
 }
-
 
 static int reset_toggles()
 {
@@ -137,7 +110,7 @@ static int save_toggle(char *env, char *id, char *col)
 {
     FILE *fp;
 
-    if ((fp = fopen(col_genpath(env, id), "w")) == NULL)
+    if ((fp = fopen(genpath_col(env, id), "w")) == NULL)
         return FALSE;
 
     fprintf(fp, "col : %s\n", col);
@@ -150,7 +123,7 @@ static char *getcol(char *env, char *id)
     char line[BUFSIZ + 1];
     char *tok;
 
-    if ((fp = fopen(col_genpath(env, id), "r")) == NULL) {
+    if ((fp = fopen(genpath_col(env, id), "r")) == NULL) {
         fprintf(stderr, "could not open col file\n");
         return NULL;
     }
@@ -171,8 +144,8 @@ static int load_toggles(char *env)
     char *id, *col;
     struct dirent *ent;
 
-    if ((dir = opendir(genpath(env))) == NULL) {
-        fprintf(stderr, "could not open env dir: %s\n", genpath(env));
+    if ((dir = opendir(genpath_env(env))) == NULL) {
+        fprintf(stderr, "could not open env dir: %s\n", genpath_env(env));
         return FALSE;
     }
 
@@ -237,8 +210,6 @@ int task_del(char *env, char *id)
 
 int task_move(char *env, char *id, char *col)
 {
-    fprintf(stderr, "task_move: start\n");
-
     if (task_exists(env, id) == FALSE) {
         fprintf(stderr, "task does NOT exist: %s\n", id);
         return 1;
@@ -266,37 +237,29 @@ int task_move(char *env, char *id, char *col)
     }
 }
 
-// roachme: maybe it's better to malloc curr?
 char *task_getcurr(char *env)
 {
     if (load_toggles(env) == FALSE)
         return NULL;
-    else if (curr[0] == '\0')
-        return NULL;
-    return curr;
+    return curr[0] != '\0' ? curr : NULL;
 }
 
 char *task_getprev(char *env)
 {
     if (load_toggles(env) == FALSE)
         return NULL;
-    else if (prev[0] == '\0')
-        return NULL;
-    return prev;
+    return prev[0] != '\0' ? prev : NULL;
 }
 
 int task_swap(char *env)
 {
-    if (load_toggles(env) == FALSE) {
-        fprintf(stderr, "task_swap: could not load toggles\n");
+    if (load_toggles(env) == FALSE)
         return 1;
-    }
-    else if (curr[0] == '\0' || prev[0] == '\0') {
-        fprintf(stderr, "task_swap: curr or prev toggles not found\n");
+    else if (curr[0] == '\0' || prev[0] == '\0')
         return 1;
-    }
 
     save_toggle(env, curr, MARKPREV);
     save_toggle(env, prev, MARKCURR);
+    reset_toggles();
     return 0;
 }
