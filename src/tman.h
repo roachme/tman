@@ -133,6 +133,8 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt);
 int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, struct tman_id_set_opt *opt);
 int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt);
 int tman_id_use (tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *opt);
+char *tman_id_getcurr(tman_ctx_t *ctx, char *env);
+char *tman_id_getprev(tman_ctx_t *ctx, char *env);
 
 /* Task environment functions.  */
 int tman_env_add (tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt);
@@ -141,6 +143,8 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt);
 int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt);
 int tman_env_set (tman_ctx_t *ctx, char *env, struct tman_env_set_opt *opt);
 int tman_env_use (tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt);
+char *tman_env_getcurr(tman_ctx_t *ctx);
+char *tman_env_getprev(tman_ctx_t *ctx);
 
 /* Task plugin functions.  */
 int tman_isplugin(const char *pgn);

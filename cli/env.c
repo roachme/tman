@@ -52,8 +52,7 @@ int _env_del(int argc, char **argv, tman_ctx_t *ctx)
     char c;
     int force, status;
     int showpath = FALSE;
-    char *old_cenv = column_getcenv();
-    //char *old_penv = column_getpenv();
+    char *old_cenv = tman_env_getcurr(NULL);
     struct tman_env_del_opt opt;
 
     force = FALSE;
@@ -74,7 +73,7 @@ int _env_del(int argc, char **argv, tman_ctx_t *ctx)
         status = tman_env_del(ctx, NULL, &opt);
 
     // TODO: update current directory if current env got deleted.
-    if (strcpy(old_cenv, column_getcenv())) {
+    if (strcpy(old_cenv, tman_env_getcurr(NULL))) {
         showpath = TRUE;
     }
 
@@ -85,8 +84,8 @@ int _env_list(int argc, char **argv, tman_ctx_t *ctx)
 {
     char mark = '+';
     struct dirent *ent;
-    char *cenv = column_getcenv();
-    char *penv = column_getpenv();
+    char *cenv = tman_env_getcurr(NULL);
+    char *penv = tman_env_getprev(NULL);
     DIR *edir = opendir(tmanfs.base);
 
     if (!edir)
@@ -97,9 +96,9 @@ int _env_list(int argc, char **argv, tman_ctx_t *ctx)
             continue;
 
         // TODO: simplify this logic
-        if (cenv != NULL && strcmp(column_getcenv(), ent->d_name) == 0)
+        if (cenv != NULL && strcmp(tman_env_getcurr(NULL), ent->d_name) == 0)
             mark = '*';
-        else if (penv != NULL && strcmp(column_getpenv(), ent->d_name) == 0)
+        else if (penv != NULL && strcmp(tman_env_getprev(NULL), ent->d_name) == 0)
             mark = '^';
         else
             mark = '+';
