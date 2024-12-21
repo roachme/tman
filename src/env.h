@@ -15,5 +15,6 @@ int env_delcenv(void);
 int env_delpenv(void);
 int env_swapenvs(void);
 int env_addcenv(char *env);
+int env_exists(char *env);
 
 #endif
