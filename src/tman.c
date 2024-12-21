@@ -178,12 +178,12 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
 
     if (hookact("del", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
-    else if (task_del(taskenv, taskid))
-        return emod_set(TMAN_EDELID);
     else if (unit_delbin(taskenv, taskid))
         return emod_set(TMAN_ETASKRMUNIT);
     else if (irmdir(tmanfs.base, taskenv, taskid))
         return emod_set(TMAN_ETASKRMDIR);
+    else if (task_del(taskenv, taskid))
+        return emod_set(TMAN_EDELID);
     return TMAN_OK;
 }
 
