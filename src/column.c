@@ -13,6 +13,8 @@
 #include "tman.h"
 #include "column.h"
 
+char col[COLSIZ + 1];
+
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 0, .mark = '?', .tag = "uknw" },
     { .prio = 1, .mark = '*', .tag = "curr" },
@@ -46,6 +48,37 @@ int column_exists(char *col)
         if (strncmp(col, coltab[i].tag, COLSIZ) == 0)
             return TRUE;
     return FALSE;
+}
+
+int column_add(char *env, char *id, char *col)
+{
+    FILE *fp;
+
+    if ((fp = fopen(genpath_col(env, id), "w")) == NULL)
+        return 1;
+    fprintf(fp, "col : %s\n", MARKBLOG);
+    return fclose(fp);
+}
+
+char *column_get(char *env, char *id)
+{
+    FILE *fp;
+    char line[BUFSIZ + 1];
+    char *tok;
+
+    if ((fp = fopen(genpath_col(env, id), "r")) == NULL) {
+        fprintf(stderr, "could not open col file\n");
+        return NULL;
+    }
+
+    fgets(line, BUFSIZ, fp);
+    //printf("col: '%s'\n", line);
+    tok = strtok(line, " :\n");
+    tok = strtok(NULL, " :\n");
+    //printf("col: '%s'\n", tok);
+
+    fclose(fp);
+    return strncpy(col, tok, COLSIZ);
 }
 
 /* column_markid: will be needed by tman `list' command */

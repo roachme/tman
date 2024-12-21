@@ -36,12 +36,17 @@ struct columns {
 
 int column_show(void);
 int column_moveid(char *id, char *tag);
+
+
+int column_exists(char *col);
+char *column_get(char *env, char *id);
+int column_add(char *env, char *id, char *col);
 struct column column_getmark(char *env, char *id);
+
 
 int column_init();
 int column_getids(void);        /* get all task IDs in environment */
 int column_markid(char *id);    /* add a new task ID's col file */
-int column_exists(char *col);
 
 char *column_getcid();
 char *column_getpid();

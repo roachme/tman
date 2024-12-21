@@ -8,32 +8,68 @@
 #include <string.h>
 #include <dirent.h>
 
+#include "common.h"
 #include "tman.h"
 #include "task.h"
 #include "column.h"
 
 static char *base = tmanfs.base;
-static char coltag[COLSIZ + 1];
 static char pathname[PATHSIZ + 1];
 static char curr[IDSIZ + 1], prev[IDSIZ + 1];
 
-static int load_toggles(char *env);
-static int save_toggle(char *env, char *id, char *col);
-
-static int _fill_col_file(char *env, char *id, char *col)
+static int load_toggles(char *env)
 {
-    FILE *fp;
+    DIR *dir;
+    char *id, *col;
+    struct dirent *ent;
 
-    if ((fp = fopen(genpath_col(env, id), "w")) == NULL)
-        return 1;
-    fprintf(fp, "col : %s\n", MARKBLOG);
-    return fclose(fp);
+    if ((dir = opendir(genpath_env(env))) == NULL) {
+        fprintf(stderr, "could not open env dir: %s\n", genpath_env(env));
+        return FALSE;
+    }
+
+    while ((ent = readdir(dir)) != NULL) {
+        id = ent->d_name;
+        if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
+            continue;
+        else if ((col = column_get(env, id)) == NULL) {
+            fprintf(stderr, "err: could not get taks unit: %s\n", id);
+            continue;
+        }
+
+        if (strncmp(col, MARKCURR, COLSIZ) == 0)
+            strncpy(curr, id, IDSIZ);
+        else if (strncmp(col, MARKPREV, COLSIZ) == 0)
+            strncpy(prev, id, IDSIZ);
+    }
+    closedir(dir);
+    return TRUE;
 }
 
 static int reset_toggles()
 {
     curr[0] = '\0';
     prev[0] = '\0';
+    return 0;
+}
+
+static int save_toggle(char *env, char *id, char *col)
+{
+    FILE *fp;
+
+    if ((fp = fopen(genpath_col(env, id), "w")) == NULL)
+        return FALSE;
+
+    fprintf(fp, "col : %s\n", col);
+    return fclose(fp) == 0;
+}
+
+static int save_toggles(char *env)
+{
+    if (curr[0] != '\0')
+        save_toggle(env, curr, MARKCURR);
+    if (prev[0] != '\0')
+        save_toggle(env, prev, MARKCURR);
     return 0;
 }
 
@@ -88,7 +124,6 @@ static int _movetask(char *env, char *id, char *col)
     return 0;
 }
 
-// TODO: delete `char *id' from API
 static int _delete_curr(char *env)
 {
     fprintf(stderr, "_delete_curr: start\n");
@@ -98,73 +133,11 @@ static int _delete_curr(char *env)
     return reset_toggles();
 }
 
-// TODO: delete `char *id' from API
 static int _delete_prev(char *env)
 {
     fprintf(stderr, "_delete_prev: start\n");
     save_toggle(env, prev, MARKBLOG);
     return reset_toggles();
-}
-
-static int save_toggle(char *env, char *id, char *col)
-{
-    FILE *fp;
-
-    if ((fp = fopen(genpath_col(env, id), "w")) == NULL)
-        return FALSE;
-
-    fprintf(fp, "col : %s\n", col);
-    return fclose(fp) == 0;
-}
-
-static char *getcol(char *env, char *id)
-{
-    FILE *fp;
-    char line[BUFSIZ + 1];
-    char *tok;
-
-    if ((fp = fopen(genpath_col(env, id), "r")) == NULL) {
-        fprintf(stderr, "could not open col file\n");
-        return NULL;
-    }
-
-    fgets(line, BUFSIZ, fp);
-    //printf("col: '%s'\n", line);
-    tok = strtok(line, " :\n");
-    tok = strtok(NULL, " :\n");
-    //printf("col: '%s'\n", tok);
-
-    fclose(fp);
-    return strncpy(coltag, tok, COLSIZ);
-}
-
-static int load_toggles(char *env)
-{
-    DIR *dir;
-    char *id, *col;
-    struct dirent *ent;
-
-    if ((dir = opendir(genpath_env(env))) == NULL) {
-        fprintf(stderr, "could not open env dir: %s\n", genpath_env(env));
-        return FALSE;
-    }
-
-    while ((ent = readdir(dir)) != NULL) {
-        id = ent->d_name;
-        if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
-            continue;
-        else if ((col = getcol(env, id)) == NULL) {
-            fprintf(stderr, "err: could not get taks unit: %s\n", id);
-            continue;
-        }
-
-        if (strncmp(col, MARKCURR, COLSIZ) == 0)
-            strncpy(curr, id, IDSIZ);
-        else if (strncmp(col, MARKPREV, COLSIZ) == 0)
-            strncpy(prev, id, IDSIZ);
-    }
-    closedir(dir);
-    return TRUE;
 }
 
 int task_exists(char *env, char *id)
@@ -178,13 +151,7 @@ int task_add(char *env, char *id, char *col)
 {
     char *newcol = col != NULL ? col : MARKCURR;
 
-    if (task_exists(env, id) == FALSE)
-        return 1;
-    else if (column_exists(col) == FALSE) {
-        fprintf(stderr, "column NOT exist: %s\n", col);
-        return 1;
-    }
-    else if (_fill_col_file(env, id, MARKCURR)) {
+    if (column_add(env, id, MARKCURR)) {
         fprintf(stderr, "_fill_col_file: error\n");
         return 1;
     }
@@ -193,32 +160,19 @@ int task_add(char *env, char *id, char *col)
 
 int task_del(char *env, char *id)
 {
-    if (task_exists(env, id) == FALSE)
-        return 1;
-    else if (load_toggles(env) == FALSE)
+    if (load_toggles(env) == FALSE)
         return 1;
 
     if (strncmp(id, curr, IDSIZ) == 0) {
         fprintf(stderr, "_delete_curr: id: %s\n", id);
         return _delete_curr(env);
-    } else if (strncmp(id, prev, IDSIZ) == 0) {
-        return _delete_prev(env);
     }
-    // TODO: not a special task ID, do nothing
-    return 0;
+    return _delete_prev(env);
 }
 
 int task_move(char *env, char *id, char *col)
 {
-    if (task_exists(env, id) == FALSE) {
-        fprintf(stderr, "task does NOT exist: %s\n", id);
-        return 1;
-    }
-    else if (column_exists(col) == FALSE) {
-        fprintf(stderr, "column NOT exist: %s\n", col);
-        return 1;
-    }
-    else if (load_toggles(env) == FALSE) {
+    if (load_toggles(env) == FALSE) {
         fprintf(stderr, "task_move: could not load_toggles\n");
         return 1;
     }
@@ -253,13 +207,14 @@ char *task_getprev(char *env)
 
 int task_swap(char *env)
 {
+    char tmp[IDSIZ + 1];
     if (load_toggles(env) == FALSE)
         return 1;
     else if (curr[0] == '\0' || prev[0] == '\0')
         return 1;
 
+    // TODO: find a good way to use save_toggles();
     save_toggle(env, curr, MARKPREV);
     save_toggle(env, prev, MARKCURR);
-    reset_toggles();
     return 0;
 }

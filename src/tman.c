@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
+#include "column.h"
 #include "dir.h"
 #include "tman.h"
 #include "env.h"
@@ -134,6 +135,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
     // TODO: maybe it's better to move units to ctx?
     struct unitbin units[NKEYS] = {0};
     char *cenv = env_getcurr();
+    char *col = MARKCURR;
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
@@ -150,7 +152,9 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_ETASKMKUNIT);
     // TODO: add support to not mark task as current
     // depending on option.
-    else if (task_add(taskenv, taskid, MARKCURR))
+    else if (column_exists(col) == FALSE)
+        return emod_set(TMAN_ECOLNEXIST);
+    else if (task_add(taskenv, taskid, col))
         return emod_set(TMAN_EADDID);
     else if (hookact("add", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
