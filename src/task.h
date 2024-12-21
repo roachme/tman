@@ -18,6 +18,7 @@
 
 int task_add(char *env, char *id, char *col);
 int task_del(char *env, char *id);
+int task_exists(char *env, char *id);
 char *task_getcurr(char *env);
 char *task_getprev(char *env);
 int task_move(char *env, char *id, char *col);
