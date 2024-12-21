@@ -49,12 +49,24 @@ int column_exists(char *col)
 }
 
 /* column_markid: will be needed by tman `list' command */
-struct column column_getmark(char *id)
+struct column column_getmark(char *env, char *id)
 {
-    for (int i = 0; i < taskids.idx; ++i)
-        if (strcmp(id, taskids.ids[i].id) == 0)
-            return taskids.ids[i].col;
-    return coltab[0];
+    int i;
+    FILE *fp;
+    char tag[TAGSIZ + 1];
+
+    // NOTE: hotfix
+    if ((fp = fopen(genpath(env, id), "r")) == NULL)
+        return coltab[7];
+
+    fscanf(fp, "%*s : %4s\n", tag);
+    fclose(fp);
+
+    for (i = 0; i < ARRAY_SIZE(coltab); ++i) {
+        if (strncmp(tag, coltab[i].tag, TAGSIZ) == 0)
+            return coltab[i];
+    }
+    return coltab[i];
 }
 
 struct column column_setmark(char *tag)

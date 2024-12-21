@@ -36,7 +36,7 @@ struct columns {
 
 int column_show(void);
 int column_moveid(char *id, char *tag);
-struct column column_getmark(char *id);
+struct column column_getmark(char *env, char *id);
 
 int column_init();
 int column_getids(void);        /* get all task IDs in environment */
