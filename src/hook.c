@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "errmod.h"
 #include "tman.h"
 #include "hook.h"
 #include "unit.h"
@@ -43,14 +44,14 @@ int plugin(int argc, char **argv)
         }
     }
 
-    id = argc > 4 ? argv[4] : column_getcid();
-    env = argc > 5 ? argv[5] : column_getcenv();
+    env = argv[5];
+    id = argv[4];
 
     // TODO: check that ID and env exist.
-    if (env == NULL)
-        return elog(1, "no current env set");
-    else if (id == NULL)
-        return elog(1, "no current id set");
+    if (env == NULL && (env = tman_env_getcurr(NULL)) == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    else if (id == NULL && (id = tman_id_getcurr(NULL, env)) == NULL)
+        return emod_set(TMAN_ENOCURRID);
 
     // pgname ENV ID base subcmd [OPTION]..
     sprintf(pgn, "%s -e %s -i %s -b %s %s", path, env, id, tmanfs.base, subcmd);

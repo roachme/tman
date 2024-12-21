@@ -16,6 +16,12 @@
 static char *base = tmanfs.base;
 static char curr[IDSIZ + 1], prev[IDSIZ + 1];
 
+static int reset_toggles()
+{
+    curr[0] = prev[0] = '\0';
+    return 0;
+}
+
 static int load_toggles(char *env)
 {
     DIR *dir;
@@ -45,30 +51,12 @@ static int load_toggles(char *env)
     return TRUE;
 }
 
-static int reset_toggles()
-{
-    curr[0] = '\0';
-    prev[0] = '\0';
-    return 0;
-}
-
-static int save_toggle(char *env, char *id, char *col)
-{
-    FILE *fp;
-
-    if ((fp = fopen(genpath_col(env, id), "w")) == NULL)
-        return FALSE;
-
-    fprintf(fp, "col : %s\n", col);
-    return fclose(fp) == 0;
-}
-
 static int save_toggles(char *env)
 {
     if (curr[0] != '\0')
-        save_toggle(env, curr, MARKCURR);
+        column_add(env, curr, MARKCURR);
     if (prev[0] != '\0')
-        save_toggle(env, prev, MARKCURR);
+        column_add(env, prev, MARKPREV);
     return 0;
 }
 
@@ -80,9 +68,9 @@ static int _movecurr(char *env, char *col)
         fprintf(stderr, "swap not allowed this way\n");
         return 1;
     }
-    save_toggle(env, curr, col);
+    column_add(env, curr, col);
     if (prev[0] != '\0')
-        save_toggle(env, prev, MARKCURR);
+        column_add(env, prev, MARKCURR);
     reset_toggles();
     return 0;
 }
@@ -97,7 +85,7 @@ static int _moveprev(char *env, char *col)
         return 1;
     }
 
-    save_toggle(env, prev, col);
+    column_add(env, prev, col);
     reset_toggles();
     return 0;
 }
@@ -111,13 +99,13 @@ static int _movetask(char *env, char *id, char *col)
 
     if (strncmp(col, MARKCURR, COLSIZ) == 0 && curr[0] != '\0') {
         fprintf(stderr, "_movetask: old curr '%s'\n", curr);
-        save_toggle(env, curr, MARKPREV);
+        column_add(env, curr, MARKPREV);
         if (prev[0] != '\0')
-            save_toggle(env, prev, MARKBLOG);
-        save_toggle(env, id, MARKCURR);
+            column_add(env, prev, MARKBLOG);
+        column_add(env, id, MARKCURR);
     } else {
         fprintf(stderr, "_movetask: rest: new curr '%s'\n", id);
-        save_toggle(env, id, col);
+        column_add(env, id, col);
     }
     reset_toggles();
     return 0;
@@ -126,16 +114,16 @@ static int _movetask(char *env, char *id, char *col)
 static int _delete_curr(char *env)
 {
     fprintf(stderr, "_delete_curr: start\n");
-    save_toggle(env, curr, MARKBLOG);
+    column_add(env, curr, MARKBLOG);
     if (prev[0] != '\0')
-        save_toggle(env, prev, MARKCURR);
+        column_add(env, prev, MARKCURR);
     return reset_toggles();
 }
 
 static int _delete_prev(char *env)
 {
     fprintf(stderr, "_delete_prev: start\n");
-    save_toggle(env, prev, MARKBLOG);
+    column_add(env, prev, MARKBLOG);
     return reset_toggles();
 }
 
@@ -146,10 +134,8 @@ int task_exists(char *env, char *id)
 
 int task_add(char *env, char *id, char *col)
 {
-    char *newcol = col != NULL ? col : MARKCURR;
-
     if (column_add(env, id, MARKCURR)) {
-        fprintf(stderr, "_fill_col_file: error\n");
+        fprintf(stderr, "column_add: error\n");
         return 1;
     }
     return task_move(env, id, col);
@@ -211,7 +197,7 @@ int task_swap(char *env)
         return 1;
 
     // TODO: find a good way to use save_toggles();
-    save_toggle(env, curr, MARKPREV);
-    save_toggle(env, prev, MARKCURR);
+    column_add(env, curr, MARKPREV);
+    column_add(env, prev, MARKCURR);
     return 0;
 }

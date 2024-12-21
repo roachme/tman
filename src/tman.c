@@ -24,6 +24,9 @@ struct tmanstruct tmanfs;
 
 static char *taskenv, *taskid;
 
+static char task_currid[IDSIZ + 1], task_previd[IDSIZ + 1];
+static char task_currenv[ENVSIZ + 1], task_prevenv[ENVSIZ + 1];
+
 static tman_ctx_t *mkctx()
 {
     tman_ctx_t *ctx;
@@ -104,12 +107,6 @@ int tman_setup(int setuplvl)
             return elog(1, "err: column_envinit");
         // roach: is it a good idea to init module column in general
         // and here?
-        /*
-        else if (column_init()) {
-            elog(1, "column_init: error: could not init");
-            status = emod_set(TMAN_EINIT);
-        }
-        */
     }
     return status;
 }
@@ -400,6 +397,32 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
     return status;
 }
 
+char *tman_id_getcurr(tman_ctx_t *ctx, char *env)
+{
+    taskenv = env;
+
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL) {
+        emod_set(TMAN_ENOCURRENV);
+        return NULL;
+    }
+    else if ((taskid = task_getcurr(taskenv)) == NULL)
+        return NULL;
+    return strncpy(task_currid, taskid, IDSIZ);
+}
+
+char *tman_id_getprev(tman_ctx_t *ctx, char *env)
+{
+    taskenv = env;
+
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL) {
+        emod_set(TMAN_ENOCURRENV);
+        return NULL;
+    }
+    else if ((taskid = task_getprev(taskenv)) == NULL)
+        return NULL;
+    return strncpy(task_previd, taskid, IDSIZ);
+}
+
 int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 {
     taskenv = env;
@@ -463,6 +486,17 @@ int tman_env_use(tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt)
         return emod_set(TMAN_ENOSUCHENV);
     return env_addcenv(taskenv);
 }
+
+char *tman_env_getcurr(tman_ctx_t *ctx)
+{
+    return env_getcurr();
+}
+
+char *tman_env_getprev(tman_ctx_t *ctx)
+{
+    return env_getprev();
+}
+
 
 int tman_isplugin(const char *pgn)
 {
