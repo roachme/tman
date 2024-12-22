@@ -43,6 +43,10 @@ enum tman_err_enum {
 
     TMAN_EILLEGUNIT,
 
+    TMAN_NOSUCHCMD,
+    TMAN_NOSUCHPGN,
+    TMAN_NOCMDORPGN,
+
     TMAN_NODEF_ERR,
 
     __TMAN_STATUS_LAST

@@ -45,6 +45,10 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
 
     [TMAN_EILLEGUNIT] =  "illegal unit value",
 
+    [TMAN_NOSUCHCMD]  = "no such command",
+    [TMAN_NOSUCHPGN]  = "no such plugin",
+    [TMAN_NOCMDORPGN]  = "no such command or plugin",
+
     /* Not yet defined error messages.  */
     [TMAN_NODEF_ERR] = "not yet defined error messages",
 };

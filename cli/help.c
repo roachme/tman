@@ -9,7 +9,7 @@
 #define TAGMISC     "bin-misc"
 #define TAGINFO     "bin-info"
 
-struct help help[] = {
+struct help helptab[] = {
     {
         .tag = TAGSYSTEM,
         .name  = "cfg",
@@ -71,9 +71,8 @@ struct help help[] = {
     {
         .tag = TAGBASIC,
         .name  = "prev",
-        .synop = PROGRAM " prev",
-        .sdesc = "switch to previous task",
-        .desc  = "prev description",
+        .synop = "Usage: " PROGRAM " prev",
+        .sdesc = "Switch to previous task",
     },
     {
         .tag = TAGBASIC,
@@ -85,9 +84,8 @@ struct help help[] = {
     {
         .tag = TAGBASIC,
         .name  = "sync",
-        .synop = PROGRAM " sync",
-        .sdesc = "synchronize task",
-        .desc  = "sync description",
+        .synop = "Usage: " PROGRAM " sync",
+        .sdesc = "Synchronize task",
     },
     {
         .tag = TAGBASIC,
@@ -129,9 +127,13 @@ struct help help[] = {
     {
         .tag = TAGINFO,
         .name  = "list",
-        .synop = PROGRAM " list [ENV]",
-        .sdesc = "list environment task",
-        .desc  = "help description",
+        .synop = "Usage: " PROGRAM " list [OPTION]... ENV",
+        .sdesc = "List environment tasks",
+        .desc  = "With no option `-e' ENV is current environment.\n"
+                 "  -A      list all tasks\n"
+                 "  -a      list almost all tasks (expect for archieved)\n"
+                 "  -h      show this help and exit\n"
+                 "  -t      list only current and previous tasks\n"
     },
     {
         .tag = TAGINFO,
@@ -142,8 +144,6 @@ struct help help[] = {
     },
 };
 
-static size_t helpsize = sizeof(help) / sizeof(help[0]);
-
 int help_list_commands(void)
 {
     printf("Usage: %s [OBJECT] COMMAND [OPITONS]... [ID]...\n", PROGRAM);
@@ -153,34 +153,34 @@ int help_list_commands(void)
     printf("Try '" PROGRAM " help COMMAND' for more info.\n\n");
 
     printf("System:\n");
-    for (int i = 0; i < helpsize; ++i)
-        if (strcmp(help[i].tag, TAGSYSTEM) == 0)
-            printf("  %-6s - %s\n", help[i].name, help[i].sdesc);
+    for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
+        if (strcmp(helptab[i].tag, TAGSYSTEM) == 0)
+            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
     printf("\nBasic:\n");
-    for (int i = 0; i < helpsize; ++i)
-        if (strcmp(help[i].tag, TAGBASIC) == 0)
-            printf("  %-6s - %s\n", help[i].name, help[i].sdesc);
+    for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
+        if (strcmp(helptab[i].tag, TAGBASIC) == 0)
+            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
     printf("\nMisc:\n");
-    for (int i = 0; i < helpsize; ++i)
-        if (strcmp(help[i].tag, TAGMISC) == 0)
-            printf("  %-6s - %s\n", help[i].name, help[i].sdesc);
+    for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
+        if (strcmp(helptab[i].tag, TAGMISC) == 0)
+            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
     printf("\nInfo:\n");
-    for (int i = 0; i < helpsize; ++i)
-        if (strcmp(help[i].tag, TAGINFO) == 0)
-            printf("  %-6s - %s\n", help[i].name, help[i].sdesc);
+    for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
+        if (strcmp(helptab[i].tag, TAGINFO) == 0)
+            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
     return 1;
 }
 
 int help_usage(const char *cmd)
 {
-    for (int i = 0; i < helpsize; ++i) {
-        if (strcmp(help[i].name, cmd) == 0) {
-            printf("%s\n", help[i].synop);
-            printf("%s\n", help[i].sdesc);
+    for (int i = 0; i < ARRAY_SIZE(helptab); ++i) {
+        if (strcmp(helptab[i].name, cmd) == 0) {
+            printf("%s\n", helptab[i].synop);
+            printf("%s\n", helptab[i].sdesc);
             printf("Try '" PROGRAM " help %s' for more info.\n", cmd);
             return 1;
         }
@@ -192,15 +192,15 @@ int help_lookup(const char *cmd)
 {
     if (cmd == NULL)
         return help_list_commands();
-    for (int i = 0; i < helpsize; ++i) {
-        if (strcmp(help[i].name, cmd) == 0) {
-            printf("%s\n", help[i].synop);
-            printf("%s\n\n", help[i].sdesc);
-            printf("%s\n", help[i].desc);
-            return 1;
+    for (int i = 0; i < ARRAY_SIZE(helptab); ++i) {
+        if (strcmp(helptab[i].name, cmd) == 0) {
+            printf("%s\n", helptab[i].synop);
+            printf("%s\n\n", helptab[i].sdesc);
+            printf("%s\n", helptab[i].desc);
+            return TMAN_OK;
         }
     }
-    return elog(1, "cannot access '%s': command not found", cmd);
+    return emod_set(TMAN_NOSUCHCMD);
 }
 
 int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
@@ -208,6 +208,7 @@ int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
     char c;
     char *cmd;
     char *key = NULL;
+    int status;
 
     while ((c = getopt(argc, argv, "dk:")) != -1) {
         switch (c) {
@@ -217,5 +218,7 @@ int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
     }
 
     cmd = argv[optind];
-    return help_lookup(cmd);
+    if ((status = help_lookup(cmd)) != TMAN_OK)
+        elog(1, "cannot find '%s': %s", cmd, tman_strerror());
+    return status;
 }
