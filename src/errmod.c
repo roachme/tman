@@ -15,6 +15,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_EHOOK] =       "failed to execute hook",
     [TMAN_EPGN] =        "failed to execute plugin command",
     [TMAN_EOPENENVDIR]=  "could not open environment directory",
+    [TMAN_ESWITCHENV] =  "could not switch to environment",
 
     [TMAN_EREQRENV] =    "task environment name required",
     [TMAN_EMISSENV] =    "task environment name does not exist",

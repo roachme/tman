@@ -253,14 +253,10 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
         return emod_set(TMAN_EREQRID);
     else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_EMISSID);
-    else if (taskenv != env_getcurr()) {
-        fprintf(stderr, "trynna switch to task in another env\n");
-        fprintf(stderr, "under development\n");
-        return emod_set(TMAN_NODEF_ERR);
-    }
 
-    // TODO: it can't switch to task in non-current env.
-    // Cuz it gotta switch env first.
+    /* switch to new current environment.  */
+    if (taskenv != env_getcurr() && env_addcenv(taskenv) != 0)
+        return emod_set(TMAN_ESWITCHENV);
     return task_move(taskenv, taskid, MARKCURR);
 }
 

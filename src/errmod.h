@@ -14,6 +14,7 @@ enum tman_err_enum {
     TMAN_EHOOK,    /* Failed to execute hook */
     TMAN_EPGN,    /* Failed to execute plugin */
     TMAN_EOPENENVDIR,
+    TMAN_ESWITCHENV,
 
     TMAN_EREQRENV,
     TMAN_EMISSENV,
