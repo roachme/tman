@@ -13,16 +13,17 @@ static int tman_cli_cat_usage(void)
 
 static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
 {
+    int i, status;
+    struct unitbin *unitbin;
     struct unitpgn *unitpgn;
     struct tman_id_cat_opt opt = { };
 
-    if (tman_id_cat(ctx, env, id, &opt) != TMAN_OK) {
-        return 1;
-    }
+    if ((status = tman_id_cat(ctx, env, id, &opt)) != TMAN_OK)
+        return elog(status, "cannot cat units '%s': %s", id, tman_strerror());
 
-    for (int i = 0; i < NKEYS; ++i)
-        if (ctx->units.bin[i].isset)
-            printf("%-7s : %s\n", ctx->units.bin[i].key, ctx->units.bin[i].val);
+    unitbin = ctx->units.bin;
+    for (i = 0; i < NKEYS; ++i)
+        printf("%-7s : %s\n", unitbin[i].key, unitbin[i].val);
 
     unitpgn = ctx->units.pgn;
     while (unitpgn != NULL) {
