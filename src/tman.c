@@ -241,9 +241,9 @@ int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, 
 int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *opt)
 {
     taskid = id;
-    taskenv = env != NULL ? env : env_getcurr();
+    taskenv = env;
 
-    if (taskenv == NULL)
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
