@@ -205,6 +205,17 @@ static int genitems(char *env, char *id)
     return save(genpath(env, id));
 }
 
+int unit_check(struct unitbin *units)
+{
+    int i;
+
+    for (i = 0; i < NKEYS; ++i)
+        if (units->isset && strncmp(validval[i].key, units->key, KEYSIZ) == 0)
+            if (validval[i].func(units->val) == FALSE)
+                return FALSE;
+    return TRUE;
+}
+
 int unit_addbin(char *env, char *id, struct unitbin *units)
 {
     if (genitems(env, id))
