@@ -132,7 +132,7 @@ int task_exists(char *env, char *id)
 
 int task_add(char *env, char *id, char *col)
 {
-    if (column_add(env, id, MARKCURR)) {
+    if (column_add(env, id, MARKBLOG)) {
         fprintf(stderr, "column_add: error\n");
         return 1;
     }
