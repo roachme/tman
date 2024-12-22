@@ -112,12 +112,11 @@ int tman_pwd()
 {
     char *cid, *cenv;
 
-    if ((cenv = env_getcurr()) == NULL) {
-        elog(1, "internal error: no current env set");
-        return 1;
-    }
-    cid = task_getcurr(cenv);
-    printf("PWD: %s/%s/%s\n", tmanfs.base, cenv, cid ? cid : "");
+    if ((cenv = env_getcurr()) == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    if ((cid = task_getcurr(cenv)) == NULL)
+        cid = "";
+    printf("PWD: %s/%s/%s\n", tmanfs.base, cenv, cid);
     return TMAN_OK;
 }
 
