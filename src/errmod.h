@@ -40,6 +40,8 @@ enum tman_err_enum {
     TMAN_ETASKRMUNIT,
     TMAN_ECOLNEXIST,
 
+    TMAN_EILLEGUNIT,
+
     TMAN_NODEF_ERR,
 
     __TMAN_STATUS_LAST

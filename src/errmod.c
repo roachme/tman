@@ -14,6 +14,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_ECONF] =       "error to parse config",
     [TMAN_EHOOK] =       "failed to execute hook",
     [TMAN_EPGN] =        "failed to execute plugin command",
+    [TMAN_EOPENENVDIR]=  "could not open environment directory",
 
     [TMAN_EREQRENV] =    "task environment name required",
     [TMAN_EMISSENV] =    "task environment name does not exist",
@@ -39,7 +40,9 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_ETASKMKUNIT] = "could not create task unit",
     [TMAN_ETASKRMUNIT] = "could not delete task unit",
 
-    [TMAN_ECOLNEXIST] =   "column does not exist",
+    [TMAN_ECOLNEXIST] =  "column does not exist",
+
+    [TMAN_EILLEGUNIT] =  "illegal unit value",
 
     /* Not yet defined error messages.  */
     [TMAN_NODEF_ERR] = "not yet defined error messages",

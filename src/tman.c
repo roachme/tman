@@ -139,6 +139,10 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_EIDEXISTS);
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
+    else if (column_exists(col) == FALSE)
+        return emod_set(TMAN_ECOLNEXIST);
+    else if (unit_check(units) == FALSE)
+        return emod_set(TMAN_EILLEGUNIT);
 
     if (imkdir(tmanfs.base, taskenv, taskid) != 0)
         return emod_set(TMAN_ETASKMKDIR);
@@ -146,8 +150,6 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_ETASKMKUNIT);
     // TODO: add support to not mark task as current
     // depending on option.
-    else if (column_exists(col) == FALSE)
-        return emod_set(TMAN_ECOLNEXIST);
     else if (task_add(taskenv, taskid, col))
         return emod_set(TMAN_EADDID);
     else if (hookact("add", taskenv, taskid))
@@ -174,6 +176,7 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
         return emod_set(TMAN_EHOOK);
     else if (unit_delbin(taskenv, taskid))
         return emod_set(TMAN_ETASKRMUNIT);
+    // TODO: gotta change the order call: task_del goes before irmdir
     else if (irmdir(tmanfs.base, taskenv, taskid))
         return emod_set(TMAN_ETASKRMDIR);
     else if (task_del(taskenv, taskid))

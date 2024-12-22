@@ -21,6 +21,7 @@ struct units {
     struct unitbin bin[NKEYS];
 };
 
+int unit_check(struct unitbin *unitbin);
 int unit_addbin(char *env, char *id, struct unitbin *units);
 int unit_setbin(char *env, char *id, struct unitbin *units);
 struct unitbin *unit_getbin(struct unitbin *units, char *env, char *id);
