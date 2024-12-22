@@ -273,6 +273,12 @@ struct unitpgn *unit_addpgn(struct unitpgn *head, char *key, char *val)
 
 int unit_delpgn(struct unitpgn *pgn)
 {
-    free(pgn);
+    struct unitpgn *tmp;
+
+    while (pgn) {
+        tmp = pgn;
+        pgn = pgn->next;
+        free(tmp);
+    }
     return 0;
 }
