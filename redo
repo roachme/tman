@@ -2,9 +2,13 @@
 
 set -e
 
-rm -rf ~/trash/tman/
+function redo()
+{
+    rm -rf ~/trash/tman/
 
-source tman.sh
-tman init
-tman env add test
-tman add test1
+    ./_tman init
+    ./_tman env add test
+    ./_tman add test1
+}
+
+redo
