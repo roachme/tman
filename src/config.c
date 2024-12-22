@@ -6,6 +6,7 @@
 #include "common.h"
 #include "osdep.h"
 #include "config.h"
+#include "task.h"
 
 // TODO: gotta define default columns: curr, prev, blog, done
 // TODO: gotta add config checker so a program doesn't fail.
@@ -47,12 +48,55 @@ static int parse_hook(const char *hookname, struct hooks *hooks)
     return 0;
 }
 
+
+
+
+static char *column_default_names[] = {
+    "curr",
+    "prev",
+    "blog",
+    "done",
+};
+
+static int _is_column_name_default(char *colname)
+{
+    int i;
+
+    for (i = 0; i < ARRAY_SIZE(column_default_names); ++i)
+        if (strncmp(colname, column_default_names[i], COLSIZ) == 0)
+            return TRUE;
+    return FALSE;
+}
+
 static int parse_columns(struct columns *columns)
 {
     char *prio;
     int i = columns->size;
+    char *token;
 
-    strcpy(columns->column[i].env, strtok(NULL, delim));
+    // TODO:
+    // 1. check column name is not default.
+    // 2. check that no duplicates.
+
+
+    // 1. get environment name
+
+
+    if ((token = strtok(NULL, delim)) == NULL) {
+        fprintf(stderr, "config: err: column tag: environment name is missing\n");
+        return 1;
+    }
+    strcpy(columns->column[i].env, token);
+
+
+    if ((token = strtok(NULL, delim)) == NULL) {
+        fprintf(stderr, "config: err: column name is missing\n");
+        return 1;
+    }
+    if (_is_column_name_default(token) == TRUE) {
+        fprintf(stderr, "config: err: this is a reserved column '%s'\n", token);
+        return 1;
+    }
     strcpy(&columns->column[i].mark, strtok(NULL, delim));
     strcpy(columns->column[i].tag, strtok(NULL, delim));
     prio = strtok(NULL, delim);
@@ -60,6 +104,9 @@ static int parse_columns(struct columns *columns)
         columns->column[i].prio = atoi(prio);
     return 0;
 }
+
+
+
 
 static int parseconf(const char *fname)
 {

@@ -12,7 +12,8 @@
 #include "task.h"
 #include "column.h"
 
-char col[COLSIZ + 1];
+static char col[COLSIZ + 1];
+static int colsize = 0;
 
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 0, .mark = '?', .tag = "uknw" },
