@@ -9,6 +9,7 @@
 #include <dirent.h>
 
 #include "common.h"
+#include "errmod.h"
 #include "tman.h"
 #include "task.h"
 #include "column.h"
@@ -28,17 +29,14 @@ static int load_toggles(char *env)
     char *id, *col;
     struct dirent *ent;
 
-    if ((dir = opendir(genpath_env(env))) == NULL) {
-        fprintf(stderr, "could not open env dir: %s\n", genpath_env(env));
-        return FALSE;
-    }
+    if ((dir = opendir(genpath_env(env))) == NULL)
+        return emod_set(TMAN_EOPENENVDIR);
 
-    while ((ent = readdir(dir)) != NULL) {
-        id = ent->d_name;
+    while ((ent = readdir(dir)) != NULL && (id = ent->d_name) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
         else if ((col = column_get(env, id)) == NULL) {
-            fprintf(stderr, "err: could not get taks unit: %s\n", id);
+            fprintf(stderr, "err: could not get task unit: %s\n", id);
             continue;
         }
 
