@@ -105,7 +105,7 @@ int _env_list(int argc, char **argv, tman_ctx_t *ctx)
         printf("%c %-10s [%s] %s\n", mark, ent->d_name, "roach", "some env desc");
     }
     closedir(edir);
-    return 1;
+    return TMAN_OK;
 }
 
 int _env_prev(int argc, char **argv, tman_ctx_t *ctx)
