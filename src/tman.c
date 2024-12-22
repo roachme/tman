@@ -515,11 +515,7 @@ const char *tman_strerror(void)
 
 int tman_deinit(struct tman_context *ctx)
 {
-    while (ctx->units.pgn) {
-        struct unitpgn *pgn = ctx->units.pgn;
-        ctx->units.pgn = ctx->units.pgn->next;
-        unit_delpgn(pgn);
-    }
+    unit_delpgn(ctx->units.pgn);
     free(ctx);
     return TMAN_OK;
 }
