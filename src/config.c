@@ -12,6 +12,8 @@
 
 struct config config = {
     .usehooks = TRUE,
+    .hooks.size = 0,
+    .columns.size = 0,
 };
 static const char *delim = " =\n";
 
@@ -25,11 +27,11 @@ static int parse_usehooks(const char *confkey, int *usehooks)
 {
     char *confval = strtok(NULL, delim);
 
-    if (strncmp(confval, "1", 1) == 0) {
+    if (strncmp(confval, "true", 1) == 0) {
         *usehooks = TRUE;
         return 0;
     }
-    else if (strncmp(confval, "0", 1) == 0) {
+    else if (strncmp(confval, "false", 1) == 0) {
         *usehooks = FALSE;
         return 0;
     }
@@ -63,12 +65,12 @@ static int parse_columns(struct columns *columns)
 
 static int parseconf(const char *fname)
 {
+    FILE *fp;
     int retcode = 0;
     char line[BUFSIZ + 1];
     char *token = NULL;
-    FILE *fp = fopen(fname, "r");
 
-    if (!fp)
+    if ((fp = fopen(fname, "r")) == NULL)
         return elog(1, "could not open config file");
 
     while (retcode == TMAN_OK && fgets(line, BUFSIZ, fp) != NULL) {

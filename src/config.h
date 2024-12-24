@@ -26,5 +26,6 @@ struct config {
 extern struct config config;
 
 int config_init(void);
+int config_deinit(struct config *config);
 
 #endif
