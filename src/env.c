@@ -4,6 +4,7 @@
  * They also can be used as defaults.
 */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
@@ -46,6 +47,16 @@ int env_init(char *fstate)
 
     assert(fstate != NULL && "env state file not passed or NULL");
     return load();
+}
+
+int env_isvalid(char *env)
+{
+    if (!isalnum(*env++))
+        return 0;
+    for ( ; *env; ++env)
+        if (!(isalnum(*env) || *env == '_' || *env == '-'))
+            return 0;
+    return isalnum(*--env);
 }
 
 int env_exists(char *env)

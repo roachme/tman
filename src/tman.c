@@ -132,7 +132,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (_chkenv(taskenv) == FALSE)
+    else if (env_isvalid(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
@@ -167,7 +167,7 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (_chkenv(taskenv) == FALSE)
+    else if (env_isvalid(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
@@ -228,7 +228,7 @@ int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, s
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (_chkenv(taskenv) == FALSE)
+    else if (env_isvalid(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
@@ -258,7 +258,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
         return emod_set(TMAN_ENOCURRENV);
     if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    else if (_chkenv(taskenv) == FALSE)
+    else if (env_isvalid(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
 
     else if (taskid == NULL)
@@ -328,7 +328,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (_chkenv(taskenv) == FALSE)
+    else if (env_isvalid(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
@@ -371,7 +371,7 @@ int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_
     // The problem in CLI command `col'.
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (_chkenv(taskenv) == FALSE)
+    else if (env_isvalid(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
 
     else if (taskid == NULL && (taskid = task_getcurr(taskenv)) == NULL)
@@ -392,7 +392,7 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
     status = TMAN_OK;
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (_chkenv(taskenv) == FALSE)
+    else if (env_isvalid(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
@@ -450,10 +450,10 @@ int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 
     if (taskenv == NULL)
         return emod_set(TMAN_EREQRENV);
+    else if (env_isvalid(taskenv) == FALSE)
+        return emod_set(TMAN_EILLEGENV);
     else if (env_exists(taskenv))
         return emod_set(TMAN_EENVEXISTS);
-    else if (_chkenv(taskenv) == FALSE)
-        return emod_set(TMAN_EILLEGENV);
     else if (emkdir(tmanfs.base, taskenv)) {
         elog(1, "%s: could not create env directory", taskenv);
         return emod_set(TMAN_NODEF_ERR);
