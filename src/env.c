@@ -53,7 +53,7 @@ int env_isvalid(char *env)
 {
     if (!isalnum(*env++))
         return 0;
-    for ( ; *env; ++env)
+    for (; *env; ++env)
         if (!(isalnum(*env) || *env == '_' || *env == '-'))
             return 0;
     return isalnum(*--env);
@@ -87,7 +87,7 @@ char *env_getprev()
     return envs[PENV];
 }
 
-int env_addcenv(char *env)
+int env_addcurr(char *env)
 {
     if (strcmp(envs[CENV], env) == 0)
         return 1;
@@ -96,14 +96,14 @@ int env_addcenv(char *env)
     return save();
 }
 
-int env_delcenv(void)
+int env_delcurr(void)
 {
     strncpy(envs[CENV], envs[PENV], ENVSIZ);
     memset(envs[PENV], 0, ENVSIZ);
     return save();
 }
 
-int env_delpenv(void)
+int env_delprev(void)
 {
     memset(envs[PENV], 0, ENVSIZ);
     return save();

@@ -269,7 +269,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
         return emod_set(TMAN_EMISSID);
 
     /* switch to new current environment.  */
-    if (strncmp(taskenv, env_getcurr(), ENVSIZ) != 0 && env_addcenv(taskenv) != 0)
+    if (strncmp(taskenv, env_getcurr(), ENVSIZ) != 0 && env_addcurr(taskenv) != 0)
         return emod_set(TMAN_ESWITCHENV);
     return task_move(taskenv, taskid, MARKCURR);
 }
@@ -458,7 +458,7 @@ int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
         elog(1, "%s: could not create env directory", taskenv);
         return emod_set(TMAN_NODEF_ERR);
     }
-    return env_addcenv(env);
+    return env_addcurr(env);
 }
 
 int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
@@ -473,7 +473,7 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
         elog(1, "%s: could not delete env directory", taskenv);
         return emod_set(TMAN_NODEF_ERR);
     }
-    return env_delcenv();
+    return env_delcurr();
 }
 
 int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
@@ -505,7 +505,7 @@ int tman_env_use(tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt)
         return emod_set(TMAN_EREQRENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-    return env_addcenv(taskenv);
+    return env_addcurr(taskenv);
 }
 
 char *tman_env_getcurr(tman_ctx_t *ctx)
