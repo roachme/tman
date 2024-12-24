@@ -11,10 +11,10 @@ int env_init(char *fstate);
 int env_reset(void);
 char *env_getcurr();
 char *env_getprev();
-int env_delcenv(void);
-int env_delpenv(void);
+int env_delcurr(void);
+int env_delprev(void);
 int env_swapenvs(void);
-int env_addcenv(char *env);
+int env_addcurr(char *env);
 int env_exists(char *env);
 int env_isvalid(char *env);
 
