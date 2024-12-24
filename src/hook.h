@@ -22,7 +22,7 @@ struct hooks {
 };
 
 int isplugin(const char *pgn);
-int plugin(int argc, char **argv);
+int plugin(char *env, char *id, char *pgname, char *pgncmd);
 
 int pgm(int argc, char **argv);
 

@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 {
     tman_ctx_t *ctx;
     int i, status, cmdfound;
-    const char *cmd = argc > 1 ? argv[1] : "list";
+    char *cmd = argc > 1 ? argv[1] : "list";
     struct tman_pgn_opt pgnopt;
 
     ctx = NULL;
@@ -48,7 +48,11 @@ int main(int argc, char **argv)
         }
     if (cmdfound == FALSE && (status = tman_isplugin(cmd)) == TRUE) {
         cmdfound = TRUE;
-        status = tman_plugin(ctx, argc, argv, &pgnopt);
+        if ((status = tman_setup(TMAN_SETUPCHECK)) != TMAN_OK) {
+            elog(status, "%s", tman_strerror());
+            goto out;
+        }
+        status = tman_cli_plugin(cmd, argc - 1, argv + 1, ctx);
     }
     if (cmdfound == FALSE) {
         status = 1;

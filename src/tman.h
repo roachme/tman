@@ -148,6 +148,6 @@ char *tman_env_getprev(tman_ctx_t *ctx);
 
 /* Task plugin functions.  */
 int tman_isplugin(const char *pgn);
-int tman_plugin(tman_ctx_t *ctx, int argc, char **argv, struct tman_pgn_opt *opt);
+int tman_plugin(tman_ctx_t *ctx, char *env, char *id, char *pgname, char *pgncmd, struct tman_pgn_opt *opt);
 
 #endif

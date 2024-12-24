@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "env.h"
 #include "errmod.h"
+#include "task.h"
 #include "tman.h"
 #include "hook.h"
 #include "unit.h"
@@ -11,8 +13,15 @@
 #include "common.h"
 #include "config.h"
 
+#define FMTPGN "%s/%s/%s -e %s -i %s -b %s %s"
 
 static char fullcmd[HOOKSIZ + 1];
+
+static char *gen_pgncmd(char *env, char *id, char *name, char *cmd)
+{
+    sprintf(fullcmd, FMTPGN, tmanfs.pgnins, name, name, env, id, tmanfs.base, cmd);
+    return fullcmd;
+}
 
 int isplugin(const char *pgn)
 {
@@ -25,75 +34,63 @@ int isplugin(const char *pgn)
     pgn cmd [OPTION].. ID ENV
 */
 // TODO: Let tman core pass plugin options to plugins
-int plugin(int argc, char **argv)
+//int plugin(int argc, char **argv)
+int plugin(char *env, char *id, char *pgname, char *pgncmd)
 {
-    char c;
-    char pgn[BUFSIZ + 1];
-    char path[PATHSIZ + 1];
-    char *name = argc > 1 ? argv[1] : "";
-    char *subcmd = argc > 2 ? argv[2] : "";
-    char *id = NULL, *env = NULL;
-    sprintf(path, "%s/%s/%s", tmanfs.pgnins, name, name);
+    char *taskenv, *taskid;
 
-    while ((c = getopt(argc, argv, ":e:")) != -1) {
-        switch (c) {
-            case 'e':
-                env = optarg; break ;
-            case 'i':
-                id = optarg; break ;
-        }
-    }
+    taskenv = env;
+    taskid = id;
 
-    env = argv[5];
-    id = argv[4];
-
-    // TODO: check that ID and env exist.
-    if (env == NULL && (env = tman_env_getcurr(NULL)) == NULL)
+    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (id == NULL && (id = tman_id_getcurr(NULL, env)) == NULL)
+    else if (_chkenv(taskenv) == FALSE)
+        return emod_set(TMAN_EILLEGENV);
+    else if (env_exists(taskenv) == FALSE)
+        return emod_set(TMAN_ENOSUCHENV);
+
+    else if (taskid == NULL && (taskid = tman_id_getcurr(NULL, taskenv)) == NULL)
         return emod_set(TMAN_ENOCURRID);
+    else if (_chkid(taskid) == FALSE)
+        return emod_set(TMAN_EILLEGID);
+    else if (task_exists(taskenv, taskid) == FALSE)
+        return emod_set(TMAN_ENOSUCHID);
 
-    // pgname ENV ID base subcmd [OPTION]..
-    sprintf(pgn, "%s -e %s -i %s -b %s %s", path, env, id, tmanfs.base, subcmd);
-    system(pgn);
-    return 1;
-}
-
-static char *cmdgen(struct hook *hook, char *env, char *id)
-{
-    sprintf(fullcmd, "%s/%s/%s -e %s -i %s -b %s %s",
-            config.pgnins, hook->pgname, hook->pgname,
-            env, id, config.base, hook->pgncmd);
-    return fullcmd;
+    return system(gen_pgncmd(taskenv, taskid, pgname, pgncmd));
 }
 
 int hookact(char *cmd, char *env, char *id)
 {
+    int i;
+
     if (config.usehooks == FALSE)
         return 0;
-    for (int i = 0; i < config.hooks.size; ++i) {
+
+    for (i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];
         if (strcmp(cmd, hook->cmd) == 0)
-            system(cmdgen(hook, env, id));
+            system(gen_pgncmd(env, id, hook->pgname, hook->pgncmd));
     }
     return 0;
 }
 
 struct unitpgn *hookcat(struct unitpgn *unitpgn, char *env, char *id)
 {
+    int i;
+    FILE *pipe;
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
     char line[BUFSIZ + 1] = {0};
 
     if (config.usehooks == FALSE)
         return unitpgn;
-    for (int i = 0; i < config.hooks.size; ++i) {
+
+    for (i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];
         if (strcmp(hook->cmd, "cat") != 0)
             continue;
 
-        FILE *pipe = popen(cmdgen(hook, env, id), "r");
-        if (!pipe) {
+        if ((pipe = popen(gen_pgncmd(env, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
             elog(1, "hookcat: failed: '%s'", fullcmd);
             continue;
         }
@@ -108,18 +105,20 @@ struct unitpgn *hookcat(struct unitpgn *unitpgn, char *env, char *id)
 
 char *hookls(char *pgnout, char *env, char *id)
 {
+    int i;
+    FILE *pipe;
     char *prefix = "";
     char line[BUFSIZ + 1] = {0};
 
     if (config.usehooks == FALSE)
         return pgnout;
-    for (int i = 0; i < config.hooks.size; ++i) {
+
+    for (i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];
         if (strcmp(hook->cmd, "list") != 0)
             continue;
 
-        FILE *pipe = popen(cmdgen(hook, env, id), "r");
-        if (!pipe) {
+        if ((pipe = popen(gen_pgncmd(env, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
             elog(1, "hookls: failed: '%s'", fullcmd);
             return NULL;
         }
