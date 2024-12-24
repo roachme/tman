@@ -221,7 +221,7 @@ int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
     return TMAN_OK;
 }
 
-int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, struct tman_id_set_opt *opt)
+int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, struct tman_id_set_opt *opt)
 {
     taskid  = id;
     taskenv = env;

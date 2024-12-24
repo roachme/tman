@@ -9,31 +9,33 @@
 #include <string.h>
 
 #include "env.h"
-#include "../src/tman.h"
+#include "tman.h"
 
 static char *envfile;
 static char envs[NENV][ENVSIZ + 1];
 
 static int load(void)
 {
+    int i;
     FILE *fp;
 
     if ((fp  = fopen(envfile, "r")) == NULL)
         return elog(1, "could not load env state");
 
-    for (int i = 0; i < NENV && fscanf(fp, "%s", envs[i]) == NENVITEM; ++i)
+    for (i = 0; i < NENV && fscanf(fp, "%s", envs[i]) == NENVITEM; ++i)
         ;
     return fclose(fp);
 }
 
 static int save(void)
 {
+    int i;
     FILE *fp;
 
     if ((fp  = fopen(envfile, "w")) == NULL)
         return elog(1, "could not save env state");
 
-    for (int i = 0; i < NENV && envs[i][0] != '\0'; ++i)
+    for (i = 0; i < NENV && envs[i][0] != '\0'; ++i)
         fprintf(fp, "%s\n", envs[i]);
     return fclose(fp);
 }
