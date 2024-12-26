@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-#include "column.h"
+#include "col.h"
 #include "dir.h"
 #include "tman.h"
 #include "env.h"
@@ -23,6 +23,12 @@ static char *taskenv, *taskid;
 
 static char task_currid[IDSIZ + 1], task_previd[IDSIZ + 1];
 static char task_currenv[ENVSIZ + 1], task_prevenv[ENVSIZ + 1];
+
+#include "tree.h"
+static int foreach(struct tree *p, int (*func)())
+{
+    return 0;
+}
 
 static tman_ctx_t *mkctx()
 {
@@ -114,7 +120,7 @@ int tman_pwd()
 
     if ((cenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    if ((cid = task_getcurr(cenv)) == NULL)
+    if ((cid = task_curr(cenv)) == NULL)
         cid = "";
     printf("PWD: %s/%s/%s\n", tmanfs.base, cenv, cid);
     return TMAN_OK;
@@ -128,7 +134,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
     // TODO: maybe it's better to move units to ctx?
     struct unitbin units[NKEYS] = {0};
     char *cenv = env_getcurr();
-    char *col = MARKCURR;
+    char *col = COLCURR;
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
@@ -139,9 +145,9 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
 
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
-    else if (task_exists(taskenv, taskid) == TRUE)
+    else if (task_ext(taskenv, taskid) == TRUE)
         return emod_set(TMAN_EIDEXISTS);
-    else if (column_exists(col) == FALSE)
+    else if (col_ext(col) == FALSE)
         return emod_set(TMAN_ECOLNEXIST);
     else if (unit_check(units) == FALSE)
         return emod_set(TMAN_EILLEGUNIT);
@@ -152,7 +158,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_ETASKMKUNIT);
     // TODO: add support to not mark task as current
     // depending on option.
-    else if (task_add(taskenv, taskid, col))
+    else if (task_add(taskenv, taskid))
         return emod_set(TMAN_EADDID);
     else if (hookact("add", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
@@ -173,11 +179,11 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
 
-    else if (taskid == NULL && (taskid = task_getcurr(taskenv)) == NULL)
+    else if (taskid == NULL && (taskid = task_curr(taskenv)) == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
-    else if (task_exists(taskenv, taskid) == FALSE)
+    else if (task_ext(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
 
     /* Copy current task ID to another variable, cuz it'll be
@@ -201,13 +207,13 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 
     if ((cenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if (task_getcurr(cenv) == NULL)
+    else if (task_curr(cenv) == NULL)
         return emod_set(TMAN_ENOCURRID);
-    else if (task_getprev(cenv) == NULL)
+    else if (task_prev(cenv) == NULL)
         return emod_set(TMAN_ENOPREVID);
     else if (task_swap(cenv))
         return emod_set(TMAN_ESWAPIDS);
-    else if (hookact("prev", env_getcurr(), task_getcurr(cenv)))
+    else if (hookact("prev", env_getcurr(), task_curr(cenv)))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
@@ -218,7 +224,7 @@ int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
 
     if ((cenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
-    else if ((cid = task_getcurr(cenv)) == NULL)
+    else if ((cid = task_curr(cenv)) == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (hookact("sync", cenv, cid))
         return emod_set(TMAN_EHOOK);
@@ -237,11 +243,11 @@ int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, s
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
 
-    else if (taskid == NULL && (taskid = task_getcurr(taskenv)) == NULL)
+    else if (taskid == NULL && (taskid = task_curr(taskenv)) == NULL)
         return emod_set(TMAN_ENOCURRENV);
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
-    else if (task_exists(taskenv, taskid) == FALSE)
+    else if (task_ext(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
     else if (unit_setbin(taskenv, taskid, unitbin)) {
         elog(1, "%s: could not set unit values", taskid);
@@ -269,13 +275,13 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
         return emod_set(TMAN_EREQRID);
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
-    else if (task_exists(taskenv, taskid) == FALSE)
+    else if (task_ext(taskenv, taskid) == FALSE)
         return emod_set(TMAN_EMISSID);
 
     /* switch to new current environment.  */
     if (strncmp(taskenv, env_getcurr(), ENVSIZ) != 0 && env_addcurr(taskenv) != 0)
         return emod_set(TMAN_ESWITCHENV);
-    return task_move(taskenv, taskid, MARKCURR);
+    return task_move(taskenv, taskid, COLCURR);
 }
 
 int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
@@ -358,7 +364,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
         }
         strcpy(ctx->list.ilist[i].id, ent->d_name);
         strcpy(ctx->list.ilist[i].desc, bunit[4].val);
-        ctx->list.ilist[i].col = column_getmark(taskenv, ctx->list.ilist[i].id);
+        ctx->list.ilist[i].col = col_getmark(taskenv, ctx->list.ilist[i].id);
         ++i;
     }
     ctx->list.num = i;
@@ -378,11 +384,11 @@ int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_
     else if (env_isvalid(taskenv) == FALSE)
         return emod_set(TMAN_EILLEGENV);
 
-    else if (taskid == NULL && (taskid = task_getcurr(taskenv)) == NULL)
+    else if (taskid == NULL && (taskid = task_curr(taskenv)) == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
-    else if (task_exists(taskenv, taskid) == FALSE)
+    else if (task_ext(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
     return task_move(taskenv, taskid, tag);
 }
@@ -401,11 +407,11 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
 
-    else if (taskid == NULL && (taskid = task_getcurr(taskenv)) == NULL)
+    else if (taskid == NULL && (taskid = task_curr(taskenv)) == NULL)
         return emod_set(TMAN_ENOCURRID);
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
-    else if (task_exists(taskenv, taskid) == FALSE)
+    else if (task_ext(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
 
     // TODO: don't wanna lose plugin units if builtin ones
@@ -430,7 +436,7 @@ char *tman_id_getcurr(tman_ctx_t *ctx, char *env)
         emod_set(TMAN_ENOCURRENV);
         return NULL;
     }
-    else if ((taskid = task_getcurr(taskenv)) == NULL)
+    else if ((taskid = task_curr(taskenv)) == NULL)
         return NULL;
     return strncpy(task_currid, taskid, IDSIZ);
 }
@@ -443,7 +449,7 @@ char *tman_id_getprev(tman_ctx_t *ctx, char *env)
         emod_set(TMAN_ENOCURRENV);
         return NULL;
     }
-    else if ((taskid = task_getprev(taskenv)) == NULL)
+    else if ((taskid = task_prev(taskenv)) == NULL)
         return NULL;
     return strncpy(task_previd, taskid, IDSIZ);
 }

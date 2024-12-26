@@ -3,7 +3,7 @@
 
 #include "unit.h"
 #include "common.h"
-#include "column.h"
+#include "col.h"
 #include "osdep.h"
 #include "errmod.h"
 
