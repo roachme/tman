@@ -10,7 +10,7 @@
 
 #include "common.h"
 #include "task.h"
-#include "column.h"
+#include "col.h"
 
 char col[COLSIZ + 1];
 
@@ -30,7 +30,7 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 7, .mark = '-', .tag = "done" },
 };
 
-int column_exists(char *newcol)
+int col_ext(char *newcol)
 {
     int i;
 
@@ -40,7 +40,7 @@ int column_exists(char *newcol)
     return FALSE;
 }
 
-int column_add(char *env, char *id, char *newcol)
+int col_add(char *env, char *id, char *newcol)
 {
     FILE *fp;
 
@@ -50,7 +50,7 @@ int column_add(char *env, char *id, char *newcol)
     return fclose(fp);
 }
 
-char *column_get(char *env, char *id)
+char *col_get(char *env, char *id)
 {
     FILE *fp;
 
@@ -62,14 +62,26 @@ char *column_get(char *env, char *id)
     return col;
 }
 
+int col_set(char *env, char *id, char *col)
+{
+    FILE *fp;
+
+    if ((fp = fopen(genpath_col(env, id), "w")) == NULL) {
+        fprintf(stderr, "err: setcol '%s'\n", id);
+        return 1;
+    }
+    fprintf(fp, COLFMT, col);
+    return fclose(fp);
+}
+
 // roach: should it delete col file or mark it with default column?
-int column_del(char *env, char *id, char *newcol)
+int col_del(char *env, char *id)
 {
     return 0;
 }
 
 // Note: used only by tman_id_list(). Get rid of it in the future.
-struct column column_getmark(char *env, char *id)
+struct column col_getmark(char *env, char *id)
 {
     int i;
     FILE *fp;

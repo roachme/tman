@@ -7,195 +7,258 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
-
-#include "common.h"
-#include "errmod.h"
-#include "tman.h"
+#include <ctype.h>
 #include "task.h"
-#include "column.h"
+#include "col.h"
+#include "common.h"
+#include "osdep.h"
 
-static char *base = tmanfs.base;
 static char curr[IDSIZ + 1], prev[IDSIZ + 1];
 
-static int reset_toggles()
+
+/*
+ * Notes:
+ * 1. col_del() should delete a file or what? Move it to column blog or done??
+*/
+
+static int addcurr(char *env, char *id)
 {
-    curr[0] = prev[0] = '\0';
+    /* Prevent duplicate toggles.  */
+    if (strncmp(id, curr, IDSIZ) == 0)
+        return 0;
+
+    if (prev[0] != '\0')
+        col_set(env, prev, COLBLOG);
+
+    if (curr[0] != '\0') {
+        col_set(env, curr, COLPREV);
+        strncpy(prev, curr, IDSIZ);
+    }
+    col_set(env, id, COLCURR);
+    strncpy(curr, id, IDSIZ);
     return 0;
 }
 
-static int load_toggles(char *env)
+static int delcurr(char *env)
+{
+    col_set(env, curr, COLBLOG);
+    memset(curr, 0, IDSIZ);
+    if (prev[0] != '\0') {
+        col_set(env, prev, COLCURR);
+        strncpy(curr, prev, IDSIZ);
+    }
+    return 0;
+}
+
+static int delprev(char *env)
+{
+    if (curr[0] == '\0')
+        return 1;
+
+    col_set(env, prev, COLBLOG);
+    prev[0] = '\0';
+    return 0;
+}
+
+static int addprev(char *env, char *id)
+{
+    col_set(env, id, COLPREV);
+    strncpy(prev, id, IDSIZ);
+    return 0;
+}
+
+static int swap(char *env)
+{
+    char tmp[IDSIZ + 1];
+
+    if (curr[0] == '\0' || prev[0] == '\0')
+        return 1;
+    strncpy(tmp, prev, IDSIZ);
+    return addcurr(env, tmp);
+}
+
+
+/* Move current task to another column.  */
+static int movecurr(char *env, char *id, char *col)
+{
+    if (strncmp(col, COLCURR, COLSIZ) == 0)
+        return 0; /* do nothing */
+    if (strncmp(col, COLPREV, COLSIZ) == 0)
+        return swap(env);
+    return delcurr(env);
+}
+
+/* Move previous task to another column.  */
+static int moveprev(char *env, char *id, char *col)
+{
+    if (strncmp(col, COLPREV, COLSIZ) == 0)
+        return 0; /* do nothing */
+    if (strncmp(col, COLCURR, COLSIZ) == 0)
+        return swap(env);
+    return delprev(env);
+}
+
+/* Move random task to another column. */
+static int movetask(char *env, char *id, char *col)
+{
+    if (strncmp(col, COLCURR, COLSIZ) == 0) {
+        return addcurr(env, id);
+    }
+    else if (strncmp(col, COLPREV, COLSIZ) == 0) {
+        return addprev(env, id);
+    }
+    return col_set(env, id, col);
+}
+
+static int reset()
+{
+    memset(curr, 0, IDSIZ);
+    memset(prev, 0, IDSIZ);
+    return 0;
+}
+
+static int load(char *env)
 {
     DIR *dir;
-    char *id, *col;
+    char *col;
     struct dirent *ent;
 
     if ((dir = opendir(genpath_env(env))) == NULL)
-        return emod_set(TMAN_EOPENENVDIR);
+        return 1;
 
-    while ((ent = readdir(dir)) != NULL && (id = ent->d_name) != NULL) {
+    reset();
+    while ((ent = readdir(dir)) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
-        else if ((col = column_get(env, id)) == NULL) {
-            fprintf(stderr, "err: could not get task unit: %s\n", id);
+        else if ((col = col_get(env, ent->d_name)) == NULL) {
+            fprintf(stderr, "warn: could not get col file: %s:%s\n", env, ent->d_name);
             continue;
         }
-
-        if (strncmp(col, MARKCURR, COLSIZ) == 0)
-            strncpy(curr, id, IDSIZ);
-        else if (strncmp(col, MARKPREV, COLSIZ) == 0)
-            strncpy(prev, id, IDSIZ);
+        if (strncmp(col, COLCURR, IDSIZ) == 0)
+            strncpy(curr, ent->d_name, IDSIZ);
+        else if (strncmp(col, COLPREV, IDSIZ) == 0)
+            strncpy(prev, ent->d_name, IDSIZ);
+        else if (curr[0] != '\0' && prev[0] != '\0')
+            break;
     }
-    closedir(dir);
-    return TRUE;
+    return closedir(dir);
 }
 
-static int save_toggles(char *env)
+/*
+ * Get current task ID in environment.
+ * @param env environment name
+ * @return current task ID
+*/
+char *task_curr(char *env)
 {
-    if (curr[0] != '\0')
-        column_add(env, curr, MARKCURR);
-    if (prev[0] != '\0')
-        column_add(env, prev, MARKPREV);
-    return 0;
+    if (load(env))
+        return NULL;
+    return curr;
 }
 
-static int _movecurr(char *env, char *col)
+/*
+ * Get previous task ID in environment.
+ * @param env environment name
+ * @return previous task ID
+*/
+char *task_prev(char *env)
 {
-    if (strncmp(col, MARKCURR, COLSIZ) == 0)
-        return 0; // do nothing
-    else if (strncmp(col, MARKPREV, COLSIZ) == 0) {
-        fprintf(stderr, "swap not allowed this way\n");
-        return 1;
-    }
-    column_add(env, curr, col);
-    if (prev[0] != '\0')
-        column_add(env, prev, MARKCURR);
-    reset_toggles();
-    return 0;
+    if (load(env))
+        return NULL;
+    return prev;
 }
 
-static int _moveprev(char *env, char *col)
+/*
+ * Check that task ID is valid.
+ * @param id task ID
+ * @return on success - 1, otherwise 0
+*/
+int task_chk(char *id)
 {
-    if (strncmp(col, MARKPREV, COLSIZ) == 0)
-        return 0; // do nothing
-    else if (strncmp(col, MARKCURR, COLSIZ) == 0) {
-        // TODO: should be legal.
-        fprintf(stderr, "cant move prev to curr\n");
-        return 1;
-    }
-
-    column_add(env, prev, col);
-    reset_toggles();
-    return 0;
+    if (!isalnum(*id++))
+        return 0;
+    for ( ; *id; ++id)
+        if (!(isalnum(*id) || *id == '_' || *id == '-'))
+            return 0;
+    return isalnum(*--id);
 }
 
-static int _movetask(char *env, char *id, char *col)
-{
-    if (strncmp(col, MARKPREV, COLSIZ) == 0) {
-        fprintf(stderr, "cant move task to prev this way\n");
-        return 1;
-    }
-
-    if (strncmp(col, MARKCURR, COLSIZ) == 0 && curr[0] != '\0') {
-        fprintf(stderr, "_movetask: old curr '%s'\n", curr);
-        column_add(env, curr, MARKPREV);
-        if (prev[0] != '\0')
-            column_add(env, prev, MARKBLOG);
-        column_add(env, id, MARKCURR);
-    } else {
-        fprintf(stderr, "_movetask: rest: new curr '%s'\n", id);
-        column_add(env, id, col);
-    }
-    reset_toggles();
-    return 0;
-}
-
-static int _delete_curr(char *env)
-{
-    fprintf(stderr, "_delete_curr: start\n");
-    column_add(env, curr, MARKBLOG);
-    if (prev[0] != '\0')
-        column_add(env, prev, MARKCURR);
-    return reset_toggles();
-}
-
-static int _delete_prev(char *env)
-{
-    fprintf(stderr, "_delete_prev: start\n");
-    column_add(env, prev, MARKBLOG);
-    return reset_toggles();
-}
-
-int task_exists(char *env, char *id)
+/*
+ * Check that task ID exists in environment.
+ * @param env environment name
+ * @param id task ID
+*/
+int task_ext(char *env, char *id)
 {
     return ISDIR(genpath_full(env, id));
 }
 
-int task_add(char *env, char *id, char *col)
+/*
+ * Add a task to column.
+ * @param env environment name
+ * @param id task ID
+*/
+int task_add(char *env, char *id)
 {
-    if (column_add(env, id, MARKBLOG)) {
-        fprintf(stderr, "column_add: error\n");
+    char taskid[IDSIZ + 1];
+
+    strncpy(taskid, id, IDSIZ);
+    if (col_set(env, taskid, COLBLOG))
         return 1;
-    }
-    return task_move(env, id, col);
+    return task_move(env, taskid, COLCURR);
 }
 
+/**
+ * Delete task from column.
+ * @param env environment name
+ * @param id task ID
+ * @return on success: 0
+ * @return on failure: 1
+*/
 int task_del(char *env, char *id)
 {
-    if (load_toggles(env) == FALSE)
+    char taskid[IDSIZ + 1];
+
+    if (load(env))
         return 1;
 
-    if (strncmp(id, curr, IDSIZ) == 0) {
-        fprintf(stderr, "_delete_curr: id: %s\n", id);
-        return _delete_curr(env);
-    }
-    return _delete_prev(env);
+    strncpy(taskid, id, IDSIZ);
+    if (strncmp(taskid, curr, IDSIZ) == 0)
+        return delcurr(env);
+    else if (strncmp(taskid, prev, IDSIZ) == 0)
+        return delprev(env);
+    return col_del(env, taskid);
 }
 
+
+/*
+ * Move task to another column.
+ * @param env environment name
+ * @param id task ID
+ * @param col column name
+*/
 int task_move(char *env, char *id, char *col)
 {
-    if (load_toggles(env) == FALSE) {
-        fprintf(stderr, "task_move: could not load_toggles\n");
+    char taskid[IDSIZ + 1];
+
+    if (load(env))
         return 1;
-    }
 
-    if (strncmp(id, curr, IDSIZ) == 0) {
-        fprintf(stderr, "task_move: _movecurr\n");
-        return _movecurr(env, col);
+    strncpy(taskid, id, IDSIZ);
+    if (strncmp(curr, taskid, IDSIZ) == 0) {
+        return movecurr(env, curr, col);
     }
-    else if (strncmp(id, prev, IDSIZ) == 0) {
-        fprintf(stderr, "task_move: _moveprev\n");
-        return _moveprev(env, col);
+    else if (strncmp(prev, taskid, IDSIZ) == 0) {
+        return moveprev(env, prev, col);
     }
-    else {
-        fprintf(stderr, "task_move: _movetask\n");
-        return _movetask(env, id, col);
-    }
+    return movetask(env, taskid, col);
 }
 
-char *task_getcurr(char *env)
-{
-    if (load_toggles(env) == FALSE)
-        return NULL;
-    return curr[0] != '\0' ? curr : NULL;
-}
-
-char *task_getprev(char *env)
-{
-    if (load_toggles(env) == FALSE)
-        return NULL;
-    return prev[0] != '\0' ? prev : NULL;
-}
-
+/**
+ * Swap current and previous task IDs in environment.
+ * @param env environment
+*/
 int task_swap(char *env)
 {
-    char tmp[IDSIZ + 1];
-    if (load_toggles(env) == FALSE)
-        return 1;
-    else if (curr[0] == '\0' || prev[0] == '\0')
-        return 1;
-
-    // TODO: find a good way to use save_toggles();
-    column_add(env, curr, MARKPREV);
-    column_add(env, prev, MARKCURR);
-    return 0;
+    return swap(env);
 }

@@ -53,7 +53,7 @@ int plugin(char *env, char *id, char *pgname, char *pgncmd)
         return emod_set(TMAN_ENOCURRID);
     else if (_chkid(taskid) == FALSE)
         return emod_set(TMAN_EILLEGID);
-    else if (task_exists(taskenv, taskid) == FALSE)
+    else if (task_ext(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
 
     return system(gen_pgncmd(taskenv, taskid, pgname, pgncmd));

@@ -3,7 +3,7 @@
 
 #include "hook.h"
 #include "unit.h"
-#include "column.h"
+#include "col.h"
 #include "common.h"
 
 #define NUMCONFIG       2
