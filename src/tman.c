@@ -164,6 +164,7 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
     // FIXME: causes error when delete current task in previous env
     taskenv = env;
     taskid  = id;
+    char _taskid[IDSIZ + 1];
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
@@ -179,15 +180,18 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
     else if (task_exists(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ENOSUCHID);
 
+    /* Copy current task ID to another variable, cuz it'll be
+     * lost once removed from column.  */
+    strncpy(_taskid, taskid, IDSIZ);
+
     if (hookact("del", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     else if (unit_delbin(taskenv, taskid))
         return emod_set(TMAN_ETASKRMUNIT);
-    // TODO: gotta change the order call: task_del goes before irmdir
-    else if (irmdir(tmanfs.base, taskenv, taskid))
-        return emod_set(TMAN_ETASKRMDIR);
     else if (task_del(taskenv, taskid))
         return emod_set(TMAN_EDELID);
+    else if (irmdir(tmanfs.base, taskenv, _taskid))
+        return emod_set(TMAN_ETASKRMDIR);
     return TMAN_OK;
 }
 
