@@ -80,7 +80,6 @@ char *genpath_unit(char *env, char *id)
     return pathname;
 }
 
-/*
 int wlog(char *fmt, ...)
 {
     va_list arg;
@@ -91,9 +90,7 @@ int wlog(char *fmt, ...)
     va_end(arg);
     return 0;
 }
-*/
 
-/*
 int dlog(char *fmt, ...)
 {
     va_list arg;
@@ -104,4 +101,3 @@ int dlog(char *fmt, ...)
     va_end(arg);
     return 0;
 }
-*/

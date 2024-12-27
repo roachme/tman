@@ -1,7 +1,5 @@
-/*
-    Module to move task from column to column.
-    It also supports toggles, i.e. current and previous task IDs.
-*/
+/*  Module to move task from column to column.
+    It also supports toggles, i.e. current and previous task IDs.  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,8 +22,10 @@ static char curr[IDSIZ + 1], prev[IDSIZ + 1];
 static int addcurr(char *env, char *id)
 {
     /* Prevent duplicate toggles.  */
-    if (strncmp(id, curr, IDSIZ) == 0)
+    if (strncmp(id, curr, IDSIZ) == 0) {
+        dlog("task: assert: addcurr: tryna add toggle duplicate");
         return 0;
+    }
 
     if (prev[0] != '\0')
         col_set(env, prev, COLBLOG);
@@ -52,8 +52,10 @@ static int delcurr(char *env)
 
 static int delprev(char *env)
 {
-    if (curr[0] == '\0')
+    if (curr[0] == '\0') {
+        dlog("task: delprev: curr not set");
         return 1;
+    }
 
     col_set(env, prev, COLBLOG);
     prev[0] = '\0';
@@ -71,8 +73,10 @@ static int swap(char *env)
 {
     char tmp[IDSIZ + 1];
 
-    if (curr[0] == '\0' || prev[0] == '\0')
+    if (curr[0] == '\0' || prev[0] == '\0') {
+        dlog("task: swap: either curr or prev not set");
         return 1;
+    }
     strncpy(tmp, prev, IDSIZ);
     return addcurr(env, tmp);
 }
