@@ -155,7 +155,7 @@ static int load(char *env)
 */
 char *task_curr(char *env)
 {
-    if (load(env))
+    if (load(env) || curr[0] == '\0')
         return NULL;
     return curr;
 }
@@ -167,7 +167,7 @@ char *task_curr(char *env)
 */
 char *task_prev(char *env)
 {
-    if (load(env))
+    if (load(env) || prev[0] == '\0')
         return NULL;
     return prev;
 }
