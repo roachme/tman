@@ -156,10 +156,10 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_ETASKMKDIR);
     else if (unit_addbin(taskenv, taskid, units) != 0)
         return emod_set(TMAN_ETASKMKUNIT);
-    // TODO: add support to not mark task as current
-    // depending on option.
     else if (task_add(taskenv, taskid))
         return emod_set(TMAN_EADDID);
+    else if (opt->noswitch == FALSE && task_move(taskenv, taskid, COLCURR))
+        return emod_set(TMAN_EMOVEID);
     else if (hookact("add", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;

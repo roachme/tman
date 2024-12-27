@@ -27,14 +27,15 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
 
     [TMAN_EREQRID] =     "task ID required",
     [TMAN_EMISSID] =     "task ID does not exist",
-    [TMAN_EADDID] =      "could not add task to column",
-    [TMAN_EDELID] =      "could not delete task to column",
+    [TMAN_EADDID] =      "could not add task to default column",
+    [TMAN_EMOVEID] =     "could not move task to column",
+    [TMAN_EDELID] =      "could not delete task from column",
     [TMAN_EILLEGID] =    "illegal task ID",
     [TMAN_ENOCURRID] =   "no current task ID",
     [TMAN_ENOPREVID] =   "no previous task ID",
     [TMAN_ENOSUCHID] =   "no such task ID",
     [TMAN_EIDEXISTS] =   "task ID already exists",
-    [TMAN_ESWAPIDS] =    "could not swapd current and previous IDs",
+    [TMAN_ESWAPIDS] =    "could not swap current and previous task IDs",
 
     [TMAN_ETASKMKDIR] =  "could not create task directory",
     [TMAN_ETASKRMDIR] =  "could not delete task directory",
