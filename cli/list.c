@@ -19,6 +19,16 @@ static int compare(const void *aa, const void *bb)
     return (a->col.prio - b->col.prio);
 }
 
+static int recursive_tree_print(struct tree *p)
+{
+    if (p != NULL) {
+        recursive_tree_print(p->left);
+        printf("%c %s [%s] %s\n", p->mark, p->id, p->pgnout, p->desc);
+        recursive_tree_print(p->right);
+    }
+    return 0;
+}
+
 static int pretty_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 {
     if (tman_id_list(ctx, env, opt) != TMAN_OK) {
@@ -26,16 +36,7 @@ static int pretty_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
         return 1;
     }
 
-    // sort list according to mark level
-    // code goes here..
-    qsort((void*)ctx->list.ilist, ctx->list.num, sizeof(ctx->list.ilist[0]), compare);
-
-    for (int i = 0; i < ctx->list.num; ++i) {
-        struct ilist item = ctx->list.ilist[i];
-        printf("%c %-10s [%s] %s\n", item.col.mark, item.id, item.pgn, item.desc);
-    }
-
-    return TMAN_OK;
+    return recursive_tree_print(ctx->tree);
 }
 
 // TODO: Find a good error message in case option fails.  */

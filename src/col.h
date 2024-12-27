@@ -26,7 +26,9 @@ struct columns {
 
 int col_add(char *env, char *id, char *col);
 int col_ext(char *col);
+int col_prio(char *col);
 char *col_get(char *env, char *id);
+char col_get2(int prio);
 int col_set(char *env, char *id, char *col);
 int col_del(char *env, char *id);
 
