@@ -43,7 +43,6 @@ static tman_ctx_t *mkctx()
 
 static int mkfs_vars()
 {
-    // TODO: Add a variable for task db as well.
     sprintf(tmanfs.base,   "%s",    config.base);
     sprintf(tmanfs.db,     "%s/%s", tmanfs.base, ".tman");
     sprintf(tmanfs.finit,  "%s/%s", tmanfs.db,   "inited");
@@ -488,6 +487,35 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
 
 int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 {
+    DIR *edir;
+    struct dirent *ent;
+    struct tree *node;
+    int colprio = 1;
+    char *cenv, *penv;
+    char *desc = "some env desc";
+    char pgnout[PGNOUTSCSIZ + 1];
+
+    if ((edir = opendir(tmanfs.base)) == NULL) {
+        elog(1, "tman_env_list: could not open env dir");
+        return 1;
+    }
+
+    cenv = env_getcurr();
+    penv = env_getprev();
+    while ((ent = readdir(edir)) != NULL) {
+        if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
+            continue;
+
+        // TODO: unify this shit
+        if (cenv != NULL && strncmp(cenv, ent->d_name, ENVSIZ) == 0)
+            colprio = 1;
+        else if (penv != NULL && strncmp(penv, ent->d_name, ENVSIZ) == 0)
+            colprio = 2;
+        else
+            colprio = 3;
+        node = tree_alloc(ent->d_name, colprio, desc, pgnout);
+        ctx->etree = tree_add(ctx->etree, node);
+    }
     return TMAN_OK;
 }
 
@@ -547,6 +575,7 @@ int tman_deinit(struct tman_context *ctx)
 {
     unit_delpgn(ctx->units.pgn);
     tree_free(ctx->tree);
+    tree_free(ctx->etree);
     free(ctx);
     return TMAN_OK;
 }
