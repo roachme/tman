@@ -53,6 +53,7 @@ typedef struct tman_context {
     struct list list;
     struct units units;
     struct tree *tree;
+    struct tree *etree;
 } tman_ctx_t;
 
 

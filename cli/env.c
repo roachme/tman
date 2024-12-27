@@ -4,18 +4,18 @@
 #include "env.h"
 #include "cli.h"
 
-static const builtin_t envcmds[] = {
-    { .name = "add",  .func = &_env_add  },
-    { .name = "cat",  .func = &_env_cat  }, // under consideration
-    { .name = "del",  .func = &_env_del  },
-    { .name = "list", .func = &_env_list },
-    { .name = "prev", .func = &_env_prev },
-    { .name = "set",  .func = &_env_set  },
-    { .name = "use",  .func = &_env_use  },
-};
+static int tree_print_rec(struct tree *p)
+{
+    if (p != NULL) {
+        tree_print_rec(p->left);
+        printf("%c %-10s [%s] %s\n", p->mark, p->id, p->pgnout, p->desc);
+        tree_print_rec(p->right);
+    }
+    return 0;
+}
 
 // TODO: Find a good error message in case option fails.  */
-int _env_add(int argc, char **argv, tman_ctx_t *ctx)
+static int _env_add(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int force, status;
@@ -42,12 +42,12 @@ int _env_add(int argc, char **argv, tman_ctx_t *ctx)
 }
 
 // roach: maybe it'll be useful
-int _env_cat(int argc, char **argv, tman_ctx_t *ctx)
+static int _env_cat(int argc, char **argv, tman_ctx_t *ctx)
 {
     return 0;
 }
 
-int _env_del(int argc, char **argv, tman_ctx_t *ctx)
+static int _env_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int force, status;
@@ -80,35 +80,18 @@ int _env_del(int argc, char **argv, tman_ctx_t *ctx)
     return status == TMAN_OK && showpath == TRUE ? tman_pwd() : 1;
 }
 
-int _env_list(int argc, char **argv, tman_ctx_t *ctx)
+static int _env_list(int argc, char **argv, tman_ctx_t *ctx)
 {
-    char mark = '+';
-    struct dirent *ent;
-    char *cenv = tman_env_getcurr(NULL);
-    char *penv = tman_env_getprev(NULL);
-    DIR *edir = opendir(tmanfs.base);
+    int status;
 
-    if (!edir)
-        return elog(1, "could not open task directory");
-
-    while ((ent = readdir(edir)) != NULL) {
-        if (ent->d_name[0] == '.'  || ent->d_type != DT_DIR)
-            continue;
-
-        // TODO: simplify this logic
-        if (cenv != NULL && strcmp(tman_env_getcurr(NULL), ent->d_name) == 0)
-            mark = '*';
-        else if (penv != NULL && strcmp(tman_env_getprev(NULL), ent->d_name) == 0)
-            mark = '^';
-        else
-            mark = '+';
-        printf("%c %-10s [%s] %s\n", mark, ent->d_name, "roach", "some env desc");
+    if ((status = tman_env_list(ctx, NULL)) != TMAN_OK) {
+        elog(1, "_env_list: something went wrong");
+        return status;
     }
-    closedir(edir);
-    return TMAN_OK;
+    return tree_print_rec(ctx->etree);
 }
 
-int _env_prev(int argc, char **argv, tman_ctx_t *ctx)
+static int _env_prev(int argc, char **argv, tman_ctx_t *ctx)
 {
     int status;
     struct tman_env_prev_opt opt;
@@ -119,12 +102,12 @@ int _env_prev(int argc, char **argv, tman_ctx_t *ctx)
     return tman_pwd();
 }
 
-int _env_set(int argc, char **argv, tman_ctx_t *ctx)
+static int _env_set(int argc, char **argv, tman_ctx_t *ctx)
 {
     return 0;
 }
 
-int _env_use(int argc, char **argv, tman_ctx_t *ctx)
+static int _env_use(int argc, char **argv, tman_ctx_t *ctx)
 {
     int status;
     char *env;
@@ -138,6 +121,16 @@ int _env_use(int argc, char **argv, tman_ctx_t *ctx)
         return elog(status, errfmt, env, tman_strerror());
     return tman_pwd();
 }
+
+static const builtin_t envcmds[] = {
+    { .name = "add",  .func = &_env_add  },
+    { .name = "cat",  .func = &_env_cat  }, // under consideration
+    { .name = "del",  .func = &_env_del  },
+    { .name = "list", .func = &_env_list },
+    { .name = "prev", .func = &_env_prev },
+    { .name = "set",  .func = &_env_set  },
+    { .name = "use",  .func = &_env_use  },
+};
 
 int tman_cli_env(int argc, char **argv, tman_ctx_t *ctx)
 {

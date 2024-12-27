@@ -23,7 +23,7 @@ static int recursive_tree_print(struct tree *p)
 {
     if (p != NULL) {
         recursive_tree_print(p->left);
-        printf("%c %s [%s] %s\n", p->mark, p->id, p->pgnout, p->desc);
+        printf("%c %-10s [%s] %s\n", p->mark, p->id, p->pgnout, p->desc);
         recursive_tree_print(p->right);
     }
     return 0;
