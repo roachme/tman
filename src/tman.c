@@ -27,26 +27,34 @@ static char *taskenv, *taskid;
 static char task_currid[IDSIZ + 1], task_previd[IDSIZ + 1];
 static char task_currenv[ENVSIZ + 1], task_prevenv[ENVSIZ + 1];
 
+static int check_input_env(char *env)
+{
+    if ((taskenv = env) == NULL && (taskenv = env_getcurr()) == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    else if (env_isvalid(taskenv) == FALSE)
+        return emod_set(TMAN_EILLEGENV);
+    else if (env_exists(taskenv) == FALSE)
+        return emod_set(TMAN_ENOSUCHENV);
+    return 0;
+}
+
+static int check_input_id(char *id)
+{
+    if ((taskid = id) == NULL && (taskid = task_curr(taskenv)) == NULL)
+        return emod_set(TMAN_ENOCURRENV);
+    else if (task_chk(taskid) == FALSE)
+        return emod_set(TMAN_EILLEGID);
+    else if (task_ext(taskenv, taskid) == FALSE)
+        return emod_set(TMAN_ENOSUCHID);
+    return 0;
+}
 
 static int chkargs(char *env, char *id)
 {
-    taskid = id;
-    taskenv = env;
-
-    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
-    else if (taskid == NULL && (taskid = task_curr(taskenv)) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
-
-    else if (env_isvalid(taskenv) == FALSE)
-        return emod_set(TMAN_EILLEGENV);
-    else if (task_chk(taskid) == FALSE)
-        return emod_set(TMAN_EILLEGID);
-
-    else if (env_exists(taskenv) == FALSE)
-        return emod_set(TMAN_ENOSUCHENV);
-    else if (task_ext(taskenv, taskid) == FALSE)
-        return emod_set(TMAN_ENOSUCHID);
+    if ((status = check_input_env(env)))
+        return status;
+    else if ((status = check_input_id(id)))
+        return status;
     return 0;
 }
 
@@ -259,40 +267,6 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
 
 int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
 {
-    /*
-    char dstid[BUFSIZ + 1] = {0};
-
-    taskid = id;
-    taskenv = src ? src : column_getcenv();
-    sprintf(dstid, "%s/%s/%s", tmanfs.base, dst, id);
-
-    if (env_exists(dst) == FALSE) {
-        elog(1, "no such destination env");
-        return emod_set(TMAN_NODEF_ERR);
-    }
-    else if (taskenv == NULL)
-        return emod_set(TMAN_ENOCURRENV);
-    else if (env_exists(taskenv) == FALSE) {
-        elog(1, "no such source env");
-        return emod_set(TMAN_NODEF_ERR);
-    }
-    else if (task_exists(taskenv, taskid) == FALSE)
-        emod_set(TMAN_ENOSUCHID);
-    else if (task_exists(dst, taskid)) {
-        elog(1, "cannot move '%s': task id exists in env '%s'", taskid, dst);
-        return emod_set(TMAN_NODEF_ERR);
-    }
-
-    if (imove(tmanfs.base, taskid, dst, taskenv)) {
-        elog(1, "%s: could not move task to %s", taskid, dst);
-        return emod_set(TMAN_NODEF_ERR);
-    }
-    else if (strcmp(column_getcid(), taskid) == 0)
-        return column_delcid();
-    else if (strcmp(column_getpid(), taskid) == 0)
-        return !column_swapid() && !column_delcid();
-    return TMAN_OK;
-    */
     return 0;
 }
 
@@ -404,15 +378,12 @@ char *tman_id_getprev(tman_ctx_t *ctx, char *env)
 
 int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 {
-    taskenv = env;
-
-    if (taskenv == NULL)
-        return emod_set(TMAN_EREQRENV);
-    else if (env_isvalid(taskenv) == FALSE)
-        return emod_set(TMAN_EILLEGENV);
-    else if (env_exists(taskenv))
+    if ((status = check_input_env(env)) && status != TMAN_EENVEXISTS)
+        return status;
+    else if (env_exists(env) == TRUE)
         return emod_set(TMAN_EENVEXISTS);
-    else if (emkdir(tmanfs.base, taskenv)) {
+
+    if (emkdir(tmanfs.base, taskenv)) {
         elog(1, "%s: could not create env directory", taskenv);
         return emod_set(TMAN_NODEF_ERR);
     }
@@ -421,16 +392,14 @@ int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 
 int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
 {
-    taskenv = env;
+    if ((status = check_input_env(env)))
+        return status;
 
-    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
-    else if (env_exists(taskenv) == FALSE)
-        return emod_set(TMAN_ENOSUCHENV);
-    else if (ermdir(tmanfs.base, taskenv)) {
+    if (ermdir(tmanfs.base, taskenv)) {
         elog(1, "%s: could not delete env directory", taskenv);
         return emod_set(TMAN_NODEF_ERR);
     }
+    // TODO: check if that is a current env
     return env_delcurr();
 }
 
@@ -486,12 +455,8 @@ int tman_env_set(tman_ctx_t *ctx, char *env, struct tman_env_set_opt *opt)
 
 int tman_env_use(tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt)
 {
-    taskenv = env;
-
-    if (taskenv == NULL)
-        return emod_set(TMAN_EREQRENV);
-    else if (env_exists(taskenv) == FALSE)
-        return emod_set(TMAN_ENOSUCHENV);
+    if ((status = check_input_env(env)))
+        return status;
     return env_addcurr(taskenv);
 }
 
