@@ -24,7 +24,6 @@ extern struct tmanstruct tmanfs;
 #define FALSE           0
 
 #define IDSIZ           20
-#define TAGSIZ          4
 #define PATHSIZ         4096
 
 int _chkid(char *id);
