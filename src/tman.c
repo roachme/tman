@@ -528,7 +528,6 @@ char *tman_env_getprev(tman_ctx_t *ctx)
     return env_getprev();
 }
 
-
 int tman_isplugin(const char *pgn)
 {
     return isplugin(pgn);

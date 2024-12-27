@@ -44,7 +44,7 @@ struct help helptab[] = {
                  "  -e      specify an environment to add a task to\n"
                  "  -f      do not interrupt if task exists, process others\n"
                  "  -h      show this help and exit\n"
-                 "  -n      don't switch to newly created task (default is false)\n"
+                 "  -n      don't switch to newly created task\n"
                  "  -q      do not write anything to standard error output"
     },
     {
