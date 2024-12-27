@@ -236,7 +236,6 @@ int task_del(char *env, char *id)
     return col_del(env, taskid);
 }
 
-
 /*
  * Move task to another column.
  * @param env environment name
