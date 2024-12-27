@@ -34,10 +34,12 @@ int tman_cli_col(int argc, char **argv, tman_ctx_t *ctx)
         return elog(1, "gotta specify column to move a task to");
 
     for (i = optind; i < argc; ++i)
-        status = tman_id_col(ctx, env, argv[i], col, &opt);
+        if ((status = tman_id_col(ctx, env, argv[i], col, &opt)) != TMAN_OK)
+            elog(status, "cannot move to column '%s': %s", col, tman_strerror());
 
     if (optind == argc) /* operate on current task id */
-        status = tman_id_col(ctx, env, NULL, col, &opt);
+        if ((status = tman_id_col(ctx, env, argv[i], col, &opt)) != TMAN_OK)
+            elog(status, "cannot move to column '%s': %s", col, tman_strerror());
 
     return status;
 }
