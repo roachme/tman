@@ -207,9 +207,11 @@ int task_add(char *env, char *id)
     char taskid[IDSIZ + 1];
 
     strncpy(taskid, id, IDSIZ);
-    if (col_set(env, taskid, COLBLOG))
+    if (col_set(env, taskid, COLBLOG)) {
+        dlog("task: task_add: could not add new task to default column");
         return 1;
-    return task_move(env, taskid, COLCURR);
+    }
+    return 0;
 }
 
 /**

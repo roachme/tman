@@ -27,6 +27,7 @@ enum tman_err_enum {
     TMAN_EREQRID,
     TMAN_EMISSID,
     TMAN_EADDID,
+    TMAN_EMOVEID,
     TMAN_EDELID,
     TMAN_EILLEGID,
     TMAN_ENOCURRID,
