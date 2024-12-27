@@ -2,9 +2,7 @@
 #define TMAN_H
 
 #include "unit.h"
-#include "common.h"
 #include "col.h"
-#include "osdep.h"
 #include "errmod.h"
 
 #define LISTBIN         4

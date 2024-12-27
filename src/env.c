@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "env.h"
+#include "osdep.h"
 #include "tman.h"
 
 static char *envfile;
