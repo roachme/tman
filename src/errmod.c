@@ -16,6 +16,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_EPGN] =        "failed to execute plugin command",
     [TMAN_EOPENENVDIR]=  "could not open environment directory",
     [TMAN_ESWITCHENV] =  "could not switch to environment",
+    [TMAN_EINIT_ENVMOD]= "could not init module env",
 
     [TMAN_EREQRENV] =    "task environment name required",
     [TMAN_EMISSENV] =    "task environment name does not exist",
@@ -41,10 +42,18 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_ETASKRMDIR] =  "could not delete task directory",
     [TMAN_ETASKMKUNIT] = "could not create task unit",
     [TMAN_ETASKRMUNIT] = "could not delete task unit",
+    [TMAN_ETASKOPENDIR] ="could not open task directory",
+
+    [TMAN_ENVRMDIR] =    "could not delete env directory",
+    [TMAN_ENVMKDIR] =    "could not create env directory",
+    [TMAN_ENVOPENDIR] =  "could not open env directory",
+
 
     [TMAN_ECOLNEXIST] =  "column does not exist",
 
     [TMAN_EILLEGUNIT] =  "illegal unit value",
+    [TMAN_EISETUNIT]  =  "could not set unit values",
+    [TMAN_EIGETUNIT]  =  "could not get unit values",
 
     [TMAN_NOSUCHCMD]  = "no such command",
     [TMAN_NOSUCHPGN]  = "no such plugin",
