@@ -85,7 +85,7 @@ struct column col_getmark(char *env, char *id)
 {
     int i;
     FILE *fp;
-    char tag[TAGSIZ + 1];
+    char tag[COLSIZ + 1];
 
     // NOTE: hotfix
     if ((fp = fopen(genpath_col(env, id), "r")) == NULL)
@@ -95,7 +95,7 @@ struct column col_getmark(char *env, char *id)
     fclose(fp);
 
     for (i = 0; i < ARRAY_SIZE(coltab); ++i)
-        if (strncmp(tag, coltab[i].tag, TAGSIZ) == 0)
+        if (strncmp(tag, coltab[i].tag, COLSIZ) == 0)
             return coltab[i];
     return coltab[i];
 }
