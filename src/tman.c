@@ -123,19 +123,16 @@ int tman_setup(int setuplvl)
     if (setuplvl == TMAN_SETUPSOFT)
         return TMAN_OK;
     else if (setuplvl == TMAN_SETUPHARD) {
-        elog(1, "TMAN_SETUPHARD");
         if ((status = tman_mkfs()) != TMAN_OK) {
-            elog(1, "in tmat_setup");
             status = emod_set(TMAN_EINIT);
         }
     }
     else if (setuplvl == TMAN_SETUPCHECK) {
-        //elog(1, "TMAN_SETUPCHECK '%s'", tmanfs.fstate);
         if (ISFILE(tmanfs.finit) != TRUE) {
             status = emod_set(TMAN_EINIT);
         }
         else if (env_init(tmanfs.fstate) != 0)
-            return elog(1, "err: column_envinit");
+            return emod_set(TMAN_EINIT_ENVMOD);
         // roach: is it a good idea to init module column in general
         // and here?
     }
@@ -244,10 +241,8 @@ int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, s
     if ((status = chkargs(env, id)))
         return status;
 
-    if (unit_setbin(taskenv, taskid, unitbin)) {
-        elog(1, "%s: could not set unit values", taskid);
-        return emod_set(TMAN_NODEF_ERR);
-    }
+    if (unit_setbin(taskenv, taskid, unitbin))
+        return emod_set(TMAN_EISETUNIT);
 
     // TODO: change task directory if id unit was changed
     // TODO: update task id status as well.
@@ -289,11 +284,8 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
         return emod_set(TMAN_EILLEGENV);
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
-
-    if ((ids = opendir(genpath_env(taskenv))) == NULL) {
-        elog(1, "%s: could not read environment", taskenv);
-        return emod_set(TMAN_NODEF_ERR);
-    }
+    else if ((ids = opendir(genpath_env(taskenv))) == NULL)
+        return emod_set(TMAN_ETASKOPENDIR);
 
     while ((ent = readdir(ids)) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
@@ -343,10 +335,8 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
     /* No need to check return value because there might case
      * that no hooks are defined or executed */
     ctx->units.pgn = hookcat(ctx->units.pgn, taskenv, taskid);
-    if (unit_getbin(ctx->units.bin, taskenv, taskid) == NULL) {
-        status = emod_set(TMAN_NODEF_ERR);
-        elog(1, "tman_id_cat: failed to get builtn units");
-    }
+    if (unit_getbin(ctx->units.bin, taskenv, taskid) == NULL)
+        status = emod_set(TMAN_EIGETUNIT);
     return status;
 }
 
@@ -378,15 +368,13 @@ char *tman_id_getprev(tman_ctx_t *ctx, char *env)
 
 int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 {
-    if ((status = check_input_env(env)) && status != TMAN_EENVEXISTS)
+    if ((status = check_input_env(env)) && status != TMAN_ENOSUCHENV)
         return status;
     else if (env_exists(env) == TRUE)
         return emod_set(TMAN_EENVEXISTS);
 
-    if (emkdir(tmanfs.base, taskenv)) {
-        elog(1, "%s: could not create env directory", taskenv);
-        return emod_set(TMAN_NODEF_ERR);
-    }
+    if (emkdir(tmanfs.base, taskenv))
+        return emod_set(TMAN_ENVMKDIR);
     return env_addcurr(env);
 }
 
@@ -395,10 +383,9 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
     if ((status = check_input_env(env)))
         return status;
 
-    if (ermdir(tmanfs.base, taskenv)) {
-        elog(1, "%s: could not delete env directory", taskenv);
-        return emod_set(TMAN_NODEF_ERR);
-    }
+    if (ermdir(tmanfs.base, taskenv))
+        return emod_set(TMAN_ENVRMDIR);
+
     // TODO: check if that is a current env
     return env_delcurr();
 }
@@ -413,10 +400,8 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
     char *desc = "some env desc";
     char pgnout[PGNOUTSCSIZ + 1];
 
-    if ((edir = opendir(tmanfs.base)) == NULL) {
-        elog(1, "tman_env_list: could not open env dir");
-        return 1;
-    }
+    if ((edir = opendir(tmanfs.base)) == NULL)
+        return emod_set(TMAN_ENVOPENDIR);
 
     cenv = env_getcurr();
     penv = env_getprev();
