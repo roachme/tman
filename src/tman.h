@@ -4,6 +4,7 @@
 #include "unit.h"
 #include "col.h"
 #include "errmod.h"
+#include "tree.h"
 
 #define LISTBIN         4
 #define CMDSIZ          5
@@ -51,6 +52,7 @@ enum tman_setuplvl {
 typedef struct tman_context {
     struct list list;
     struct units units;
+    struct tree *tree;
 } tman_ctx_t;
 
 

@@ -5,7 +5,8 @@
 #include "task.h"
 
 struct tree {
-    int col;
+    int mark;
+    int colprio;
     char id[IDSIZ + 1];
     char desc[DESCSIZ + 1];
     char pgnout[PGNOUTSCSIZ + 1];

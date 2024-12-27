@@ -9,10 +9,9 @@
 #include <string.h>
 
 #include "common.h"
-#include "task.h"
 #include "col.h"
 
-char col[COLSIZ + 1];
+static char col[COLSIZ + 1];
 
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 0, .mark = '?', .tag = "uknw" },
@@ -62,6 +61,14 @@ char *col_get(char *env, char *id)
     return col;
 }
 
+char col_get2(int prio)
+{
+    for (int i = 0; i < ARRAY_SIZE(coltab); ++i)
+        if (coltab[i].prio == prio)
+                return coltab[i].mark;
+    return coltab[7].mark;
+}
+
 int col_set(char *env, char *id, char *col)
 {
     FILE *fp;
@@ -72,6 +79,16 @@ int col_set(char *env, char *id, char *col)
     }
     fprintf(fp, COLFMT, col);
     return fclose(fp);
+}
+
+int col_prio(char *col)
+{
+    int i;
+
+    for (i = 0; i < ARRAY_SIZE(coltab); ++i)
+        if (strncmp(col, coltab[i].tag, COLSIZ) == 0)
+            return coltab[i].prio;
+    return coltab[7].prio;
 }
 
 // roach: should it delete col file or mark it with default column?

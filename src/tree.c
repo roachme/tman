@@ -2,18 +2,24 @@
 #include <string.h>
 
 #include "tree.h"
+#include "col.h"
 #include "common.h"
 
-struct tree *tree_alloc(char *id, int col, char *desc, char *pgnout)
+struct tree *tree_alloc(char *id, int colprio, char *desc, char *pgnout)
 {
     struct tree *node;
 
     if ((node = malloc(sizeof(struct tree))) == NULL)
         return NULL;
-    node->col = col;
+
+    // NOTE: somehow sets off uninited values
+    memset(node, 0, sizeof(struct tree));
+
+    node->mark = col_get2(colprio);
+    node->colprio = colprio;
     strncpy(node->id, id, IDSIZ);
-    strncpy(node->desc, desc, IDSIZ);
-    memset(node->pgnout, 0, PGNOUTSCSIZ); // TODO: define it too
+    strncpy(node->desc, desc, DESCSIZ);
+    strncpy(node->pgnout, pgnout, PGNOUTSCSIZ);
     node->left = node->right = NULL;
     return node;
 }
@@ -25,7 +31,7 @@ struct tree *tree_add(struct tree *parent, struct tree *node)
 
     if (parent == NULL)
         parent = node;
-    else if (node->col <= parent->col)
+    else if (node->colprio <= parent->colprio)
         parent->left = tree_add(parent->left, node);
     else
         parent->right = tree_add(parent->right, node);
@@ -46,7 +52,7 @@ void tree_print(struct tree *parent)
 {
     if (parent != NULL) {
         tree_print(parent->left);
-        printf("tree: %s %d '%s'\n", parent->id, parent->col, parent->desc);
+        printf("-> %c %s [%s] '%s'\n", parent->mark, parent->id, parent->pgnout, parent->desc);
         tree_print(parent->right);
     }
 }

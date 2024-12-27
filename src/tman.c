@@ -333,8 +333,8 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     size_t i = 0;
     struct dirent *ent;
     struct unitbin bunit[NKEYS];
-    char pathname[PATHSIZ + 1];
     taskenv = env;
+    struct tree *node;
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENOCURRENV);
@@ -343,13 +343,12 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     else if (env_exists(taskenv) == FALSE)
         return emod_set(TMAN_ENOSUCHENV);
 
-    sprintf(pathname, "%s/%s", tmanfs.base, taskenv);
-    if ((ids = opendir(pathname)) == NULL) {
+    if ((ids = opendir(genpath_env(taskenv))) == NULL) {
         elog(1, "%s: could not read environment", taskenv);
         return emod_set(TMAN_NODEF_ERR);
     }
 
-    while ((ent = readdir(ids)) != NULL && i < LSIZE) {
+    while ((ent = readdir(ids)) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
         if (unit_getbin(bunit, taskenv, ent->d_name) == NULL) {
@@ -359,15 +358,16 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 
         /* TODO: remove check and warning because there might
          * case when no hooks executed or defined and it's ok.  */
-        if (!hookls(ctx->list.ilist[i].pgn, taskenv, ent->d_name)) {
+        //if (!hookls(ctx->list.ilist[i].pgn, taskenv, ent->d_name)) {
+        /*
+        if (!hookls(ctx->tree->pgnout, taskenv, ent->d_name)) {
             fprintf(stderr, "tman_id_list %s: failed to get hookls output\n", ent->d_name);
         }
-        strcpy(ctx->list.ilist[i].id, ent->d_name);
-        strcpy(ctx->list.ilist[i].desc, bunit[4].val);
-        ctx->list.ilist[i].col = col_getmark(taskenv, ctx->list.ilist[i].id);
-        ++i;
+        */
+        struct column column = col_getmark(taskenv, ent->d_name);
+        node = tree_alloc(ent->d_name, col_prio(column.tag), bunit[4].val, "");
+        ctx->tree = tree_add(ctx->tree, node);
     }
-    ctx->list.num = i;
     closedir(ids);
     return TMAN_OK;
 }
@@ -546,6 +546,7 @@ const char *tman_strerror(void)
 int tman_deinit(struct tman_context *ctx)
 {
     unit_delpgn(ctx->units.pgn);
+    tree_free(ctx->tree);
     free(ctx);
     return TMAN_OK;
 }
