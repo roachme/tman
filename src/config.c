@@ -27,11 +27,11 @@ static int parse_usehooks(const char *confkey, int *usehooks)
 {
     char *confval = strtok(NULL, delim);
 
-    if (strncmp(confval, "true", 1) == 0) {
+    if (strncmp(confval, "true", 4) == 0) {
         *usehooks = TRUE;
         return 0;
     }
-    else if (strncmp(confval, "false", 1) == 0) {
+    else if (strncmp(confval, "false", 5) == 0) {
         *usehooks = FALSE;
         return 0;
     }
