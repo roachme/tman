@@ -15,6 +15,7 @@
 
 static char *envfile;
 static char envs[NENV][ENVSIZ + 1];
+static char curr[ENVSIZ + 1], prev[ENVSIZ + 1];
 
 static int load(void)
 {
@@ -78,14 +79,14 @@ char *env_getcurr()
 {
     if (envs[CENV][0] == '\0')
         return NULL;
-    return envs[CENV];
+    return strncpy(curr, envs[CENV], ENVSIZ);
 }
 
 char *env_getprev()
 {
     if (envs[PENV][0] == '\0')
         return NULL;
-    return envs[PENV];
+    return strncpy(prev, envs[PENV], ENVSIZ);
 }
 
 int env_addcurr(char *env)
