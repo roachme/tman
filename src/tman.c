@@ -27,6 +27,15 @@ static char *taskenv, *taskid;
 static char task_currid[IDSIZ + 1], task_previd[IDSIZ + 1];
 static char task_currenv[ENVSIZ + 1], task_prevenv[ENVSIZ + 1];
 
+static int iscurrenv(char *env)
+{
+    if (env == NULL)
+        return FALSE;
+    if (strncmp(env, env_getcurr(), ENVSIZ) == 0)
+        return TRUE;
+    return FALSE;
+}
+
 static int check_input_env(char *env)
 {
     if ((taskenv = env) == NULL && (taskenv = env_getcurr()) == NULL)
@@ -224,14 +233,12 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 
 int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
 {
-    char *cid, *cenv;
+    if ((taskenv = env_getcurr()) == NULL)
+        return emod_set(TMAN_ENV_NOCURR);
+    else if ((taskid = task_curr(taskenv)) == NULL)
+        return emod_set(TMAN_ID_NOCURR);
 
-    cenv = env_getcurr();
-    cid = task_curr(cenv);
-    if ((status = chkargs(cenv, cid)))
-        return status;
-
-    if (hookact("sync", cenv, cid))
+    if (hookact("sync", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
@@ -254,8 +261,8 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
     if ((status = chkargs(env, id)))
         return status;
 
-    /* switch to new current environment.  */
-    if (strncmp(taskenv, env_getcurr(), ENVSIZ) != 0 && env_addcurr(taskenv) != 0)
+    /* If env not current then switch to it.  */
+    if (iscurrenv(taskenv) == FALSE && env_addcurr(taskenv) != 0)
         return emod_set(TMAN_ESWITCHENV);
     return task_move(taskenv, taskid, COLCURR);
 }
@@ -272,18 +279,13 @@ int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
 int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 {
     DIR *ids;
-    size_t i = 0;
+    size_t i = 0; // TODO: delete it once fully logic implemented
     struct dirent *ent;
     struct unitbin bunit[NKEYS];
-    taskenv = env;
     struct tree *node;
 
-    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENV_NOCURR);
-    else if (env_isvalid(taskenv) == FALSE)
-        return emod_set(TMAN_ENV_ILLEG);
-    else if (env_exists(taskenv) == FALSE)
-        return emod_set(TMAN_ENV_NOSUCH);
+    if ((status = check_input_env(env)))
+        return status;
     else if ((ids = opendir(genpath_env(taskenv))) == NULL)
         return emod_set(TMAN_DIR_ID_OPEN);
 
