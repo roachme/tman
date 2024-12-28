@@ -4,14 +4,6 @@
 #include "add.h"
 #include "cli.h"
 
-static int tman_cli_add_usage(void)
-{
-    const char *cmd = "add";
-    printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
-    printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_OK;
-}
-
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
 {

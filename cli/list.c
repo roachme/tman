@@ -4,14 +4,6 @@
 #include "list.h"
 #include "cli.h"
 
-static int tman_cli_list_usage(void)
-{
-    const char *cmd = "help";
-    printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
-    printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_OK;
-}
-
 static int compare(const void *aa, const void *bb)
 {
     struct ilist *a = (struct ilist*)aa;
@@ -55,6 +47,8 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx)
     showhelp = FALSE;
     while ((c = getopt(argc, argv, ":Aac:hs")) != -1) {
         switch (c) {
+            case 'h':
+                showhelp = TRUE; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -65,7 +59,7 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx)
     // TODO: check that option don't conflict with each other.
 
     if (showhelp == 1)
-        return tman_cli_list_usage();
+        return help_usage("list");
 
     for (int i = optind; i < argc; ++i) {
         char *env = argv[i];

@@ -1,14 +1,6 @@
 #include "del.h"
 #include "cli.h"
 
-int tman_cli_del_usage(void)
-{
-    const char *cmd = "del";
-    printf("Usage: %s %s [OPTION]... [ID]..\n", PROGRAM, cmd);
-    printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_OK;
-}
-
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
 {
@@ -37,7 +29,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
     }
 
     if (showhelp == TRUE)
-        return tman_cli_del_usage();
+        return help_usage("del");
 
     for (i = optind; i < argc; ++i) {
         if ((status = tman_id_del(ctx, env, argv[i], &opt)) != TMAN_OK) {
