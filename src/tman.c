@@ -325,26 +325,14 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
 
 char *tman_id_getcurr(tman_ctx_t *ctx, char *env)
 {
-    taskenv = env;
-
-    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL) {
-        emod_set(TMAN_ENV_NOCURR);
-        return NULL;
-    }
-    else if ((taskid = task_curr(taskenv)) == NULL)
+    if ((status = chkargs(env, NULL)))
         return NULL;
     return strncpy(task_currid, taskid, IDSIZ);
 }
 
 char *tman_id_getprev(tman_ctx_t *ctx, char *env)
 {
-    taskenv = env;
-
-    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL) {
-        emod_set(TMAN_ENV_NOCURR);
-        return NULL;
-    }
-    else if ((taskid = task_prev(taskenv)) == NULL)
+    if ((status = chkargs(env, task_curr(env))))
         return NULL;
     return strncpy(task_previd, taskid, IDSIZ);
 }
