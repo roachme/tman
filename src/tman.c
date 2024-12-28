@@ -259,6 +259,7 @@ int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
 }
 
 /*
+ * roachme: refactor this shit.
  @param env char * | NULL (then list the current env)
  @return struct item * | NULL (if error happened)
 */
@@ -373,6 +374,9 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
     return env_delcurr();
 }
 
+/*
+ * roachme: Refactor this shit
+*/
 int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 {
     DIR *edir;
