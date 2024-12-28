@@ -23,6 +23,7 @@ enum tman_err_enum {
     TMAN_ENV_NOSUCH,
     TMAN_ENV_EXISTS,
     TMAN_ENV_SWITCH,
+    TMAN_ENV_DEL_CURR,
 
     TMAN_ID_ILLEG,
     TMAN_ID_NOCURR,
