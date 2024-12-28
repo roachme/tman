@@ -50,7 +50,7 @@ static int check_input_env(char *env)
 static int check_input_id(char *id)
 {
     if ((taskid = id) == NULL && (taskid = task_curr(taskenv)) == NULL)
-        return emod_set(TMAN_ENV_NOCURR);
+        return emod_set(TMAN_ID_NOCURR);
     else if (task_chk(taskid) == FALSE)
         return emod_set(TMAN_ID_ILLEG);
     else if (task_ext(taskenv, taskid) == FALSE)
