@@ -1,14 +1,6 @@
 #include "use.h"
 #include "cli.h"
 
-int tman_cli_use_usage(void)
-{
-    const char *cmd = "use";
-    printf("Usage: %s %s [OPTION]... ID\n", PROGRAM, cmd);
-    printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_OK;
-}
-
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_use(int argc, char **argv, tman_ctx_t *ctx)
 {
@@ -33,7 +25,7 @@ int tman_cli_use(int argc, char **argv, tman_ctx_t *ctx)
     }
 
     if (showhelp == 1)
-        return tman_cli_use_usage();
+        return help_usage("use");
     else if (optind == argc)
         return elog(TMAN_USE_IDREQ, "task id required");
 

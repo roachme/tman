@@ -1,13 +1,5 @@
 #include "cli.h"
 
-static int tman_cli_sync_usage(void)
-{
-    const char *cmd = "sync";
-    printf("Usage: %s %s [OPTION]\n", PROGRAM, cmd);
-    printf("Try '%s help %s' for more info.\n", PROGRAM, cmd);
-    return TMAN_OK;
-}
-
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
 {
@@ -29,7 +21,7 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
     }
 
     if (showhelp == TRUE)
-        return tman_cli_sync_usage();
+        return help_usage("sync");
     if ((status = tman_id_sync(ctx, &opt)) != TMAN_OK)
         return elog(status, errfmt, tman_strerror());
     return tman_pwd();
