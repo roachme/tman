@@ -13,6 +13,8 @@
 
 static char curr[IDSIZ + 1], prev[IDSIZ + 1];
 
+/* For external use. Used only by getters so no harm to module.  */
+static char taskcurr[IDSIZ + 1], taskprev[IDSIZ + 1];
 
 /*
  * Notes:
@@ -157,7 +159,7 @@ char *task_curr(char *env)
 {
     if (load(env) || curr[0] == '\0')
         return NULL;
-    return curr;
+    return strncpy(taskcurr, curr, IDSIZ);
 }
 
 /*
@@ -169,7 +171,7 @@ char *task_prev(char *env)
 {
     if (load(env) || prev[0] == '\0')
         return NULL;
-    return prev;
+    return strncpy(taskprev, prev, IDSIZ);
 }
 
 /*
