@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "env.h"
+#include "common.h"
 #include "osdep.h"
 #include "tman.h"
 
@@ -63,14 +64,14 @@ int env_isvalid(char *env)
 
 int env_exists(char *env)
 {
-    char pathname[PATHSIZ + 1];
-    sprintf(pathname, "%s/%s", tmanfs.base, env);
-    return ISDIR(pathname);
+    return ISDIR(genpath_env(env));
 }
 
 int env_reset(void)
 {
-    for (int i = 0; i < NENV; ++i)
+    int i;
+
+    for (i = 0; i < NENV; ++i)
         memset(envs[i], 0, ENVSIZ);
     return 0;
 }
