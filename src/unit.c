@@ -15,14 +15,12 @@ static char unitpath[PATHSIZ + 1];
 static char *basedir = tmanfs.base;
 static struct unitbin unitbin[NKEYS];
 static char *keys[NKEYS] = {
-    "id",       /* task ID */
     "prio",     /* task priority */
     "type",     /* task type: bugfix, hotfix, feature */
     "date",     /* task date of creation */
     "desc",     /* task description */
 };
 
-static int valid_id(const char *val);
 static int valid_prio(const char *val);
 static int valid_type(const char *val);
 static int valid_date(const char *val);
@@ -34,7 +32,6 @@ struct validval {
 };
 
 struct validval validval[NKEYS] = {
-    { .key = "id",   .func = valid_id,   },
     { .key = "prio", .func = valid_prio, },
     { .key = "type", .func = valid_type, },
     { .key = "date", .func = valid_date, },
@@ -44,16 +41,6 @@ struct validval validval[NKEYS] = {
 static char *genpath(char *env, char *id)
 {
     return formpath(unitpath, "%s/%s/%s/.tman/unit", basedir, env, id);
-}
-
-static int valid_id(const char *id)
-{
-    if (!isalnum(*id++))
-        return FALSE;
-    for (; *id; ++id)
-        if (!(isalnum(*id) || *id == '_' || *id == '-'))
-            return FALSE;
-    return isalnum(*--id);
 }
 
 static int valid_prio(const char *val)
@@ -195,13 +182,10 @@ static int genitems(char *env, char *id)
     char desc[VALSIZ + 1] = "generated description for task ";
 
     strftime(buff, BUFSIZ, timefmt, timeinfo);
-
-    /* TODO: delete item `id' from future releases */
-    genitem(idx++, "id", id);
     genitem(idx++, "prio", "mid");
     genitem(idx++, "type", "hotfix");
     genitem(idx++, "date", buff);
-    genitem(idx++, "desc", strncat(desc, id, VALSIZ));
+    genitem(idx++, "desc", strncat(desc, id, IDSIZ));
     return save(genpath(env, id));
 }
 

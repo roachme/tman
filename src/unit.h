@@ -1,7 +1,9 @@
 #ifndef TMAN_UNIT_H
 #define TMAN_UNIT_H
 
-#define NKEYS       5
+#include "common.h"
+
+#define NKEYS       4
 #define KEYSIZ      10
 #define VALSIZ      80 /* this big cuz of task description */
 
@@ -17,6 +19,7 @@ struct unitpgn {
 };
 
 struct units {
+    char id[IDSIZ + 1];
     struct unitpgn *pgn;
     struct unitbin bin[NKEYS];
 };
