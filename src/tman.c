@@ -356,9 +356,9 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
 
     if (dir_env_del(tmanfs.base, taskenv))
         return emod_set(TMAN_DIR_ENV_DEL);
-
-    // TODO: check if that is a current env
-    return env_delcurr();
+    else if (iscurrenv(taskenv) == TRUE && env_delcurr())
+        return emod_set(TMAN_ENV_DEL_CURR);
+    return TMAN_OK;
 }
 
 /*

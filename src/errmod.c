@@ -24,6 +24,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_ENV_NOSUCH]     = "no such environment",
     [TMAN_ENV_EXISTS]     = "environment already exists",
     [TMAN_ENV_SWITCH]     = "could not switch to environment",
+    [TMAN_ENV_DEL_CURR]   = "could not unmark current environment",
 
     [TMAN_ID_ILLEG]       = "illegal task ID",
     [TMAN_ID_NOSUCH]      = "no such task ID",
