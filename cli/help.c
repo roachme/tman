@@ -200,7 +200,7 @@ int help_lookup(const char *cmd)
             return TMAN_OK;
         }
     }
-    return emod_set(TMAN_NOSUCHCMD);
+    return emod_set(TMAN_CMD_BIN);
 }
 
 int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)

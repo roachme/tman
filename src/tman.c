@@ -30,22 +30,22 @@ static char task_currenv[ENVSIZ + 1], task_prevenv[ENVSIZ + 1];
 static int check_input_env(char *env)
 {
     if ((taskenv = env) == NULL && (taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
+        return emod_set(TMAN_ENV_NOCURR);
     else if (env_isvalid(taskenv) == FALSE)
-        return emod_set(TMAN_EILLEGENV);
+        return emod_set(TMAN_ENV_ILLEG);
     else if (env_exists(taskenv) == FALSE)
-        return emod_set(TMAN_ENOSUCHENV);
+        return emod_set(TMAN_ENV_NOSUCH);
     return 0;
 }
 
 static int check_input_id(char *id)
 {
     if ((taskid = id) == NULL && (taskid = task_curr(taskenv)) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
+        return emod_set(TMAN_ENV_NOCURR);
     else if (task_chk(taskid) == FALSE)
-        return emod_set(TMAN_EILLEGID);
+        return emod_set(TMAN_ID_ILLEG);
     else if (task_ext(taskenv, taskid) == FALSE)
-        return emod_set(TMAN_ENOSUCHID);
+        return emod_set(TMAN_ID_NOSUCH);
     return 0;
 }
 
@@ -144,7 +144,7 @@ int tman_pwd()
     char *cid, *cenv;
 
     if ((cenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
+        return emod_set(TMAN_ENV_NOCURR);
     if ((cid = task_curr(cenv)) == NULL)
         cid = "";
     printf("PWD: %s/%s/%s\n", tmanfs.base, cenv, cid);
@@ -160,23 +160,23 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
     char *col = COLCURR;
 
     /* Special case: task ID should not exists. If this's a case - let it go. */
-    if ((status = chkargs(env, id)) && status != TMAN_ENOSUCHID)
+    if ((status = chkargs(env, id)) && status != TMAN_ID_NOSUCH)
         return status;
     else if (task_ext(taskenv, taskid) == TRUE)
-        return emod_set(TMAN_EIDEXISTS);
+        return emod_set(TMAN_ID_EXISTS);
     else if (col_ext(col) == FALSE)
-        return emod_set(TMAN_ECOLNEXIST);
+        return emod_set(TMAN_COL_EXISTS);
     else if (unit_check(units) == FALSE)
-        return emod_set(TMAN_EILLEGUNIT);
+        return emod_set(TMAN_UNIT_ILLEG);
 
     if (imkdir(tmanfs.base, taskenv, taskid) != 0)
-        return emod_set(TMAN_ETASKMKDIR);
+        return emod_set(TMAN_DIR_ID_MAKE);
     else if (unit_addbin(taskenv, taskid, units) != 0)
-        return emod_set(TMAN_ETASKMKUNIT);
+        return emod_set(TMAN_UNIT_MAKE);
     else if (task_add(taskenv, taskid))
-        return emod_set(TMAN_EADDID);
+        return emod_set(TMAN_COL_ADD);
     else if (opt->noswitch == FALSE && task_move(taskenv, taskid, COLCURR))
-        return emod_set(TMAN_EMOVEID);
+        return emod_set(TMAN_COL_MOVE);
     else if (hookact("add", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
@@ -197,11 +197,11 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
     if (hookact("del", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     else if (unit_delbin(taskenv, taskid))
-        return emod_set(TMAN_ETASKRMUNIT);
+        return emod_set(TMAN_UNIT_DEL);
     else if (task_del(taskenv, taskid))
-        return emod_set(TMAN_EDELID);
+        return emod_set(TMAN_COL_DEL);
     else if (irmdir(tmanfs.base, taskenv, _taskid))
-        return emod_set(TMAN_ETASKRMDIR);
+        return emod_set(TMAN_DIR_ID_DEL);
     return TMAN_OK;
 }
 
@@ -210,13 +210,13 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
     char *cenv;
 
     if ((cenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
+        return emod_set(TMAN_ENV_NOCURR);
     else if (task_curr(cenv) == NULL)
-        return emod_set(TMAN_ENOCURRID);
+        return emod_set(TMAN_ID_NOCURR);
     else if (task_prev(cenv) == NULL)
-        return emod_set(TMAN_ENOPREVID);
+        return emod_set(TMAN_ID_NOPREV);
     else if (task_swap(cenv))
-        return emod_set(TMAN_ESWAPIDS);
+        return emod_set(TMAN_ID_SWAP);
     else if (hookact("prev", env_getcurr(), task_curr(cenv)))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
@@ -242,7 +242,7 @@ int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, s
         return status;
 
     if (unit_setbin(taskenv, taskid, unitbin))
-        return emod_set(TMAN_EISETUNIT);
+        return emod_set(TMAN_UNIT_SET);
 
     // TODO: change task directory if id unit was changed
     // TODO: update task id status as well.
@@ -279,13 +279,13 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     struct tree *node;
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
+        return emod_set(TMAN_ENV_NOCURR);
     else if (env_isvalid(taskenv) == FALSE)
-        return emod_set(TMAN_EILLEGENV);
+        return emod_set(TMAN_ENV_ILLEG);
     else if (env_exists(taskenv) == FALSE)
-        return emod_set(TMAN_ENOSUCHENV);
+        return emod_set(TMAN_ENV_NOSUCH);
     else if ((ids = opendir(genpath_env(taskenv))) == NULL)
-        return emod_set(TMAN_ETASKOPENDIR);
+        return emod_set(TMAN_DIR_ID_OPEN);
 
     while ((ent = readdir(ids)) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
@@ -319,7 +319,7 @@ int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_
     if ((status = chkargs(env, id)))
         return status;
     else if (col_ext(tag) == FALSE)
-        return emod_set(TMAN_ECOLNEXIST);
+        return emod_set(TMAN_COL_EXISTS);
     return task_move(taskenv, taskid, tag);
 }
 
@@ -336,7 +336,7 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
      * that no hooks are defined or executed */
     ctx->units.pgn = hookcat(ctx->units.pgn, taskenv, taskid);
     if (unit_getbin(ctx->units.bin, taskenv, taskid) == NULL)
-        status = emod_set(TMAN_EIGETUNIT);
+        status = emod_set(TMAN_UNIT_GET);
     return status;
 }
 
@@ -345,7 +345,7 @@ char *tman_id_getcurr(tman_ctx_t *ctx, char *env)
     taskenv = env;
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL) {
-        emod_set(TMAN_ENOCURRENV);
+        emod_set(TMAN_ENV_NOCURR);
         return NULL;
     }
     else if ((taskid = task_curr(taskenv)) == NULL)
@@ -358,7 +358,7 @@ char *tman_id_getprev(tman_ctx_t *ctx, char *env)
     taskenv = env;
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL) {
-        emod_set(TMAN_ENOCURRENV);
+        emod_set(TMAN_ENV_NOCURR);
         return NULL;
     }
     else if ((taskid = task_prev(taskenv)) == NULL)
@@ -368,13 +368,13 @@ char *tman_id_getprev(tman_ctx_t *ctx, char *env)
 
 int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 {
-    if ((status = check_input_env(env)) && status != TMAN_ENOSUCHENV)
+    if ((status = check_input_env(env)) && status != TMAN_ENV_NOSUCH)
         return status;
     else if (env_exists(env) == TRUE)
-        return emod_set(TMAN_EENVEXISTS);
+        return emod_set(TMAN_ENV_EXISTS);
 
     if (emkdir(tmanfs.base, taskenv))
-        return emod_set(TMAN_ENVMKDIR);
+        return emod_set(TMAN_DIR_ENV_MAKE);
     return env_addcurr(env);
 }
 
@@ -384,7 +384,7 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
         return status;
 
     if (ermdir(tmanfs.base, taskenv))
-        return emod_set(TMAN_ENVRMDIR);
+        return emod_set(TMAN_DIR_ENV_DEL);
 
     // TODO: check if that is a current env
     return env_delcurr();
@@ -401,7 +401,7 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
     char pgnout[PGNOUTSCSIZ + 1];
 
     if ((edir = opendir(tmanfs.base)) == NULL)
-        return emod_set(TMAN_ENVOPENDIR);
+        return emod_set(TMAN_DIR_ENV_OPEN);
 
     cenv = env_getcurr();
     penv = env_getprev();
@@ -425,11 +425,11 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt)
 {
     if (env_getcurr() == NULL)
-        return emod_set(TMAN_ENOCURRENV);
+        return emod_set(TMAN_ENV_NOCURR);
     if (env_getprev() == NULL)
-        return emod_set(TMAN_ENOPREVENV);
+        return emod_set(TMAN_ENV_NOPREV);
     if (env_swapenvs())
-        return emod_set(TMAN_ENOPREVENV);
+        return emod_set(TMAN_ENV_SWAP);
     return TMAN_OK;
 }
 

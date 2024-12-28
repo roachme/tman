@@ -43,18 +43,18 @@ int plugin(char *env, char *id, char *pgname, char *pgncmd)
     taskid = id;
 
     if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENOCURRENV);
+        return emod_set(TMAN_ENV_NOCURR);
     else if (_chkenv(taskenv) == FALSE)
-        return emod_set(TMAN_EILLEGENV);
+        return emod_set(TMAN_ENV_ILLEG);
     else if (env_exists(taskenv) == FALSE)
-        return emod_set(TMAN_ENOSUCHENV);
+        return emod_set(TMAN_ENV_NOSUCH);
 
     else if (taskid == NULL && (taskid = tman_id_getcurr(NULL, taskenv)) == NULL)
-        return emod_set(TMAN_ENOCURRID);
+        return emod_set(TMAN_ID_NOCURR);
     else if (_chkid(taskid) == FALSE)
-        return emod_set(TMAN_EILLEGID);
+        return emod_set(TMAN_ID_ILLEG);
     else if (task_ext(taskenv, taskid) == FALSE)
-        return emod_set(TMAN_ENOSUCHID);
+        return emod_set(TMAN_ID_NOSUCH);
 
     return system(gen_pgncmd(taskenv, taskid, pgname, pgncmd));
 }
