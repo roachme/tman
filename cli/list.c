@@ -4,13 +4,6 @@
 #include "list.h"
 #include "cli.h"
 
-static int compare(const void *aa, const void *bb)
-{
-    struct ilist *a = (struct ilist*)aa;
-    struct ilist *b = (struct ilist*)bb;
-    return (a->col.prio - b->col.prio);
-}
-
 static int recursive_tree_print(struct tree *p)
 {
     if (p != NULL) {

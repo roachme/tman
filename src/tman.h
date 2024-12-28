@@ -2,33 +2,11 @@
 #define TMAN_H
 
 #include "unit.h"
-#include "col.h"
 #include "errmod.h"
 #include "tree.h"
 
-#define LISTBIN         4
 #define CMDSIZ          5
-#define LISTPGN         40
-#define LISTBINUN       50
 #define TMANPATHSIZE    1024
-
-#define LSIZE           50
-#define LBINNUM         2
-#define LBINSIZ         80
-#define LPGNSIZ         80
-
-struct ilist {
-    char id[IDSIZ + 1];
-    char pgn[LPGNSIZ + 1];
-    char desc[DESCSIZ + 1];
-    struct column col;
-};
-
-struct list {
-    size_t num;
-    size_t capac;
-    struct ilist ilist[LSIZE];
-};
 
 struct tmanstruct {
     char db[TMANPATHSIZE + 1];          /* directory for tman metadata */
@@ -50,14 +28,10 @@ enum tman_setuplvl {
 
 /* Generic tman structure used by all(?) API functions.  */
 typedef struct tman_context {
-    struct list list;
     struct units units;
     struct tree *tree;
     struct tree *etree;
 } tman_ctx_t;
-
-
-
 
 struct tman_id_add_opt {
     int noswitch;   /* Do switch to task (set by default) */
