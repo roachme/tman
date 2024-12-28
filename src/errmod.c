@@ -15,15 +15,15 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_EHOOK] =       "failed to execute hook",
     [TMAN_EPGN] =        "failed to execute plugin command",
     [TMAN_EOPENENVDIR]=  "could not open environment directory",
-    [TMAN_ESWITCHENV] =  "could not switch to environment",
     [TMAN_EINIT_ENVMOD]= "could not init module env",
 
+    [TMAN_ENV_SWAP]       = "could not swap environments",
     [TMAN_ENV_ILLEG]      = "illegal environment name",
     [TMAN_ENV_NOCURR]     = "no current environment",
     [TMAN_ENV_NOPREV]     = "no previous environment",
     [TMAN_ENV_NOSUCH]     = "no such environment",
     [TMAN_ENV_EXISTS]     = "environment already exists",
-    [TMAN_ENV_SWAP]       = "could not swap environments",
+    [TMAN_ENV_SWITCH]     = "could not switch to environment",
 
     [TMAN_ID_ILLEG]       = "illegal task ID",
     [TMAN_ID_NOSUCH]      = "no such task ID",

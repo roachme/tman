@@ -252,7 +252,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
 
     /* If env not current then switch to it.  */
     if (iscurrenv(taskenv) == FALSE && env_addcurr(taskenv) != 0)
-        return emod_set(TMAN_ESWITCHENV);
+        return emod_set(TMAN_ENV_SWITCH);
     return task_move(taskenv, taskid, COLCURR);
 }
 

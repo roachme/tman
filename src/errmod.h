@@ -14,15 +14,15 @@ enum tman_err_enum {
     TMAN_EHOOK,    /* Failed to execute hook */
     TMAN_EPGN,    /* Failed to execute plugin */
     TMAN_EOPENENVDIR,
-    TMAN_ESWITCHENV,
     TMAN_EINIT_ENVMOD,
 
+    TMAN_ENV_SWAP,
     TMAN_ENV_ILLEG,
     TMAN_ENV_NOCURR,
     TMAN_ENV_NOPREV,
     TMAN_ENV_NOSUCH,
     TMAN_ENV_EXISTS,
-    TMAN_ENV_SWAP,
+    TMAN_ENV_SWITCH,
 
     TMAN_ID_ILLEG,
     TMAN_ID_NOCURR,
