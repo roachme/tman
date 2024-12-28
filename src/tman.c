@@ -150,13 +150,11 @@ int tman_setup(int setuplvl)
 
 int tman_pwd()
 {
-    char *cid, *cenv;
-
-    if ((cenv = env_getcurr()) == NULL)
+    if ((taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENV_NOCURR);
-    if ((cid = task_curr(cenv)) == NULL)
-        cid = "";
-    printf("PWD: %s/%s/%s\n", tmanfs.base, cenv, cid);
+    if ((taskid = task_curr(taskenv)) == NULL)
+        taskid = "";
+    printf("PWD: %s/%s/%s\n", tmanfs.base, taskenv, taskid);
     return TMAN_OK;
 }
 
