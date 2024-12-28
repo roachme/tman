@@ -266,7 +266,6 @@ int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
 int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 {
     DIR *ids;
-    size_t i = 0; // TODO: delete it once fully logic implemented
     struct dirent *ent;
     struct unitbin bunit[NKEYS];
     struct tree *node;
