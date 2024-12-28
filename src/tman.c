@@ -205,10 +205,9 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
 
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 {
-    if ((taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENV_NOCURR);
-    else if (task_curr(taskenv) == NULL)
-        return emod_set(TMAN_ID_NOCURR);
+    /* Check that current environment and task ID are set.  */
+    if ((status = chkargs(NULL, NULL)))
+        return status;
     else if (task_prev(taskenv) == NULL)
         return emod_set(TMAN_ID_NOPREV);
 
@@ -221,10 +220,9 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 
 int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
 {
-    if ((taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENV_NOCURR);
-    else if ((taskid = task_curr(taskenv)) == NULL)
-        return emod_set(TMAN_ID_NOCURR);
+    /* Check that current environment and task ID are set.  */
+    if ((status = chkargs(NULL, NULL)))
+        return status;
 
     if (hookact("sync", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
