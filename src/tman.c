@@ -190,15 +190,8 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
 
 int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *opt)
 {
-    // FIXME: causes error when delete current task in previous env
-    char _taskid[IDSIZ + 1];
-
     if ((status = chkargs(env, id)))
         return status;
-
-    /* Copy current task ID to another variable, cuz it'll be
-     * lost once removed from column.  */
-    strncpy(_taskid, taskid, IDSIZ);
 
     if (hookact("del", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
@@ -206,7 +199,7 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
         return emod_set(TMAN_UNIT_DEL);
     else if (task_del(taskenv, taskid))
         return emod_set(TMAN_COL_DEL);
-    else if (irmdir(tmanfs.base, taskenv, _taskid))
+    else if (irmdir(tmanfs.base, taskenv, taskid))
         return emod_set(TMAN_DIR_ID_DEL);
     return TMAN_OK;
 }
