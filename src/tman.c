@@ -163,7 +163,6 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
     // TODO: Add support to pass unit values into unit_add()
     // TODO: maybe it's better to move units to ctx?
     struct unitbin units[NKEYS] = {0};
-    char *cenv = env_getcurr();
     char *col = COLCURR;
 
     /* Special case: task ID should not exists. If this's a case - let it go. */
