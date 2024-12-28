@@ -216,17 +216,16 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
 
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 {
-    char *cenv;
-
-    if ((cenv = env_getcurr()) == NULL)
+    if ((taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENV_NOCURR);
-    else if (task_curr(cenv) == NULL)
+    else if (task_curr(taskenv) == NULL)
         return emod_set(TMAN_ID_NOCURR);
-    else if (task_prev(cenv) == NULL)
+    else if (task_prev(taskenv) == NULL)
         return emod_set(TMAN_ID_NOPREV);
-    else if (task_swap(cenv))
+
+    if (task_swap(taskenv))
         return emod_set(TMAN_ID_SWAP);
-    else if (hookact("prev", env_getcurr(), task_curr(cenv)))
+    else if (hookact("prev", env_getcurr(), task_curr(taskenv)))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
