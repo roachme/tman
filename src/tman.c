@@ -174,7 +174,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
     else if (unit_check(units) == FALSE)
         return emod_set(TMAN_UNIT_ILLEG);
 
-    if (imkdir(tmanfs.base, taskenv, taskid) != 0)
+    if (dir_id_add(tmanfs.base, taskenv, taskid) != 0)
         return emod_set(TMAN_DIR_ID_MAKE);
     else if (unit_addbin(taskenv, taskid, units) != 0)
         return emod_set(TMAN_UNIT_MAKE);
@@ -198,7 +198,7 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
         return emod_set(TMAN_UNIT_DEL);
     else if (task_del(taskenv, taskid))
         return emod_set(TMAN_COL_DEL);
-    else if (irmdir(tmanfs.base, taskenv, taskid))
+    else if (dir_id_del(tmanfs.base, taskenv, taskid))
         return emod_set(TMAN_DIR_ID_DEL);
     return TMAN_OK;
 }
@@ -271,6 +271,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     struct dirent *ent;
     struct unitbin bunit[NKEYS];
     struct tree *node;
+    char pgnout[PGNOUTSCSIZ + 1];
 
     if ((status = check_input_env(env)))
         return status;
@@ -285,17 +286,11 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
             continue;
         }
 
-        /* TODO: remove check and warning because there might
-         * case when no hooks executed or defined and it's ok.  */
-        //if (!hookls(ctx->list.ilist[i].pgn, taskenv, ent->d_name)) {
-        /*
-        if (!hookls(ctx->tree->pgnout, taskenv, ent->d_name)) {
-            fprintf(stderr, "tman_id_list %s: failed to get hookls output\n", ent->d_name);
-        }
-        */
+        hookls(pgnout, taskenv, ent->d_name);
         struct column column = col_getmark(taskenv, ent->d_name);
-        node = tree_alloc(ent->d_name, col_prio(column.tag), bunit[4].val, "");
+        node = tree_alloc(ent->d_name, col_prio(column.col), bunit[4].val, pgnout);
         ctx->tree = tree_add(ctx->tree, node);
+        pgnout[0] = '\0';
     }
     closedir(ids);
     return TMAN_OK;
@@ -363,7 +358,7 @@ int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
     else if (env_exists(env) == TRUE)
         return emod_set(TMAN_ENV_EXISTS);
 
-    if (emkdir(tmanfs.base, taskenv))
+    if (dir_env_add(tmanfs.base, taskenv))
         return emod_set(TMAN_DIR_ENV_MAKE);
     return env_addcurr(env);
 }
@@ -373,7 +368,7 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
     if ((status = check_input_env(env)))
         return status;
 
-    if (ermdir(tmanfs.base, taskenv))
+    if (dir_env_del(tmanfs.base, taskenv))
         return emod_set(TMAN_DIR_ENV_DEL);
 
     // TODO: check if that is a current env

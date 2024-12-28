@@ -11,17 +11,20 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
     int quiet, force, showhelp, status, i, c;
     struct tman_id_add_opt opt = {
         .noswitch = FALSE,
+        .dogenerate = FALSE,
     };
 
     env = NULL;
     force = quiet = showhelp = FALSE;
     errfmt = "cannot create task '%s': %s";
-    while ((c = getopt(argc, argv, ":e:fhnq")) != -1) {
+    while ((c = getopt(argc, argv, ":e:fghnq")) != -1) {
         switch (c) {
             case 'e':
                 env = optarg; break;
             case 'f':
                 force = TRUE; break;
+            case 'g':
+                opt.dogenerate = TRUE; break;
             case 'h':
                 showhelp = TRUE; break;
             case 'n':
