@@ -233,12 +233,11 @@ int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, s
 {
     if ((status = chkargs(env, id)))
         return status;
+    else if (unit_check(unitbin) == FALSE)
+        return emod_set(TMAN_UNIT_ILLEG);
 
     if (unit_setbin(taskenv, taskid, unitbin))
         return emod_set(TMAN_UNIT_SET);
-
-    // TODO: change task directory if id unit was changed
-    // TODO: update task id status as well.
     return TMAN_OK;
 }
 
@@ -286,7 +285,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 
         hookls(pgnout, taskenv, ent->d_name);
         struct column column = col_getmark(taskenv, ent->d_name);
-        node = tree_alloc(ent->d_name, col_prio(column.col), bunit[4].val, pgnout);
+        node = tree_alloc(ent->d_name, col_prio(column.col), bunit[3].val, pgnout);
         ctx->tree = tree_add(ctx->tree, node);
         pgnout[0] = '\0';
     }
@@ -320,6 +319,8 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
     ctx->units.pgn = hookcat(ctx->units.pgn, taskenv, taskid);
     if (unit_getbin(ctx->units.bin, taskenv, taskid) == NULL)
         status = emod_set(TMAN_UNIT_GET);
+
+    strncpy(ctx->units.id, taskid, IDSIZ);
     return status;
 }
 

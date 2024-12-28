@@ -13,6 +13,7 @@ static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
     if ((status = tman_id_cat(ctx, env, id, &opt)) != TMAN_OK)
         return elog(status, "cannot cat units '%s': %s", id, tman_strerror());
 
+    printf("%-7s : %s\n", "id", ctx->units.id);
     unitbin = ctx->units.bin;
     for (i = 0; i < NKEYS; ++i)
         printf("%-7s : %s\n", unitbin[i].key, unitbin[i].val);
