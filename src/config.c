@@ -56,7 +56,7 @@ static int parse_columns(struct columns *columns)
 
     strcpy(columns->column[i].env, strtok(NULL, delim));
     strcpy(&columns->column[i].mark, strtok(NULL, delim));
-    strcpy(columns->column[i].tag, strtok(NULL, delim));
+    strcpy(columns->column[i].col, strtok(NULL, delim));
     prio = strtok(NULL, delim);
     if (prio != NULL)
         columns->column[i].prio = atoi(prio);

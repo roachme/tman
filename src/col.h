@@ -16,7 +16,7 @@ struct column {
     int prio;
     char mark;
     char env[ENVSIZ + 1];
-    char tag[COLSIZ + 1];
+    char col[COLSIZ + 1];
 };
 
 struct columns {

@@ -9,21 +9,21 @@ static int _dbmkdir(char *base, char *env, char *id)
     return MKDIR(path);
 }
 
-int imkdir(char *base, char *env, char *id)
+int dir_id_add(char *base, char *env, char *id)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s/%s", base, env, id);
     return !(MKDIR(path) == 0 && _dbmkdir(base, env, id) == 0);
 }
 
-int irmdir(char *base, char *env, char *id)
+int dir_id_del(char *base, char *env, char *id)
 {
     char path[BUFSIZ + 1];
     sprintf(path, "%s/%s/%s", base, env, id);
     return RMDIR(path);
 }
 
-int irndir(char *base, char *env, char *newid, char *oldid)
+int dir_id_ren(char *base, char *env, char *newid, char *oldid)
 {
     char new_path[PATHSIZ + 1];
     char old_path[PATHSIZ + 1];
@@ -32,7 +32,7 @@ int irndir(char *base, char *env, char *newid, char *oldid)
     return rename(old_path, new_path);
 }
 
-int imove(char *base, char *id, char *dstenv, char *srcenv)
+int dir_id_move(char *base, char *id, char *dstenv, char *srcenv)
 {
     char new_path[PATHSIZ + 1];
     char old_path[PATHSIZ + 1];
@@ -44,14 +44,14 @@ int imove(char *base, char *id, char *dstenv, char *srcenv)
     return MOVE(old_path, new_path);
 }
 
-int emkdir(char *base, char *env)
+int dir_env_add(char *base, char *env)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s/", base, env);
     return MKDIR(path);
 }
 
-int ermdir(char *base, char *env)
+int dir_env_del(char *base, char *env)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s", base, env);

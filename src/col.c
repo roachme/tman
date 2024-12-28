@@ -14,19 +14,19 @@
 static char col[COLSIZ + 1];
 
 struct column coltab[NCOLUMNS] = { /* user defined columns from config */
-    { .prio = 0, .mark = '?', .tag = "uknw" },
-    { .prio = 1, .mark = '*', .tag = "curr" },
-    { .prio = 2, .mark = '^', .tag = "prev" },
-    { .prio = 3, .mark = '+', .tag = "blog" },
+    { .prio = 0, .mark = '?', .col = "uknw" },
+    { .prio = 1, .mark = '*', .col = "curr" },
+    { .prio = 2, .mark = '^', .col = "prev" },
+    { .prio = 3, .mark = '+', .col = "blog" },
 
 // user define columns (gotta read 'em from config file
-    { .prio = 4, .mark = '>', .tag = "revw" },
-    { .prio = 5, .mark = '$', .tag = "test" },
-    { .prio = 6, .mark = '!', .tag = "lock" },
+    { .prio = 4, .mark = '>', .col = "revw" },
+    { .prio = 5, .mark = '$', .col = "test" },
+    { .prio = 6, .mark = '!', .col = "lock" },
 // user define columns (gotta read 'em from config file
 
 // FIXME: should be the last prio in table
-    { .prio = 7, .mark = '-', .tag = "done" },
+    { .prio = 7, .mark = '-', .col = "done" },
 };
 
 int col_ext(char *newcol)
@@ -34,7 +34,7 @@ int col_ext(char *newcol)
     int i;
 
     for (i = 0; i < ARRAY_SIZE(coltab); ++i)
-        if (strncmp(newcol, coltab[i].tag, COLSIZ) == 0)
+        if (strncmp(newcol, coltab[i].col, COLSIZ) == 0)
             return TRUE;
     return FALSE;
 }
@@ -86,7 +86,7 @@ int col_prio(char *col)
     int i;
 
     for (i = 0; i < ARRAY_SIZE(coltab); ++i)
-        if (strncmp(col, coltab[i].tag, COLSIZ) == 0)
+        if (strncmp(col, coltab[i].col, COLSIZ) == 0)
             return coltab[i].prio;
     return coltab[7].prio;
 }
@@ -112,7 +112,7 @@ struct column col_getmark(char *env, char *id)
     fclose(fp);
 
     for (i = 0; i < ARRAY_SIZE(coltab); ++i)
-        if (strncmp(tag, coltab[i].tag, COLSIZ) == 0)
+        if (strncmp(tag, coltab[i].col, COLSIZ) == 0)
             return coltab[i];
     return coltab[i];
 }
