@@ -75,7 +75,7 @@ static int foreach(struct tree *p, int (*func)())
     return 0;
 }
 
-static tman_ctx_t *mkctx()
+static tman_ctx_t *make_context()
 {
     tman_ctx_t *ctx;
 
@@ -86,7 +86,7 @@ static tman_ctx_t *mkctx()
     return ctx;
 }
 
-static int mkfs_vars()
+static int fill_sysvars()
 {
     sprintf(tmanfs.base,   "%s",    config.base);
     sprintf(tmanfs.db,     "%s/%s", tmanfs.base, ".tman");
@@ -122,11 +122,11 @@ struct tman_context *tman_init(void)
         emod_set(TMAN_ECONF);
         return NULL;
     }
-    else if (mkfs_vars()) {
+    else if (fill_sysvars()) {
         emod_set(TMAN_ESYSVAR);
         return NULL;
     }
-    return mkctx();
+    return make_context();
 }
 
 int tman_setup(int setuplvl)
