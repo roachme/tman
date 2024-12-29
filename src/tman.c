@@ -35,6 +35,15 @@ static int iscurrenv(char *env)
     return FALSE;
 }
 
+static int isprevenv(char *env)
+{
+    if (env == NULL)
+        return FALSE;
+    if (strncmp(env, env_getprev(), ENVSIZ) == 0)
+        return TRUE;
+    return FALSE;
+}
+
 static int check_input_env(char *env)
 {
     if ((taskenv = env) == NULL && (taskenv = env_getcurr()) == NULL)
@@ -360,6 +369,8 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
     if (dir_env_del(tmanfs.base, taskenv))
         return emod_set(TMAN_DIR_ENV_DEL);
     else if (iscurrenv(taskenv) == TRUE && env_delcurr())
+        return emod_set(TMAN_ENV_DEL_CURR);
+    else if (isprevenv(taskenv) == TRUE && env_delprev())
         return emod_set(TMAN_ENV_DEL_CURR);
     return TMAN_OK;
 }
