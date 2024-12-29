@@ -407,10 +407,14 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 
 int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt)
 {
-    if ((status = check_input_env(NULL)))
-        return status;
-    else if (env_getprev() == NULL)
+    char *envprev;
+
+    if ((envprev = env_getprev()) == NULL)
         return emod_set(TMAN_ENV_NOPREV);
+    else if ((status = check_input_env(NULL)))
+        return status;
+    else if ((status = check_input_env(envprev)))
+        return status;
 
     if (env_swapenvs())
         return emod_set(TMAN_ENV_SWAP);
