@@ -17,5 +17,7 @@ int env_swapenvs(void);
 int env_addcurr(char *env);
 int env_exists(char *env);
 int env_isvalid(char *env);
+int env_iscurr(char *env);
+int env_isprev(char *env);
 
 #endif
