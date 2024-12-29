@@ -12,10 +12,16 @@
 #include "env.h"
 #include "common.h"
 #include "osdep.h"
-#include "tman.h"
+
+#define CENV        0  /* index of current env */
+#define PENV        1  /* index of previous env */
+#define NENV        2  /* number of 'special' environments */
+#define NENVITEM    1  /* number of environment items per line */
 
 static char *envfile;
 static char envs[NENV][ENVSIZ + 1];
+
+/* Holders for caller functions. This way caller can't mess with module.  */
 static char curr[ENVSIZ + 1], prev[ENVSIZ + 1];
 
 static int load(void)
