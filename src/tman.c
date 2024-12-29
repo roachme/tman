@@ -326,14 +326,16 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
 
 char *tman_id_getcurr(tman_ctx_t *ctx, char *env)
 {
-    if ((status = chkargs(env, NULL)))
+    if (chkargs(env, NULL))
         return NULL;
     return strncpy(task_currid, taskid, IDSIZ);
 }
 
 char *tman_id_getprev(tman_ctx_t *ctx, char *env)
 {
-    if ((status = chkargs(env, task_curr(env))))
+    if (chkargs(env, task_prev(env)))
+        return NULL;
+    else if (task_prev(env) == NULL)
         return NULL;
     return strncpy(task_previd, taskid, IDSIZ);
 }
@@ -399,10 +401,10 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 
 int tman_env_prev(tman_ctx_t *ctx, struct tman_env_prev_opt *opt)
 {
-    if ((status = check_input_env(env_getcurr())))
+    if ((status = check_input_env(NULL)))
         return status;
-    else if ((status = check_input_env(env_getprev())))
-        return status;
+    else if (env_getprev() == NULL)
+        return emod_set(TMAN_ENV_NOPREV);
 
     if (env_swapenvs())
         return emod_set(TMAN_ENV_SWAP);
