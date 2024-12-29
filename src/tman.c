@@ -26,23 +26,6 @@ static char *taskenv, *taskid;
 static char task_currid[IDSIZ + 1], task_previd[IDSIZ + 1];
 static char task_currenv[ENVSIZ + 1], task_prevenv[ENVSIZ + 1];
 
-static int iscurrenv(char *env)
-{
-    if (env == NULL)
-        return FALSE;
-    if (strncmp(env, env_getcurr(), ENVSIZ) == 0)
-        return TRUE;
-    return FALSE;
-}
-
-static int isprevenv(char *env)
-{
-    if (env == NULL)
-        return FALSE;
-    if (strncmp(env, env_getprev(), ENVSIZ) == 0)
-        return TRUE;
-    return FALSE;
-}
 
 static int check_input_env(char *env)
 {
@@ -256,7 +239,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
         return status;
 
     /* If env not current then switch to it.  */
-    if (iscurrenv(taskenv) == FALSE && env_addcurr(taskenv) != 0)
+    if (env_iscurr(taskenv) == FALSE && env_addcurr(taskenv) != 0)
         return emod_set(TMAN_ENV_SWITCH);
     return task_move(taskenv, taskid, COLCURR);
 }
@@ -368,9 +351,9 @@ int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
 
     if (dir_env_del(tmanfs.base, taskenv))
         return emod_set(TMAN_DIR_ENV_DEL);
-    else if (iscurrenv(taskenv) == TRUE && env_delcurr())
+    else if (env_iscurr(taskenv) == TRUE && env_delcurr())
         return emod_set(TMAN_ENV_DEL_CURR);
-    else if (isprevenv(taskenv) == TRUE && env_delprev())
+    else if (env_isprev(taskenv) == TRUE && env_delprev())
         return emod_set(TMAN_ENV_DEL_CURR);
     return TMAN_OK;
 }

@@ -123,3 +123,21 @@ int env_swapenvs(void)
     strncpy(envs[PENV], tmp, ENVSIZ);
     return save();
 }
+
+int env_iscurr(char *env)
+{
+    if (env == NULL)
+        return FALSE;
+    if (strncmp(env, env_getcurr(), ENVSIZ) == 0)
+        return TRUE;
+    return FALSE;
+}
+
+int env_isprev(char *env)
+{
+    if (env == NULL)
+        return FALSE;
+    if (strncmp(env, env_getprev(), ENVSIZ) == 0)
+        return TRUE;
+    return FALSE;
+}
