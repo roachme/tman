@@ -50,10 +50,13 @@ struct help helptab[] = {
     {
         .tag = TAGBASIC,
         .name  = "col",
-        .synop = "Usage: " PROGRAM " col COLUMN [OPTION]... ID...",
-        .sdesc = "Move a task to a column",
-        .desc  = "With no option `-e' add a new task to current environment.\n"
-                 "COLUMN is column to move a task to\n"
+        .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...",
+        .sdesc = "Move a task to new column",
+        .desc  = "With no option `-e' operate on current environment.\n"
+                 "COLUMN is column to move a task to.\n"
+                 "Options:\n"
+                 "  -e      specify environment name\n"
+                 "  -l      list environment columns\n"
                  "  -h      show this help and exit"
     },
     {
