@@ -8,7 +8,6 @@
 #include <ctype.h>
 #include "task.h"
 #include "col.h"
-#include "common.h"
 #include "osdep.h"
 
 static char curr[IDSIZ + 1], prev[IDSIZ + 1];
