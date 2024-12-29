@@ -6,7 +6,6 @@
 
 #define TAGSYSTEM   "bin-system"
 #define TAGBASIC    "bin-basic"
-#define TAGMISC     "bin-misc"
 #define TAGINFO     "bin-info"
 
 struct help helptab[] = {
@@ -21,6 +20,13 @@ struct help helptab[] = {
         .name  = "chk",
         .sdesc = "check system config and task units",
         .desc  = "cfg description"
+    },
+    {
+        .tag = TAGSYSTEM,
+        .name  = "env",
+        .synop = PROGRAM " env SUBCMD [OPTION] NAME",
+        .sdesc = "manipulate environments",
+        .desc  = "env description",
     },
     {
         .tag = TAGSYSTEM,
@@ -79,6 +85,13 @@ struct help helptab[] = {
     },
     {
         .tag = TAGBASIC,
+        .name  = "move",
+        .synop = PROGRAM " move [OPTION] ID DST SRC",
+        .sdesc = "rename or move task",
+        .desc  = "move description",
+    },
+    {
+        .tag = TAGBASIC,
         .name  = "set",
         .synop = PROGRAM " set OPTION... [ID]... [ENV]",
         .sdesc = "set task unit values",
@@ -96,21 +109,6 @@ struct help helptab[] = {
         .synop = PROGRAM " use ID [ENV]",
         .sdesc = "switch to specific task",
         .desc  = "use description",
-    },
-
-    {
-        .tag = TAGMISC,
-        .name  = "env",
-        .synop = PROGRAM " env SUBCMD [OPTION] NAME",
-        .sdesc = "manipulate environments",
-        .desc  = "env description",
-    },
-    {
-        .tag = TAGMISC,
-        .name  = "move",
-        .synop = PROGRAM " move [OPTION] ID DST SRC",
-        .sdesc = "move task to another environment",
-        .desc  = "move description",
     },
 
     {
@@ -165,17 +163,12 @@ int help_list_commands(void)
         if (strcmp(helptab[i].tag, TAGBASIC) == 0)
             printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
-    printf("\nMisc:\n");
-    for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
-        if (strcmp(helptab[i].tag, TAGMISC) == 0)
-            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
-
     printf("\nInfo:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
         if (strcmp(helptab[i].tag, TAGINFO) == 0)
             printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
-    return 1;
+    return TMAN_OK;
 }
 
 int help_usage(const char *cmd)
@@ -222,6 +215,6 @@ int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
 
     cmd = argv[optind];
     if ((status = help_lookup(cmd)) != TMAN_OK)
-        elog(1, "cannot find '%s': %s", cmd, tman_strerror());
-    return status;
+        return elog(status, "cannot find '%s': %s", cmd, tman_strerror());
+    return TMAN_OK;
 }
