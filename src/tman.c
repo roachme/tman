@@ -16,17 +16,23 @@
 #include "errmod.h"
 #include "config.h"
 
+/* Library function's return code */
 static int status;
 
 // TODO: Make NOT global.
 struct tmanstruct tmanfs;
 
+/* For inner use by API functions.  */
 static char *taskenv, *taskid;
 
+/* Used by caller to get access to default values.  */
 static char task_currid[IDSIZ + 1], task_previd[IDSIZ + 1];
 static char task_currenv[ENVSIZ + 1], task_prevenv[ENVSIZ + 1];
 
 
+/*
+ * Check that input environment name is valid
+*/
 static int check_input_env(char *env)
 {
     if ((taskenv = env) == NULL && (taskenv = env_getcurr()) == NULL)
@@ -38,6 +44,9 @@ static int check_input_env(char *env)
     return 0;
 }
 
+/*
+ * Check that input task ID is valid
+*/
 static int check_input_id(char *id)
 {
     if ((taskid = id) == NULL && (taskid = task_curr(taskenv)) == NULL)
@@ -49,6 +58,9 @@ static int check_input_id(char *id)
     return 0;
 }
 
+/*
+ * Check that input values, i.e environment name and task ID are valid
+*/
 static int chkargs(char *env, char *id)
 {
     if ((status = check_input_env(env)))
