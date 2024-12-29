@@ -34,6 +34,7 @@ char *genpath_env(char *env);
 char *genpath_col(char *env, char *id);
 char *genpath_full(char *env, char *id);
 char *genpath_unit(char *env, char *id);
+char *genpath_pgn(char *env, char *id, char *name, char *cmd);
 
 int elog(int status, const char *fmt, ...);
 int wlog(char *fmt, ...);

@@ -13,16 +13,6 @@
 #include "common.h"
 #include "config.h"
 
-#define FMTPGN "%s/%s/%s -e %s -i %s -b %s %s"
-
-static char fullcmd[HOOKSIZ + 1];
-
-static char *gen_pgncmd(char *env, char *id, char *name, char *cmd)
-{
-    sprintf(fullcmd, FMTPGN, tmanfs.pgnins, name, name, env, id, tmanfs.base, cmd);
-    return fullcmd;
-}
-
 int isplugin(const char *pgn)
 {
     char path[PATHSIZ + 1];
@@ -56,7 +46,7 @@ int plugin(char *env, char *id, char *pgname, char *pgncmd)
     else if (task_ext(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ID_NOSUCH);
 
-    return system(gen_pgncmd(taskenv, taskid, pgname, pgncmd));
+    return system(genpath_pgn(taskenv, taskid, pgname, pgncmd));
 }
 
 int hookact(char *cmd, char *env, char *id)
@@ -69,7 +59,7 @@ int hookact(char *cmd, char *env, char *id)
     for (i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];
         if (strcmp(cmd, hook->cmd) == 0)
-            system(gen_pgncmd(env, id, hook->pgname, hook->pgncmd));
+            system(genpath_pgn(env, id, hook->pgname, hook->pgncmd));
     }
     return 0;
 }
@@ -90,8 +80,8 @@ struct unitpgn *hookcat(struct unitpgn *unitpgn, char *env, char *id)
         if (strcmp(hook->cmd, "cat") != 0)
             continue;
 
-        if ((pipe = popen(gen_pgncmd(env, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
-            elog(1, "hookcat: failed: '%s'", fullcmd);
+        if ((pipe = popen(genpath_pgn(env, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
+            elog(1, "hookcat: failed to execute hookcat");
             continue;
         }
         while (fgets(line, BUFSIZ, pipe)) {
@@ -118,8 +108,8 @@ char *hookls(char *pgnout, char *env, char *id)
         if (strcmp(hook->cmd, "list") != 0)
             continue;
 
-        if ((pipe = popen(gen_pgncmd(env, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
-            elog(1, "hookls: failed: '%s'", fullcmd);
+        if ((pipe = popen(genpath_pgn(env, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
+            elog(1, "hookls: failed to execute hookls");
             return NULL;
         }
 

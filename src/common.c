@@ -62,6 +62,13 @@ char *genpath_env(char *env)
     return pathname;
 }
 
+char *genpath_pgn(char *env, char *id, char *name, char *cmd)
+{
+    const char *fmt = "%s/%s/%s -e %s -i %s -b %s %s";
+    sprintf(pathname, fmt, tmanfs.pgnins, name, name, env, id, tmanfs.base, cmd);
+    return pathname;
+}
+
 char *genpath_full(char *env, char *id)
 {
     sprintf(pathname, "%s/%s/%s", base, env, id);
