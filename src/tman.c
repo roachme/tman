@@ -419,12 +419,16 @@ int tman_env_use(tman_ctx_t *ctx, char *env, struct tman_env_use_opt *opt)
 
 char *tman_env_getcurr(tman_ctx_t *ctx)
 {
-    return env_getcurr();
+    if ((taskenv = env_getcurr()) == NULL)
+        return NULL;
+    return strncpy(task_currenv, taskenv, ENVSIZ);
 }
 
 char *tman_env_getprev(tman_ctx_t *ctx)
 {
-    return env_getprev();
+    if ((taskenv = env_getprev()) == NULL)
+        return NULL;
+    return strncpy(task_prevenv, taskenv, ENVSIZ);
 }
 
 int tman_isplugin(const char *pgn)
