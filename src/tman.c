@@ -282,7 +282,12 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     while ((ent = readdir(ids)) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
-        if (unit_getbin(bunit, taskenv, ent->d_name) == NULL) {
+        else if (check_input_id(ent->d_name)) {
+            // roach: sholud we leave it here? If not then what?..
+            elog(1, "illegal task ID: '%s'", ent->d_name);
+            continue;
+        }
+        else if (unit_getbin(bunit, taskenv, ent->d_name) == NULL) {
             fprintf(stderr, "tman_id_list %s: failde to get units\n", ent->d_name);
             continue;
         }
@@ -391,6 +396,11 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
     while ((ent = readdir(edir)) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
+        else if (check_input_env(ent->d_name)) {
+            // roach: sholud we leave it here? If not then what?..
+            elog(1, "illegal environment name: '%s'", ent->d_name);
+            continue;
+        }
 
         // TODO: unify this shit
         if (cenv != NULL && strncmp(cenv, ent->d_name, ENVSIZ) == 0)
