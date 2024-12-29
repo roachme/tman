@@ -348,12 +348,12 @@ int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 {
     if ((status = check_input_env(env)) && status != TMAN_ENV_NOSUCH)
         return status;
-    else if (env_exists(env) == TRUE)
+    else if (env_exists(taskenv) == TRUE)
         return emod_set(TMAN_ENV_EXISTS);
 
     if (dir_env_add(tmanfs.base, taskenv))
         return emod_set(TMAN_DIR_ENV_MAKE);
-    return env_addcurr(env);
+    return env_addcurr(taskenv);
 }
 
 int tman_env_del(tman_ctx_t *ctx, char *env, struct tman_env_del_opt *opt)
