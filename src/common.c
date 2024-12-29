@@ -25,6 +25,7 @@ char *formpath(char *dst, char *fmt, ...)
     if c is an alphanumeric character; otherwise, they shall
     return 0.
 */
+/* roach: depricated, tho module hook.c use it.  */
 int _chkid(char *id)
 {
     if (!isalnum(*id++))
@@ -35,6 +36,7 @@ int _chkid(char *id)
     return isalnum(*--id);
 }
 
+/* roach: depricated, tho module hook.c use it.  */
 int _chkenv(char *env)
 {
     if (!isalnum(*env++))
