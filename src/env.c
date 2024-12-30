@@ -143,16 +143,12 @@ int env_iscurr(char *env)
 {
     if (env == NULL)
         return FALSE;
-    if (strncmp(env, env_getcurr(), ENVSIZ) == 0)
-        return TRUE;
-    return FALSE;
+    return strncmp(env, envs[CENV], ENVSIZ) == 0;
 }
 
 int env_isprev(char *env)
 {
     if (env == NULL)
         return FALSE;
-    if (strncmp(env, env_getprev(), ENVSIZ) == 0)
-        return TRUE;
-    return FALSE;
+    return strncmp(env, envs[PENV], ENVSIZ) == 0;
 }
