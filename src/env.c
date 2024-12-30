@@ -25,6 +25,13 @@ static char envs[NENV][ENVSIZ + 1];
 /* Holders for caller functions. This way caller can't mess with module.  */
 static char curr[ENVSIZ + 1], prev[ENVSIZ + 1];
 
+static int is_envset(char *env)
+{
+    if (env == NULL || env[0] == '\0')
+        return FALSE;
+    return TRUE;
+}
+
 static int load(void)
 {
     int i;
@@ -85,21 +92,22 @@ int env_reset(void)
 
 char *env_getcurr()
 {
-    if (envs[CENV][0] == '\0')
+    if (is_envset(envs[CENV]) == FALSE)
         return NULL;
     return strncpy(curr, envs[CENV], ENVSIZ);
 }
 
 char *env_getprev()
 {
-    if (envs[PENV][0] == '\0')
+    if (is_envset(envs[PENV]) == FALSE)
         return NULL;
     return strncpy(prev, envs[PENV], ENVSIZ);
 }
 
 int env_addcurr(char *env)
 {
-    if (strcmp(envs[CENV], env) == 0)
+    /* Prevent duplicates in toggles.  */
+    if (env_iscurr(env) == TRUE)
         return 1;
     strncpy(envs[PENV], envs[CENV], ENVSIZ);
     strncpy(envs[CENV], env, ENVSIZ);
@@ -123,7 +131,7 @@ int env_swapenvs(void)
 {
     char tmp[ENVSIZ + 1];
 
-    if (envs[CENV][0] == '\0' || envs[PENV][0] == '\0')
+    if (is_envset(envs[PENV]) == FALSE || is_envset(envs[CENV]) == FALSE)
         return 1;
     strncpy(tmp, envs[CENV], ENVSIZ);
     strncpy(envs[CENV], envs[PENV], ENVSIZ);
