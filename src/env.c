@@ -108,7 +108,7 @@ int env_addcurr(char *env)
 {
     /* Prevent duplicates in toggles.  */
     if (env_iscurr(env) == TRUE)
-        return 1;
+        return 0;
     strncpy(envs[PENV], envs[CENV], ENVSIZ);
     strncpy(envs[CENV], env, ENVSIZ);
     return save();
