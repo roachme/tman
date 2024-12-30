@@ -35,11 +35,6 @@ struct validval validval[NKEYS] = {
     { .key = "desc", .func = valid_desc, },
 };
 
-static char *genpath(char *env, char *id)
-{
-    return formpath(unitpath, "%s/%s/%s/.tman/unit", basedir, env, id);
-}
-
 static int valid_prio(const char *val)
 {
     char *prios[] = { "lowest", "low", "mid", "high", "highest" };
@@ -183,7 +178,7 @@ static int genitems(char *env, char *id)
     genitem(idx++, "type", "hotfix");
     genitem(idx++, "date", buff);
     genitem(idx++, "desc", strncat(desc, id, IDSIZ));
-    return save(genpath(env, id));
+    return save(genpath_unit(env, id));
 }
 
 int unit_check(struct unitbin *units)
@@ -208,7 +203,7 @@ int unit_setbin(char *env, char *id, struct unitbin *units)
 {
     int i;
 
-    if (load(genpath(env, id)))
+    if (load(genpath_unit(env, id)))
         return 1;
 
     /* Changes are atomic, check everything before setting any.  */
@@ -218,14 +213,14 @@ int unit_setbin(char *env, char *id, struct unitbin *units)
 
     for (i = 0; i < NKEYS; ++i)
         setitem(units[i].key, units[i].val);
-    return save(genpath(env, id));
+    return save(genpath_unit(env, id));
 }
 
 struct unitbin *unit_getbin(struct unitbin *units, char *env, char *id)
 {
     int i;
 
-    if (load(genpath(env, id)))
+    if (load(genpath_unit(env, id)))
         return NULL;
     for (i = 0; i < NKEYS; ++i)
         units[i] = unitbin[i];
@@ -235,7 +230,7 @@ struct unitbin *unit_getbin(struct unitbin *units, char *env, char *id)
 int unit_delbin(char *env, char *id)
 {
     reset_units();
-    return save(genpath(env, id));
+    return save(genpath_unit(env, id));
 }
 
 struct unitpgn *unit_addpgn(struct unitpgn *head, char *key, char *val)
