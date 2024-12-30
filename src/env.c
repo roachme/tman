@@ -16,6 +16,7 @@
 #define CENV        0  /* index of current env */
 #define PENV        1  /* index of previous env */
 #define NENV        2  /* number of 'special' environments */
+#define ENVFMT      "%s\n" /* environment file format */
 #define NENVITEM    1  /* number of environment items per line */
 
 static char *envfile;
@@ -32,7 +33,7 @@ static int load(void)
     if ((fp  = fopen(envfile, "r")) == NULL)
         return elog(1, "could not load env state");
 
-    for (i = 0; i < NENV && fscanf(fp, "%s", envs[i]) == NENVITEM; ++i)
+    for (i = 0; i < NENV && fscanf(fp, ENVFMT, envs[i]) == NENVITEM; ++i)
         ;
     return fclose(fp);
 }
@@ -46,7 +47,7 @@ static int save(void)
         return elog(1, "could not save env state");
 
     for (i = 0; i < NENV && envs[i][0] != '\0'; ++i)
-        fprintf(fp, "%s\n", envs[i]);
+        fprintf(fp, ENVFMT, envs[i]);
     return fclose(fp);
 }
 
