@@ -179,7 +179,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_UNIT_MAKE);
     else if (task_add(taskenv, taskid))
         return emod_set(TMAN_COL_ADD);
-    else if (opt->noswitch == FALSE && task_move(taskenv, taskid, COLCURR))
+    else if (opt->doswitch == TRUE && task_move(taskenv, taskid, COLCURR))
         return emod_set(TMAN_COL_MOVE);
     else if (hookact("add", taskenv, taskid))
         return emod_set(TMAN_EHOOK);

@@ -34,7 +34,7 @@ typedef struct tman_context {
 } tman_ctx_t;
 
 struct tman_id_add_opt {
-    int noswitch;   /* Do switch to task (set by default) */
+    int doswitch;   /* Switch to newly created task */
     int dogenerate; /* Generate task ID */
 };
 

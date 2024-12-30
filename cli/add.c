@@ -10,7 +10,7 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
     char *env, *errfmt;
     int quiet, force, showhelp, status, i, c;
     struct tman_id_add_opt opt = {
-        .noswitch = FALSE,
+        .doswitch = TRUE,
         .dogenerate = FALSE,
     };
 
@@ -28,7 +28,7 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
             case 'h':
                 showhelp = TRUE; break;
             case 'n':
-                opt.noswitch = TRUE; break;
+                opt.doswitch = FALSE; break;
             case 'q':
                 quiet = TRUE; break;
             case ':':
