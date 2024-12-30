@@ -55,7 +55,7 @@ static int check_input_id(char *id)
         return emod_set(TMAN_ID_ILLEG);
     else if (task_ext(taskenv, taskid) == FALSE)
         return emod_set(TMAN_ID_NOSUCH);
-    return 0;
+    return TMAN_OK;
 }
 
 /*
@@ -67,7 +67,7 @@ static int chkargs(char *env, char *id)
         return status;
     else if ((status = check_input_id(id)))
         return status;
-    return 0;
+    return TMAN_OK;
 }
 
 static tman_ctx_t *make_context()
