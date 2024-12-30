@@ -18,14 +18,11 @@ static int tree_print_rec(struct tree *p)
 static int _env_add(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int force, status;
+    int i, status;
     struct tman_env_add_opt opt;
 
-    force = FALSE;
-    while ((c = getopt(argc, argv, ":f")) != -1) {
+    while ((c = getopt(argc, argv, ":")) != -1) {
         switch (c) {
-            case 'f':
-                force = 1; break ;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -36,7 +33,7 @@ static int _env_add(int argc, char **argv, tman_ctx_t *ctx)
     if (optind == argc)
         return elog(1, "task env required");
 
-    for (int i = optind; i < argc; ++i)
+    for (i = optind; i < argc; ++i)
         status = tman_env_add(ctx, argv[i], &opt);
     return status == TMAN_OK ? tman_pwd() : 1;
 }
@@ -50,16 +47,13 @@ static int _env_cat(int argc, char **argv, tman_ctx_t *ctx)
 static int _env_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int force, status;
+    int status;
     int showpath = FALSE;
     char *old_cenv = tman_env_getcurr(NULL);
     struct tman_env_del_opt opt;
 
-    force = FALSE;
-    while ((c = getopt(argc, argv, ":f")) != -1) {
+    while ((c = getopt(argc, argv, ":")) != -1) {
         switch (c) {
-            case 'f':
-                force = 1; break ;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
