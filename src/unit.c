@@ -7,12 +7,9 @@
 #include <ctype.h>
 #include <time.h>
 
-#include "tman.h"
 #include "unit.h"
 #include "common.h"
 
-static char unitpath[PATHSIZ + 1];
-static char *basedir = tmanfs.base;
 static struct unitbin unitbin[NKEYS];
 static char *keys[NKEYS] = {
     "prio",     /* task priority */

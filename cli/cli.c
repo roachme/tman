@@ -27,7 +27,6 @@ int main(int argc, char **argv)
     tman_ctx_t *ctx;
     int i, status, cmdfound;
     char *cmd = argc > 1 ? argv[1] : "list";
-    struct tman_pgn_opt pgnopt;
 
     ctx = NULL;
     cmdfound = FALSE;

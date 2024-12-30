@@ -203,13 +203,14 @@ int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     char *cmd;
-    char *key = NULL;
+    //char *key = NULL;
     int status;
 
     while ((c = getopt(argc, argv, "dk:")) != -1) {
         switch (c) {
             case 'k':
-                key = optarg; break;
+                //key = optarg;
+                break;
         };
     }
 

@@ -70,11 +70,6 @@ static int chkargs(char *env, char *id)
     return 0;
 }
 
-static int foreach(struct tree *p, int (*func)())
-{
-    return 0;
-}
-
 static tman_ctx_t *make_context()
 {
     tman_ctx_t *ctx;
