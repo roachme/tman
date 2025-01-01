@@ -350,6 +350,7 @@ char *tman_id_getprev(tman_ctx_t *ctx, char *env)
 
 int tman_env_add(tman_ctx_t *ctx, char *env, struct tman_env_add_opt *opt)
 {
+    /* Special case: environment should not exists. If this's a case - let it go. */
     if ((status = check_input_env(env)) && status != TMAN_ENV_NOSUCH)
         return status;
     else if (env_exists(taskenv) == TRUE)
