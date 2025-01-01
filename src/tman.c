@@ -269,6 +269,10 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     struct tree *node;
     char pgnout[PGNOUTSCSIZ + 1] = { 0 };
 
+    /* Free task ID list because it might be called more than once.  */
+    tree_free(ctx->tree);
+    ctx->tree = NULL;
+
     if ((status = check_input_env(env)))
         return status;
     else if ((ids = opendir(genpath_env(taskenv))) == NULL)
@@ -385,6 +389,10 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
 
     if ((edir = opendir(tmanfs.base)) == NULL)
         return emod_set(TMAN_DIR_ENV_OPEN);
+
+    /* Free task env list because it might be called more than once.  */
+    tree_free(ctx->etree);
+    ctx->etree = NULL;
 
     cenv = env_getcurr();
     penv = env_getprev();
