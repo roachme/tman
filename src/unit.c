@@ -48,7 +48,7 @@ static int valid_prio(const char *val)
 
 static int valid_type(const char *val)
 {
-    char *types[] = { "bugfix", "feature", "hotfix" };
+    char *types[] = { "task", "bugfix", "feature", "hotfix" };
     int size = sizeof(types) / sizeof(types[0]);
 
     for (int i = 0; i < size; ++i) {
