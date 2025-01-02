@@ -416,6 +416,7 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
         node = tree_alloc(ent->d_name, colprio, desc, pgnout);
         ctx->etree = tree_add(ctx->etree, node);
     }
+    closedir(edir);
     return TMAN_OK;
 }
 
