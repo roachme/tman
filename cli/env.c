@@ -41,6 +41,7 @@ static int _env_add(int argc, char **argv, tman_ctx_t *ctx)
 // roach: maybe it'll be useful
 static int _env_cat(int argc, char **argv, tman_ctx_t *ctx)
 {
+    elog(1, "under development");
     return 0;
 }
 
