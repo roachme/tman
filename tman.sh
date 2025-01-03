@@ -6,12 +6,9 @@ function tman()
     output="$(_tman "$@")"
     retcode="$?"
 
-    # TODO: simplify this shit
     # Check that output contains tag. If so then interpret
-    # it as a path not output.
-    echo "$output" | grep -qE "^$PATHTAG"
-    tagcheck="$?"
-    if [ "$tagcheck" -eq 0 ]; then
+    # it as a path not an output.
+    if [ -n "$(echo $output | grep -E "^$PATHTAG")" ]; then
         cd "${output/$PATHTAG/}"
     elif [ -n "$output" ]; then
         echo "$output"
