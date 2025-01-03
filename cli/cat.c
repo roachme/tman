@@ -32,10 +32,9 @@ int tman_cli_cat(int argc, char **argv, tman_ctx_t *ctx)
     int i, status;
     struct tman_cli_cat_opt opt = { .env = NULL, .help = 0, .force = 0, };
 
-    while ((c = getopt(argc, argv, ":e:fhk")) != -1) {
+    while ((c = getopt(argc, argv, ":e:hk")) != -1) {
         switch (c) {
             case 'e': opt.env = optarg; break;
-            case 'f': opt.force = 1; break;
             case 'k': opt.key = optarg; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
@@ -46,9 +45,7 @@ int tman_cli_cat(int argc, char **argv, tman_ctx_t *ctx)
 
     i = optind;
     do {
-        if ((status = pretty_cat(ctx, opt.env, argv[i], opt.key)) != TMAN_OK)
-            return status;
-        ++i;
+        status = pretty_cat(ctx, opt.env, argv[i++], opt.key);
     } while (i < argc);
     return status;
 }
