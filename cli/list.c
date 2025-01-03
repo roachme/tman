@@ -21,7 +21,7 @@ static int pretty_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
         return 1;
     }
 
-    return recursive_tree_print(ctx->tree);
+    return recursive_tree_print(ctx->ids);
 }
 
 // TODO: Find a good error message in case option fails.  */
