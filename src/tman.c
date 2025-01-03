@@ -270,8 +270,8 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     char pgnout[PGNOUTSIZ + 1] = { 0 };
 
     /* Free task ID list because it might be called more than once.  */
-    tree_free(ctx->tree);
-    ctx->tree = NULL;
+    tree_free(ctx->ids);
+    ctx->ids = NULL;
 
     if ((status = check_input_env(env)))
         return status;
@@ -294,7 +294,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
         hookls(pgnout, taskenv, ent->d_name);
         struct column column = col_getmark(taskenv, ent->d_name);
         node = tree_alloc(ent->d_name, col_prio(column.col), bunit[3].val, pgnout);
-        ctx->tree = tree_add(ctx->tree, node);
+        ctx->ids = tree_add(ctx->ids, node);
         pgnout[0] = '\0';
     }
     closedir(ids);
@@ -392,8 +392,8 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
         return emod_set(TMAN_DIR_ENV_OPEN);
 
     /* Free task env list because it might be called more than once.  */
-    tree_free(ctx->etree);
-    ctx->etree = NULL;
+    tree_free(ctx->envs);
+    ctx->envs = NULL;
 
     cenv = env_getcurr();
     penv = env_getprev();
@@ -414,7 +414,7 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
         else
             colprio = 3;
         node = tree_alloc(ent->d_name, colprio, desc, pgnout);
-        ctx->etree = tree_add(ctx->etree, node);
+        ctx->envs = tree_add(ctx->envs, node);
     }
     closedir(edir);
     return TMAN_OK;
@@ -480,8 +480,8 @@ const char *tman_strerror(void)
 int tman_deinit(struct tman_context *ctx)
 {
     unit_delpgn(ctx->units.pgn);
-    tree_free(ctx->tree);
-    tree_free(ctx->etree);
+    tree_free(ctx->ids);
+    tree_free(ctx->envs);
     free(ctx);
     return TMAN_OK;
 }

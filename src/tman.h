@@ -29,8 +29,8 @@ enum tman_setuplvl {
 /* Generic tman structure used by all(?) API functions.  */
 typedef struct tman_context {
     struct units units;
-    struct tree *tree;
-    struct tree *etree;
+    struct tree *ids;
+    struct tree *envs;
 } tman_ctx_t;
 
 struct tman_id_add_opt {

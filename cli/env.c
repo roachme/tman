@@ -82,7 +82,7 @@ static int _env_list(int argc, char **argv, tman_ctx_t *ctx)
         elog(1, "_env_list: something went wrong");
         return status;
     }
-    return tree_print_rec(ctx->etree);
+    return tree_print_rec(ctx->envs);
 }
 
 static int _env_prev(int argc, char **argv, tman_ctx_t *ctx)
