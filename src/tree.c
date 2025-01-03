@@ -19,7 +19,7 @@ struct tree *tree_alloc(char *id, int colprio, char *desc, char *pgnout)
     node->colprio = colprio;
     strncpy(node->id, id, IDSIZ);
     strncpy(node->desc, desc, DESCSIZ);
-    strncpy(node->pgnout, pgnout, PGNOUTSCSIZ);
+    strncpy(node->pgnout, pgnout, PGNOUTSIZ);
     node->left = node->right = NULL;
     return node;
 }

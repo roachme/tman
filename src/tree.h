@@ -9,7 +9,7 @@ struct tree {
     int colprio;
     char id[IDSIZ + 1];
     char desc[DESCSIZ + 1];
-    char pgnout[PGNOUTSCSIZ + 1];
+    char pgnout[PGNOUTSIZ + 1];
     struct tree *left;
     struct tree *right;
 };

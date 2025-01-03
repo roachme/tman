@@ -13,7 +13,7 @@
 #define FALSE       0
 
 #define DESCSIZ         80
-#define PGNOUTSCSIZ     80
+#define PGNOUTSIZ       80
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 

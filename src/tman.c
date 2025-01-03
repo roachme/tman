@@ -267,7 +267,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     struct dirent *ent;
     struct unitbin bunit[NKEYS];
     struct tree *node;
-    char pgnout[PGNOUTSCSIZ + 1] = { 0 };
+    char pgnout[PGNOUTSIZ + 1] = { 0 };
 
     /* Free task ID list because it might be called more than once.  */
     tree_free(ctx->tree);
@@ -386,7 +386,7 @@ int tman_env_list(tman_ctx_t *ctx, struct tman_env_list_opt *opt)
     int colprio = 1;
     char *cenv, *penv;
     char *desc = "some env desc";
-    char pgnout[PGNOUTSCSIZ + 1] = { 0 };
+    char pgnout[PGNOUTSIZ + 1] = { 0 };
 
     if ((edir = opendir(tmanfs.base)) == NULL)
         return emod_set(TMAN_DIR_ENV_OPEN);
