@@ -20,7 +20,7 @@ struct units {
     struct unit bin[NKEYS];
 };
 
-int unit_check(struct unit *units);
+int unit_chkbin(struct unit *units);
 int unit_addbin(char *env, char *id, struct unit *units);
 int unit_setbin(char *env, char *id, struct unit *units);
 struct unit *unit_getbin(struct unit *units, char *env, char *id);

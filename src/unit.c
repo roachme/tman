@@ -181,7 +181,7 @@ static int genitems(char *env, char *id)
     return save(genpath_unit(env, id));
 }
 
-int unit_check(struct unit *units)
+int unit_chkbin(struct unit *units)
 {
     int i;
 

@@ -170,7 +170,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_ID_EXISTS);
     else if (col_ext(col) == FALSE)
         return emod_set(TMAN_COL_EXISTS);
-    else if (unit_check(units) == FALSE)
+    else if (unit_chkbin(units) == FALSE)
         return emod_set(TMAN_UNIT_ILLEG);
 
     if (dir_id_add(tmanfs.base, taskenv, taskid) != 0)
@@ -232,7 +232,7 @@ int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unit *unitbin, stru
 {
     if ((status = chkargs(env, id)))
         return status;
-    else if (unit_check(unitbin) == FALSE)
+    else if (unit_chkbin(unitbin) == FALSE)
         return emod_set(TMAN_UNIT_ILLEG);
 
     if (unit_setbin(taskenv, taskid, unitbin))
