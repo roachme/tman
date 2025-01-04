@@ -186,9 +186,8 @@ int unit_chkbin(struct unit *units)
     int i;
 
     for (i = 0; i < NKEYS; ++i)
-        if (units->isset && strncmp(validval[i].key, units->key, KEYSIZ) == 0)
-            if (validval[i].func(units->val) == FALSE)
-                return FALSE;
+        if (units[i].isset && chkitem(units[i].key, units[i].val) == FALSE)
+            return FALSE;
     return TRUE;
 }
 
@@ -205,11 +204,6 @@ int unit_setbin(char *env, char *id, struct unit *units)
 
     if (load(genpath_unit(env, id)))
         return 1;
-
-    /* Changes are atomic, check everything before setting any.  */
-    for (i = 0; i < NKEYS; ++i)
-        if (units[i].isset && chkitem(units[i].key, units[i].val) == FALSE)
-            return 1;
 
     for (i = 0; i < NKEYS; ++i)
         setitem(units[i].key, units[i].val);
