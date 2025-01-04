@@ -35,6 +35,7 @@ struct validval validval[NKEYS] = {
     { .key = "desc", .func = valid_desc, },
 };
 
+/* roachme: replace all prios if user specifies any in config file */
 static int valid_prio(const char *val)
 {
     char *prios[] = { "lowest", "low", "mid", "high", "highest" };
@@ -46,6 +47,7 @@ static int valid_prio(const char *val)
     return FALSE;
 }
 
+/* roachme: replace all types if user specifies any in config file */
 static int valid_type(const char *val)
 {
     char *types[] = { "task", "bugfix", "feature", "hotfix" };
