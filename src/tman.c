@@ -160,7 +160,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
 {
     // TODO: Add support to pass unit values into unit_add()
     // TODO: maybe it's better to move units to ctx?
-    struct unitbin units[NKEYS] = {0};
+    struct unit units[NKEYS] = {0};
     char *col = COLCURR;
 
     /* Special case: task ID should not exists. If this's a case - let it go. */
@@ -228,7 +228,7 @@ int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
     return TMAN_OK;
 }
 
-int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unitbin *unitbin, struct tman_id_set_opt *opt)
+int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unit *unitbin, struct tman_id_set_opt *opt)
 {
     if ((status = chkargs(env, id)))
         return status;
@@ -265,7 +265,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 {
     DIR *ids;
     struct dirent *ent;
-    struct unitbin bunit[NKEYS];
+    struct unit bunit[NKEYS];
     struct tree *node;
     char pgnout[PGNOUTSIZ + 1] = { 0 };
 

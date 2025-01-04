@@ -10,7 +10,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t *ctx)
     int idx;
     int atleast_one_key_set;
     char *env = NULL, *id = NULL;
-    struct unitbin units[NKEYS] = { 0 };
+    struct unit units[NKEYS] = { 0 };
     struct tman_id_set_opt opt;
 
     /*

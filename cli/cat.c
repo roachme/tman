@@ -6,23 +6,20 @@
 static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
 {
     int i, status;
-    struct unitbin *unitbin;
-    struct unitpgn *unitpgn;
+    struct unit *unitbin, *unitpgn;
     struct tman_id_cat_opt opt = { };
 
     if ((status = tman_id_cat(ctx, env, id, &opt)) != TMAN_OK)
         return elog(status, "cannot cat units '%s': %s", id, tman_strerror());
 
     printf("%-7s : %s\n", "id", ctx->units.id);
-    unitbin = ctx->units.bin;
-    for (i = 0; i < NKEYS; ++i)
+
+    for (unitbin = ctx->units.bin, i = 0; i < NKEYS; ++i)
         printf("%-7s : %s\n", unitbin[i].key, unitbin[i].val);
 
-    unitpgn = ctx->units.pgn;
-    while (unitpgn != NULL) {
-        printf("%-7s : %s\n", unitpgn->node.key, unitpgn->node.val);
-        unitpgn = unitpgn->next;
-    }
+    for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
+        printf("%-7s : %s\n", unitpgn->key, unitpgn->val);
+
     return TMAN_OK;
 }
 

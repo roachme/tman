@@ -7,30 +7,26 @@
 #define KEYSIZ      10
 #define VALSIZ      80 /* this big cuz of task description */
 
-struct unitbin {
+struct unit {
     int isset;
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
-};
-
-struct unitpgn {
-    struct unitbin node;
-    struct unitpgn *next;
+    struct unit *next;
 };
 
 struct units {
     char id[IDSIZ + 1];
-    struct unitpgn *pgn;
-    struct unitbin bin[NKEYS];
+    struct unit *pgn;
+    struct unit bin[NKEYS];
 };
 
-int unit_check(struct unitbin *unitbin);
-int unit_addbin(char *env, char *id, struct unitbin *units);
-int unit_setbin(char *env, char *id, struct unitbin *units);
-struct unitbin *unit_getbin(struct unitbin *units, char *env, char *id);
+int unit_check(struct unit *units);
+int unit_addbin(char *env, char *id, struct unit *units);
+int unit_setbin(char *env, char *id, struct unit *units);
+struct unit *unit_getbin(struct unit *units, char *env, char *id);
 int unit_delbin(char *env, char *id);
 
-struct unitpgn *unit_addpgn(struct unitpgn *head, char *key, char *val);
-int unit_delpgn(struct unitpgn *pgn);
+struct unit *unit_addpgn(struct unit *head, char *key, char *val);
+int unit_delpgn(struct unit *pgn);
 
 #endif
