@@ -30,7 +30,7 @@ int pgm(int argc, char **argv);
 int ispgn(char *pgn);
 int pgnexe(int argc, char **argv);
 int hookact(char *command, char *env, char *id);
-struct unitpgn *hookcat(struct unitpgn *unit, char *env, char *id);
+struct unit *hookcat(struct unit *unit, char *env, char *id);
 char *hookls(char *pgn, char *env, char *id);
 
 #endif

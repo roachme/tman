@@ -10,7 +10,7 @@
 #include "unit.h"
 #include "common.h"
 
-static struct unitbin unitbin[NKEYS];
+static struct unit unitbin[NKEYS];
 static char *keys[NKEYS] = {
     "prio",     /* task priority */
     "type",     /* task type: bugfix, hotfix, feature */
@@ -181,7 +181,7 @@ static int genitems(char *env, char *id)
     return save(genpath_unit(env, id));
 }
 
-int unit_check(struct unitbin *units)
+int unit_check(struct unit *units)
 {
     int i;
 
@@ -192,14 +192,14 @@ int unit_check(struct unitbin *units)
     return TRUE;
 }
 
-int unit_addbin(char *env, char *id, struct unitbin *units)
+int unit_addbin(char *env, char *id, struct unit *units)
 {
     if (genitems(env, id))
         return 1;
     return unit_setbin(env, id, units);
 }
 
-int unit_setbin(char *env, char *id, struct unitbin *units)
+int unit_setbin(char *env, char *id, struct unit *units)
 {
     int i;
 
@@ -216,7 +216,7 @@ int unit_setbin(char *env, char *id, struct unitbin *units)
     return save(genpath_unit(env, id));
 }
 
-struct unitbin *unit_getbin(struct unitbin *units, char *env, char *id)
+struct unit *unit_getbin(struct unit *units, char *env, char *id)
 {
     int i;
 
@@ -233,23 +233,23 @@ int unit_delbin(char *env, char *id)
     return save(genpath_unit(env, id));
 }
 
-struct unitpgn *unit_addpgn(struct unitpgn *head, char *key, char *val)
+struct unit *unit_addpgn(struct unit *head, char *key, char *val)
 {
-    struct unitpgn *node;
+    struct unit *node;
 
-    if ((node = malloc(sizeof(struct unitpgn))) == NULL)
+    if ((node = malloc(sizeof(struct unit))) == NULL)
         return head;
 
     node->next = head;
-    node->node.isset = TRUE;
-    strncpy(node->node.key, key, KEYSIZ);
-    strncpy(node->node.val, val, VALSIZ);
+    node->isset = TRUE;
+    strncpy(node->key, key, KEYSIZ);
+    strncpy(node->val, val, VALSIZ);
     return node;
 }
 
-int unit_delpgn(struct unitpgn *pgn)
+int unit_delpgn(struct unit *pgn)
 {
-    struct unitpgn *tmp;
+    struct unit *tmp;
 
     while (pgn) {
         tmp = pgn;

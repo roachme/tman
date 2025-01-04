@@ -64,7 +64,7 @@ int hookact(char *cmd, char *env, char *id)
     return 0;
 }
 
-struct unitpgn *hookcat(struct unitpgn *unitpgn, char *env, char *id)
+struct unit *hookcat(struct unit *unitpgn, char *env, char *id)
 {
     int i;
     FILE *pipe;
