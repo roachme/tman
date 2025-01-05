@@ -104,7 +104,10 @@ int tman_id_cat (tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *o
 int tman_id_col (tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt);
 int tman_id_del (tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *opt);
 int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt);
-int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src);
+
+int tman_id_move(tman_ctx_t *ctx, char *srcenv, char *dstenv, char *srcid, char *dstid);
+//int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src);
+
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt);
 int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unit *unitbin, struct tman_id_set_opt *opt);
 int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt);
