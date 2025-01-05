@@ -251,7 +251,7 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
     return task_move(taskenv, taskid, COLCURR);
 }
 
-int tman_id_move(tman_ctx_t *ctx, char *id, char *dst, char *src)
+int tman_id_move(tman_ctx_t *ctx, char *srcenv, char *dstenv, char *srcid, char *dstid)
 {
     return 0;
 }
