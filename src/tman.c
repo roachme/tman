@@ -161,15 +161,12 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
     // TODO: Add support to pass unit values into unit_add()
     // TODO: maybe it's better to move units to ctx?
     struct unit units[NKEYS] = {0};
-    char *col = COLCURR;
 
     /* Special case: task ID should not exists. If this's a case - let it go. */
     if ((status = chkargs(env, id)) && status != TMAN_ID_NOSUCH)
         return status;
     else if (task_ext(taskenv, taskid) == TRUE)
         return emod_set(TMAN_ID_EXISTS);
-    else if (col_ext(col) == FALSE)
-        return emod_set(TMAN_COL_EXISTS);
     else if (unit_chkbin(units) == FALSE)
         return emod_set(TMAN_UNIT_ILLEG);
 
