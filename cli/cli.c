@@ -42,7 +42,11 @@ int main(int argc, char **argv)
                 elog(status, "%s", tman_strerror());
                 goto out;
             }
-            status = builtins[i].func(argc - 1, argv + 1, ctx);
+            /* Note: command list is default and can be omited.  */
+            if (argc == 1 && strncmp(cmd, "list", 4) == 0)
+                status = builtins[i].func(argc, argv, ctx);
+            else
+                status = builtins[i].func(argc - 1, argv + 1, ctx);
             goto out;
         }
     if (cmdfound == FALSE && (status = tman_isplugin(cmd)) == TRUE) {
