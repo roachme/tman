@@ -7,7 +7,7 @@
 int tman_cli_set(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int idx;
+    int i, idx, status;
     int atleast_one_key_set;
     char *env = NULL, *id = NULL;
     struct unit units[NKEYS] = { 0 };
@@ -68,11 +68,10 @@ Options:
     if (atleast_one_key_set == FALSE)
         return elog(1, "gotta supply one of the options");
 
-    if (optind == argc) {
-        tman_id_set(ctx, env, id, units, &opt);
-    }
-    for (int i = optind; i < argc; ++i) {
-        tman_id_set(ctx, env, argv[i], units, &opt);
-    }
-    return 1;
+    i =  optind;
+    do {
+        status = tman_id_set(ctx, env, argv[i], units, &opt);
+    } while (++i < argc);
+
+    return status;
 }
