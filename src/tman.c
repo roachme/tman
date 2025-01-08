@@ -315,6 +315,11 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
     if ((status = chkargs(env, id)))
         return status;
 
+    /* FIXME: tman cat test1 test2 test3
+     * output previous plugin output.
+    */
+    //unit_delpgn(ctx->units.pgn);
+
     // TODO: don't wanna lose plugin units if builtin ones
     // failed to parse. But gotta make user return value
     // make any sense for caller.
