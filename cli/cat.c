@@ -42,7 +42,7 @@ int tman_cli_cat(int argc, char **argv, tman_ctx_t *ctx)
 
     i = optind;
     do {
-        status = pretty_cat(ctx, opt.env, argv[i++], opt.key);
-    } while (i < argc);
+        status = pretty_cat(ctx, opt.env, argv[i], opt.key);
+    } while (++i < argc);
     return status;
 }

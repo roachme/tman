@@ -28,7 +28,7 @@ static int pretty_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
 int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int showhelp, status;
+    int i, showhelp, status;
     struct tman_id_list_opt opt = { };
 
     /*
@@ -50,15 +50,12 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx)
     }
 
     // TODO: check that option don't conflict with each other.
-
     if (showhelp == 1)
         return help_usage("list");
 
-    for (int i = optind; i < argc; ++i) {
-        char *env = argv[i];
-        status = pretty_list(ctx, env, &opt);
-    }
-
-    /* if no arguments passed then list current env */
-    return optind < argc ? status : pretty_list(ctx, NULL, &opt);
+    i = optind;
+    do {
+        status = pretty_list(ctx, argv[i], &opt);
+    } while (++i < argc);
+    return status;
 }

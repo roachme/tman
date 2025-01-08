@@ -31,23 +31,15 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
     if (showhelp == TRUE)
         return help_usage("del");
 
-    for (i = optind; i < argc; ++i) {
+    i = optind;
+    do {
         if ((status = tman_id_del(ctx, env, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
             if (force == TRUE)
                 break;
         }
-    }
-
-    if (optind == argc) { /* delete current task id */
-        if ((status = tman_id_del(ctx, env, id, &opt)) != TMAN_OK) {
-            if (quiet == FALSE) {
-                // TODO: shows null if no current task ID set.
-                elog(status, errfmt, id, tman_strerror());
-            }
-        }
-    }
+    } while (i++ < argc);
 
     // FIXME: when delete task ID from non-current env,
     // it switches to current task in current env.
