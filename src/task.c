@@ -82,14 +82,18 @@ static int swap(char *env)
     return addcurr(env, tmp);
 }
 
-
 /* Move current task to another column.  */
 static int movecurr(char *env, char *id, char *col)
 {
     if (strncmp(col, COLCURR, COLSIZ) == 0)
         return 0; /* do nothing */
-    if (strncmp(col, COLPREV, COLSIZ) == 0)
+    if (strncmp(col, COLPREV, COLSIZ) == 0) {
+        /* if previous task ID not set then it's an error, right?  */
         return swap(env);
+    }
+    /* note: maybe it's better to use movetask() ?  */
+    /* Delete current task ID and move it to another column.  */
+    /* FIXME: can't move current task ID to another column.  */
     return delcurr(env);
 }
 
