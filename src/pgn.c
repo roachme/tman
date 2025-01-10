@@ -1,52 +1,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
 
-#include "env.h"
-#include "errmod.h"
-#include "task.h"
-#include "tman.h"
+#include "tman.h" // for tmanfs. make it not global
 #include "pgn.h"
 #include "unit.h"
 #include "osdep.h"
-#include "common.h"
-#include "config.h"
+#include "config.h" // for usehooks. make it not global
 
 int ispgn(const char *pgn)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s/%s", tmanfs.pgnins, pgn, pgn);
     return ISFILE(path);
-}
-
-/*
-    pgn cmd [OPTION].. ID ENV
-*/
-// TODO: Let tman core pass plugin options to plugins
-//int plugin(int argc, char **argv)
-int pgnexec(char *env, char *id, char *pgname, char *pgncmd)
-{
-    char *taskenv, *taskid;
-
-    taskenv = env;
-    taskid = id;
-
-    if (taskenv == NULL && (taskenv = env_getcurr()) == NULL)
-        return emod_set(TMAN_ENV_NOCURR);
-    else if (_chkenv(taskenv) == FALSE)
-        return emod_set(TMAN_ENV_ILLEG);
-    else if (env_exists(taskenv) == FALSE)
-        return emod_set(TMAN_ENV_NOSUCH);
-
-    else if (taskid == NULL && (taskid = tman_id_getcurr(NULL, taskenv)) == NULL)
-        return emod_set(TMAN_ID_NOCURR);
-    else if (_chkid(taskid) == FALSE)
-        return emod_set(TMAN_ID_ILLEG);
-    else if (task_ext(taskenv, taskid) == FALSE)
-        return emod_set(TMAN_ID_NOSUCH);
-
-    return system(genpath_pgn(taskenv, taskid, pgname, pgncmd));
 }
 
 int pgnact(char *cmd, char *env, char *id)
