@@ -38,13 +38,13 @@ static int parse_usehooks(const char *confkey, int *usehooks)
     return elog(1, "'%s': invalid usehooks value", confval);
 }
 
-static int parse_hook(const char *hookname, struct hooks *hooks)
+static int parse_hook(const char *hookname, struct pgns *hooks)
 {
     int i = hooks->size;
-    strcpy(hooks->hook[i].hook, hookname);
-    strcpy(hooks->hook[i].cmd, strtok(NULL, delim));
-    strcpy(hooks->hook[i].pgname, strtok(NULL, delim));
-    strcpy(hooks->hook[i].pgncmd, strtok(NULL, delim));
+    strcpy(hooks->pgn[i].pgntag, hookname);
+    strcpy(hooks->pgn[i].cmd, strtok(NULL, delim));
+    strcpy(hooks->pgn[i].pgname, strtok(NULL, delim));
+    strcpy(hooks->pgn[i].pgncmd, strtok(NULL, delim));
     ++hooks->size;
     return 0;
 }

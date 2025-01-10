@@ -6,7 +6,7 @@
 #include "col.h"
 #include "dir.h"
 #include "env.h"
-#include "hook.h"
+#include "pgn.h"
 #include "tman.h"
 #include "tree.h"
 #include "task.h"
@@ -178,7 +178,7 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
         return emod_set(TMAN_COL_ADD);
     else if (opt->doswitch == TRUE && task_move(taskenv, taskid, COLCURR))
         return emod_set(TMAN_COL_MOVE);
-    else if (hookact("add", taskenv, taskid))
+    else if (pgnact("add", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
@@ -188,7 +188,7 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
     if ((status = chkargs(env, id)))
         return status;
 
-    if (hookact("del", taskenv, taskid))
+    if (pgnact("del", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     else if (unit_delbin(taskenv, taskid))
         return emod_set(TMAN_UNIT_DEL);
@@ -209,7 +209,7 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 
     if (task_swap(taskenv))
         return emod_set(TMAN_ID_SWAP);
-    else if (hookact("prev", env_getcurr(), task_curr(taskenv)))
+    else if (pgnact("prev", env_getcurr(), task_curr(taskenv)))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
@@ -220,7 +220,7 @@ int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
     if ((status = chkargs(NULL, NULL)))
         return status;
 
-    if (hookact("sync", taskenv, taskid))
+    if (pgnact("sync", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
@@ -288,7 +288,7 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
             continue;
         }
 
-        hookls(pgnout, taskenv, ent->d_name);
+        pgnls(pgnout, taskenv, ent->d_name);
         struct column column = col_getmark(taskenv, ent->d_name);
         node = tree_alloc(ent->d_name, col_prio(column.col), bunit[3].val, pgnout);
         ctx->ids = tree_add(ctx->ids, node);
@@ -326,7 +326,7 @@ int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *op
 
     /* No need to check return value because there might case
      * that no hooks are defined or executed */
-    ctx->units.pgn = hookcat(ctx->units.pgn, taskenv, taskid);
+    ctx->units.pgn = pgncat(ctx->units.pgn, taskenv, taskid);
     if (unit_getbin(ctx->units.bin, taskenv, taskid) == NULL)
         status = emod_set(TMAN_UNIT_GET);
 
@@ -466,12 +466,12 @@ char *tman_env_getprev(tman_ctx_t *ctx)
 
 int tman_isplugin(const char *pgn)
 {
-    return isplugin(pgn);
+    return ispgn(pgn);
 }
 
 int tman_plugin(tman_ctx_t *ctx, char *env, char *id, char *pgname, char *pgncmd, struct tman_pgn_opt *opt)
 {
-    return plugin(env, id, pgname, pgncmd);
+    return pgnexec(env, id, pgname, pgncmd);
 }
 
 const char *tman_strerror(void)
