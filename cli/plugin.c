@@ -4,9 +4,9 @@
 int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t *ctx)
 {
     int status;
-    char c, *cmd, *env, *id, *subcmd;
+    char c, *cmd, *env, *id;
 
-    id = env = subcmd = NULL;
+    id = env = NULL;
     while ((c = getopt(argc, argv, ":e:i:")) != -1) {
         switch (c) {
             case 'e':
