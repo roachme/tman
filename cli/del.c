@@ -39,7 +39,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
             if (force == TRUE)
                 break;
         }
-    } while (i++ < argc);
+    } while (++i < argc);
 
     // FIXME: when delete task ID from non-current env,
     // it switches to current task in current env.
