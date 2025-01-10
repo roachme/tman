@@ -7,13 +7,13 @@
 #include "errmod.h"
 #include "task.h"
 #include "tman.h"
-#include "hook.h"
+#include "pgn.h"
 #include "unit.h"
 #include "osdep.h"
 #include "common.h"
 #include "config.h"
 
-int isplugin(const char *pgn)
+int ispgn(const char *pgn)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s/%s", tmanfs.pgnins, pgn, pgn);
@@ -25,7 +25,7 @@ int isplugin(const char *pgn)
 */
 // TODO: Let tman core pass plugin options to plugins
 //int plugin(int argc, char **argv)
-int plugin(char *env, char *id, char *pgname, char *pgncmd)
+int pgnexec(char *env, char *id, char *pgname, char *pgncmd)
 {
     char *taskenv, *taskid;
 
@@ -49,7 +49,7 @@ int plugin(char *env, char *id, char *pgname, char *pgncmd)
     return system(genpath_pgn(taskenv, taskid, pgname, pgncmd));
 }
 
-int hookact(char *cmd, char *env, char *id)
+int pgnact(char *cmd, char *env, char *id)
 {
     int i;
 
@@ -57,14 +57,14 @@ int hookact(char *cmd, char *env, char *id)
         return 0;
 
     for (i = 0; i < config.hooks.size; ++i) {
-        struct hook *hook = &config.hooks.hook[i];
+        struct pgn *hook = &config.hooks.pgn[i];
         if (strcmp(cmd, hook->cmd) == 0)
             system(genpath_pgn(env, id, hook->pgname, hook->pgncmd));
     }
     return 0;
 }
 
-struct unit *hookcat(struct unit *unitpgn, char *env, char *id)
+struct unit *pgncat(struct unit *unitpgn, char *env, char *id)
 {
     int i;
     FILE *pipe;
@@ -76,7 +76,7 @@ struct unit *hookcat(struct unit *unitpgn, char *env, char *id)
         return unitpgn;
 
     for (i = 0; i < config.hooks.size; ++i) {
-        struct hook *hook = &config.hooks.hook[i];
+        struct pgn *hook = &config.hooks.pgn[i];
         if (strcmp(hook->cmd, "cat") != 0)
             continue;
 
@@ -93,7 +93,7 @@ struct unit *hookcat(struct unit *unitpgn, char *env, char *id)
     return unitpgn;
 }
 
-char *hookls(char *pgnout, char *env, char *id)
+char *pgnls(char *pgnout, char *env, char *id)
 {
     int i;
     FILE *pipe;
@@ -104,7 +104,7 @@ char *hookls(char *pgnout, char *env, char *id)
         return pgnout;
 
     for (i = 0; i < config.hooks.size; ++i) {
-        struct hook *hook = &config.hooks.hook[i];
+        struct pgn *hook = &config.hooks.pgn[i];
         if (strcmp(hook->cmd, "list") != 0)
             continue;
 
