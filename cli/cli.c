@@ -49,7 +49,7 @@ int main(int argc, char **argv)
                 status = builtins[i].func(argc - 1, argv + 1, ctx);
             goto out;
         }
-    if (cmdfound == FALSE && (status = tman_isplugin(cmd)) == TRUE) {
+    if (cmdfound == FALSE && (status = tman_ispgn(cmd)) == TRUE) {
         cmdfound = TRUE;
         if ((status = tman_setup(TMAN_SETUPCHECK)) != TMAN_OK) {
             elog(status, "%s", tman_strerror());

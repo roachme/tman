@@ -3,6 +3,7 @@
 
 int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t *ctx)
 {
+    int status;
     char c, *cmd, *env, *id, *subcmd;
 
     id = env = subcmd = NULL;
@@ -19,10 +20,13 @@ int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t *ctx)
         }
     }
 
+    /* roachme: system call gotta take care of it.  */
     if (optind == argc)
         cmd = "";
     else
         cmd = argv[optind];
 
-    return tman_plugin(NULL, env, id, name, cmd, NULL);
+    if ((status = tman_pgnexec(NULL, env, id, name, cmd, NULL)) != TMAN_OK)
+        elog(status, "pgn failed: %s", tman_strerror());
+    return status;
 }

@@ -24,6 +24,6 @@ struct pgns {
 int ispgn(const char *pgn);
 int pgnact(char *command, char *env, char *id);
 struct unit *pgncat(struct unit *unit, char *env, char *id);
-char *pgnls(char *pgn, char *env, char *id);
+char *pgnls(char *pgnout, char *env, char *id);
 
 #endif
