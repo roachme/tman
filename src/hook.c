@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include "tman.h" // for tmanfs. make it not global
-#include "pgn.h"
+#include "hook.h"
 #include "unit.h"
 #include "osdep.h"
 #include "config.h" // for usehooks. make it not global
@@ -15,7 +15,7 @@ int ispgn(const char *pgn)
     return ISFILE(path);
 }
 
-int pgnact(char *cmd, char *env, char *id)
+int hookact(char *cmd, char *env, char *id)
 {
     int i;
 
@@ -23,14 +23,14 @@ int pgnact(char *cmd, char *env, char *id)
         return 0;
 
     for (i = 0; i < config.hooks.size; ++i) {
-        struct pgn *hook = &config.hooks.pgn[i];
+        struct hook *hook = &config.hooks.hook[i];
         if (strcmp(cmd, hook->cmd) == 0)
             system(genpath_pgn(env, id, hook->pgname, hook->pgncmd));
     }
     return 0;
 }
 
-struct unit *pgncat(struct unit *unitpgn, char *env, char *id)
+struct unit *hookcat(struct unit *unitpgn, char *env, char *id)
 {
     int i;
     FILE *pipe;
@@ -42,7 +42,7 @@ struct unit *pgncat(struct unit *unitpgn, char *env, char *id)
         return unitpgn;
 
     for (i = 0; i < config.hooks.size; ++i) {
-        struct pgn *hook = &config.hooks.pgn[i];
+        struct hook *hook = &config.hooks.hook[i];
         if (strcmp(hook->cmd, "cat") != 0)
             continue;
 
@@ -59,7 +59,7 @@ struct unit *pgncat(struct unit *unitpgn, char *env, char *id)
     return unitpgn;
 }
 
-char *pgnls(char *pgnout, char *env, char *id)
+char *hookls(char *pgnout, char *env, char *id)
 {
     int i;
     FILE *pipe;
@@ -70,7 +70,7 @@ char *pgnls(char *pgnout, char *env, char *id)
         return pgnout;
 
     for (i = 0; i < config.hooks.size; ++i) {
-        struct pgn *hook = &config.hooks.pgn[i];
+        struct hook *hook = &config.hooks.hook[i];
         if (strcmp(hook->cmd, "list") != 0)
             continue;
 

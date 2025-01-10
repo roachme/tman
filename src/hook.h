@@ -7,7 +7,7 @@
 #define HOOKSIZ     1000
 
 // "HOOKCMD = add struct create",
-struct pgn {
+struct hook {
     char cmd[10];
     char cmdopt[10];
     char pgntag[10];
@@ -16,14 +16,14 @@ struct pgn {
     char pgnopt[10];
 };
 
-struct pgns {
+struct hooks {
     int size;
-    struct pgn pgn[NHOOKS];
+    struct hook hook[NHOOKS];
 };
 
 int ispgn(const char *pgn);
-int pgnact(char *command, char *env, char *id);
-struct unit *pgncat(struct unit *unit, char *env, char *id);
-char *pgnls(char *pgnout, char *env, char *id);
+int hookact(char *command, char *env, char *id);
+struct unit *hookcat(struct unit *unit, char *env, char *id);
+char *hookls(char *pgnout, char *env, char *id);
 
 #endif
