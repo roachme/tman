@@ -80,6 +80,7 @@ char *hookls(char *pgnout, char *env, char *id)
         }
 
         // TODO: simplify this shit
+        // NOTE: gotta get a single word
         if (fgets(line, BUFSIZ, pipe)) {
             line[strcspn(line, "\n")] = 0;
             strcpy(pgnout + strlen(pgnout), prefix);
