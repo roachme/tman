@@ -12,20 +12,20 @@ struct help helptab[] = {
     {
         .tag = TAGSYSTEM,
         .name  = "cfg",
-        .sdesc = "manipulate system configuration",
+        .sdesc = "configuration manager",
         .desc  = "cfg description"
     },
     {
         .tag = TAGSYSTEM,
         .name  = "chk",
-        .sdesc = "check system config and task units",
+        .sdesc = "check system health",
         .desc  = "cfg description"
     },
     {
         .tag = TAGSYSTEM,
         .name  = "env",
         .synop = PROGRAM " env SUBCMD [OPTION] NAME",
-        .sdesc = "manipulate environments",
+        .sdesc = "environment manager",
         .desc  = "env description",
     },
     {
@@ -45,7 +45,7 @@ struct help helptab[] = {
         .tag = TAGBASIC,
         .name  = "add",
         .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
-        .sdesc = "Add a new task into environment",
+        .sdesc = "add a new task",
         .desc  = "With no option `-e' add a new task to current environment.\n"
                  "  -e      specify an environment to add a task to\n"
                  "  -f      do not interrupt if task exists, process others\n"
@@ -57,7 +57,7 @@ struct help helptab[] = {
         .tag = TAGBASIC,
         .name  = "col",
         .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...",
-        .sdesc = "Move a task to new column",
+        .sdesc = "move task to column",
         .desc  = "With no option `-e' operate on current environment.\n"
                  "COLUMN is column to move a task to.\n"
                  "Options:\n"
@@ -70,7 +70,7 @@ struct help helptab[] = {
         .name  = "del",
         .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
                  "Try '" PROGRAM " help del' for more info.",
-        .sdesc = "Delete the task from the environment",
+        .sdesc = "delete task",
         .desc  = "With no option `-e' delete task from current environment.\n"
                  "  -e      specify an environment to add a task to\n"
                  "  -f      do not interrupt if task does not exist, process others\n"
@@ -81,13 +81,13 @@ struct help helptab[] = {
         .tag = TAGBASIC,
         .name  = "prev",
         .synop = "Usage: " PROGRAM " prev",
-        .sdesc = "Switch to previous task",
+        .sdesc = "switch to previous task",
     },
     {
         .tag = TAGBASIC,
         .name  = "move",
         .synop = PROGRAM " move [OPTION] ID DST SRC",
-        .sdesc = "rename or move task",
+        .sdesc = "move (rename) tasks",
         .desc  = "move description",
     },
     {
@@ -101,13 +101,13 @@ struct help helptab[] = {
         .tag = TAGBASIC,
         .name  = "sync",
         .synop = "Usage: " PROGRAM " sync",
-        .sdesc = "Synchronize task",
+        .sdesc = "synchronize task",
     },
     {
         .tag = TAGBASIC,
         .name  = "use",
         .synop = PROGRAM " use ID [ENV]",
-        .sdesc = "switch to specific task",
+        .sdesc = "switch to task",
         .desc  = "use description",
     },
 
@@ -129,7 +129,7 @@ struct help helptab[] = {
         .tag = TAGINFO,
         .name  = "list",
         .synop = "Usage: " PROGRAM " list [OPTION]... ENV",
-        .sdesc = "List environment tasks",
+        .sdesc = "list environment tasks",
         .desc  = "With no option `-e' ENV is current environment.\n"
                  "  -A      list all tasks\n"
                  "  -a      list almost all tasks (expect for archieved)\n"
