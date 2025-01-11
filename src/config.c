@@ -108,16 +108,16 @@ static int parseconf(const char *fname)
 int config_init(void)
 {
     char *homedir = getenv("HOME");
-    char configs[NUMCONFIG][CONFIGSIZ + 1] = { 0 };
+    char config[CONFIGSIZ + 1];
     const char cfgfmts[NUMCONFIG][CONFIGSIZ + 1] = {
         "%s/.%s/%s.cfg",
         "%s/.config/%s/%s.cfg",
     };
 
     for (int i = 0; i < NUMCONFIG; ++i) {
-        sprintf(configs[i], cfgfmts[i], homedir, PROGRAM, PROGRAM);
-        if (ISFILE(configs[i]))
-            return parseconf(configs[i]);
+        sprintf(config, cfgfmts[i], homedir, PROGRAM, PROGRAM);
+        if (ISFILE(config))
+            return parseconf(config);
     }
     return elog(1, "could not find system config file");
 }
