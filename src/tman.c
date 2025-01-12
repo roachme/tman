@@ -254,6 +254,32 @@ int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *op
 
 int tman_id_move(tman_ctx_t *ctx, char *srcenv, char *dstenv, char *srcid, char *dstid)
 {
+    char *_srcenv, *_srcid, *_dstenv, *_dstid;
+
+
+    if ((status = chkargs(srcenv, srcid)))
+        return status;
+    _srcenv = taskenv;
+    _srcid = taskid;
+
+    if ((status = chkargs(dstenv, dstid)) && status != TMAN_ID_NOSUCH) {
+        return status;
+    }
+    _dstenv = taskenv;
+    _dstid = taskid;
+    if (task_ext(_dstenv, _dstid) == TRUE) {
+        elog(1, "task exists in destination env");
+        return TMAN_ID_EXISTS;
+    }
+
+    // roach: check this case
+    // elog(1, "source and destination pathes are the same. Do nothing.");
+
+    elog(1, "source path: %s", genpath_full(_srcenv, _srcid));
+    elog(1, "source path: %s", genpath_full(_dstenv, _dstid));
+
+    // TODO: update curr & prev if needed.
+
     return 0;
 }
 

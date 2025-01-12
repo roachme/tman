@@ -86,9 +86,13 @@ struct help helptab[] = {
     {
         .tag = TAGBASIC,
         .name  = "move",
-        .synop = PROGRAM " move [OPTION] ID DST SRC",
+        .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]",
         .sdesc = "move (rename) tasks",
-        .desc  = "move description",
+        .desc  = "Options:\n"
+                 "  -f      overwrite destination task\n"
+                 "  -d      destination environment\n"
+                 "  -s      source environment",
+
     },
     {
         .tag = TAGBASIC,
