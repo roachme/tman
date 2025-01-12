@@ -188,6 +188,9 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
     if ((status = chkargs(env, id)))
         return status;
 
+    /* FIXME: if current task gets deleted, plugin gun deletes
+     * branches but won't switch to new current task branch.  */
+
     if (hookact("del", taskenv, taskid))
         return emod_set(TMAN_EHOOK);
     else if (unit_delbin(taskenv, taskid))
