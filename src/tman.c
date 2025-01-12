@@ -234,6 +234,8 @@ int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unit *unitbin, stru
 
     if (unit_setbin(taskenv, taskid, unitbin))
         return emod_set(TMAN_UNIT_SET);
+    else if (hookact("set", taskenv, taskid))
+        return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
 
