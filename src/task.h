@@ -7,6 +7,7 @@ int task_chk(char *id);
 int task_add(char *env, char *id);
 int task_ext(char *env, char *id);
 int task_del(char *env, char *id);
+int task_iscurr(char *env, char *id);
 int task_move(char *env, char *id, char *col);
 int task_swap(char *env);
 

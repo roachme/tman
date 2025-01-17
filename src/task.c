@@ -241,6 +241,17 @@ int task_del(char *env, char *id)
     return col_del(env, taskid);
 }
 
+int task_iscurr(char *env, char *id)
+{
+    char *currid = task_curr(env);
+
+    if (currid == NULL)
+        return FALSE;
+    else if (strncmp(currid, id, IDSIZ) == 0)
+        return TRUE;
+    return FALSE;
+}
+
 /*
  * Move task to another column.
  * @param env environment name
