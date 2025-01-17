@@ -53,5 +53,5 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
                 break;
         }
     }
-    return status == TMAN_OK ? tman_pwd() : status;
+    return opt.doswitch && status == TMAN_OK ? tman_pwd() : status;
 }
