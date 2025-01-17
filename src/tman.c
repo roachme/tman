@@ -217,11 +217,17 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
     return TMAN_OK;
 }
 
-int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt)
+int tman_id_sync(tman_ctx_t *ctx, char *env, char *id, struct tman_id_sync_opt *opt)
 {
-    /* Check that current environment and task ID are set.  */
-    if ((status = chkargs(NULL, NULL)))
+    if ((status = chkargs(env, id)))
         return status;
+
+    if (opt->doswitch == TRUE) {
+        if (env_iscurr(taskenv) == FALSE && env_addcurr(taskenv) != 0)
+            return emod_set(TMAN_ENV_SWITCH);
+        else if (task_iscurr(taskenv, taskid) == FALSE && task_move(taskenv, taskid, COLCURR))
+            return emod_set(TMAN_ID_SWAP);
+    }
 
     if (hookact("sync", taskenv, taskid))
         return emod_set(TMAN_EHOOK);

@@ -57,6 +57,7 @@ struct tman_id_prev_opt {
 };
 
 struct tman_id_sync_opt {
+    int doswitch;   /* Switch to newly created task */
 };
 
 struct tman_id_list_opt {
@@ -110,7 +111,7 @@ int tman_id_move(tman_ctx_t *ctx, char *srcenv, char *dstenv, char *srcid, char 
 
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt);
 int tman_id_set (tman_ctx_t *ctx, char *env, char *id, struct unit *unitbin, struct tman_id_set_opt *opt);
-int tman_id_sync(tman_ctx_t *ctx, struct tman_id_sync_opt *opt);
+int tman_id_sync(tman_ctx_t *ctx, char *env, char *id, struct tman_id_sync_opt *opt);
 int tman_id_use (tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *opt);
 char *tman_id_getcurr(tman_ctx_t *ctx, char *env);
 char *tman_id_getprev(tman_ctx_t *ctx, char *env);
