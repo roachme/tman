@@ -106,9 +106,9 @@ struct help helptab[] = {
         .name  = "sync",
         .synop = "Usage: " PROGRAM " sync [OPTION]... ID...",
         .sdesc = "synchronize task",
-        .desc  = "With no option `-e' add a new task to current environment.\n"
-                 "  -e      specify an environment to add a task to\n"
-                 "  -f      do not interrupt if task exists, process others\n"
+        .desc  = "With no option `-e' sync task in current environment.\n"
+                 "  -e      specify an environment\n"
+                 "  -f      do not interrupt if task not found, process others\n"
                  "  -h      show this help and exit\n"
                  "  -n      don't switch to synced task\n"
                  "  -q      do not write anything to standard error output"
