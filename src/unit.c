@@ -174,7 +174,7 @@ static int genitems(char *env, char *id)
 
     strftime(buff, BUFSIZ, timefmt, timeinfo);
     genitem(idx++, "prio", "mid");
-    genitem(idx++, "type", "hotfix");
+    genitem(idx++, "type", "task");
     genitem(idx++, "date", buff);
     genitem(idx++, "desc", strncat(desc, id, IDSIZ));
     return save(genpath_unit(env, id));
