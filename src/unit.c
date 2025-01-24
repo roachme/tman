@@ -87,10 +87,7 @@ static int val_valid(const char *key, const char *val)
 
 static int reset_units(void)
 {
-    int i;
-
-    for (i = 0; i < NKEYS; ++i)
-        memset(&unitbin[i], 0, sizeof(unitbin));
+    memset(unitbin, 0, sizeof(unitbin));
     return 0;
 }
 
