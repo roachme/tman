@@ -15,7 +15,7 @@ Prio: high
 4. Use dynamic memory allocation so there'd be no limit on number of tasks in enviroment.
 5. Add a support for a user to add custom task columns.
 6. Add a good manual system.
-7. Plugin gun (for git repos) should depend on system unit date.
+7. Plugin gun (for git repos) depends on system unit date.
    Outta create its own one.
 
 Prio: mid
