@@ -339,6 +339,12 @@ int tman_id_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     return TMAN_OK;
 }
 
+/* Link task IDs together: parent - children relationship.  */
+int tman_id_link(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
+{
+    return 0;
+}
+
 int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt)
 {
     // TODO: does not change CWD if curr task was moved.
