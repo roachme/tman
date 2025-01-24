@@ -6,6 +6,7 @@ Priorities:
 Ideas:
     1. Replace cat & ls hooks with reading from file. Gonna highly optimize
        command exection.
+    2. Add multiple users.
 
 Prio: high
 1. Write config file parser and define config itself.
