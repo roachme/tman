@@ -6,6 +6,7 @@
 
 #define TAGSYSTEM   "bin-system"
 #define TAGBASIC    "bin-basic"
+#define TAGMISC     "bin-misc"
 #define TAGINFO     "bin-info"
 
 struct help helptab[] = {
@@ -45,25 +46,13 @@ struct help helptab[] = {
         .tag = TAGBASIC,
         .name  = "add",
         .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
-        .sdesc = "add a new task",
+        .sdesc = "add new task",
         .desc  = "With no option `-e' add a new task to current environment.\n"
                  "  -e      specify an environment to add a task to\n"
                  "  -f      do not interrupt if task exists, process others\n"
                  "  -h      show this help and exit\n"
                  "  -n      don't switch to newly created task\n"
                  "  -q      do not write anything to standard error output"
-    },
-    {
-        .tag = TAGBASIC,
-        .name  = "col",
-        .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...",
-        .sdesc = "move task to column",
-        .desc  = "With no option `-e' operate on current environment.\n"
-                 "COLUMN is column to move a task to.\n"
-                 "Options:\n"
-                 "  -e      specify environment name\n"
-                 "  -l      list environment columns\n"
-                 "  -h      show this help and exit"
     },
     {
         .tag = TAGBASIC,
@@ -85,24 +74,6 @@ struct help helptab[] = {
     },
     {
         .tag = TAGBASIC,
-        .name  = "move",
-        .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]",
-        .sdesc = "move (rename) tasks",
-        .desc  = "Options:\n"
-                 "  -f      overwrite destination task\n"
-                 "  -d      destination environment\n"
-                 "  -s      source environment",
-
-    },
-    {
-        .tag = TAGBASIC,
-        .name  = "set",
-        .synop = PROGRAM " set OPTION... [ID]... [ENV]",
-        .sdesc = "set task unit values",
-        .desc  = "set description",
-    },
-    {
-        .tag = TAGBASIC,
         .name  = "sync",
         .synop = "Usage: " PROGRAM " sync [OPTION]... ID...",
         .sdesc = "synchronize task",
@@ -119,6 +90,44 @@ struct help helptab[] = {
         .synop = PROGRAM " use ID [ENV]",
         .sdesc = "switch to task",
         .desc  = "use description",
+    },
+
+    {
+        .tag = TAGMISC,
+        .name  = "col",
+        .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...",
+        .sdesc = "move task to column",
+        .desc  = "With no option `-e' operate on current environment.\n"
+            "COLUMN is column to move a task to.\n"
+            "Options:\n"
+            "  -e      specify environment name\n"
+            "  -l      list environment columns\n"
+            "  -h      show this help and exit"
+    },
+    {
+        .tag = TAGMISC,
+        .name  = "link",
+        .synop = "Usage: " PROGRAM " link [OPTION]... PID CID",
+        .sdesc = "link tasks together",
+        .desc  = "With no option `-e' add a new task to current environment.\n"
+    },
+    {
+        .tag = TAGMISC,
+        .name  = "move",
+        .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]",
+        .sdesc = "move (rename) tasks",
+        .desc  = "Options:\n"
+            "  -f      overwrite destination task\n"
+            "  -d      destination environment\n"
+            "  -s      source environment",
+
+    },
+    {
+        .tag = TAGMISC,
+        .name  = "set",
+        .synop = PROGRAM " set OPTION... [ID]... [ENV]",
+        .sdesc = "set task unit values",
+        .desc  = "set description",
     },
 
     {
@@ -171,6 +180,11 @@ int help_list_commands(void)
     printf("\nBasic:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
         if (strcmp(helptab[i].tag, TAGBASIC) == 0)
+            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
+
+    printf("\nMisc:\n");
+    for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
+        if (strcmp(helptab[i].tag, TAGMISC) == 0)
             printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
     printf("\nInfo:\n");
