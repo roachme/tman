@@ -48,23 +48,23 @@ struct help helptab[] = {
         .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
         .sdesc = "add new task",
         .desc  = "With no option `-e' add a new task to current environment.\n"
-                 "  -e      specify an environment to add a task to\n"
-                 "  -f      do not interrupt if task exists, process others\n"
-                 "  -h      show this help and exit\n"
-                 "  -n      don't switch to newly created task\n"
-                 "  -q      do not write anything to standard error output"
+            "  -e      specify an environment to add a task to\n"
+            "  -f      do not interrupt if task exists, process others\n"
+            "  -h      show this help and exit\n"
+            "  -n      don't switch to newly created task\n"
+            "  -q      do not write anything to standard error output"
     },
     {
         .tag = TAGBASIC,
         .name  = "del",
         .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
-                 "Try '" PROGRAM " help del' for more info.",
+            "Try '" PROGRAM " help del' for more info.",
         .sdesc = "delete task",
         .desc  = "With no option `-e' delete task from current environment.\n"
-                 "  -e      specify an environment to add a task to\n"
-                 "  -f      do not interrupt if task does not exist, process others\n"
-                 "  -h      show this help and exit\n"
-                 "  -q      do not write anything to standard error output"
+            "  -e      specify an environment to add a task to\n"
+            "  -f      do not interrupt if task does not exist, process others\n"
+            "  -h      show this help and exit\n"
+            "  -q      do not write anything to standard error output"
     },
     {
         .tag = TAGBASIC,
@@ -78,11 +78,11 @@ struct help helptab[] = {
         .synop = "Usage: " PROGRAM " sync [OPTION]... ID...",
         .sdesc = "synchronize task",
         .desc  = "With no option `-e' sync task in current environment.\n"
-                 "  -e      specify an environment\n"
-                 "  -f      do not interrupt if task not found, process others\n"
-                 "  -h      show this help and exit\n"
-                 "  -n      don't switch to synced task\n"
-                 "  -q      do not write anything to standard error output"
+            "  -e      specify an environment\n"
+            "  -f      do not interrupt if task not found, process others\n"
+            "  -h      show this help and exit\n"
+            "  -n      don't switch to synced task\n"
+            "  -q      do not write anything to standard error output"
     },
     {
         .tag = TAGBASIC,
@@ -150,10 +150,10 @@ struct help helptab[] = {
         .synop = "Usage: " PROGRAM " list [OPTION]... ENV",
         .sdesc = "list environment tasks",
         .desc  = "With no option `-e' ENV is current environment.\n"
-                 "  -A      list all tasks\n"
-                 "  -a      list almost all tasks (expect for archieved)\n"
-                 "  -h      show this help and exit\n"
-                 "  -t      list only current and previous tasks\n"
+            "  -A      list all tasks\n"
+            "  -a      list almost all tasks (expect for archieved)\n"
+            "  -h      show this help and exit\n"
+            "  -t      list only current and previous tasks\n"
     },
     {
         .tag = TAGINFO,
