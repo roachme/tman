@@ -4,6 +4,7 @@
 #include "help.h"
 #include "cli.h"
 
+#define TAGOBJ      "bin-object"
 #define TAGSYSTEM   "bin-system"
 #define TAGBASIC    "bin-basic"
 #define TAGMISC     "bin-misc"
@@ -24,10 +25,10 @@ struct help helptab[] = {
     },
     {
         .tag = TAGSYSTEM,
-        .name  = "env",
-        .synop = PROGRAM " env SUBCMD [OPTION] NAME",
-        .sdesc = "environment manager",
-        .desc  = "env description",
+        .name  = "help",
+        .synop = PROGRAM " help [CMD]",
+        .sdesc = "show this help message and exit",
+        .desc  = "help description",
     },
     {
         .tag = TAGSYSTEM,
@@ -37,9 +38,10 @@ struct help helptab[] = {
     },
     {
         .tag = TAGSYSTEM,
-        .name  = "pgm",
-        .sdesc = "plugin manager",
-        .desc  = "pgm description"
+        .name  = "ver",
+        .synop = PROGRAM " ver",
+        .sdesc = "show version and exit",
+        .desc  = "ver description",
     },
 
     {
@@ -56,6 +58,13 @@ struct help helptab[] = {
     },
     {
         .tag = TAGBASIC,
+        .name  = "cat",
+        .synop = PROGRAM " cat ID... [ENV]",
+        .sdesc = "cat task info",
+        .desc  = "cat description",
+    },
+    {
+        .tag = TAGBASIC,
         .name  = "del",
         .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
             "Try '" PROGRAM " help del' for more info.",
@@ -65,6 +74,17 @@ struct help helptab[] = {
             "  -f      do not interrupt if task does not exist, process others\n"
             "  -h      show this help and exit\n"
             "  -q      do not write anything to standard error output"
+    },
+    {
+        .tag = TAGBASIC,
+        .name  = "list",
+        .synop = "Usage: " PROGRAM " list [OPTION]... ENV",
+        .sdesc = "list environment tasks",
+        .desc  = "With no option `-e' ENV is current environment.\n"
+            "  -A      list all tasks\n"
+            "  -a      list almost all tasks (expect for archieved)\n"
+            "  -h      show this help and exit\n"
+            "  -t      list only current and previous tasks\n"
     },
     {
         .tag = TAGBASIC,
@@ -90,6 +110,20 @@ struct help helptab[] = {
         .synop = PROGRAM " use ID [ENV]",
         .sdesc = "switch to task",
         .desc  = "use description",
+    },
+
+    {
+        .tag = TAGOBJ,
+        .name  = "env",
+        .synop = PROGRAM " env SUBCMD [OPTION] NAME",
+        .sdesc = "environment manager",
+        .desc  = "env description",
+    },
+    {
+        .tag = TAGOBJ,
+        .name  = "pgm",
+        .sdesc = "plugin manager",
+        .desc  = "pgm description"
     },
 
     {
@@ -129,39 +163,6 @@ struct help helptab[] = {
         .sdesc = "set task unit values",
         .desc  = "set description",
     },
-
-    {
-        .tag = TAGINFO,
-        .name  = "cat",
-        .synop = PROGRAM " cat ID... [ENV]",
-        .sdesc = "cat task info",
-        .desc  = "cat description",
-    },
-    {
-        .tag = TAGINFO,
-        .name  = "help",
-        .synop = PROGRAM " help [CMD]",
-        .sdesc = "show this help message and exit",
-        .desc  = "help description",
-    },
-    {
-        .tag = TAGINFO,
-        .name  = "list",
-        .synop = "Usage: " PROGRAM " list [OPTION]... ENV",
-        .sdesc = "list environment tasks",
-        .desc  = "With no option `-e' ENV is current environment.\n"
-            "  -A      list all tasks\n"
-            "  -a      list almost all tasks (expect for archieved)\n"
-            "  -h      show this help and exit\n"
-            "  -t      list only current and previous tasks\n"
-    },
-    {
-        .tag = TAGINFO,
-        .name  = "ver",
-        .synop = PROGRAM " ver",
-        .sdesc = "show version and exit",
-        .desc  = "ver description",
-    },
 };
 
 int help_list_commands(void)
@@ -187,9 +188,9 @@ int help_list_commands(void)
         if (strcmp(helptab[i].tag, TAGMISC) == 0)
             printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
-    printf("\nInfo:\n");
+    printf("\nObject:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
-        if (strcmp(helptab[i].tag, TAGINFO) == 0)
+        if (strcmp(helptab[i].tag, TAGOBJ) == 0)
             printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
 
     return TMAN_OK;
