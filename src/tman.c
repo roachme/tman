@@ -185,6 +185,42 @@ int tman_id_add(tman_ctx_t *ctx, char *env, char *id, struct tman_id_add_opt *op
     return TMAN_OK;
 }
 
+int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *opt)
+{
+    if ((status = chkargs(env, id)))
+        return status;
+
+    /* FIXME: tman cat test1 test2 test3
+     * output previous plugin output.
+    */
+    //unit_delpgn(ctx->units.pgn);
+
+    // TODO: don't wanna lose plugin units if builtin ones
+    // failed to parse. But gotta make user return value
+    // make any sense for caller.
+
+    /* No need to check return value because there might case
+     * that no hooks are defined or executed */
+    ctx->units.pgn = hookcat(ctx->units.pgn, taskenv, taskid);
+    if (unit_getbin(ctx->units.bin, taskenv, taskid) == NULL)
+        status = emod_set(TMAN_UNIT_GET);
+
+    strncpy(ctx->units.id, taskid, IDSIZ);
+    return status;
+}
+
+int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt)
+{
+    // TODO: does not change CWD if curr task was moved.
+    // The problem in CLI command `col'.
+
+    if ((status = chkargs(env, id)))
+        return status;
+    else if (col_ext(tag) == FALSE)
+        return emod_set(TMAN_COL_EXISTS);
+    return task_move(taskenv, taskid, tag);
+}
+
 int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *opt)
 {
     if ((status = chkargs(env, id)))
@@ -202,96 +238,6 @@ int tman_id_del(tman_ctx_t *ctx, char *env, char *id, struct tman_id_del_opt *op
     else if (dir_id_del(tmanfs.base, taskenv, taskid))
         return emod_set(TMAN_DIR_ID_DEL);
     return TMAN_OK;
-}
-
-int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
-{
-    /* Check that current environment and task ID are set.  */
-    if ((status = chkargs(NULL, NULL)))
-        return status;
-    else if (task_prev(taskenv) == NULL)
-        return emod_set(TMAN_ID_NOPREV);
-
-    if (task_swap(taskenv))
-        return emod_set(TMAN_ID_SWAP);
-    else if (hookact("prev", env_getcurr(), task_curr(taskenv)))
-        return emod_set(TMAN_EHOOK);
-    return TMAN_OK;
-}
-
-int tman_id_sync(tman_ctx_t *ctx, char *env, char *id, struct tman_id_sync_opt *opt)
-{
-    if ((status = chkargs(env, id)))
-        return status;
-
-    if (opt->doswitch == TRUE) {
-        if (env_iscurr(taskenv) == FALSE && env_addcurr(taskenv) != 0)
-            return emod_set(TMAN_ENV_SWITCH);
-        else if (task_iscurr(taskenv, taskid) == FALSE && task_move(taskenv, taskid, COLCURR))
-            return emod_set(TMAN_ID_SWAP);
-    }
-
-    if (hookact("sync", taskenv, taskid))
-        return emod_set(TMAN_EHOOK);
-    return TMAN_OK;
-}
-
-int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unit *unitbin, struct tman_id_set_opt *opt)
-{
-    if ((status = chkargs(env, id)))
-        return status;
-    else if (unit_chkbin(unitbin) == FALSE)
-        return emod_set(TMAN_UNIT_ILLEG);
-
-    if (unit_setbin(taskenv, taskid, unitbin))
-        return emod_set(TMAN_UNIT_SET);
-    else if (hookact("set", taskenv, taskid))
-        return emod_set(TMAN_EHOOK);
-    return TMAN_OK;
-}
-
-int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *opt)
-{
-    if ((status = chkargs(env, id)))
-        return status;
-
-    /* If env not current then switch to it.  */
-    if (env_iscurr(taskenv) == FALSE && env_addcurr(taskenv) != 0)
-        return emod_set(TMAN_ENV_SWITCH);
-    else if (hookact("use", taskenv, taskid))
-        return emod_set(TMAN_EHOOK);
-    return task_move(taskenv, taskid, COLCURR);
-}
-
-int tman_id_move(tman_ctx_t *ctx, char *srcenv, char *dstenv, char *srcid, char *dstid)
-{
-    char *_srcenv, *_srcid, *_dstenv, *_dstid;
-
-
-    if ((status = chkargs(srcenv, srcid)))
-        return status;
-    _srcenv = taskenv;
-    _srcid = taskid;
-
-    if ((status = chkargs(dstenv, dstid)) && status != TMAN_ID_NOSUCH) {
-        return status;
-    }
-    _dstenv = taskenv;
-    _dstid = taskid;
-    if (task_ext(_dstenv, _dstid) == TRUE) {
-        elog(1, "task exists in destination env");
-        return TMAN_ID_EXISTS;
-    }
-
-    // roach: check this case
-    // elog(1, "source and destination pathes are the same. Do nothing.");
-
-    elog(1, "source path: %s", genpath_full(_srcenv, _srcid));
-    elog(1, "source path: %s", genpath_full(_dstenv, _dstid));
-
-    // TODO: update curr & prev if needed.
-
-    return 0;
 }
 
 /*
@@ -345,40 +291,94 @@ int tman_id_link(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
     return 0;
 }
 
-int tman_id_col(tman_ctx_t *ctx, char *env, char *id, char *tag, struct tman_id_col_opt *opt)
+int tman_id_move(tman_ctx_t *ctx, char *srcenv, char *dstenv, char *srcid, char *dstid)
 {
-    // TODO: does not change CWD if curr task was moved.
-    // The problem in CLI command `col'.
+    char *_srcenv, *_srcid, *_dstenv, *_dstid;
 
-    if ((status = chkargs(env, id)))
+
+    if ((status = chkargs(srcenv, srcid)))
         return status;
-    else if (col_ext(tag) == FALSE)
-        return emod_set(TMAN_COL_EXISTS);
-    return task_move(taskenv, taskid, tag);
+    _srcenv = taskenv;
+    _srcid = taskid;
+
+    if ((status = chkargs(dstenv, dstid)) && status != TMAN_ID_NOSUCH) {
+        return status;
+    }
+    _dstenv = taskenv;
+    _dstid = taskid;
+    if (task_ext(_dstenv, _dstid) == TRUE) {
+        elog(1, "task exists in destination env");
+        return TMAN_ID_EXISTS;
+    }
+
+    // roach: check this case
+    // elog(1, "source and destination pathes are the same. Do nothing.");
+
+    elog(1, "source path: %s", genpath_full(_srcenv, _srcid));
+    elog(1, "source path: %s", genpath_full(_dstenv, _dstid));
+
+    // TODO: update curr & prev if needed.
+
+    return 0;
 }
 
-int tman_id_cat(tman_ctx_t *ctx, char *env, char *id, struct tman_id_cat_opt *opt)
+int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
+{
+    /* Check that current environment and task ID are set.  */
+    if ((status = chkargs(NULL, NULL)))
+        return status;
+    else if (task_prev(taskenv) == NULL)
+        return emod_set(TMAN_ID_NOPREV);
+
+    if (task_swap(taskenv))
+        return emod_set(TMAN_ID_SWAP);
+    else if (hookact("prev", env_getcurr(), task_curr(taskenv)))
+        return emod_set(TMAN_EHOOK);
+    return TMAN_OK;
+}
+
+int tman_id_set(tman_ctx_t *ctx, char *env, char *id, struct unit *unitbin, struct tman_id_set_opt *opt)
+{
+    if ((status = chkargs(env, id)))
+        return status;
+    else if (unit_chkbin(unitbin) == FALSE)
+        return emod_set(TMAN_UNIT_ILLEG);
+
+    if (unit_setbin(taskenv, taskid, unitbin))
+        return emod_set(TMAN_UNIT_SET);
+    else if (hookact("set", taskenv, taskid))
+        return emod_set(TMAN_EHOOK);
+    return TMAN_OK;
+}
+
+int tman_id_sync(tman_ctx_t *ctx, char *env, char *id, struct tman_id_sync_opt *opt)
 {
     if ((status = chkargs(env, id)))
         return status;
 
-    /* FIXME: tman cat test1 test2 test3
-     * output previous plugin output.
-    */
-    //unit_delpgn(ctx->units.pgn);
+    if (opt->doswitch == TRUE) {
+        if (env_iscurr(taskenv) == FALSE && env_addcurr(taskenv) != 0)
+            return emod_set(TMAN_ENV_SWITCH);
+        else if (task_iscurr(taskenv, taskid) == FALSE && task_move(taskenv, taskid, COLCURR))
+            return emod_set(TMAN_ID_SWAP);
+    }
 
-    // TODO: don't wanna lose plugin units if builtin ones
-    // failed to parse. But gotta make user return value
-    // make any sense for caller.
+    if (hookact("sync", taskenv, taskid))
+        return emod_set(TMAN_EHOOK);
+    return TMAN_OK;
+}
 
-    /* No need to check return value because there might case
-     * that no hooks are defined or executed */
-    ctx->units.pgn = hookcat(ctx->units.pgn, taskenv, taskid);
-    if (unit_getbin(ctx->units.bin, taskenv, taskid) == NULL)
-        status = emod_set(TMAN_UNIT_GET);
+int tman_id_use(tman_ctx_t *ctx, char *env, char *id, struct tman_id_use_opt *opt)
+{
+    if ((status = chkargs(env, id)))
+        return status;
 
-    strncpy(ctx->units.id, taskid, IDSIZ);
-    return status;
+    /* If env not current then switch to it.  */
+    if (env_iscurr(taskenv) == FALSE && env_addcurr(taskenv) != 0)
+        return emod_set(TMAN_ENV_SWITCH);
+    else if (hookact("use", taskenv, taskid))
+        return emod_set(TMAN_EHOOK);
+    return task_move(taskenv, taskid, COLCURR);
 }
 
 char *tman_id_getcurr(tman_ctx_t *ctx, char *env)
