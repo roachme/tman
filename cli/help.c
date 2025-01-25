@@ -95,7 +95,7 @@ struct help helptab[] = {
     {
         .tag = TAGBASIC,
         .name  = "sync",
-        .synop = "Usage: " PROGRAM " sync [OPTION]... ID...",
+        .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...",
         .sdesc = "synchronize task",
         .desc  = "With no option `-e' sync task in current environment.\n"
             "  -e      specify an environment\n"
