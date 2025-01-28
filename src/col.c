@@ -13,7 +13,8 @@
 
 static char col[COLSIZ + 1];
 
-struct column coltab[NCOLUMNS] = { /* user defined columns from config */
+struct column coltab[NCOLUMNS] = {
+    /* system defined columns.  */
     { .prio = 0, .mark = '?', .col = "uknw" },
     { .prio = 1, .mark = '*', .col = "curr" },
     { .prio = 2, .mark = '^', .col = "prev" },
@@ -23,9 +24,6 @@ struct column coltab[NCOLUMNS] = { /* user defined columns from config */
     { .prio = 4, .mark = '>', .col = "revw" },
     { .prio = 5, .mark = '$', .col = "test" },
     { .prio = 6, .mark = '!', .col = "lock" },
-// user define columns (gotta read 'em from config file
-
-// FIXME: should be the last prio in table
     { .prio = 7, .mark = '-', .col = "done" },
 };
 
