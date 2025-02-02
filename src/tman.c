@@ -70,7 +70,7 @@ static int chkargs(char *env, char *id)
     return TMAN_OK;
 }
 
-static tman_ctx_t *make_context()
+static tman_ctx_t *make_context(void)
 {
     tman_ctx_t *ctx;
 
@@ -146,7 +146,7 @@ int tman_setup(int setuplvl)
     return status;
 }
 
-int tman_pwd()
+int tman_pwd(void)
 {
     if ((taskenv = env_getcurr()) == NULL)
         return emod_set(TMAN_ENV_NOCURR);
