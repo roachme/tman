@@ -163,7 +163,7 @@ static int save(const char *fname)
     return fclose(fp);
 }
 
-static int genitems(char *env, char *id)
+static int genitems(char *prj, char *id)
 {
     int idx = 0;
     char buff[BUFSIZ + 1];
@@ -177,7 +177,7 @@ static int genitems(char *env, char *id)
     genitem(idx++, "type", "task");
     genitem(idx++, "date", buff);
     genitem(idx++, "desc", strncat(desc, id, IDSIZ));
-    return save(genpath_unit(env, id));
+    return save(genpath_unit(prj, id));
 }
 
 int unit_chkbin(struct unit *units)
@@ -190,40 +190,40 @@ int unit_chkbin(struct unit *units)
     return TRUE;
 }
 
-int unit_addbin(char *env, char *id, struct unit *units)
+int unit_addbin(char *prj, char *id, struct unit *units)
 {
-    if (genitems(env, id))
+    if (genitems(prj, id))
         return 1;
-    return unit_setbin(env, id, units);
+    return unit_setbin(prj, id, units);
 }
 
-int unit_setbin(char *env, char *id, struct unit *units)
+int unit_setbin(char *prj, char *id, struct unit *units)
 {
     int i;
 
-    if (load(genpath_unit(env, id)))
+    if (load(genpath_unit(prj, id)))
         return 1;
 
     for (i = 0; i < NKEYS; ++i)
         setitem(units[i].key, units[i].val);
-    return save(genpath_unit(env, id));
+    return save(genpath_unit(prj, id));
 }
 
-struct unit *unit_getbin(struct unit *units, char *env, char *id)
+struct unit *unit_getbin(struct unit *units, char *prj, char *id)
 {
     int i;
 
-    if (load(genpath_unit(env, id)))
+    if (load(genpath_unit(prj, id)))
         return NULL;
     for (i = 0; i < NKEYS; ++i)
         units[i] = unitbin[i];
     return units;
 }
 
-int unit_delbin(char *env, char *id)
+int unit_delbin(char *prj, char *id)
 {
     reset_units();
-    return save(genpath_unit(env, id));
+    return save(genpath_unit(prj, id));
 }
 
 struct unit *unit_addpgn(struct unit *head, char *key, char *val)

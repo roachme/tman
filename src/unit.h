@@ -21,10 +21,10 @@ struct units {
 };
 
 int unit_chkbin(struct unit *units);
-int unit_addbin(char *env, char *id, struct unit *units);
-int unit_setbin(char *env, char *id, struct unit *units);
-struct unit *unit_getbin(struct unit *units, char *env, char *id);
-int unit_delbin(char *env, char *id);
+int unit_addbin(char *prj, char *id, struct unit *units);
+int unit_setbin(char *prj, char *id, struct unit *units);
+struct unit *unit_getbin(struct unit *units, char *prj, char *id);
+int unit_delbin(char *prj, char *id);
 
 struct unit *unit_addpgn(struct unit *head, char *key, char *val);
 int unit_delpgn(struct unit *pgn);

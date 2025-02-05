@@ -6,11 +6,11 @@
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_col(int argc, char **argv, tman_ctx_t *ctx)
 {
-    char *env, *col;
+    char *prj, *col;
     int i, c, status, showhelp, showlist;
     struct tman_id_col_opt opt;
 
-    env = NULL;
+    prj = NULL;
     showhelp = showlist = FALSE;
     while ((c = getopt(argc, argv, ":hl")) != -1) {
         switch (c) {
@@ -34,11 +34,11 @@ int tman_cli_col(int argc, char **argv, tman_ctx_t *ctx)
         return elog(1, "gotta specify column to move a task to");
 
     for (i = optind; i < argc; ++i)
-        if ((status = tman_id_col(ctx, env, argv[i], col, &opt)) != TMAN_OK)
+        if ((status = tman_id_col(ctx, prj, argv[i], col, &opt)) != TMAN_OK)
             elog(status, "cannot move to column '%s': %s", col, tman_strerror());
 
     if (optind == argc) /* operate on current task id */
-        if ((status = tman_id_col(ctx, env, argv[i], col, &opt)) != TMAN_OK)
+        if ((status = tman_id_col(ctx, prj, argv[i], col, &opt)) != TMAN_OK)
             elog(status, "cannot move to column '%s': %s", col, tman_strerror());
 
     return status;

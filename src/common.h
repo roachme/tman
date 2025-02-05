@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <getopt.h>
 
-#include "env.h"
+#include "prj.h"
 #include "limit.h"
 
 #define PROGRAM     "tman"
@@ -27,14 +27,14 @@ extern struct tmanstruct tmanfs;
 #define PATHSIZ         4096
 
 int _chkid(char *id);
-int _chkenv(char *env);
+int _chkprj(char *prj);
 char *formpath(char *dst, char *fmt, ...);
 
-char *genpath_env(char *env);
-char *genpath_col(char *env, char *id);
-char *genpath_full(char *env, char *id);
-char *genpath_unit(char *env, char *id);
-char *genpath_pgn(char *env, char *id, char *name, char *cmd);
+char *genpath_prj(char *prj);
+char *genpath_col(char *prj, char *id);
+char *genpath_full(char *prj, char *id);
+char *genpath_unit(char *prj, char *id);
+char *genpath_pgn(char *prj, char *id, char *name, char *cmd);
 
 int elog(int status, const char *fmt, ...);
 int wlog(char *fmt, ...);

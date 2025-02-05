@@ -3,19 +3,19 @@
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
 {
-    char c, *errfmt, *env;
+    char c, *errfmt, *prj;
     int i, force, quiet, showhelp, status;
     struct tman_id_sync_opt opt = {
         .doswitch = TRUE,
     };
 
-    env = NULL;
+    prj = NULL;
     force = quiet = showhelp = FALSE;
     errfmt =  "cannot sync '%s': %s";
     while ((c = getopt(argc, argv, ":e:fhnq")) != -1) {
         switch (c) {
             case 'e':
-                env = optarg; break ;
+                prj = optarg; break ;
             case 'f':
                 force = TRUE; break ;
             case 'h':
@@ -36,7 +36,7 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
 
     i = optind;
     do {
-        if ((status = tman_id_sync(ctx, env, argv[i], &opt)) != TMAN_OK) {
+        if ((status = tman_id_sync(ctx, prj, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
             if (force == TRUE)

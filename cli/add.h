@@ -1,5 +1,5 @@
 /*
-    Add a task to a specified or current environment.
+    Add a task to a specified or current project.
     If multiple task IDs are passed then switch to last
     successfully added task ID.
 */

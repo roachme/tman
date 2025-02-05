@@ -14,9 +14,9 @@ static int recursive_tree_print(struct tree *p)
     return 0;
 }
 
-static int pretty_list(tman_ctx_t *ctx, char *env, struct tman_id_list_opt *opt)
+static int pretty_list(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt)
 {
-    if (tman_id_list(ctx, env, opt) != TMAN_OK) {
+    if (tman_id_list(ctx, prj, opt) != TMAN_OK) {
         elog(1, "could not list task IDs: %s", tman_strerror());
         return 1;
     }

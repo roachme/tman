@@ -22,8 +22,8 @@ struct hooks {
 };
 
 int ispgn(const char *pgn);
-int hookact(char *command, char *env, char *id);
-struct unit *hookcat(struct unit *unit, char *env, char *id);
-char *hookls(char *pgnout, char *env, char *id);
+int hookact(char *command, char *prj, char *id);
+struct unit *hookcat(struct unit *unit, char *prj, char *id);
+char *hookls(char *pgnout, char *prj, char *id);
 
 #endif

@@ -5,22 +5,22 @@
 int tman_cli_move(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    char *srcenv, *srcid, *dstenv, *dstid;
+    char *srcprj, *srcid, *dstprj, *dstid;
 
-    srcenv = srcid = dstenv = dstid = NULL;
+    srcprj = srcid = dstprj = dstid = NULL;
     while ((c = getopt(argc, argv, ":d:s:")) != -1) {
         switch (c) {
             case 'd':
-                dstenv = optarg; break ;
+                dstprj = optarg; break ;
             case 's':
-                srcenv = optarg; break ;
+                srcprj = optarg; break ;
         }
     }
 
     printf("argc: %d\n", argc);
     printf("optind: %d\n", optind);
 
-    if ((srcenv == NULL && dstenv == NULL) || strcmp(srcenv, dstenv) == 0) {
+    if ((srcprj == NULL && dstprj == NULL) || strcmp(srcprj, dstprj) == 0) {
         elog(1, "rename a task ID");
         if (argc > optind + 2) {
             elog(1, "err: can't rename more than 2 task at a time");
@@ -30,8 +30,8 @@ int tman_cli_move(int argc, char **argv, tman_ctx_t *ctx)
         elog(1, "move a task ID");
 
     /*
-    if (optind == 1 && (srcenv == NULL || dstenv == NULL)) {
-        printf("can't move task: neither source nor destination env specified\n");
+    if (optind == 1 && (srcprj == NULL || dstprj == NULL)) {
+        printf("can't move task: neither source nor destination prj specified\n");
         return 1;
     }
     */
@@ -39,12 +39,12 @@ int tman_cli_move(int argc, char **argv, tman_ctx_t *ctx)
 
     /*
      * Move:
-        1. move a task to another env.
-        2. move multiple tasks to another env.
+        1. move a task to another prj.
+        2. move multiple tasks to another prj.
 
      * Rename:
-        2. rename task from current env.
-        3. rename task from another env.
+        2. rename task from current prj.
+        3. rename task from another prj.
     */
 
     /*
@@ -54,10 +54,10 @@ int tman_cli_move(int argc, char **argv, tman_ctx_t *ctx)
      Special cases:
      * tman move test1 test2 test3 -d work (rename: if -s and -d are the same)
      *                                     Q: 3 and move task and -s & -d are not the same. Is it an error?
-     *                                     A: not an error. Move task to destination env.
+     *                                     A: not an error. Move task to destination prj.
     */
 
-    tman_id_move(NULL, srcenv, dstenv, argv[optind], argv[optind + 1]);
+    tman_id_move(NULL, srcprj, dstprj, argv[optind], argv[optind + 1]);
 
     return 1;
 }

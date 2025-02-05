@@ -13,17 +13,17 @@ enum tman_err_enum {
     TMAN_ECONF,
     TMAN_EHOOK,    /* Failed to execute hook */
     TMAN_EPGN,    /* Failed to execute plugin */
-    TMAN_EOPENENVDIR,
-    TMAN_EINIT_ENVMOD,
+    TMAN_EOPENPRJDIR,
+    TMAN_EINIT_PRJMOD,
 
-    TMAN_ENV_SWAP,
-    TMAN_ENV_ILLEG,
-    TMAN_ENV_NOCURR,
-    TMAN_ENV_NOPREV,
-    TMAN_ENV_NOSUCH,
-    TMAN_ENV_EXISTS,
-    TMAN_ENV_SWITCH,
-    TMAN_ENV_DEL_CURR,
+    TMAN_PRJ_SWAP,
+    TMAN_PRJ_ILLEG,
+    TMAN_PRJ_NOCURR,
+    TMAN_PRJ_NOPREV,
+    TMAN_PRJ_NOSUCH,
+    TMAN_PRJ_EXISTS,
+    TMAN_PRJ_SWITCH,
+    TMAN_PRJ_DEL_CURR,
 
     TMAN_ID_ILLEG,
     TMAN_ID_NOCURR,
@@ -43,9 +43,9 @@ enum tman_err_enum {
     TMAN_UNIT_DEL,
     TMAN_DIR_ID_OPEN,
 
-    TMAN_DIR_ENV_DEL,
-    TMAN_DIR_ENV_MAKE,
-    TMAN_DIR_ENV_OPEN,
+    TMAN_DIR_PRJ_DEL,
+    TMAN_DIR_PRJ_MAKE,
+    TMAN_DIR_PRJ_OPEN,
 
     TMAN_UNIT_SET,
     TMAN_UNIT_GET,

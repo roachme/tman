@@ -6,7 +6,7 @@ enum tman_cli_del_errno {
 };
 
 struct tman_cli_del_opt {
-    char *env;      /* environment to add a task to */
+    char *prj;      /* project to add a task to */
     int force;      /* ignore existent task ID */
     int help;       /* Show command usage */
 };
