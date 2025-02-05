@@ -151,7 +151,11 @@ struct help helptab[] = {
         .name  = "link",
         .synop = "Usage: " PROGRAM " link [OPTION]... PID CID",
         .sdesc = "link tasks together",
-        .desc  = "With no option `-e' add a new task to current project.\n"
+        .desc  = "With no option `-e' link a new task in current project.\n"
+            "Options:\n"
+            "  -c      link task as child\n"
+            "  -l      link two tasks\n"
+            "  -p      link task as parent\n"
     },
     {
         .tag = TAGMISC,
