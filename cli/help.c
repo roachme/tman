@@ -51,6 +51,7 @@ struct help helptab[] = {
         .sdesc = "add new task",
         .desc  = "With no option `-e' add a new task to current project.\n"
             "  -e      specify an project to add a task to\n"
+            "  -g      generate task ID\n"
             "  -f      do not interrupt if task exists, process others\n"
             "  -h      show this help and exit\n"
             "  -n      don't switch to newly created task\n"
