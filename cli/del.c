@@ -4,17 +4,17 @@
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
 {
-    char c, *env, *id, *errfmt;
+    char c, *prj, *id, *errfmt;
     struct tman_id_del_opt opt = { };
     int i, force, quiet, showhelp, status;
 
-    env = id =  NULL;
+    prj = id =  NULL;
     force = quiet = showhelp = FALSE;
     errfmt = "cannot delete task '%s': %s";
     while ((c = getopt(argc, argv, ":e:fhq")) != -1) {
         switch (c) {
             case 'e':
-                env = optarg; break ;
+                prj = optarg; break ;
             case 'f':
                 force = TRUE; break ;
             case 'h':
@@ -33,7 +33,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
 
     i = optind;
     do {
-        if ((status = tman_id_del(ctx, env, argv[i], &opt)) != TMAN_OK) {
+        if ((status = tman_id_del(ctx, prj, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
             if (force == TRUE)
@@ -41,8 +41,8 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
         }
     } while (++i < argc);
 
-    // FIXME: when delete task ID from non-current env,
-    // it switches to current task in current env.
+    // FIXME: when delete task ID from non-current prj,
+    // it switches to current task in current prj.
     // BUT should not change user's CWD at all.
     return status == TMAN_OK ? tman_pwd() : status;
 }

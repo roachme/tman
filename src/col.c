@@ -37,21 +37,21 @@ int col_ext(char *newcol)
     return FALSE;
 }
 
-int col_add(char *env, char *id, char *newcol)
+int col_add(char *prj, char *id, char *newcol)
 {
     FILE *fp;
 
-    if ((fp = fopen(genpath_col(env, id), "w")) == NULL)
+    if ((fp = fopen(genpath_col(prj, id), "w")) == NULL)
         return 1;
     fprintf(fp, "col : %s\n", newcol);
     return fclose(fp);
 }
 
-char *col_get(char *env, char *id)
+char *col_get(char *prj, char *id)
 {
     FILE *fp;
 
-    if ((fp = fopen(genpath_col(env, id), "r")) == NULL)
+    if ((fp = fopen(genpath_col(prj, id), "r")) == NULL)
         return NULL;
     else if (fscanf(fp, "col : %s\n", col) != NCOLITEM)
         return NULL;
@@ -67,11 +67,11 @@ char col_get2(int prio)
     return coltab[7].mark;
 }
 
-int col_set(char *env, char *id, char *col)
+int col_set(char *prj, char *id, char *col)
 {
     FILE *fp;
 
-    if ((fp = fopen(genpath_col(env, id), "w")) == NULL) {
+    if ((fp = fopen(genpath_col(prj, id), "w")) == NULL) {
         fprintf(stderr, "err: setcol '%s'\n", id);
         return 1;
     }
@@ -90,20 +90,20 @@ int col_prio(char *col)
 }
 
 // roach: should it delete col file or mark it with default column?
-int col_del(char *env, char *id)
+int col_del(char *prj, char *id)
 {
     return 0;
 }
 
 // Note: used only by tman_id_list(). Get rid of it in the future.
-struct column col_getmark(char *env, char *id)
+struct column col_getmark(char *prj, char *id)
 {
     int i;
     FILE *fp;
     char tag[COLSIZ + 1];
 
     // NOTE: hotfix
-    if ((fp = fopen(genpath_col(env, id), "r")) == NULL)
+    if ((fp = fopen(genpath_col(prj, id), "r")) == NULL)
         return coltab[7];
 
     fscanf(fp, "%*s : %4s\n", tag);

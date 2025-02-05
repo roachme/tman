@@ -3,13 +3,13 @@
 #include "cat.h"
 #include "cli.h"
 
-static int pretty_cat(tman_ctx_t *ctx, char *env, char *id, char *key)
+static int pretty_cat(tman_ctx_t *ctx, char *prj, char *id, char *key)
 {
     int i, status;
     struct unit *unitbin, *unitpgn;
     struct tman_id_cat_opt opt = { };
 
-    if ((status = tman_id_cat(ctx, env, id, &opt)) != TMAN_OK)
+    if ((status = tman_id_cat(ctx, prj, id, &opt)) != TMAN_OK)
         return elog(status, "cannot cat units '%s': %s", id, tman_strerror());
 
     printf("%-7s : %s\n", "id", ctx->units.id);
@@ -27,11 +27,11 @@ int tman_cli_cat(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int i, status;
-    struct tman_cli_cat_opt opt = { .env = NULL, .help = 0, .force = 0, };
+    struct tman_cli_cat_opt opt = { .prj = NULL, .help = 0, .force = 0, };
 
     while ((c = getopt(argc, argv, ":e:hk")) != -1) {
         switch (c) {
-            case 'e': opt.env = optarg; break;
+            case 'e': opt.prj = optarg; break;
             case 'k': opt.key = optarg; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
@@ -42,7 +42,7 @@ int tman_cli_cat(int argc, char **argv, tman_ctx_t *ctx)
 
     i = optind;
     do {
-        status = pretty_cat(ctx, opt.env, argv[i], opt.key);
+        status = pretty_cat(ctx, opt.prj, argv[i], opt.key);
     } while (++i < argc);
     return status;
 }

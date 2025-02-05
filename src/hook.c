@@ -15,7 +15,7 @@ int ispgn(const char *pgn)
     return ISFILE(path);
 }
 
-int hookact(char *cmd, char *env, char *id)
+int hookact(char *cmd, char *prj, char *id)
 {
     int i;
 
@@ -25,12 +25,12 @@ int hookact(char *cmd, char *env, char *id)
     for (i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];
         if (strcmp(cmd, hook->cmd) == 0)
-            system(genpath_pgn(env, id, hook->pgname, hook->pgncmd));
+            system(genpath_pgn(prj, id, hook->pgname, hook->pgncmd));
     }
     return 0;
 }
 
-struct unit *hookcat(struct unit *unitpgn, char *env, char *id)
+struct unit *hookcat(struct unit *unitpgn, char *prj, char *id)
 {
     int i;
     FILE *pipe;
@@ -46,7 +46,7 @@ struct unit *hookcat(struct unit *unitpgn, char *env, char *id)
         if (strcmp(hook->cmd, "cat") != 0)
             continue;
 
-        if ((pipe = popen(genpath_pgn(env, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
+        if ((pipe = popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
             elog(1, "hookcat: failed to execute hookcat");
             continue;
         }
@@ -59,7 +59,7 @@ struct unit *hookcat(struct unit *unitpgn, char *env, char *id)
     return unitpgn;
 }
 
-char *hookls(char *pgnout, char *env, char *id)
+char *hookls(char *pgnout, char *prj, char *id)
 {
     int i;
     FILE *pipe;
@@ -74,7 +74,7 @@ char *hookls(char *pgnout, char *env, char *id)
         if (strcmp(hook->cmd, "list") != 0)
             continue;
 
-        if ((pipe = popen(genpath_pgn(env, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
+        if ((pipe = popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
             elog(1, "hookls: failed to execute hookls");
             return NULL;
         }

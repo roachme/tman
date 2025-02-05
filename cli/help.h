@@ -15,7 +15,7 @@ int help_usage(const char *cmd);
 int help_lookup(const char *cmd);
 
 int help_bincmd(const char *cmd);
-int help_envcmd(const char *cmd);
+int help_prjcmd(const char *cmd);
 int help_pgmcmd(const char *cmd);
 
 #endif

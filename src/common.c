@@ -27,34 +27,34 @@ int elog(int status, const char *fmt, ...)
     return status;
 }
 
-char *genpath_env(char *env)
+char *genpath_prj(char *prj)
 {
-    sprintf(pathname, "%s/%s", base, env);
+    sprintf(pathname, "%s/%s", base, prj);
     return pathname;
 }
 
-char *genpath_pgn(char *env, char *id, char *name, char *cmd)
+char *genpath_pgn(char *prj, char *id, char *name, char *cmd)
 {
     const char *fmt = "%s/%s/%s -e %s -i %s -b %s %s";
-    sprintf(pathname, fmt, tmanfs.pgnins, name, name, env, id, tmanfs.base, cmd);
+    sprintf(pathname, fmt, tmanfs.pgnins, name, name, prj, id, tmanfs.base, cmd);
     return pathname;
 }
 
-char *genpath_full(char *env, char *id)
+char *genpath_full(char *prj, char *id)
 {
-    sprintf(pathname, "%s/%s/%s", base, env, id);
+    sprintf(pathname, "%s/%s/%s", base, prj, id);
     return pathname;
 }
 
-char *genpath_col(char *env, char *id)
+char *genpath_col(char *prj, char *id)
 {
-    sprintf(pathname, "%s/%s/%s/.tman/col", base, env, id);
+    sprintf(pathname, "%s/%s/%s/.tman/col", base, prj, id);
     return pathname;
 }
 
-char *genpath_unit(char *env, char *id)
+char *genpath_unit(char *prj, char *id)
 {
-    sprintf(pathname, "%s/%s/%s/.tman/unit", base, env, id);
+    sprintf(pathname, "%s/%s/%s/.tman/unit", base, prj, id);
     return pathname;
 }
 

@@ -7,7 +7,7 @@ enum tman_cli_use_errno {
 };
 
 struct tman_cli_use_opt {
-    char *env;
+    char *prj;
     int force;
     int help;
 };

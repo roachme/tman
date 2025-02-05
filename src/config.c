@@ -54,7 +54,7 @@ static int parse_columns(struct columns *columns)
     char *prio;
     int i = columns->size;
 
-    strcpy(columns->column[i].env, strtok(NULL, delim));
+    strcpy(columns->column[i].prj, strtok(NULL, delim));
     strcpy(&columns->column[i].mark, strtok(NULL, delim));
     strcpy(columns->column[i].col, strtok(NULL, delim));
     prio = strtok(NULL, delim);
@@ -80,7 +80,7 @@ static int parseconf(const char *fname)
         else if (config.hooks.size >= CONF_MAXHOOK)
             return elog(1, "Too many hooks in config");
         else if (config.columns.size >= CONF_MAXCOLDEF)
-            return elog(1, "Too many columns per env in config");
+            return elog(1, "Too many columns per prj in config");
 
         if (strcmp(token, "TMANBASE") == 0)
             retcode = parsepath(config.base);

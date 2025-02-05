@@ -49,8 +49,8 @@ struct help helptab[] = {
         .name  = "add",
         .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
         .sdesc = "add new task",
-        .desc  = "With no option `-e' add a new task to current environment.\n"
-            "  -e      specify an environment to add a task to\n"
+        .desc  = "With no option `-e' add a new task to current project.\n"
+            "  -e      specify an project to add a task to\n"
             "  -f      do not interrupt if task exists, process others\n"
             "  -h      show this help and exit\n"
             "  -n      don't switch to newly created task\n"
@@ -59,7 +59,7 @@ struct help helptab[] = {
     {
         .tag = TAGBASIC,
         .name  = "cat",
-        .synop = PROGRAM " cat ID... [ENV]",
+        .synop = PROGRAM " cat ID... [PRJ]",
         .sdesc = "cat task info",
         .desc  = "cat description",
     },
@@ -69,8 +69,8 @@ struct help helptab[] = {
         .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
             "Try '" PROGRAM " help del' for more info.",
         .sdesc = "delete task",
-        .desc  = "With no option `-e' delete task from current environment.\n"
-            "  -e      specify an environment to add a task to\n"
+        .desc  = "With no option `-e' delete task from current project.\n"
+            "  -e      specify an project to add a task to\n"
             "  -f      do not interrupt if task does not exist, process others\n"
             "  -h      show this help and exit\n"
             "  -q      do not write anything to standard error output"
@@ -78,9 +78,9 @@ struct help helptab[] = {
     {
         .tag = TAGBASIC,
         .name  = "list",
-        .synop = "Usage: " PROGRAM " list [OPTION]... ENV",
-        .sdesc = "list environment tasks",
-        .desc  = "With no option `-e' ENV is current environment.\n"
+        .synop = "Usage: " PROGRAM " list [OPTION]... PRJ",
+        .sdesc = "list project tasks",
+        .desc  = "With no option `-e' PRJ is current project.\n"
             "  -A      list all tasks\n"
             "  -a      list almost all tasks (expect for archieved)\n"
             "  -h      show this help and exit\n"
@@ -97,8 +97,8 @@ struct help helptab[] = {
         .name  = "sync",
         .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...",
         .sdesc = "synchronize task",
-        .desc  = "With no option `-e' sync task in current environment.\n"
-            "  -e      specify an environment\n"
+        .desc  = "With no option `-e' sync task in current project.\n"
+            "  -e      specify an project\n"
             "  -f      do not interrupt if task not found, process others\n"
             "  -h      show this help and exit\n"
             "  -n      don't switch to synced task\n"
@@ -107,17 +107,17 @@ struct help helptab[] = {
     {
         .tag = TAGBASIC,
         .name  = "use",
-        .synop = PROGRAM " use ID [ENV]",
+        .synop = PROGRAM " use ID [PRJ]",
         .sdesc = "switch to task",
         .desc  = "use description",
     },
 
     {
         .tag = TAGOBJ,
-        .name  = "env",
-        .synop = PROGRAM " env SUBCMD [OPTION] NAME",
-        .sdesc = "environment manager",
-        .desc  = "env description",
+        .name  = "prj",
+        .synop = PROGRAM " prj SUBCMD [OPTION] NAME",
+        .sdesc = "project manager",
+        .desc  = "project description",
     },
     {
         .tag = TAGOBJ,
@@ -131,11 +131,11 @@ struct help helptab[] = {
         .name  = "col",
         .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...",
         .sdesc = "move task to column",
-        .desc  = "With no option `-e' operate on current environment.\n"
+        .desc  = "With no option `-e' operate on current project.\n"
             "COLUMN is column to move a task to.\n"
             "Options:\n"
-            "  -e      specify environment name\n"
-            "  -l      list environment columns\n"
+            "  -e      specify project name\n"
+            "  -l      list project columns\n"
             "  -h      show this help and exit"
     },
     {
@@ -143,7 +143,7 @@ struct help helptab[] = {
         .name  = "link",
         .synop = "Usage: " PROGRAM " link [OPTION]... PID CID",
         .sdesc = "link tasks together",
-        .desc  = "With no option `-e' add a new task to current environment.\n"
+        .desc  = "With no option `-e' add a new task to current project.\n"
     },
     {
         .tag = TAGMISC,
@@ -152,14 +152,14 @@ struct help helptab[] = {
         .sdesc = "move (rename) tasks",
         .desc  = "Options:\n"
             "  -f      overwrite destination task\n"
-            "  -d      destination environment\n"
-            "  -s      source environment",
+            "  -d      destination project\n"
+            "  -s      source project",
 
     },
     {
         .tag = TAGMISC,
         .name  = "set",
-        .synop = PROGRAM " set OPTION... [ID]... [ENV]",
+        .synop = PROGRAM " set OPTION... [ID]... [PRJ]",
         .sdesc = "set task unit values",
         .desc  = "set description",
     },
@@ -168,7 +168,7 @@ struct help helptab[] = {
 int help_list_commands(void)
 {
     printf("Usage: %s [OBJECT] COMMAND [OPITONS]... [ID]...\n", PROGRAM);
-    printf("    Where OBJECT := { id | env | pgm }\n");
+    printf("    Where OBJECT := { id | prj | pgm }\n");
     printf("    Where COMMAND is one of the builtin commands\n");
     printf("    Where ID is task ID\n");
     printf("Try '" PROGRAM " help COMMAND' for more info.\n\n");

@@ -19,7 +19,7 @@ int tman_cli_cfg(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_chk(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_col(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx);
-int tman_cli_env(int argc, char **argv, tman_ctx_t *ctx);
+int tman_cli_prj(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_init(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx);

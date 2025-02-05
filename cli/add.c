@@ -7,20 +7,20 @@
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
 {
-    char *env, *errfmt;
+    char *prj, *errfmt;
     int quiet, force, showhelp, status, i, c;
     struct tman_id_add_opt opt = {
         .doswitch = TRUE,
         .dogenerate = FALSE,
     };
 
-    env = NULL;
+    prj = NULL;
     force = quiet = showhelp = FALSE;
     errfmt = "cannot create task '%s': %s";
     while ((c = getopt(argc, argv, ":e:fghnq")) != -1) {
         switch (c) {
             case 'e':
-                env = optarg; break;
+                prj = optarg; break;
             case 'f':
                 force = TRUE; break;
             case 'g':
@@ -46,7 +46,7 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
     }
 
     for (i = optind; i < argc; ++i) {
-        if ((status = tman_id_add(ctx, env, argv[i], &opt)) != TMAN_OK) {
+        if ((status = tman_id_add(ctx, prj, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
             if (force == FALSE)

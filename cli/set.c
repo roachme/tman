@@ -9,7 +9,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t *ctx)
     char c;
     int i, idx, status;
     int atleast_one_key_set;
-    char *env = NULL;
+    char *prj = NULL;
     struct unit units[NKEYS] = { 0 };
     struct tman_id_set_opt opt;
 
@@ -70,7 +70,7 @@ Options:
 
     i =  optind;
     do {
-        status = tman_id_set(ctx, env, argv[i], units, &opt);
+        status = tman_id_set(ctx, prj, argv[i], units, &opt);
     } while (++i < argc);
 
     return status;

@@ -15,7 +15,7 @@
 struct column {
     int prio;
     char mark;
-    char env[ENVSIZ + 1];
+    char prj[PRJSIZ + 1];
     char col[COLSIZ + 1];
 };
 
@@ -24,15 +24,15 @@ struct columns {
     struct column column[NCOLUMNS];
 };
 
-int col_add(char *env, char *id, char *col);
+int col_add(char *prj, char *id, char *col);
 int col_ext(char *col);
 int col_prio(char *col);
-char *col_get(char *env, char *id);
+char *col_get(char *prj, char *id);
 char col_get2(int prio);
-int col_set(char *env, char *id, char *col);
-int col_del(char *env, char *id);
+int col_set(char *prj, char *id, char *col);
+int col_del(char *prj, char *id);
 
 // Note: used only by tman_id_list(). Do somethnig about it.
-struct column col_getmark(char *env, char *id);
+struct column col_getmark(char *prj, char *id);
 
 #endif

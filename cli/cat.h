@@ -6,7 +6,7 @@ enum tman_cli_cat_errno {
 };
 
 struct tman_cli_cat_opt {
-    char *env;      /* environment to add a task to */
+    char *prj;      /* project to add a task to */
     char *key;      /* unit key which value to output */
     int force;      /* ignore existent task ID */
     int help;       /* show command usage */
