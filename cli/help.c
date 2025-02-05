@@ -77,6 +77,13 @@ struct help helptab[] = {
             "  -q      do not write anything to standard error output"
     },
     {
+        .tag = TAGMISC,
+        .name  = "flow",
+        .synop = "Usage: " PROGRAM " flow [OPTION]... PRJ",
+        .sdesc = "show and set project workflow",
+        .desc  = "With no option `-e' PRJ is current project.\n"
+    },
+    {
         .tag = TAGBASIC,
         .name  = "list",
         .synop = "Usage: " PROGRAM " list [OPTION]... PRJ",
