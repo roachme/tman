@@ -27,6 +27,9 @@ valgrind:
 lnum:
 	find src -name '*.c' |  xargs wc -l
 
+install:
+	cp _tman $HOME/.local/bin
+
 #build:
 #	#gcc -g -Wall src/*.h src/*.c -o tman
 #	gcc -g  src/*.h src/*.c -o _tman
