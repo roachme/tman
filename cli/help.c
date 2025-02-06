@@ -78,9 +78,23 @@ struct help helptab[] = {
     },
     {
         .tag = TAGMISC,
+        .name  = "find",
+        .synop = "Usage: " PROGRAM " find [OPTION]... PRJ",
+        .sdesc = "find a task by ID/tag",
+        .desc  = "With no option `-e' PRJ is current project.\n"
+    },
+    {
+        .tag = TAGMISC,
         .name  = "flow",
         .synop = "Usage: " PROGRAM " flow [OPTION]... PRJ",
         .sdesc = "show and set project workflow",
+        .desc  = "With no option `-e' PRJ is current project.\n"
+    },
+    {
+        .tag = TAGMISC,
+        .name  = "grep",
+        .synop = "Usage: " PROGRAM " grep [OPTION]... PRJ",
+        .sdesc = "find pattern in a task",
         .desc  = "With no option `-e' PRJ is current project.\n"
     },
     {
