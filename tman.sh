@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 function tman()
 {
@@ -8,8 +8,8 @@ function tman()
 
     # Check that output contains tag. If so then interpret
     # it as a path not an output.
-    if [ -n "$(echo $output | grep -E "^$PATHTAG")" ]; then
-        cd "${output/$PATHTAG/}"
+    if [ -n "$(echo "$output" | grep -E "^$PATHTAG")" ]; then
+        cd "${output/$PATHTAG/}" || return 1
     elif [ -n "$output" ]; then
         echo "$output"
     fi
@@ -19,7 +19,7 @@ function tman()
 # roach: Under development
 _tman_comp()
 {
-    if [ "$3" == "foo" ]; then
+    if [ "$3" = "foo" ]; then
         COMPREPLY=($(compgen -d "heh"))
     else
         COMPREPLY=($(compgen -W "foo bar baz" -- "$2"))
@@ -27,5 +27,5 @@ _tman_comp()
 }
 
 #complete -F _tman_comp tman
-complete -W "cfg init pgm add del prev set sync use env move cat help list ver" tman
+complete -W "cfg init pgm add del prev set sync use prj move show help list ver" tman
 
