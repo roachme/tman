@@ -4,7 +4,6 @@
 
 static const builtin_t builtins[] = {
     { .name = "add",  .func = &tman_cli_add,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "cat",  .func = &tman_cli_cat,  .setuplvl = TMAN_SETUPCHECK },
     { .name = "cfg",  .func = &tman_cli_cfg,  .setuplvl = TMAN_SETUPCHECK },
     { .name = "chk",  .func = &tman_cli_chk,  .setuplvl = TMAN_SETUPCHECK },
     { .name = "col",  .func = &tman_cli_col,  .setuplvl = TMAN_SETUPCHECK },
@@ -21,6 +20,7 @@ static const builtin_t builtins[] = {
     { .name = "prev", .func = &tman_cli_prev, .setuplvl = TMAN_SETUPCHECK },
     { .name = "prj",  .func = &tman_cli_prj,  .setuplvl = TMAN_SETUPCHECK },
     { .name = "set",  .func = &tman_cli_set,  .setuplvl = TMAN_SETUPCHECK },
+    { .name = "show", .func = &tman_cli_show, .setuplvl = TMAN_SETUPCHECK },
     { .name = "sync", .func = &tman_cli_sync, .setuplvl = TMAN_SETUPCHECK },
     { .name = "use",  .func = &tman_cli_use,  .setuplvl = TMAN_SETUPCHECK },
     { .name = "ver",  .func = &tman_cli_ver,  .setuplvl = TMAN_SETUPSOFT },

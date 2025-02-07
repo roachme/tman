@@ -186,12 +186,12 @@ int tman_id_add(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_add_opt *op
     return TMAN_OK;
 }
 
-int tman_id_cat(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_cat_opt *opt)
+int tman_id_show(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *opt)
 {
     if ((status = chkargs(prj, id)))
         return status;
 
-    /* FIXME: tman cat test1 test2 test3
+    /* FIXME: tman show test1 test2 test3
      * output previous plugin output.
     */
     //unit_delpgn(ctx->units.pgn);
@@ -202,7 +202,7 @@ int tman_id_cat(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_cat_opt *op
 
     /* No need to check return value because there might case
      * that no hooks are defined or executed */
-    ctx->units.pgn = hookcat(ctx->units.pgn, taskprj, taskid);
+    ctx->units.pgn = hookshow(ctx->units.pgn, taskprj, taskid);
     if (unit_getbin(ctx->units.bin, taskprj, taskid) == NULL)
         status = emod_set(TMAN_UNIT_GET);
 

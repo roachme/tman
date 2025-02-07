@@ -38,7 +38,7 @@ struct tman_id_add_opt {
     int dogenerate; /* Generate task ID */
 };
 
-struct tman_id_cat_opt {
+struct tman_id_show_opt {
 };
 
 struct tman_id_col_opt {
@@ -101,7 +101,6 @@ const char *tman_strerror(void);
 
 /* Task ID functions.  */
 int tman_id_add (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_add_opt *opt);
-int tman_id_cat (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_cat_opt *opt);
 int tman_id_col (tman_ctx_t *ctx, char *prj, char *id, char *tag, struct tman_id_col_opt *opt);
 int tman_id_del (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_del_opt *opt);
 
@@ -112,6 +111,7 @@ int tman_id_link(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt);
 int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char *dstid);
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt);
 int tman_id_set (tman_ctx_t *ctx, char *prj, char *id, struct unit *unitbin, struct tman_id_set_opt *opt);
+int tman_id_show (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *opt);
 int tman_id_sync(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_sync_opt *opt);
 int tman_id_use (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_use_opt *opt);
 char *tman_id_getcurr(tman_ctx_t *ctx, char *prj);

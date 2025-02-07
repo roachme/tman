@@ -39,7 +39,7 @@ static int _prj_add(int argc, char **argv, tman_ctx_t *ctx)
 }
 
 // roach: maybe it'll be useful
-static int _prj_cat(int argc, char **argv, tman_ctx_t *ctx)
+static int _prj_show(int argc, char **argv, tman_ctx_t *ctx)
 {
     elog(1, "under development");
     return 0;
@@ -119,11 +119,11 @@ static int _prj_use(int argc, char **argv, tman_ctx_t *ctx)
 
 static const builtin_t prjcmds[] = {
     { .name = "add",  .func = &_prj_add  },
-    { .name = "cat",  .func = &_prj_cat  }, // under consideration
     { .name = "del",  .func = &_prj_del  },
     { .name = "list", .func = &_prj_list },
     { .name = "prev", .func = &_prj_prev },
     { .name = "set",  .func = &_prj_set  },
+    { .name = "show", .func = &_prj_show }, // under consideration
     { .name = "use",  .func = &_prj_use  },
 };
 

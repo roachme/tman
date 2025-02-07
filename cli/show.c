@@ -1,16 +1,16 @@
 #include <string.h>
 
-#include "cat.h"
+#include "show.h"
 #include "cli.h"
 
-static int pretty_cat(tman_ctx_t *ctx, char *prj, char *id, char *key)
+static int pretty_show(tman_ctx_t *ctx, char *prj, char *id, char *key)
 {
     int i, status;
     struct unit *unitbin, *unitpgn;
-    struct tman_id_cat_opt opt = { };
+    struct tman_id_show_opt opt = { };
 
-    if ((status = tman_id_cat(ctx, prj, id, &opt)) != TMAN_OK)
-        return elog(status, "cannot cat units '%s': %s", id, tman_strerror());
+    if ((status = tman_id_show(ctx, prj, id, &opt)) != TMAN_OK)
+        return elog(status, "cannot show units '%s': %s", id, tman_strerror());
 
     printf("%-7s : %s\n", "id", ctx->units.id);
 
@@ -23,11 +23,11 @@ static int pretty_cat(tman_ctx_t *ctx, char *prj, char *id, char *key)
     return TMAN_OK;
 }
 
-int tman_cli_cat(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_show(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
     int i, status;
-    struct tman_cli_cat_opt opt = { .prj = NULL, .help = 0, .force = 0, };
+    struct tman_cli_show_opt opt = { .prj = NULL, .help = 0, .force = 0, };
 
     while ((c = getopt(argc, argv, ":e:hk")) != -1) {
         switch (c) {
@@ -42,7 +42,7 @@ int tman_cli_cat(int argc, char **argv, tman_ctx_t *ctx)
 
     i = optind;
     do {
-        status = pretty_cat(ctx, opt.prj, argv[i], opt.key);
+        status = pretty_show(ctx, opt.prj, argv[i], opt.key);
     } while (++i < argc);
     return status;
 }
