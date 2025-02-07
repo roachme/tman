@@ -200,6 +200,11 @@ int tman_id_show(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *
     // failed to parse. But gotta make user return value
     // make any sense for caller.
 
+    if (ctx->units.pgn != NULL) {
+        unit_delpgn(ctx->units.pgn);
+        ctx->units.pgn = NULL;
+    }
+
     /* No need to check return value because there might case
      * that no hooks are defined or executed */
     ctx->units.pgn = hookshow(taskprj, taskid);
