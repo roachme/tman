@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -237,6 +238,64 @@ int tman_id_del(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_del_opt *op
         return emod_set(TMAN_COL_DEL);
     else if (dir_id_del(tmanfs.base, taskprj, taskid))
         return emod_set(TMAN_DIR_ID_DEL);
+    return TMAN_OK;
+}
+
+int tman_id_find_by_desc(tman_ctx_t *ctx, char *prj, char *descpatt)
+{
+    DIR *ids;
+    struct dirent *ent;
+    struct unit bunit[NKEYS];
+    struct tree *node;
+    char pgnout[PGNOUTSIZ + 1] = { 0 };
+    char *desc;
+
+    /* Free task ID list because it might be called more than once.  */
+    tree_free(ctx->ids);
+    ctx->ids = NULL;
+
+    if ((status = check_input_prj(prj)))
+        return status;
+    else if ((ids = opendir(genpath_prj(taskprj))) == NULL)
+        return emod_set(TMAN_DIR_ID_OPEN);
+
+    while ((ent = readdir(ids)) != NULL) {
+        if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
+            continue;
+        else if (descpatt == NULL)
+            continue;
+        else if (check_input_id(ent->d_name)) {
+            // roach: sholud we leave it here? If not then what?..
+            elog(1, "illegal task ID: '%s'", ent->d_name);
+            continue;
+        }
+        else if (unit_getbin(bunit, taskprj, ent->d_name) == NULL) {
+            fprintf(stderr, "tman_id_list %s: failde to get units\n", ent->d_name);
+            continue;
+        }
+        desc = bunit[3].val;
+
+        /* convert to lower case. */
+        for (int i = 0; i < strlen(descpatt); ++i)
+            descpatt[i] = tolower(descpatt[i]);
+
+        char descbuf[BUFSIZ + 1];
+        strncpy(descbuf, desc, BUFSIZ);
+        for (int i = 0; i < strlen(descbuf); ++i)
+            descbuf[i] = tolower(descbuf[i]);
+
+        char *res;
+        if ((res = strstr(descbuf, descpatt)) == NULL) {
+            continue;
+        }
+
+        hookls(pgnout, taskprj, ent->d_name);
+        struct column column = col_getmark(taskprj, ent->d_name);
+        node = tree_alloc(ent->d_name, col_prio(column.col), desc, pgnout);
+        ctx->ids = tree_add(ctx->ids, node);
+        pgnout[0] = '\0';
+    }
+    closedir(ids);
     return TMAN_OK;
 }
 
