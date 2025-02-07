@@ -30,7 +30,7 @@ int hookact(char *cmd, char *prj, char *id)
     return 0;
 }
 
-struct unit *hookcat(struct unit *unitpgn, char *prj, char *id)
+struct unit *hookshow(struct unit *unitpgn, char *prj, char *id)
 {
     int i;
     FILE *pipe;
@@ -43,11 +43,11 @@ struct unit *hookcat(struct unit *unitpgn, char *prj, char *id)
 
     for (i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];
-        if (strcmp(hook->cmd, "cat") != 0)
+        if (strcmp(hook->cmd, "show") != 0)
             continue;
 
         if ((pipe = popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
-            elog(1, "hookcat: failed to execute hookcat");
+            elog(1, "hookshow: failed to execute hookshow");
             continue;
         }
         while (fgets(line, BUFSIZ, pipe)) {

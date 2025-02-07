@@ -59,13 +59,6 @@ struct help helptab[] = {
     },
     {
         .tag = TAGBASIC,
-        .name  = "cat",
-        .synop = PROGRAM " cat ID... [PRJ]",
-        .sdesc = "cat task info",
-        .desc  = "cat description",
-    },
-    {
-        .tag = TAGBASIC,
         .name  = "del",
         .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
             "Try '" PROGRAM " help del' for more info.",
@@ -113,6 +106,13 @@ struct help helptab[] = {
         .name  = "prev",
         .synop = "Usage: " PROGRAM " prev",
         .sdesc = "switch to previous task",
+    },
+    {
+        .tag = TAGBASIC,
+        .name  = "show",
+        .synop = PROGRAM " show ID... [PRJ]",
+        .sdesc = "show task info",
+        .desc  = "show description",
     },
     {
         .tag = TAGBASIC,
