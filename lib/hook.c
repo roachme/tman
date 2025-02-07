@@ -30,16 +30,17 @@ int hookact(char *cmd, char *prj, char *id)
     return 0;
 }
 
-struct unit *hookshow(struct unit *unitpgn, char *prj, char *id)
+struct unit *hookshow(char *prj, char *id)
 {
     int i;
     FILE *pipe;
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
     char line[BUFSIZ + 1] = {0};
+    struct unit *unitpgn = NULL;
 
     if (config.usehooks == FALSE)
-        return unitpgn;
+        return NULL;
 
     for (i = 0; i < config.hooks.size; ++i) {
         struct hook *hook = &config.hooks.hook[i];

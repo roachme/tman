@@ -202,7 +202,7 @@ int tman_id_show(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *
 
     /* No need to check return value because there might case
      * that no hooks are defined or executed */
-    ctx->units.pgn = hookshow(ctx->units.pgn, taskprj, taskid);
+    ctx->units.pgn = hookshow(taskprj, taskid);
     if (unit_getbin(ctx->units.bin, taskprj, taskid) == NULL)
         status = emod_set(TMAN_UNIT_GET);
 

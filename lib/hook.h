@@ -23,7 +23,7 @@ struct hooks {
 
 int ispgn(const char *pgn);
 int hookact(char *command, char *prj, char *id);
-struct unit *hookshow(struct unit *unit, char *prj, char *id);
+struct unit *hookshow(char *prj, char *id);
 char *hookls(char *pgnout, char *prj, char *id);
 
 #endif
