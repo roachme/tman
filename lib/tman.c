@@ -262,7 +262,7 @@ int tman_id_find_by_desc(tman_ctx_t *ctx, char *prj, char *descpatt)
     if ((status = check_input_prj(prj)))
         return status;
     else if ((ids = opendir(genpath_prj(taskprj))) == NULL)
-        return emod_set(TMAN_DIR_ID_OPEN);
+        return emod_set(TMAN_DIR_PRJ_OPEN);
 
     while ((ent = readdir(ids)) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
@@ -324,7 +324,7 @@ int tman_id_list(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt)
     if ((status = check_input_prj(prj)))
         return status;
     else if ((ids = opendir(genpath_prj(taskprj))) == NULL)
-        return emod_set(TMAN_DIR_ID_OPEN);
+        return emod_set(TMAN_DIR_PRJ_OPEN);
 
     while ((ent = readdir(ids)) != NULL) {
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
