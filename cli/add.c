@@ -17,9 +17,9 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
     prj = NULL;
     force = quiet = showhelp = FALSE;
     errfmt = "cannot create task '%s': %s";
-    while ((c = getopt(argc, argv, ":e:fghnq")) != -1) {
+    while ((c = getopt(argc, argv, ":p:fghnq")) != -1) {
         switch (c) {
-            case 'e':
+            case 'p':
                 prj = optarg; break;
             case 'f':
                 force = TRUE; break;

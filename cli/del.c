@@ -11,9 +11,9 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
     prj = id =  NULL;
     force = quiet = showhelp = FALSE;
     errfmt = "cannot delete task '%s': %s";
-    while ((c = getopt(argc, argv, ":e:fhq")) != -1) {
+    while ((c = getopt(argc, argv, ":p:fhq")) != -1) {
         switch (c) {
-            case 'e':
+            case 'p':
                 prj = optarg; break ;
             case 'f':
                 force = TRUE; break ;

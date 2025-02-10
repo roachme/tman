@@ -7,9 +7,9 @@ int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t *ctx)
     char c, *cmd, *prj, *id;
 
     id = prj = NULL;
-    while ((c = getopt(argc, argv, ":e:i:")) != -1) {
+    while ((c = getopt(argc, argv, ":p:i:")) != -1) {
         switch (c) {
-            case 'e':
+            case 'p':
                 prj = optarg; break;
             case 'i':
                 id = optarg; break;

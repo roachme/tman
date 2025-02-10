@@ -11,9 +11,9 @@ int tman_cli_use(int argc, char **argv, tman_ctx_t *ctx)
     prj = NULL;
     showhelp = FALSE;
     errfmt = "cannot switch to '%s': %s";
-    while ((c = getopt(argc, argv, ":e:h")) != -1) {
+    while ((c = getopt(argc, argv, ":p:h")) != -1) {
         switch (c) {
-            case 'e':
+            case 'p':
                 prj = optarg; break ;
             case 'h':
                 showhelp = 1; break ;

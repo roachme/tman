@@ -35,7 +35,7 @@ char *genpath_prj(char *prj)
 
 char *genpath_pgn(char *prj, char *id, char *name, char *cmd)
 {
-    const char *fmt = "%s/%s/%s -e %s -i %s -b %s %s";
+    const char *fmt = "%s/%s/%s -p %s -i %s -b %s %s";
     sprintf(pathname, fmt, tmanfs.pgnins, name, name, prj, id, tmanfs.base, cmd);
     return pathname;
 }
