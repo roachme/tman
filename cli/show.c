@@ -29,9 +29,9 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t *ctx)
     int i, status;
     struct tman_cli_show_opt opt = { .prj = NULL, .help = 0, .force = 0, };
 
-    while ((c = getopt(argc, argv, ":e:hk")) != -1) {
+    while ((c = getopt(argc, argv, ":p:hk")) != -1) {
         switch (c) {
-            case 'e': opt.prj = optarg; break;
+            case 'p': opt.prj = optarg; break;
             case 'k': opt.key = optarg; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);

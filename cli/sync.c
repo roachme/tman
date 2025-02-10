@@ -12,9 +12,9 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
     prj = NULL;
     force = quiet = showhelp = FALSE;
     errfmt =  "cannot sync '%s': %s";
-    while ((c = getopt(argc, argv, ":e:fhnq")) != -1) {
+    while ((c = getopt(argc, argv, ":p:fhnq")) != -1) {
         switch (c) {
-            case 'e':
+            case 'p':
                 prj = optarg; break ;
             case 'f':
                 force = TRUE; break ;
