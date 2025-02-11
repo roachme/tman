@@ -375,6 +375,20 @@ int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char 
         return TMAN_ID_EXISTS;
     }
 
+    /* TODO: add support to change user's PWD */
+
+    /* Rename task. */
+    if (strncmp(_srcprj, _dstprj, PRJSIZ) == 0) {
+        elog(1, "rename task in specified project");
+        if (dir_id_rename(tmanfs.base, _srcprj, _dstprj, _srcid, _dstid)) {
+            elog(1, "could not rename task directory");
+            return 1;
+        }
+    } else {
+        /* Move task to another project. */
+        elog(1, "move task to another project");
+    }
+
     // roach: check this case
     // elog(1, "source and destination pathes are the same. Do nothing.");
 
