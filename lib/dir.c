@@ -27,7 +27,7 @@ int dir_id_ren(char *base, char *prj, char *newid, char *oldid)
 {
     char new_path[PATHSIZ + 1];
     char old_path[PATHSIZ + 1];
-    sprintf(new_path, "%s/%s/%s", base, prj, newid);
+    sprintf(new_path, "%s/%s/%s", base, prj, oldid);
     sprintf(old_path, "%s/%s/%s", base, prj, newid);
     return rename(old_path, new_path);
 }
