@@ -23,12 +23,12 @@ int dir_id_del(char *base, char *prj, char *id)
     return RMDIR(path);
 }
 
-int dir_id_ren(char *base, char *prj, char *newid, char *oldid)
+int dir_id_rename(char *base, char *srcprj, char *dstprj, char *srcid, char *dstid)
 {
     char new_path[PATHSIZ + 1];
     char old_path[PATHSIZ + 1];
-    sprintf(new_path, "%s/%s/%s", base, prj, oldid);
-    sprintf(old_path, "%s/%s/%s", base, prj, newid);
+    sprintf(old_path, "%s/%s/%s", base, dstprj, srcid);
+    sprintf(new_path, "%s/%s/%s", base, srcprj, dstid);
     return rename(old_path, new_path);
 }
 
