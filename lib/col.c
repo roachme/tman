@@ -112,5 +112,5 @@ struct column col_getmark(char *prj, char *id)
     for (i = 0; i < ARRAY_SIZE(coltab); ++i)
         if (strncmp(tag, coltab[i].col, COLSIZ) == 0)
             return coltab[i];
-    return coltab[i];
+    return coltab[0];
 }
