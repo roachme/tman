@@ -57,7 +57,10 @@ int tman_cli_move(int argc, char **argv, tman_ctx_t *ctx)
      *                                     A: not an error. Move task to destination prj.
     */
 
-    tman_id_move(NULL, srcprj, dstprj, argv[optind], argv[optind + 1]);
+    int res = tman_id_move(NULL, srcprj, dstprj, argv[optind], argv[optind + 1]);
+    if (res != TMAN_OK) {
+        elog(1, "err[%d]: %s - %s", res, tman_strerror(), argv[optind]);
+    }
 
     return 1;
 }

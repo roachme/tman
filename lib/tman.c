@@ -360,18 +360,24 @@ int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char 
     char *_srcprj, *_srcid, *_dstprj, *_dstid;
 
 
-    if ((status = chkargs(srcprj, srcid)))
+    if ((status = chkargs(srcprj, srcid))) {
+        elog(1, "err: err1");
         return status;
+    }
     _srcprj = taskprj;
     _srcid = taskid;
 
+    if (dstid == NULL)
+        dstid = srcid;
     if ((status = chkargs(dstprj, dstid)) && status != TMAN_ID_NOSUCH) {
+        elog(1, "err: err2");
         return status;
     }
     _dstprj = taskprj;
     _dstid = taskid;
+
     if (task_ext(_dstprj, _dstid) == TRUE) {
-        elog(1, "task exists in destination project");
+        elog(1, "task exists in destination project: %s/%s", _dstprj, _dstid);
         return TMAN_ID_EXISTS;
     }
 
