@@ -49,8 +49,8 @@ struct help helptab[] = {
         .name  = "add",
         .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
         .sdesc = "add new task",
-        .desc  = "With no option `-e' add a new task to current project.\n"
-            "  -e      specify an project to add a task to\n"
+        .desc  = "With no option `-p' add a new task to current project.\n"
+            "  -p      specify an project to add a task to\n"
             "  -g      generate task ID\n"
             "  -f      do not interrupt if task exists, process others\n"
             "  -h      show this help and exit\n"
@@ -63,8 +63,8 @@ struct help helptab[] = {
         .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
             "Try '" PROGRAM " help del' for more info.",
         .sdesc = "delete task",
-        .desc  = "With no option `-e' delete task from current project.\n"
-            "  -e      specify an project to add a task to\n"
+        .desc  = "With no option `-p' delete task from current project.\n"
+            "  -p      specify an project to add a task to\n"
             "  -f      do not interrupt if task does not exist, process others\n"
             "  -h      show this help and exit\n"
             "  -q      do not write anything to standard error output"
@@ -74,28 +74,28 @@ struct help helptab[] = {
         .name  = "find",
         .synop = "Usage: " PROGRAM " find [OPTION]... PRJ",
         .sdesc = "find a task by ID/tag",
-        .desc  = "With no option `-e' PRJ is current project.\n"
+        .desc  = "With no option `-p' PRJ is current project.\n"
     },
     {
         .tag = TAGMISC,
         .name  = "flow",
         .synop = "Usage: " PROGRAM " flow [OPTION]... PRJ",
         .sdesc = "show and set project workflow",
-        .desc  = "With no option `-e' PRJ is current project.\n"
+        .desc  = "With no option `-p' PRJ is current project.\n"
     },
     {
         .tag = TAGMISC,
         .name  = "grep",
         .synop = "Usage: " PROGRAM " grep [OPTION]... PRJ",
         .sdesc = "find pattern in a task",
-        .desc  = "With no option `-e' PRJ is current project.\n"
+        .desc  = "With no option `-p' PRJ is current project.\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "list",
         .synop = "Usage: " PROGRAM " list [OPTION]... PRJ",
         .sdesc = "list project tasks",
-        .desc  = "With no option `-e' PRJ is current project.\n"
+        .desc  = "With no option `-p' PRJ is current project.\n"
             "  -A      list all tasks\n"
             "  -a      list almost all tasks (expect for archieved)\n"
             "  -h      show this help and exit\n"
@@ -119,8 +119,8 @@ struct help helptab[] = {
         .name  = "sync",
         .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...",
         .sdesc = "synchronize task",
-        .desc  = "With no option `-e' sync task in current project.\n"
-            "  -e      specify an project\n"
+        .desc  = "With no option `-p' sync task in current project.\n"
+            "  -p      specify an project\n"
             "  -f      do not interrupt if task not found, process others\n"
             "  -h      show this help and exit\n"
             "  -n      don't switch to synced task\n"
@@ -153,10 +153,10 @@ struct help helptab[] = {
         .name  = "col",
         .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...",
         .sdesc = "move task to column",
-        .desc  = "With no option `-e' operate on current project.\n"
+        .desc  = "With no option `-p' operate on current project.\n"
             "COLUMN is column to move a task to.\n"
             "Options:\n"
-            "  -e      specify project name\n"
+            "  -p      specify project name\n"
             "  -l      list project columns\n"
             "  -h      show this help and exit"
     },
@@ -165,7 +165,7 @@ struct help helptab[] = {
         .name  = "link",
         .synop = "Usage: " PROGRAM " link [OPTION]... PID CID",
         .sdesc = "link tasks together",
-        .desc  = "With no option `-e' link a new task in current project.\n"
+        .desc  = "With no option `-p' link a new task in current project.\n"
             "Options:\n"
             "  -c      link task as child\n"
             "  -l      link two tasks\n"
