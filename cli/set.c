@@ -15,25 +15,18 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t *ctx)
 
     /*
 Options:
-    -i      set task id
     -d      set task description
     -p      set task priority. Values: [highest|high|mid|low|lowest]
     -s      set task status.
     -t      set task type. Values: [bugfix|hotfix|feature]
     */
     atleast_one_key_set = FALSE;
-    while ((c = getopt(argc, argv, ":d:i:p:t:")) != -1) {
+    while ((c = getopt(argc, argv, ":d:p:P:t:")) != -1) {
         switch (c) {
-            /*
-            case 'i':
-                idx = 0;
-                if (units[idx].isset) break;
-                atleast_one_key_set = TRUE;
-                strcpy(units[idx].key, "id");
-                strcpy(units[idx].val, optarg);
-                units[idx].isset = 1;
-                break;
-                */
+            case 'P':
+                elog(1, "only current project is supported rn");
+                return 1;
+                break;;
             case 'p':
                 idx = 0;
                 if (units[idx].isset) break;
