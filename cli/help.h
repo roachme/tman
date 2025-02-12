@@ -9,6 +9,7 @@ struct help {
     char synop[100];
     char sdesc[1000];
     char desc[1000];
+    char opts[1000];
 };
 
 int help_usage(const char *cmd);

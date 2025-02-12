@@ -14,141 +14,134 @@ struct help helptab[] = {
     {
         .tag = TAGSYSTEM,
         .name  = "cfg",
-        .sdesc = "configuration manager",
-        .desc  = "cfg description"
+        .synop = "Usage: " PROGRAM " cfg",
+        .sdesc = "  Configuration manager",
     },
     {
         .tag = TAGSYSTEM,
         .name  = "chk",
-        .sdesc = "check system health",
-        .desc  = "cfg description"
+        .synop = "Usage: " PROGRAM " chk",
+        .sdesc = "  Check system health",
     },
     {
         .tag = TAGSYSTEM,
         .name  = "help",
-        .synop = PROGRAM " help [CMD]",
-        .sdesc = "show this help message and exit",
-        .desc  = "help description",
+        .synop = "Usage: " PROGRAM " help [CMD]",
+        .sdesc = "  Show help message for CMD. Default list all commands.",
     },
     {
         .tag = TAGSYSTEM,
         .name  = "init",
-        .sdesc = "init directory structure",
-        .desc  = "init description"
+        .synop = "Usage: " PROGRAM " init",
+        .sdesc = "  Init directory structure",
     },
     {
         .tag = TAGSYSTEM,
         .name  = "ver",
-        .synop = PROGRAM " ver",
-        .sdesc = "show version and exit",
-        .desc  = "ver description",
+        .synop = "Usage: " PROGRAM " ver",
+        .sdesc = "  Show version and exit",
     },
 
     {
         .tag = TAGBASIC,
         .name  = "add",
         .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
-        .sdesc = "add new task",
-        .desc  = "With no option `-p' add a new task to current project.\n"
-            "  -p      specify an project to add a task to\n"
-            "  -g      generate task ID\n"
-            "  -f      do not interrupt if task exists, process others\n"
-            "  -h      show this help and exit\n"
-            "  -n      don't switch to newly created task\n"
-            "  -q      do not write anything to standard error output"
+        .sdesc = "  Add a new task to project",
+        .opts  = "  Options:\n"
+            "    -f      do not interrupt if task exists, process others\n"
+            "    -g      generate task ID (under development)\n"
+            "    -h      show this help and exit\n"
+            "    -n      don't switch to newly created task\n"
+            "    -p      project name (default is current)\n"
+            "    -q      do not write anything to standard error output"
     },
     {
         .tag = TAGBASIC,
         .name  = "del",
-        .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
-            "Try '" PROGRAM " help del' for more info.",
-        .sdesc = "delete task",
-        .desc  = "With no option `-p' delete task from current project.\n"
-            "  -p      specify an project to add a task to\n"
-            "  -f      do not interrupt if task does not exist, process others\n"
-            "  -h      show this help and exit\n"
-            "  -q      do not write anything to standard error output"
+        .synop = "Usage: " PROGRAM " del [OPTION]... ID..",
+        .sdesc = "  Delete task from project",
+        .opts  = "  Options:\n"
+            "    -f      do not interrupt if task does not exist, process others\n"
+            "    -h      show this help and exit\n"
+            "    -p      project to delete a task from (default current)\n"
+            "    -q      do not write anything to standard error output"
     },
     {
         .tag = TAGMISC,
         .name  = "find",
         .synop = "Usage: " PROGRAM " find [OPTION]... PRJ",
         .sdesc = "find a task by ID/tag",
-        .desc  = "With no option `-p' PRJ is current project.\n"
     },
     {
         .tag = TAGMISC,
         .name  = "flow",
         .synop = "Usage: " PROGRAM " flow [OPTION]... PRJ",
         .sdesc = "show and set project workflow",
-        .desc  = "With no option `-p' PRJ is current project.\n"
     },
     {
         .tag = TAGMISC,
         .name  = "grep",
         .synop = "Usage: " PROGRAM " grep [OPTION]... PRJ",
         .sdesc = "find pattern in a task",
-        .desc  = "With no option `-p' PRJ is current project.\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "list",
         .synop = "Usage: " PROGRAM " list [OPTION]... PRJ",
         .sdesc = "list project tasks",
-        .desc  = "With no option `-p' PRJ is current project.\n"
-            "  -A      list all tasks\n"
-            "  -a      list almost all tasks (expect for archieved)\n"
-            "  -h      show this help and exit\n"
-            "  -t      list only current and previous tasks\n"
+        .opts  = "  Options:\n"
+            "    -A      list all tasks\n"
+            "    -a      list almost all tasks (expect for archieved)\n"
+            "    -h      show this help and exit\n"
+            "    -t      list only current and previous tasks\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "prev",
         .synop = "Usage: " PROGRAM " prev",
-        .sdesc = "switch to previous task",
+        .sdesc = "  Switch to previous task",
     },
     {
         .tag = TAGBASIC,
         .name  = "show",
         .synop = PROGRAM " show ID... [PRJ]",
-        .sdesc = "show task info",
-        .desc  = "show description",
+        .sdesc = "  Show task info",
+        .opts  = "  Options:\n"
+            "    -p      project name (default current)\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "sync",
         .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...",
         .sdesc = "synchronize task",
-        .desc  = "With no option `-p' sync task in current project.\n"
-            "  -p      specify an project\n"
-            "  -f      do not interrupt if task not found, process others\n"
-            "  -h      show this help and exit\n"
-            "  -n      don't switch to synced task\n"
-            "  -q      do not write anything to standard error output"
+        .opts  = "  Options:\n"
+            "    -f      do not interrupt if task not found, process others\n"
+            "    -h      show this help and exit\n"
+            "    -n      don't switch to synced task\n"
+            "    -p      project name (default current)\n"
+            "    -q      do not write anything to standard error output"
     },
     {
         .tag = TAGBASIC,
         .name  = "use",
-        .synop = PROGRAM " use [OPTION] ID",
-        .sdesc = "  switch to task",
-        .desc  = "  With no option `-p' switch to task in current project.\n"
-            "    Options:\n"
-            "      -h      show this help and exit\n"
-            "      -p      specify an project\n"
+        .synop = "Usage: " PROGRAM " use [OPTION] ID",
+        .sdesc = "  Switch to task by its ID",
+        .opts  = "  Options:\n"
+            "    -h      show this help and exit\n"
+            "    -p      project name (default is current)\n"
     },
 
     {
         .tag = TAGOBJ,
         .name  = "prj",
         .synop = PROGRAM " prj SUBCMD [OPTION] NAME",
-        .sdesc = "project manager",
-        .desc  = "project description",
+        .sdesc = "  Project manager",
     },
     {
         .tag = TAGOBJ,
         .name  = "pgm",
-        .sdesc = "plugin manager",
-        .desc  = "pgm description"
+        .synop = "Usage: " PROGRAM " pgm PLUGIN [OPTION]...\n",
+        .sdesc = "  Plugin manager",
     },
 
     {
@@ -156,41 +149,42 @@ struct help helptab[] = {
         .name  = "col",
         .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...",
         .sdesc = "move task to column",
-        .desc  = "With no option `-p' operate on current project.\n"
-            "COLUMN is column to move a task to.\n"
-            "Options:\n"
-            "  -p      specify project name\n"
-            "  -l      list project columns\n"
-            "  -h      show this help and exit"
+        .opts  = "Options:\n"
+            "    -p      project name (default is current)\n"
+            "    -l      list project columns\n"
+            "    -h      show this help and exit"
     },
     {
         .tag = TAGMISC,
         .name  = "link",
         .synop = "Usage: " PROGRAM " link [OPTION]... PID CID",
-        .sdesc = "link tasks together",
-        .desc  = "With no option `-p' link a new task in current project.\n"
-            "Options:\n"
-            "  -c      link task as child\n"
-            "  -l      link two tasks\n"
-            "  -p      link task as parent\n"
+        .sdesc = "  Link tasks together",
+        .opts  = "Options:\n"
+            "    -c      link task as child\n"
+            "    -l      link two tasks\n"
+            "    -p      link task as parent\n"
     },
     {
         .tag = TAGMISC,
         .name  = "move",
         .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]",
-        .sdesc = "move (rename) tasks",
-        .desc  = "Options:\n"
-            "  -f      overwrite destination task\n"
-            "  -d      destination project\n"
-            "  -s      source project",
+        .sdesc = "  Move (rename) tasks",
+        .opts  = "  Options:\n"
+            "    -f      overwrite destination task\n"
+            "    -d      destination project\n"
+            "    -s      source project",
 
     },
     {
         .tag = TAGMISC,
         .name  = "set",
-        .synop = PROGRAM " set OPTION... [ID]... [PRJ]",
-        .sdesc = "set task unit values",
-        .desc  = "set description",
+        .synop = "Usage: " PROGRAM " set OPTION... [ID]...",
+        .sdesc = "  Set task unit values",
+        .opts  = "Options:\n"
+            "    -d      task description\n"
+            "    -p      project name (default current)\n"
+            "    -P      task priority\n"
+            "    -t      task type\n"
     },
 };
 
@@ -246,7 +240,8 @@ int help_lookup(const char *cmd)
         if (strcmp(helptab[i].name, cmd) == 0) {
             printf("%s\n", helptab[i].synop);
             printf("%s\n\n", helptab[i].sdesc);
-            printf("%s\n", helptab[i].desc);
+            //printf("%s\n\n", helptab[i].desc);
+            printf("%s\n", helptab[i].opts);
             return TMAN_OK;
         }
     }
