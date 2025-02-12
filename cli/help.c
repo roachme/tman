@@ -129,9 +129,12 @@ struct help helptab[] = {
     {
         .tag = TAGBASIC,
         .name  = "use",
-        .synop = PROGRAM " use ID [PRJ]",
-        .sdesc = "switch to task",
-        .desc  = "use description",
+        .synop = PROGRAM " use [OPTION] ID",
+        .sdesc = "  switch to task",
+        .desc  = "  With no option `-p' switch to task in current project.\n"
+            "    Options:\n"
+            "      -h      show this help and exit\n"
+            "      -p      specify an project\n"
     },
 
     {
