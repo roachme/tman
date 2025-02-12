@@ -88,7 +88,7 @@ struct help helptab[] = {
         .tag = TAGBASIC,
         .name  = "list",
         .synop = "Usage: " PROGRAM " list [OPTION]... PRJ",
-        .sdesc = "list project tasks",
+        .sdesc = "  List project tasks",
         .opts  = "  Options:\n"
             "    -A      list all tasks\n"
             "    -a      list almost all tasks (expect for archieved)\n"
@@ -251,9 +251,8 @@ int help_lookup(const char *cmd)
 int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    char *cmd;
     //char *key = NULL;
-    int status;
+    int i, status;
 
     while ((c = getopt(argc, argv, "dk:")) != -1) {
         switch (c) {
@@ -263,8 +262,9 @@ int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
         };
     }
 
-    cmd = argv[optind];
-    if ((status = help_lookup(cmd)) != TMAN_OK)
-        return elog(status, "cannot find '%s': %s", cmd, tman_strerror());
-    return TMAN_OK;
+    for (i = optind; i < argc; ++i) {
+        if ((status = help_lookup(argv[i])) != TMAN_OK)
+            return elog(status, "cannot find '%s': %s", argv[i], tman_strerror());
+    }
+    return status;
 }
