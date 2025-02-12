@@ -1,6 +1,7 @@
 #include "cli.h"
 #include "find.h"
 
+#include <bits/getopt_core.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -28,19 +29,18 @@ static int pretty_find(tman_ctx_t *ctx, char *prj, char *descpatt)
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_find(int argc, char **argv, tman_ctx_t *ctx)
 {
-    char c;
+    char c, *prj, *pattern;
     int i, showhelp, status;
     struct tman_id_list_opt opt = { };
 
-    /*
-        -i - find by task ID
-        -d - find by task descripton
-    */
     showhelp = FALSE;
-    while ((c = getopt(argc, argv, ":dihp:")) != -1) {
+    prj = pattern = NULL;
+    while ((c = getopt(argc, argv, ":hp:")) != -1) {
         switch (c) {
             case 'h':
                 showhelp = TRUE; break;
+            case 'p':
+                prj = optarg;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -52,11 +52,14 @@ int tman_cli_find(int argc, char **argv, tman_ctx_t *ctx)
     if (showhelp == 1)
         return help_usage("find");
 
+    if ((pattern = argv[optind++]) == NULL) {
+        elog(1, "PATTERN is missing");
+        return 1;
+    }
 
     i = optind;
     do {
-        status = pretty_find(ctx, NULL, argv[i]);
+        status = pretty_find(ctx, argv[i], pattern);
     } while (++i < argc);
     return status;
 }
-
