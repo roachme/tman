@@ -1,14 +1,12 @@
 #ifndef HELP_H
 #define HELP_H
 
-#define HELPSIZE 10
-
 struct help {
-    char tag[100];
-    char name[100];
-    char synop[100];
-    char sdesc[1000];
-    char desc[1000];
+    const char *tag;
+    const char *name;
+    const char *synop;
+    const char *desc_short;
+    const char *desc_long;
 };
 
 int help_usage(const char *cmd);

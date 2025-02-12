@@ -10,184 +10,348 @@
 #define TAGMISC     "bin-misc"
 #define TAGINFO     "bin-info"
 
+struct helpctx {
+    int synop;
+    int desc_short;
+    int desc_long;
+};
+
+struct helpctx helpctx = {
+    .synop = FALSE,
+    .desc_short = FALSE,
+    .desc_long = FALSE,
+};
+
 struct help helptab[] = {
     {
         .tag = TAGSYSTEM,
         .name  = "cfg",
-        .sdesc = "configuration manager",
-        .desc  = "cfg description"
+        .synop = "Usage: " PROGRAM " cfg\n",
+        .desc_short = "Manage system configuration file.\n",
+        .desc_long  = "\n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGSYSTEM,
         .name  = "chk",
-        .sdesc = "check system health",
-        .desc  = "cfg description"
+        .synop = "Usage: " PROGRAM " chk\n",
+        .desc_short = "Check system health.\n",
+        .desc_long  = "\n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGSYSTEM,
         .name  = "help",
-        .synop = PROGRAM " help [CMD]",
-        .sdesc = "show this help message and exit",
-        .desc  = "help description",
+        .synop = "Usage: " PROGRAM " help [OPTION] [CMD]\n",
+        .desc_short = "Show help message for command.\n",
+        .desc_long  = "\n\
+    If no CMD passed, list all commands with short description.\n\
+    \n\
+    Options:\n\
+      -d      output short description for each topic\n\
+      -s      output only a short usage synopsis for each topic matching\n\
+    \n\
+    Arguments:\n\
+      CMD     builtin command\n\
+    \n\
+    Exit status:\n\
+    Returns success unless PATTERN is not found or an invalid option is given.\n"
     },
     {
         .tag = TAGSYSTEM,
         .name  = "init",
-        .sdesc = "init directory structure",
-        .desc  = "init description"
+        .synop = "Usage: " PROGRAM " init\n",
+        .desc_short = "Init directory structure.\n",
+        .desc_long = "\n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGSYSTEM,
         .name  = "ver",
-        .synop = PROGRAM " ver",
-        .sdesc = "show version and exit",
-        .desc  = "ver description",
+        .synop = "Usage: " PROGRAM " ver\n",
+        .desc_short = "Show version and exit.\n",
+        .desc_long  = "\n\
+    Exit status:\n\
+    Always return success\n"
     },
 
     {
         .tag = TAGBASIC,
         .name  = "add",
-        .synop = "Usage: " PROGRAM " add [OPTION]... ID...",
-        .sdesc = "add new task",
-        .desc  = "With no option `-e' add a new task to current project.\n"
-            "  -e      specify an project to add a task to\n"
-            "  -g      generate task ID\n"
-            "  -f      do not interrupt if task exists, process others\n"
-            "  -h      show this help and exit\n"
-            "  -n      don't switch to newly created task\n"
-            "  -q      do not write anything to standard error output"
+        .synop = "Usage: " PROGRAM " add [OPTION]... ID...\n",
+        .desc_short = "Add a new task to project.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -f      do not interrupt if task exists, process others\n\
+      -g      generate task ID (under development)\n\
+      -h      show this help and exit\n\
+      -n      don't switch to newly created task\n\
+      -p      project name (default is current)\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Arguments:\n\
+      ID      task ID\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "del",
-        .synop = "Usage: " PROGRAM " del [OPTION]... ID..\n"
-            "Try '" PROGRAM " help del' for more info.",
-        .sdesc = "delete task",
-        .desc  = "With no option `-e' delete task from current project.\n"
-            "  -e      specify an project to add a task to\n"
-            "  -f      do not interrupt if task does not exist, process others\n"
-            "  -h      show this help and exit\n"
-            "  -q      do not write anything to standard error output"
+        .synop = "Usage: " PROGRAM " del [OPTION]... ID...\n",
+        .desc_short = "Delete task from project.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -f      do not interrupt if task does not exist, process others\n\
+      -h      show this help and exit\n\
+      -n      delete task without confirmation\n\
+      -p PRJ  project name (default is current)\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Arguments:\n\
+      ID      task ID (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGMISC,
         .name  = "find",
-        .synop = "Usage: " PROGRAM " find [OPTION]... PRJ",
-        .sdesc = "find a task by ID/tag",
-        .desc  = "With no option `-e' PRJ is current project.\n"
+        .synop = "Usage: " PROGRAM " find [OPTION]... PATTERN\n",
+        .desc_short = "Find a task by pattern.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -p PRJ  project name (default is current)\n\
+    \n\
+    Arguments:\n\
+      PATTERN      Pattern specifying a description topic\n\
+      PRJ          project name (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGMISC,
         .name  = "flow",
-        .synop = "Usage: " PROGRAM " flow [OPTION]... PRJ",
-        .sdesc = "show and set project workflow",
-        .desc  = "With no option `-e' PRJ is current project.\n"
+        .synop = "Usage: " PROGRAM " flow [OPTION]... FLOW\n",
+        .desc_short = "Show and set project workflow.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -p PRJ  project name (default is current)\n\
+    \n\
+    Arguments:\n\
+      PATTERN      Pattern specifying a description topic\n\
+      PRJ          project name (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGMISC,
         .name  = "grep",
-        .synop = "Usage: " PROGRAM " grep [OPTION]... PRJ",
-        .sdesc = "find pattern in a task",
-        .desc  = "With no option `-e' PRJ is current project.\n"
+        .synop = "Usage: " PROGRAM " grep [OPTION]... PATTERN\n",
+        .desc_short = "Find pattern in a task.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -p PRJ  project name (default is current)\n\
+    \n\
+    Arguments:\n\
+      PATTERN      Pattern specifying a description topic\n\
+      PRJ          project name (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "list",
-        .synop = "Usage: " PROGRAM " list [OPTION]... PRJ",
-        .sdesc = "list project tasks",
-        .desc  = "With no option `-e' PRJ is current project.\n"
-            "  -A      list all tasks\n"
-            "  -a      list almost all tasks (expect for archieved)\n"
-            "  -h      show this help and exit\n"
-            "  -t      list only current and previous tasks\n"
+        .synop = "Usage: " PROGRAM " list [OPTION]... [PRJ]...\n",
+        .desc_short = "List project tasks.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -A      list all tasks\n\
+      -a      list almost all tasks (expect for archieved)\n\
+      -h      show this help and exit\n\
+      -t      list only current and previous tasks\n\
+    \n\
+    Arguments:\n\
+      PRJ     project name (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "prev",
-        .synop = "Usage: " PROGRAM " prev",
-        .sdesc = "switch to previous task",
+        .synop = "Usage: " PROGRAM " prev [OPTION]...\n",
+        .desc_short = "Switch to previous task in current project.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+    \n\
+    Exit status:\n\
+    Return success if previous task and current project exists, otherwise fail\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "show",
-        .synop = PROGRAM " show ID... [PRJ]",
-        .sdesc = "show task info",
-        .desc  = "show description",
+        .synop = "Usage: " PROGRAM " show [OPTION]... [ID]...\n",
+        .desc_short = "Show task info.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -p PRJ  project name (default is current)\n\
+    \n\
+    Arguments:\n\
+      ID      task ID (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "sync",
-        .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...",
-        .sdesc = "synchronize task",
-        .desc  = "With no option `-e' sync task in current project.\n"
-            "  -e      specify an project\n"
-            "  -f      do not interrupt if task not found, process others\n"
-            "  -h      show this help and exit\n"
-            "  -n      don't switch to synced task\n"
-            "  -q      do not write anything to standard error output"
+        .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...\n",
+        .desc_short = "Synchronize (with) task.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -n      do not switch to task\n\
+      -p PRJ  project name (default is current)\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Arguments:\n\
+      ID      task ID (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGBASIC,
         .name  = "use",
-        .synop = PROGRAM " use ID [PRJ]",
-        .sdesc = "switch to task",
-        .desc  = "use description",
+        .synop = "Usage: " PROGRAM " use [OPTION]... ID\n",
+        .desc_short = "Switch to task by its ID.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -p      project name (default is current)\n\
+      \n\
+    Arguments:\n\
+      ID      task ID\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
 
     {
         .tag = TAGOBJ,
         .name  = "prj",
-        .synop = PROGRAM " prj SUBCMD [OPTION] NAME",
-        .sdesc = "project manager",
-        .desc  = "project description",
+        .synop = "Usage: " PROGRAM " prj SUBCMD [OPTION] NAME\n",
+        .desc_short = "Manage and show projects.\n",
+        .desc_long  = "\n\
+    Arguments:\n\
+      SUBCMD  project subcommand\n\
+    \n\
+    SUBCMD list:\n\
+      add     Add a new project\n\
+      del     Delete project with all tasks\n\
+      list    List projects\n\
+      prev    Switch to previous project\n\
+      set     Set project vaules (under development)\n\
+      show    Show project info (under development)\n\
+      sync    Switch to or synchronize (with) project\n\
+    \n\
+    Exit status:\n\
+    The return status is return status of subcommand.\n"
     },
     {
         .tag = TAGOBJ,
         .name  = "pgm",
-        .sdesc = "plugin manager",
-        .desc  = "pgm description"
+        .synop = "Usage: " PROGRAM " pgm PLUGIN [OPTION]...\n",
+        .desc_short = "Manage and show plugins.\n",
+        .desc_long  = "\n\
+    Arguments:\n\
+      PLUGIN  plugin name\n\
+    \n\
+    Exit status:\n\
+    The return status is return status of plugin.\n"
     },
 
     {
         .tag = TAGMISC,
         .name  = "col",
-        .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...",
-        .sdesc = "move task to column",
-        .desc  = "With no option `-e' operate on current project.\n"
-            "COLUMN is column to move a task to.\n"
-            "Options:\n"
-            "  -e      specify project name\n"
-            "  -l      list project columns\n"
-            "  -h      show this help and exit"
+        .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...\n",
+        .desc_short = "Move task to column.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -l      list project columns\n\
+      -h      show this help and exit\n\
+      -p PRJ  project name (default is current)\n\
+    \n\
+    Arguments:\n\
+      ID      task ID (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
+/*
+    Options:
+      -d	output short description for each topic
+*/
     {
         .tag = TAGMISC,
         .name  = "link",
-        .synop = "Usage: " PROGRAM " link [OPTION]... PID CID",
-        .sdesc = "link tasks together",
-        .desc  = "With no option `-e' link a new task in current project.\n"
-            "Options:\n"
-            "  -c      link task as child\n"
-            "  -l      link two tasks\n"
-            "  -p      link task as parent\n"
+        .synop = "Usage: " PROGRAM " link [OPTION]... PID CID\n",
+        .desc_short = "Link tasks together.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -c      link task as child\n\
+      -l      link two tasks\n\
+      -p PRJ  project name (default is current)\n\
+    \n\
+    Arguments:\n\
+      CID     child task ID\n\
+      PID     parent task ID\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGMISC,
         .name  = "move",
-        .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]",
-        .sdesc = "move (rename) tasks",
-        .desc  = "Options:\n"
-            "  -f      overwrite destination task\n"
-            "  -d      destination project\n"
-            "  -s      source project",
-
+        .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]\n",
+        .desc_short = "Move (rename) tasks.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -f      overwrite destination task\n\
+      -d      destination project\n\
+      -s      source project\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
     {
         .tag = TAGMISC,
         .name  = "set",
-        .synop = PROGRAM " set OPTION... [ID]... [PRJ]",
-        .sdesc = "set task unit values",
-        .desc  = "set description",
+        .synop = "Usage: " PROGRAM " set OPTION... [ID]...\n",
+        .desc_short = "Set task unit values.\n",
+        .desc_long  = "\n\
+    Options:\n\
+      -d      task description\n\
+      -p PRJ  project name (default is current)\n\
+      -P      task priority\n\
+      -t      task type\n\
+    \n\
+    Arguments:\n\
+      ID      task ID (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"
     },
 };
 
@@ -202,22 +366,22 @@ int help_list_commands(void)
     printf("System:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
         if (strcmp(helptab[i].tag, TAGSYSTEM) == 0)
-            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
+            printf("  %-6s - %s", helptab[i].name, helptab[i].desc_short);
 
     printf("\nBasic:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
         if (strcmp(helptab[i].tag, TAGBASIC) == 0)
-            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
+            printf("  %-6s - %s", helptab[i].name, helptab[i].desc_short);
 
     printf("\nMisc:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
         if (strcmp(helptab[i].tag, TAGMISC) == 0)
-            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
+            printf("  %-6s - %s", helptab[i].name, helptab[i].desc_short);
 
     printf("\nObject:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
         if (strcmp(helptab[i].tag, TAGOBJ) == 0)
-            printf("  %-6s - %s\n", helptab[i].name, helptab[i].sdesc);
+            printf("  %-6s - %s", helptab[i].name, helptab[i].desc_short);
 
     return TMAN_OK;
 }
@@ -226,9 +390,20 @@ int help_usage(const char *cmd)
 {
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i) {
         if (strcmp(helptab[i].name, cmd) == 0) {
-            printf("%s\n", helptab[i].synop);
-            printf("%s\n", helptab[i].sdesc);
+            printf("%s", helptab[i].synop);
+            printf("%s", helptab[i].desc_short);
             printf("Try '" PROGRAM " help %s' for more info.\n", cmd);
+            return 1;
+        }
+    }
+    return elog(1, "cannot access '%s': command not found", cmd);
+}
+
+int help_usage_description(const char *cmd)
+{
+    for (int i = 0; i < ARRAY_SIZE(helptab); ++i) {
+        if (strcmp(helptab[i].name, cmd) == 0) {
+            printf("%s\n", helptab[i].desc_short);
             return 1;
         }
     }
@@ -237,36 +412,67 @@ int help_usage(const char *cmd)
 
 int help_lookup(const char *cmd)
 {
+    int i, found, status;
+
     if (cmd == NULL)
         return help_list_commands();
-    for (int i = 0; i < ARRAY_SIZE(helptab); ++i) {
+
+    found = 0;
+    for (i = 0; i < ARRAY_SIZE(helptab); ++i) {
         if (strcmp(helptab[i].name, cmd) == 0) {
-            printf("%s\n", helptab[i].synop);
-            printf("%s\n\n", helptab[i].sdesc);
-            printf("%s\n", helptab[i].desc);
-            return TMAN_OK;
+            found = 1;
+            if (helpctx.synop) {
+                printf("%s",  helptab[i].synop);
+                continue;
+            }
+            if (helpctx.desc_short) {
+                printf("%s - %s", cmd, helptab[i].desc_short);
+                continue;
+            }
+
+            printf("%s", helptab[i].synop);
+            printf("    %s", helptab[i].desc_short);
+            printf("    %s", helptab[i].desc_long);
+            break;
         }
     }
-    return emod_set(TMAN_CMD_BIN);
+    if (!found)
+        return emod_set(TMAN_CMD_BIN);
+    return TMAN_OK;
 }
 
 int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    char *cmd;
-    //char *key = NULL;
-    int status;
+    int i, status;
 
-    while ((c = getopt(argc, argv, "dk:")) != -1) {
+    while ((c = getopt(argc, argv, ":dhs")) != -1) {
         switch (c) {
-            case 'k':
-                //key = optarg;
+            case 'd':
+                helpctx.desc_short = TRUE;
+                helpctx.synop = FALSE;
+                helpctx.desc_long = FALSE;
                 break;
+            case 'h':
+                break;
+            case 's':
+                helpctx.synop = TRUE;
+                helpctx.desc_short = FALSE;
+                helpctx.desc_long = FALSE;
+                break;
+            case ':':
+                return elog(1, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(1, "invalid option `%c'", optopt);
         };
     }
 
-    cmd = argv[optind];
-    if ((status = help_lookup(cmd)) != TMAN_OK)
-        return elog(status, "cannot find '%s': %s", cmd, tman_strerror());
-    return TMAN_OK;
+    if (optind == argc)
+        return help_list_commands();
+
+    for (i = optind; i < argc; ++i) {
+        if ((status = help_lookup(argv[i])) != TMAN_OK)
+            elog(status, "cannot find '%s': %s", argv[i], tman_strerror());
+    }
+    return status;
 }
