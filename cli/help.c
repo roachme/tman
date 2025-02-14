@@ -105,7 +105,6 @@ struct help helptab[] = {
         .desc_short = "Delete task from project.\n",
         .desc_long  = "\n\
     Options:\n\
-      -f      do not interrupt if task does not exist, process others\n\
       -h      show this help and exit\n\
       -n      delete task without confirmation\n\
       -p PRJ  project name (default is current)\n\

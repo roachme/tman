@@ -6,16 +6,14 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c, *prj, *id, *errfmt;
     struct tman_id_del_opt opt = { };
-    int i, choice, force, quiet, showhelp, showprompt, status;
+    int i, choice, quiet, showhelp, showprompt, status;
 
     prj = id =  NULL;
     showprompt = TRUE;
-    force = quiet = showhelp = FALSE;
+    quiet = showhelp = FALSE;
     errfmt = "cannot delete task '%s': %s";
     while ((c = getopt(argc, argv, ":fhnp:q")) != -1) {
         switch (c) {
-            case 'f':
-                force = TRUE; break ;
             case 'h':
                 showhelp = TRUE; break ;
             case 'n':
@@ -47,8 +45,6 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
         if ((status = tman_id_del(ctx, prj, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i] ? argv[i] : "NOCURR", tman_strerror());
-            if (force == TRUE)
-                break;
         }
     } while (++i < argc);
 
