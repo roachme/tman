@@ -46,7 +46,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
     do {
         if ((status = tman_id_del(ctx, prj, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_strerror());
+                elog(status, errfmt, argv[i] ? argv[i] : "NOCURR", tman_strerror());
             if (force == TRUE)
                 break;
         }
