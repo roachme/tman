@@ -6,19 +6,22 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c, *prj, *id, *errfmt;
     struct tman_id_del_opt opt = { };
-    int i, force, quiet, showhelp, status;
+    int i, choice, force, quiet, showhelp, showprompt, status;
 
     prj = id =  NULL;
+    showprompt = TRUE;
     force = quiet = showhelp = FALSE;
     errfmt = "cannot delete task '%s': %s";
-    while ((c = getopt(argc, argv, ":p:fhq")) != -1) {
+    while ((c = getopt(argc, argv, ":fhnp:q")) != -1) {
         switch (c) {
-            case 'p':
-                prj = optarg; break ;
             case 'f':
                 force = TRUE; break ;
             case 'h':
                 showhelp = TRUE; break ;
+            case 'n':
+                showprompt = FALSE; break ;
+            case 'p':
+                prj = optarg; break ;
             case 'q':
                 quiet = TRUE; break ;
             case ':':
@@ -30,6 +33,14 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
 
     if (showhelp == TRUE)
         return help_usage("del");
+    else if (showprompt) {
+        /* Hotfix: if you add to stdout, than it'll be catched in my shell.  */
+        fprintf(stderr, "Are you sure to delete task(s)? [y/N] ");
+        choice = getchar();
+        if (choice != 'y' && choice != 'Y') {
+            return 0;
+        }
+    }
 
     i = optind;
     do {
