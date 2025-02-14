@@ -102,7 +102,7 @@ static int _prj_set(int argc, char **argv, tman_ctx_t *ctx)
     return 0;
 }
 
-static int _prj_use(int argc, char **argv, tman_ctx_t *ctx)
+static int _prj_sync(int argc, char **argv, tman_ctx_t *ctx)
 {
     int status;
     char *prj;
@@ -124,7 +124,7 @@ static const builtin_t prjcmds[] = {
     { .name = "prev", .func = &_prj_prev },
     { .name = "set",  .func = &_prj_set  },
     { .name = "show", .func = &_prj_show }, // under consideration
-    { .name = "use",  .func = &_prj_use  },
+    { .name = "sync", .func = &_prj_sync },
 };
 
 int tman_cli_prj(int argc, char **argv, tman_ctx_t *ctx)
