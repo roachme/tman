@@ -47,9 +47,6 @@ struct tman_id_col_opt {
 struct tman_id_del_opt {
 };
 
-struct tman_id_use_opt {
-};
-
 struct tman_id_set_opt {
 };
 
@@ -113,7 +110,6 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt);
 int tman_id_set (tman_ctx_t *ctx, char *prj, char *id, struct unit *unitbin, struct tman_id_set_opt *opt);
 int tman_id_show (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *opt);
 int tman_id_sync(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_sync_opt *opt);
-int tman_id_use (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_use_opt *opt);
 char *tman_id_getcurr(tman_ctx_t *ctx, char *prj);
 char *tman_id_getprev(tman_ctx_t *ctx, char *prj);
 

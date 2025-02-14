@@ -216,7 +216,7 @@ struct help helptab[] = {
         .tag = TAGBASIC,
         .name  = "sync",
         .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...\n",
-        .desc_short = "Synchronize (with) task.\n",
+        .desc_short = "Switch to or synchronize (with) task.\n",
         .desc_long  = "\n\
     Options:\n\
       -h      show this help and exit\n\
@@ -226,22 +226,6 @@ struct help helptab[] = {
     \n\
     Arguments:\n\
       ID      task ID (default current)\n\
-    \n\
-    Exit status:\n\
-    Under development\n"
-    },
-    {
-        .tag = TAGBASIC,
-        .name  = "use",
-        .synop = "Usage: " PROGRAM " use [OPTION]... ID\n",
-        .desc_short = "Switch to task by its ID.\n",
-        .desc_long  = "\n\
-    Options:\n\
-      -h      show this help and exit\n\
-      -p      project name (default is current)\n\
-      \n\
-    Arguments:\n\
-      ID      task ID\n\
     \n\
     Exit status:\n\
     Under development\n"
