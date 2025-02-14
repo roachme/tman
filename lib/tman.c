@@ -452,19 +452,6 @@ int tman_id_sync(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_sync_opt *
     return TMAN_OK;
 }
 
-int tman_id_use(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_use_opt *opt)
-{
-    if ((status = chkargs(prj, id)))
-        return status;
-
-    /* If prj not current then switch to it.  */
-    if (prj_iscurr(taskprj) == FALSE && prj_addcurr(taskprj) != 0)
-        return emod_set(TMAN_PRJ_SWITCH);
-    else if (hookact("use", taskprj, taskid))
-        return emod_set(TMAN_EHOOK);
-    return task_move(taskprj, taskid, COLCURR);
-}
-
 char *tman_id_getcurr(tman_ctx_t *ctx, char *prj)
 {
     if (chkargs(prj, NULL))

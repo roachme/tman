@@ -29,7 +29,6 @@ int tman_cli_prev(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_set(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_show(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx);
-int tman_cli_use(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_ver(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t *ctx);
 

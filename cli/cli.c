@@ -22,7 +22,6 @@ static const builtin_t builtins[] = {
     { .name = "set",  .func = &tman_cli_set,  .setuplvl = TMAN_SETUPCHECK },
     { .name = "show", .func = &tman_cli_show, .setuplvl = TMAN_SETUPCHECK },
     { .name = "sync", .func = &tman_cli_sync, .setuplvl = TMAN_SETUPCHECK },
-    { .name = "use",  .func = &tman_cli_use,  .setuplvl = TMAN_SETUPCHECK },
     { .name = "ver",  .func = &tman_cli_ver,  .setuplvl = TMAN_SETUPSOFT },
 };
 
