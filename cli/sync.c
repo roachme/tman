@@ -4,24 +4,22 @@
 int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c, *errfmt, *prj;
-    int i, force, quiet, showhelp, status;
+    int i, quiet, showhelp, status;
     struct tman_id_sync_opt opt = {
         .doswitch = TRUE,
     };
 
     prj = NULL;
-    force = quiet = showhelp = FALSE;
+    quiet = showhelp = FALSE;
     errfmt =  "cannot sync '%s': %s";
-    while ((c = getopt(argc, argv, ":p:fhnq")) != -1) {
+    while ((c = getopt(argc, argv, ":hnp:q")) != -1) {
         switch (c) {
-            case 'p':
-                prj = optarg; break ;
-            case 'f':
-                force = TRUE; break ;
             case 'h':
                 showhelp = TRUE; break;
             case 'n':
                 opt.doswitch = FALSE; break;
+            case 'p':
+                prj = optarg; break ;
             case 'q':
                 quiet = TRUE; break ;
             case ':':
@@ -39,8 +37,6 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
         if ((status = tman_id_sync(ctx, prj, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
-            if (force == TRUE)
-                break;
         }
     } while (++i < argc);
 
