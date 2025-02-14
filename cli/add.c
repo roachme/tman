@@ -8,21 +8,19 @@
 int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
 {
     char *prj, *errfmt;
-    int quiet, force, showhelp, status, i, c;
+    int quiet, showhelp, status, i, c;
     struct tman_id_add_opt opt = {
         .doswitch = TRUE,
         .dogenerate = FALSE,
     };
 
     prj = NULL;
-    force = quiet = showhelp = FALSE;
+    quiet = showhelp = FALSE;
     errfmt = "cannot create task '%s': %s";
-    while ((c = getopt(argc, argv, ":p:fghnq")) != -1) {
+    while ((c = getopt(argc, argv, ":p:ghnq")) != -1) {
         switch (c) {
             case 'p':
                 prj = optarg; break;
-            case 'f':
-                force = TRUE; break;
             case 'g':
                 opt.dogenerate = TRUE; break;
             case 'h':
@@ -49,8 +47,6 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
         if ((status = tman_id_add(ctx, prj, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
-            if (force == FALSE)
-                break;
         }
     }
     return opt.doswitch && status == TMAN_OK ? tman_pwd() : status;

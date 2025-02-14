@@ -85,11 +85,10 @@ struct help helptab[] = {
         .desc_short = "Add a new task to project.\n",
         .desc_long  = "\n\
     Options:\n\
-      -f      do not interrupt if task exists, process others\n\
       -g      generate task ID (under development)\n\
       -h      show this help and exit\n\
       -n      don't switch to newly created task\n\
-      -p      project name (default is current)\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
