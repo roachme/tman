@@ -378,7 +378,7 @@ int help_usage(const char *cmd)
             return 1;
         }
     }
-    return elog(1, "cannot access '%s': command not found", cmd);
+    return elog(1, "%s: command not found", cmd);
 }
 
 int help_usage_description(const char *cmd)
@@ -389,7 +389,7 @@ int help_usage_description(const char *cmd)
             return 1;
         }
     }
-    return elog(1, "cannot access '%s': command not found", cmd);
+    return elog(1, "%s: command not found", cmd);
 }
 
 int help_lookup(const char *cmd)
@@ -454,7 +454,7 @@ int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
 
     for (i = optind; i < argc; ++i) {
         if ((status = help_lookup(argv[i])) != TMAN_OK)
-            elog(status, "cannot find '%s': %s", argv[i], tman_strerror());
+            elog(status, "%s: %s", argv[i], tman_strerror());
     }
     return status;
 }
