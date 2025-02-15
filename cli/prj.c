@@ -48,13 +48,6 @@ static int _prj_add(int argc, char **argv, tman_ctx_t *ctx)
     return status == TMAN_OK ? tman_pwd() : 1;
 }
 
-// roach: maybe it'll be useful
-static int _prj_show(int argc, char **argv, tman_ctx_t *ctx)
-{
-    elog(1, "under development");
-    return 0;
-}
-
 static int _prj_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
@@ -123,6 +116,14 @@ static int _prj_prev(int argc, char **argv, tman_ctx_t *ctx)
 
 static int _prj_set(int argc, char **argv, tman_ctx_t *ctx)
 {
+    elog(1, "under development");
+    return 0;
+}
+
+// roach: maybe it'll be useful
+static int _prj_show(int argc, char **argv, tman_ctx_t *ctx)
+{
+    elog(1, "under development");
     return 0;
 }
 
