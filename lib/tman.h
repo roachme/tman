@@ -34,7 +34,7 @@ typedef struct tman_context {
 } tman_ctx_t;
 
 struct tman_id_add_opt {
-    int doswitch;   /* Switch to newly created task */
+    int doswitch;   /* Switch task */
     int dogenerate; /* Generate task ID */
 };
 
@@ -54,7 +54,7 @@ struct tman_id_prev_opt {
 };
 
 struct tman_id_sync_opt {
-    int doswitch;   /* Switch to newly created task */
+    int doswitch;   /* Switch task */
 };
 
 struct tman_id_list_opt {
@@ -81,7 +81,8 @@ struct tman_prj_prev_opt {
 struct tman_prj_set_opt {
 };
 
-struct tman_prj_use_opt {
+struct tman_prj_sync_opt {
+    int doswitch;   /* Switch to project  */
 };
 
 extern struct tmanstruct tmanfs;
@@ -119,7 +120,7 @@ int tman_prj_del (tman_ctx_t *ctx, char *prj, struct tman_prj_del_opt *opt);
 int tman_prj_list(tman_ctx_t *ctx, struct tman_prj_list_opt *opt);
 int tman_prj_prev(tman_ctx_t *ctx, struct tman_prj_prev_opt *opt);
 int tman_prj_set (tman_ctx_t *ctx, char *prj, struct tman_prj_set_opt *opt);
-int tman_prj_use (tman_ctx_t *ctx, char *prj, struct tman_prj_use_opt *opt);
+int tman_prj_sync(tman_ctx_t *ctx, char *prj, struct tman_prj_sync_opt *opt);
 char *tman_prj_getcurr(tman_ctx_t *ctx);
 char *tman_prj_getprev(tman_ctx_t *ctx);
 

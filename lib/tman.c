@@ -561,11 +561,16 @@ int tman_prj_set(tman_ctx_t *ctx, char *prj, struct tman_prj_set_opt *opt)
     return TMAN_OK;
 }
 
-int tman_prj_use(tman_ctx_t *ctx, char *prj, struct tman_prj_use_opt *opt)
+int tman_prj_sync(tman_ctx_t *ctx, char *prj, struct tman_prj_sync_opt *opt)
 {
     if ((status = check_input_prj(prj)))
         return status;
-    return prj_addcurr(taskprj);
+
+    if (opt->doswitch == TRUE) {
+        if (prj_iscurr(taskprj) == FALSE && prj_addcurr(taskprj) != 0)
+            return emod_set(TMAN_PRJ_SWITCH);
+    }
+    return TMAN_OK;
 }
 
 char *tman_prj_getcurr(tman_ctx_t *ctx)
