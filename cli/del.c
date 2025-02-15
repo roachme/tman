@@ -40,6 +40,8 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
         }
     }
 
+    // TODO: if not current task gets deleted, then no need to
+    // change user's current directory.
     i = optind;
     do {
         if ((status = tman_id_del(ctx, prj, argv[i], &opt)) != TMAN_OK) {

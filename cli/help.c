@@ -215,7 +215,7 @@ struct help helptab[] = {
         .tag = TAGBASIC,
         .name  = "sync",
         .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...\n",
-        .desc_short = "Switch to or synchronize (with) task.\n",
+        .desc_short = "Switch to or synchronize (with) task(s).\n",
         .desc_long  = "\n\
     Options:\n\
       -h      show this help and exit\n\
@@ -251,6 +251,42 @@ struct help helptab[] = {
     Exit status:\n\
     The return status is return status of subcommand.\n"
     },
+    {
+        .tag = TAGOBJ,
+        .name  = "prj-add",
+        .synop = "Usage: " PROGRAM " prj add [OPTION] NAME...\n",
+        .desc_short = "Add new project(s).\n",
+        .desc_long  = "\n\
+    Arguments:\n\
+      NAME    project name\n\
+    \n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -n      do not switch to project\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Exit status:\n\
+    The return status is return status of subcommand.\n"
+    },
+    {
+        .tag = TAGOBJ,
+        .name  = "prj-sync",
+        .synop = "Usage: " PROGRAM " prj sync [OPTION] NAME...\n",
+        .desc_short = "Switch to or synchronize (with) project(s).\n",
+        .desc_long  = "\n\
+    Arguments:\n\
+      NAME    project name\n\
+    \n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -n      do not switch to project\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Exit status:\n\
+    The return status is return status of subcommand.\n"
+    },
+
+
     {
         .tag = TAGOBJ,
         .name  = "pgm",
