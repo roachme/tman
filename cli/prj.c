@@ -18,16 +18,26 @@ static int tree_print_rec(struct tree *p)
 static int _prj_add(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int i, status;
+    int i, quiet, showhelp, status;
     struct tman_prj_add_opt opt;
 
-    while ((c = getopt(argc, argv, ":")) != -1) {
+    showhelp = quiet = FALSE;
+    while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
+            case 'h':
+                showhelp = TRUE; break;
+            case 'q':
+                quiet = TRUE; break ;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
                 return elog(1, "invalid option `%c'", optopt);
         }
+    }
+
+    if (showhelp) {
+        printf("prj add -h: under development\n");
+        return 0;
     }
 
     if (optind == argc)
@@ -48,13 +58,18 @@ static int _prj_show(int argc, char **argv, tman_ctx_t *ctx)
 static int _prj_del(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
-    int status;
-    int showpath = FALSE;
+    const char *errfmt = "cannot switch: %s";
+    int i, quiet, showpath, showhelp, status;
     char *old_cprj = tman_prj_getcurr(NULL);
     struct tman_prj_del_opt opt;
 
-    while ((c = getopt(argc, argv, ":")) != -1) {
+    quiet = showhelp = showpath = FALSE;
+    while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
+            case 'h':
+                showhelp = TRUE; break;
+            case 'q':
+                quiet = TRUE; break ;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -62,10 +77,19 @@ static int _prj_del(int argc, char **argv, tman_ctx_t *ctx)
         }
     }
 
-    for (int i = optind; i < argc; ++i)
-        status = tman_prj_del(ctx, argv[i], &opt);
-    if (optind == argc) /* delete current task id */
-        status = tman_prj_del(ctx, NULL, &opt);
+    if (showhelp) {
+        printf("prj del -h: under development\n");
+        return 0;
+    }
+
+    i = optind;
+    do {
+        if ((status = tman_prj_del(ctx, argv[i], &opt)) != TMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, argv[i], tman_strerror());
+        }
+    } while (++i < argc);
+
 
     // TODO: update current directory if current prj got deleted.
     if (strcpy(old_cprj, tman_prj_getcurr(NULL))) {
@@ -111,7 +135,7 @@ static int _prj_sync(int argc, char **argv, tman_ctx_t *ctx)
         .doswitch = TRUE,
     };
 
-    showhelp = FALSE;
+    quiet = showhelp = FALSE;
     while ((c = getopt(argc, argv, ":hnq")) != -1) {
         switch (c) {
             case 'h':
