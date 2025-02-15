@@ -2,6 +2,14 @@
 
 #include "cli.h"
 
+/*
+ * Tman util options:
+    -c      Use colors
+    -h      Use hooks
+    -i      Base dir (where DB is stored)
+    -p      Plugin dir (where plugins stored)
+*/
+
 static const builtin_t builtins[] = {
     { .name = "add",  .func = &tman_cli_add,  .setuplvl = TMAN_SETUPCHECK },
     { .name = "cfg",  .func = &tman_cli_cfg,  .setuplvl = TMAN_SETUPCHECK },
