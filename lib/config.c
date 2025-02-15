@@ -11,7 +11,7 @@
 // TODO: gotta add config checker so a program doesn't fail.
 
 struct config config = {
-    .usehooks = TRUE,
+    .usehooks = FALSE,
     .hooks.size = 0,
     .columns.size = 0,
 };
