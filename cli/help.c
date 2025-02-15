@@ -100,7 +100,7 @@ struct help helptab[] = {
     {
         .tag = TAGBASIC,
         .name  = "del",
-        .synop = "Usage: " PROGRAM " del [OPTION]... ID...\n",
+        .synop = "Usage: " PROGRAM " del [OPTION]... [ID]...\n",
         .desc_short = "Delete task from project.\n",
         .desc_long  = "\n\
     Options:\n\
@@ -266,7 +266,83 @@ struct help helptab[] = {
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    The return status is return status of subcommand.\n"
+    Under development.\n"
+    },
+    {
+        .tag = TAGOBJ,
+        .name  = "prj-del",
+        .synop = "Usage: " PROGRAM " prj del [OPTION] NAME...\n",
+        .desc_short = "Delete project(s).\n",
+        .desc_long  = "\n\
+    Arguments:\n\
+      NAME    project name (default current)\n\
+    \n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"
+    },
+    {
+        .tag = TAGOBJ,
+        .name  = "prj-list",
+        .synop = "Usage: " PROGRAM " prj list [OPTION]\n",
+        .desc_short = "List project(s).\n",
+        .desc_long  = "\n\
+    \n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"
+    },
+    {
+        .tag = TAGOBJ,
+        .name  = "prj-prev",
+        .synop = "Usage: " PROGRAM " prj prev\n",
+        .desc_short = "Switch to previous project.\n",
+        .desc_long  = "\n\
+    Arguments:\n\
+      NAME    project name\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"
+    },
+    {
+        .tag = TAGOBJ,
+        .name  = "prj-set",
+        .synop = "Usage: " PROGRAM " prj set [OPTION] [NAME]...\n",
+        .desc_short = "List project(s).\n",
+        .desc_long  = "\n\
+    This feature is under development.\n\
+    Arguments:\n\
+      NAME    project name\n\
+    \n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"
+    },
+    {
+        .tag = TAGOBJ,
+        .name  = "prj-show",
+        .synop = "Usage: " PROGRAM " prj show [OPTION] [NAME]...\n",
+        .desc_short = "Show project(s) info.\n",
+        .desc_long  = "\n\
+    This feature is under development.\n\
+    Arguments:\n\
+      NAME    project name\n\
+    \n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"
     },
     {
         .tag = TAGOBJ,
@@ -283,9 +359,8 @@ struct help helptab[] = {
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    The return status is return status of subcommand.\n"
+    Under development.\n"
     },
-
 
     {
         .tag = TAGOBJ,
@@ -317,10 +392,7 @@ struct help helptab[] = {
     Exit status:\n\
     Under development\n"
     },
-/*
-    Options:
-      -d	output short description for each topic
-*/
+
     {
         .tag = TAGMISC,
         .name  = "link",
