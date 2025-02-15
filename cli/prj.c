@@ -104,17 +104,43 @@ static int _prj_set(int argc, char **argv, tman_ctx_t *ctx)
 
 static int _prj_sync(int argc, char **argv, tman_ctx_t *ctx)
 {
-    int status;
+    int c, i, quiet, showhelp, status;
     char *prj;
     const char *errfmt = "cannot switch to '%s': %s";
-    struct tman_prj_use_opt opt;
+    struct tman_prj_sync_opt opt = {
+        .doswitch = TRUE,
+    };
 
-    // TODO: throws error if switch to current prj
-    if ((prj = argv[1]) == NULL)
-        return elog(1, errfmt, "NOENV", "project name required");
-    else if ((status = tman_prj_use(ctx, prj, &opt)) != TMAN_OK)
-        return elog(status, errfmt, prj, tman_strerror());
-    return tman_pwd();
+    showhelp = FALSE;
+    while ((c = getopt(argc, argv, ":hnq")) != -1) {
+        switch (c) {
+            case 'h':
+                showhelp = TRUE; break;
+            case 'n':
+                opt.doswitch = FALSE; break;
+            case 'q':
+                quiet = TRUE; break ;
+            case ':':
+                return elog(1, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(1, "invalid option `%c'", optopt);
+        }
+    }
+
+    if (showhelp) {
+        printf("prj sync -h: under development\n");
+        return 0;
+    }
+
+    i = optind;
+    do {
+        if ((status = tman_prj_sync(ctx, argv[i], &opt)) != TMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, argv[i], tman_strerror());
+        }
+    } while (++i < argc);
+
+    return opt.doswitch && status == TMAN_OK ? tman_pwd() : status;
 }
 
 static const builtin_t prjcmds[] = {
