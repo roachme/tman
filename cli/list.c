@@ -3,12 +3,13 @@
 
 #include "list.h"
 #include "cli.h"
+#include "color.h"
 
 static int recursive_tree_print(struct tree *p)
 {
     if (p != NULL) {
         recursive_tree_print(p->left);
-        printf("%c %-10s [%s] %s\n", p->mark, p->id, p->pgnout, p->desc);
+        printf("%c " BCYN "%-10s" CRESET "[%s] %s\n", p->mark, p->id, p->pgnout, p->desc);
         recursive_tree_print(p->right);
     }
     return 0;
