@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "errmod.h"
+#include "common.h"
 
 static int errcode = TMAN_OK;
 
@@ -18,6 +19,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_EINIT_PRJMOD]= "could not init module prj",
 
     [TMAN_PRJ_SWAP]       = "could not swap prjects",
+    [TMAN_PRJ_TOOLONG]    = "project name is too long, limit is " xstr(PRJSIZ),
     [TMAN_PRJ_ILLEG]      = "illegal prject name",
     [TMAN_PRJ_NOCURR]     = "no current prject",
     [TMAN_PRJ_NOPREV]     = "no previous prject",
@@ -27,6 +29,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_PRJ_DEL_CURR]   = "could not unmark current prject",
 
     [TMAN_ID_ILLEG]       = "illegal task ID",
+    [TMAN_ID_TOOLONG]     = "task ID is too long, limit is " xstr(IDSIZ),
     [TMAN_ID_NOSUCH]      = "no such task ID",
     [TMAN_ID_NOCURR]      = "no current task ID",
     [TMAN_ID_NOPREV]      = "no previous task ID",

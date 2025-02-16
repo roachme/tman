@@ -166,6 +166,8 @@ int tman_id_add(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_add_opt *op
     /* Special case: task ID should not exists. If this's a case - let it go. */
     if ((status = chkargs(prj, id)) && status != TMAN_ID_NOSUCH)
         return status;
+    else if (task_chklen(taskid) == FALSE)
+        return emod_set(TMAN_ID_TOOLONG);
     else if (task_ext(taskprj, taskid) == TRUE)
         return emod_set(TMAN_ID_EXISTS);
     else if (unit_chkbin(units) == FALSE)
@@ -475,6 +477,8 @@ int tman_prj_add(tman_ctx_t *ctx, char *prj, struct tman_prj_add_opt *opt)
         return status;
     else if (prj_exists(taskprj) == TRUE)
         return emod_set(TMAN_PRJ_EXISTS);
+    else if (prj_chklen(taskprj) == FALSE)
+        return emod_set(TMAN_PRJ_TOOLONG);
 
     if (dir_prj_add(tmanfs.base, taskprj))
         return emod_set(TMAN_DIR_PRJ_MAKE);
