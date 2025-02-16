@@ -3,12 +3,13 @@
 
 #include "prj.h"
 #include "cli.h"
+#include "color.h"
 
 static int tree_print_rec(struct tree *p)
 {
     if (p != NULL) {
         tree_print_rec(p->left);
-        printf("%c %-10s [%s] %s\n", p->mark, p->id, p->pgnout, p->desc);
+        printf(GRN "%c " CRESET BBLU "%-10s " CRESET "[%s] %s\n", p->mark, p->id, p->pgnout, p->desc);
         tree_print_rec(p->right);
     }
     return 0;
