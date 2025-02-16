@@ -17,6 +17,7 @@ enum tman_err_enum {
     TMAN_EINIT_PRJMOD,
 
     TMAN_PRJ_SWAP,
+    TMAN_PRJ_TOOLONG,
     TMAN_PRJ_ILLEG,
     TMAN_PRJ_NOCURR,
     TMAN_PRJ_NOPREV,
@@ -26,6 +27,7 @@ enum tman_err_enum {
     TMAN_PRJ_DEL_CURR,
 
     TMAN_ID_ILLEG,
+    TMAN_ID_TOOLONG,
     TMAN_ID_NOCURR,
     TMAN_ID_NOPREV,
     TMAN_ID_NOSUCH,

@@ -17,6 +17,9 @@
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
+#define xstr(s) str(s)
+#define str(s) #s
+
 extern struct tmanstruct tmanfs;
 
 #define BOOL            int

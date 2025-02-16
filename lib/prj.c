@@ -152,3 +152,8 @@ int prj_isprev(char *prj)
         return FALSE;
     return strncmp(prj, prjs[PPRJ], PRJSIZ) == 0;
 }
+
+int prj_chklen(char *prj)
+{
+    return strlen(prj) <= PRJSIZ;
+}

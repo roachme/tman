@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include "task.h"
 #include "col.h"
+#include "common.h"
 #include "osdep.h"
 
 static char curr[IDSIZ + 1], prev[IDSIZ + 1];
@@ -190,6 +191,14 @@ int task_chk(char *id)
         if (!(isalnum(*id) || *id == '_' || *id == '-'))
             return 0;
     return isalnum(*--id);
+}
+
+/*
+ * Return true if ID length's less or equal LIMIT, otherwise false.
+ */
+int task_chklen(char *id)
+{
+    return strlen(id) <= IDSIZ;
 }
 
 /*
