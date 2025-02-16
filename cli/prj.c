@@ -19,6 +19,7 @@ static int tree_print_rec(struct tree *p)
 static int _prj_add(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c;
+    const char *errfmt = "cannot add project '%s': %s";
     int i, quiet, showhelp, status;
     struct tman_prj_add_opt opt;
 
@@ -44,8 +45,12 @@ static int _prj_add(int argc, char **argv, tman_ctx_t *ctx)
     if (optind == argc)
         return elog(1, "task prj required");
 
-    for (i = optind; i < argc; ++i)
-        status = tman_prj_add(ctx, argv[i], &opt);
+    for (i = optind; i < argc; ++i) {
+        if ((status = tman_prj_add(ctx, argv[i], &opt)) != TMAN_OK) {
+            if (quiet == FALSE)
+                elog(1, errfmt, argv[i], tman_strerror());
+        }
+    }
     return status == TMAN_OK ? tman_pwd() : 1;
 }
 
