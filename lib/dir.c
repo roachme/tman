@@ -2,7 +2,7 @@
 #include "common.h"
 #include "osdep.h"
 
-static int _dbmkdir(char *base, char *prj, char *id)
+static int _id_dbmkdir(char *base, char *prj, char *id)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s/%s/.tman", base, prj, id);
@@ -13,7 +13,7 @@ int dir_id_add(char *base, char *prj, char *id)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s/%s", base, prj, id);
-    return !(MKDIR(path) == 0 && _dbmkdir(base, prj, id) == 0);
+    return !(MKDIR(path) == 0 && _id_dbmkdir(base, prj, id) == 0);
 }
 
 int dir_id_del(char *base, char *prj, char *id)
