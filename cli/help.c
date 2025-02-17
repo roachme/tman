@@ -5,6 +5,7 @@
 #include "cli.h"
 
 #define TAGOBJ      "bin-object"
+#define TAGOBJCMD   "bin-object-cmd"
 #define TAGSYSTEM   "bin-system"
 #define TAGBASIC    "bin-basic"
 #define TAGMISC     "bin-misc"
@@ -256,7 +257,7 @@ struct help helptab[] = {
     The return status is return status of subcommand.\n"
     },
     {
-        .tag = TAGOBJ,
+        .tag = TAGOBJCMD,
         .name  = "prj-add",
         .synop = "Usage: " PROGRAM " prj add [OPTION] NAME...\n",
         .desc_short = "Add new project(s).\n",
@@ -273,7 +274,7 @@ struct help helptab[] = {
     Under development.\n"
     },
     {
-        .tag = TAGOBJ,
+        .tag = TAGOBJCMD,
         .name  = "prj-del",
         .synop = "Usage: " PROGRAM " prj del [OPTION] NAME...\n",
         .desc_short = "Delete project(s).\n",
@@ -289,7 +290,7 @@ struct help helptab[] = {
     Under development.\n"
     },
     {
-        .tag = TAGOBJ,
+        .tag = TAGOBJCMD,
         .name  = "prj-list",
         .synop = "Usage: " PROGRAM " prj list [OPTION]\n",
         .desc_short = "List project(s).\n",
@@ -303,7 +304,7 @@ struct help helptab[] = {
     Under development.\n"
     },
     {
-        .tag = TAGOBJ,
+        .tag = TAGOBJCMD,
         .name  = "prj-prev",
         .synop = "Usage: " PROGRAM " prj prev\n",
         .desc_short = "Switch to previous project.\n",
@@ -315,7 +316,7 @@ struct help helptab[] = {
     Under development.\n"
     },
     {
-        .tag = TAGOBJ,
+        .tag = TAGOBJCMD,
         .name  = "prj-set",
         .synop = "Usage: " PROGRAM " prj set [OPTION] [NAME]...\n",
         .desc_short = "List project(s).\n",
@@ -332,7 +333,7 @@ struct help helptab[] = {
     Under development.\n"
     },
     {
-        .tag = TAGOBJ,
+        .tag = TAGOBJCMD,
         .name  = "prj-show",
         .synop = "Usage: " PROGRAM " prj show [OPTION] [NAME]...\n",
         .desc_short = "Show project(s) info.\n",
@@ -349,7 +350,7 @@ struct help helptab[] = {
     Under development.\n"
     },
     {
-        .tag = TAGOBJ,
+        .tag = TAGOBJCMD,
         .name  = "prj-sync",
         .synop = "Usage: " PROGRAM " prj sync [OPTION] NAME...\n",
         .desc_short = "Switch to or synchronize (with) project(s).\n",
