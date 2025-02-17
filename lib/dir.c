@@ -9,6 +9,13 @@ static int _id_dbmkdir(char *base, char *prj, char *id)
     return MKDIR(path);
 }
 
+static int _prj_dbmkdir(char *base, char *prj)
+{
+    char path[PATHSIZ + 1];
+    sprintf(path, "%s/%s/.tman", base, prj);
+    return MKDIR(path);
+}
+
 int dir_id_add(char *base, char *prj, char *id)
 {
     char path[PATHSIZ + 1];
@@ -48,7 +55,7 @@ int dir_prj_add(char *base, char *prj)
 {
     char path[PATHSIZ + 1];
     sprintf(path, "%s/%s/", base, prj);
-    return MKDIR(path);
+    return !(MKDIR(path) == 0 && _prj_dbmkdir(base, prj) == 0);
 }
 
 int dir_prj_del(char *base, char *prj)
