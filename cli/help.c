@@ -267,7 +267,7 @@ struct help helptab[] = {
     \n\
     Options:\n\
       -h      show this help and exit\n\
-      -n      do not switch to project\n\
+      -n      do not switch to newly created project\n\
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\

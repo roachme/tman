@@ -67,6 +67,7 @@ struct tman_pgn_opt {
 
 
 struct tman_prj_add_opt {
+    int doswitch;   /* Switch to newly created project  */
 };
 
 struct tman_prj_del_opt {

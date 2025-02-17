@@ -21,13 +21,17 @@ static int _prj_add(int argc, char **argv, tman_ctx_t *ctx)
     char c;
     const char *errfmt = "cannot add project '%s': %s";
     int i, quiet, showhelp, status;
-    struct tman_prj_add_opt opt;
+    struct tman_prj_add_opt opt = {
+        .doswitch = TRUE,
+    };
 
     showhelp = quiet = FALSE;
-    while ((c = getopt(argc, argv, ":hq")) != -1) {
+    while ((c = getopt(argc, argv, ":hnq")) != -1) {
         switch (c) {
             case 'h':
                 showhelp = TRUE; break;
+            case 'n':
+                opt.doswitch = FALSE; break;
             case 'q':
                 quiet = TRUE; break ;
             case ':':

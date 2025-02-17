@@ -482,7 +482,9 @@ int tman_prj_add(tman_ctx_t *ctx, char *prj, struct tman_prj_add_opt *opt)
 
     if (dir_prj_add(tmanfs.base, taskprj))
         return emod_set(TMAN_DIR_PRJ_MAKE);
-    return prj_addcurr(taskprj);
+    else if (opt->doswitch == TRUE && prj_addcurr(taskprj))
+        return emod_set(TMAN_PRJ_SWITCH);
+    return TMAN_OK;
 }
 
 int tman_prj_del(tman_ctx_t *ctx, char *prj, struct tman_prj_del_opt *opt)
