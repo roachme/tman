@@ -173,8 +173,6 @@ int tman_id_add(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_add_opt *op
     else if (unit_chkbin(units) == FALSE)
         return emod_set(TMAN_UNIT_ILLEG);
 
-    /* TODO: add support to add project even if it does not exist.  */
-
     if (dir_id_add(tmanfs.base, taskprj, taskid) != 0)
         return emod_set(TMAN_DIR_ID_MAKE);
     else if (unit_addbin(taskprj, taskid, units) != 0)
