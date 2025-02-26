@@ -7,6 +7,7 @@ Ideas:
     1. Replace cat & ls hooks with reading from file. Gonna highly optimize
        command exection.
     2. Add multiple users.
+    3. Add support for plugin to use libtman/tman commands.
 
 Prio: high
 1. Write config file parser and define config itself.
