@@ -197,6 +197,7 @@ struct help helptab[] = {
         .desc_long  = "\n\
     Options:\n\
       -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
     Return success if previous task and current project exists, otherwise fail\n"
