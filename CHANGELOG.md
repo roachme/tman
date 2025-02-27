@@ -10,6 +10,8 @@
 
 ### Changed
 
+- `cli/prj`: Delete extra space between columns
+
 ### Fixed
 
 ### Deleted
