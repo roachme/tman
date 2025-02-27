@@ -9,6 +9,7 @@
 - `cli/prev`: Add option quiet to suppress error messages
 
 ### Changed
+- `cli/prj`: Delete extra space between columns
 
 ### Fixed
 
