@@ -179,12 +179,14 @@ struct help helptab[] = {
         .desc_long  = "\n\
     Options:\n\
       -A      list all tasks\n\
-      -a      list almost all tasks (expect for archieved)\n\
+      -a      list almost all tasks (expect for done)\n\
+      -c COL  specify what column to list task from (under development)\n\
       -h      show this help and exit\n\
-      -t      list only current and previous tasks\n\
+      -s      list only current and previous tasks\n\
     \n\
     Arguments:\n\
       PRJ     project name (default current)\n\
+      COL     project column name\n\
     \n\
     Exit status:\n\
     Under development\n"

@@ -7,6 +7,7 @@
 - `cli`: Add extra space between task/project tag and description
 - `lib/dir`: Add support to create project hidden directory
 - `cli/prev`: Add option quiet to suppress error messages
+- `cli/list`: Add filter options for task list
 
 ### Changed
 
