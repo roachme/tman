@@ -1,5 +1,7 @@
 ## [Unreleased] - (format: 2025-02-17)
 
+## [0.0.5] - (2025-03-03)
+
 ### Added
 
 - `CHANGELOG`: Add a structure to CHANGELOG logs
