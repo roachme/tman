@@ -12,6 +12,7 @@ fi
 
 #TODO: check NEWVERSION value. Pattern: v<0-255>.<0-255>.<0-255>.
 #TODO: check NEWVERSION is greater than previous and does not exist already
+#TODO: update CHANGELOG: set new version and date
 
 git checkout master
 
