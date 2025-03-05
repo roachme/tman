@@ -8,6 +8,8 @@ Ideas:
      command exection.
   2. Add multiple users.
   3. Add support for plugin to use libtman/tman commands.
+  4. Add support to pass system config values via option to util.
+  5. Add option to show task columns in command `tman list`.
 
 Prio: high
 + 1. Write config file parser and define config itself.
