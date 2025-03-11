@@ -140,7 +140,6 @@ static int _prj_show(int argc, char **argv, tman_ctx_t *ctx)
 static int _prj_sync(int argc, char **argv, tman_ctx_t *ctx)
 {
     int c, i, quiet, showhelp, status;
-    char *prj;
     const char *errfmt = "cannot switch to '%s': %s";
     struct tman_prj_sync_opt opt = {
         .doswitch = TRUE,
