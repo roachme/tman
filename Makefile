@@ -2,7 +2,7 @@ PROGRAM=_tman
 CC=gcc
 SRCS=$(wildcard lib/*.c cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
-CFLAGS=-I lib -I cli
+CFLAGS=-I lib -I cli -Wall
 
 all: $(PROGRAM)
 .PHONY: clean $(PROGRAM)
