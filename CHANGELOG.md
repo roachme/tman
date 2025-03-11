@@ -1,5 +1,18 @@
 ## [Unreleased] - (format: 2025-02-17)
 
+### Added
+
+- `Makefile`: Turn on compiler warning messages
+
+### Changed
+
+### Fixed
+
+### Deleted
+
+### Deprecated
+
+
 ## [0.0.5] - (2025-03-03)
 
 ### Added
