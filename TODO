@@ -22,6 +22,7 @@ Prio: high
 
 Prio: mid
 + 1. Command `set' can't change task type.
+  2. Add a style checker.
 
 Prio: low
   1. Add command autocomplitions
