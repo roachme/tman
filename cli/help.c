@@ -510,7 +510,7 @@ int help_usage_description(const char *cmd)
 
 int help_lookup(const char *cmd)
 {
-    int i, found, status;
+    int i, found;
 
     if (cmd == NULL)
         return help_list_commands();
