@@ -3,6 +3,7 @@
 ### Added
 
 - `Makefile`: Turn on compiler warning messages
+- `docs`: Add a usage video
 
 ### Changed
 
