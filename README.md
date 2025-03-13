@@ -1,11 +1,12 @@
 ## Tman
 ##### Terminal task manager
 
+![command example](docs/tman.gif)
 
 
 ## ⇁  Problems
 During my work I encounter many subtaks I gotta do on the daily basis.
-Among them 
+Among them
 1. Clone Git repos to my machine and create branches in multiple repos (usually different for each task)
 2. Keep my task logs, sketches, notes and repos for each task somewhere. Structured and seperately
 3. Often switch between task, which involves context, notes, sketches, and especially Git branches
@@ -18,7 +19,7 @@ Tman comes with 3 basic ideas
 
 ## ⇁  Structure
 - Customize: Adjust the util for your workflow via config file.
-- Extensible: Extend util with predefined or your own plugins.  You can get full list of Tman plugins in `tman-pgn`. 
+- Extensible: Extend util with predefined or your own plugins.  You can get full list of Tman plugins in `tman-pgn`.
 
 ## ⇁  Dependencies
 No external dependencies, the whole program's written in C. Tho plugins might have dependencies. Take a look at plugins README.md for more info.
@@ -75,33 +76,49 @@ TMANPGNINS = /home/user/.tman/pgnins
 
 ## ⇁  Tman builtin commands
 ```
+Usage: tman [OBJECT] COMMAND [OPITONS]... [ID]...
+    Where OBJECT := { id | prj | pgm }
+    Where COMMAND is one of the builtin commands
+    Where ID is task ID
+Try 'tman help COMMAND' for more info.
+
 System:
-  cfg    - manipulate system configuration
-  init   - init directory structure
-  pgm    - plugin manager
+  cfg    - Manage system configuration file.
+  chk    - Check and repair a system.
+  help   - Show help message for command.
+  init   - Init directory structure.
+  ver    - Show version and exit.
 
 Basic:
-  add    - add a new task
-  del    - delete a task
-  prev   - switch to previous task
-  set    - set task unit values
-  sync   - synchronize task
-  use    - switch to specific task
+  add    - Add a new task to project.
+  del    - Delete task from project.
+  list   - List project tasks.
+  prev   - Switch to previous task in current project.
+  show   - Show task info.
+  sync   - Switch to or synchronize (with) task(s).
 
 Misc:
-  env    - manipulate environments
-  move   - move task to another environment
+  find   - Find a task by pattern.
+  flow   - Show and set project workflow.
+  grep   - Find pattern in a task.
+  col    - Move task to column.
+  link   - Link tasks together.
+  move   - Move (rename) tasks.
+  set    - Set task unit values.
 
-Info:
-  cat    - cat task info
-  help   - show this help message and exit
-  list   - list environment task
-  ver    - show version and exit
+Object:
+  prj    - Manage and show projects.
+  pgm    - Manage and show plugins.
 ```
 
 ## ⇁  Basic workflow
 1. To initalize util type in `tman init`.
-2. Now you're ready to create task boards (there're called `env` in Tman): `tman env add test`
-3. Once task board is created you can fill it out with task: `tman add test1`
-4. List all your task in current board: `tman list`
+2. Now you're ready to create a project: `tman prj add test`
+3. Once task project is created you can fill it with tasks: `tman add test1`
+4. List all your task in current project: `tman list`
 5. Show the content of task: `tman cat test1`
+
+
+## ⇁  Tips
+1. Use `tman help` to get list off commands.
+2. Or `tman help COMMAND` to get help on specified command.
