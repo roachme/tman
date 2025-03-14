@@ -1,17 +1,12 @@
 ## [Unreleased] - (format: 2025-02-17)
 
+
+## [0.0.6] - (2025-03-14)
+
 ### Added
 
 - `Makefile`: Turn on compiler warning messages
 - `docs`: Add a usage video
-
-### Changed
-
-### Fixed
-
-### Deleted
-
-### Deprecated
 
 
 ## [0.0.5] - (2025-03-03)
