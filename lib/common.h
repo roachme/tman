@@ -8,7 +8,7 @@
 #include "limit.h"
 
 #define PROGRAM     "tman"
-#define VERSION     "0.0.6"
+#define VERSION     "v0.0.6"
 
 #define TRUE        1
 #define FALSE       0
