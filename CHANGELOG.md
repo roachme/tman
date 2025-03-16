@@ -4,6 +4,19 @@
 
 - `scritps`: Refactor logic for script updver.sh
 
+### Changed
+
+- `cli/list`: Show plugin braces only there's plugin output
+
+### Fixed
+
+### Deleted
+
+### Deprecated
+
+
+## [0.0.6] - (2025-03-14)
+
 ### Added
 
 - `Makefile`: Turn on compiler warning messages

@@ -64,7 +64,7 @@ char *hookls(char *pgnout, char *prj, char *id)
 {
     int i;
     FILE *pipe;
-    char *prefix = "";
+    char *prefix = "  ";
     char line[BUFSIZ + 1] = {0};
 
     if (config.usehooks == FALSE)
@@ -80,16 +80,20 @@ char *hookls(char *pgnout, char *prj, char *id)
             return NULL;
         }
 
-        // TODO: simplify this shit
         // NOTE: gotta get a single word
         if (fgets(line, BUFSIZ, pipe)) {
             line[strcspn(line, "\n")] = 0;
-            strcpy(pgnout + strlen(pgnout), prefix);
-            strcpy(pgnout + strlen(pgnout), line);
-            prefix = " ";
+            strcat(pgnout, prefix);
+            strcat(pgnout, line);
         }
 
         pclose(pipe);
     }
+
+    if (pgnout[1] == ' ') {
+        pgnout[1] = '[';
+        strcat(pgnout, "]");
+    }
+
     return pgnout;
 }
