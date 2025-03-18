@@ -7,6 +7,7 @@
 ### Changed
 
 - `cli/list`: Show plugin braces only there's plugin output
+- `lib/tman`: Change return value of function tman_deinit()
 
 ### Fixed
 
