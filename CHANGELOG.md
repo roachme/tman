@@ -12,6 +12,8 @@
 
 ### Deleted
 
+- `lib`: Remove variable PROGRAM from lib part
+
 ### Deprecated
 
 

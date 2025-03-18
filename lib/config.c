@@ -107,6 +107,7 @@ static int parseconf(const char *fname)
 
 int config_init(void)
 {
+    const char *progname = "tman";
     char *homedir = getenv("HOME");
     char cfg[CONFIGSIZ + 1];
     const char cfgfmts[NUMCONFIG][CONFIGSIZ + 1] = {
@@ -115,7 +116,7 @@ int config_init(void)
     };
 
     for (int i = 0; i < NUMCONFIG; ++i) {
-        sprintf(cfg, cfgfmts[i], homedir, PROGRAM, PROGRAM);
+        sprintf(cfg, cfgfmts[i], homedir, progname, progname);
         if (ISFILE(cfg))
             return parseconf(cfg);
     }

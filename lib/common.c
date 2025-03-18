@@ -20,7 +20,6 @@ int elog(int status, const char *fmt, ...)
 {
     va_list arg;
     va_start(arg, fmt);
-    fprintf(stderr, "%s: ", PROGRAM);
     vfprintf(stderr, fmt, arg);
     fprintf(stderr, "\n");
     va_end(arg);
@@ -62,7 +61,6 @@ int wlog(char *fmt, ...)
 {
     va_list arg;
     va_start(arg, fmt);
-    fprintf(stderr, "%s: ", PROGRAM);
     vfprintf(stderr, fmt, arg);
     fprintf(stderr, "\n");
     va_end(arg);
@@ -73,7 +71,6 @@ int dlog(char *fmt, ...)
 {
     va_list arg;
     va_start(arg, fmt);
-    fprintf(stdout, "%s: ", PROGRAM);
     vfprintf(stdout, fmt, arg);
     fprintf(stdout, "\n");
     va_end(arg);
