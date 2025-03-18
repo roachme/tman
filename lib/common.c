@@ -16,16 +16,6 @@ char *formpath(char *dst, char *fmt, ...)
     return dst;
 }
 
-int elog(int status, const char *fmt, ...)
-{
-    va_list arg;
-    va_start(arg, fmt);
-    vfprintf(stderr, fmt, arg);
-    fprintf(stderr, "\n");
-    va_end(arg);
-    return status;
-}
-
 char *genpath_prj(char *prj)
 {
     sprintf(pathname, "%s/%s", base, prj);
@@ -55,24 +45,4 @@ char *genpath_unit(char *prj, char *id)
 {
     sprintf(pathname, "%s/%s/%s/.tman/unit", base, prj, id);
     return pathname;
-}
-
-int wlog(char *fmt, ...)
-{
-    va_list arg;
-    va_start(arg, fmt);
-    vfprintf(stderr, fmt, arg);
-    fprintf(stderr, "\n");
-    va_end(arg);
-    return 0;
-}
-
-int dlog(char *fmt, ...)
-{
-    va_list arg;
-    va_start(arg, fmt);
-    vfprintf(stdout, fmt, arg);
-    fprintf(stdout, "\n");
-    va_end(arg);
-    return 0;
 }

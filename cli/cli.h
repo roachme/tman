@@ -15,6 +15,9 @@ typedef struct builtin {
     int (*func)(int argc, char **argv, tman_ctx_t *ctx);
 } builtin_t;
 
+
+int elog(int status, const char *fmt, ...);
+
 // TODO: make argv const
 int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx);
 int tman_cli_cfg(int argc, char **argv, tman_ctx_t *ctx);

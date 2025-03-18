@@ -13,6 +13,7 @@
 ### Deleted
 
 - `lib`: Remove variable PROGRAM from lib part
+- `lib`: Remove logging functions
 
 ### Deprecated
 

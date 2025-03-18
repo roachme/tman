@@ -48,7 +48,6 @@ struct unit *hookshow(char *prj, char *id)
             continue;
 
         if ((pipe = popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
-            elog(1, "hookshow: failed to execute hookshow");
             continue;
         }
         while (fgets(line, BUFSIZ, pipe)) {
@@ -76,7 +75,6 @@ char *hookls(char *pgnout, char *prj, char *id)
             continue;
 
         if ((pipe = popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
-            elog(1, "hookls: failed to execute hookls");
             return NULL;
         }
 

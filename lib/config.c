@@ -35,7 +35,8 @@ static int parse_usehooks(const char *confkey, int *usehooks)
         *usehooks = FALSE;
         return 0;
     }
-    return elog(1, "'%s': invalid usehooks value", confval);
+    fprintf(stderr, "'%s': invalid usehooks value", confval);
+    return emod_set(TMAN_NODEF_ERR);
 }
 
 static int parse_hook(const char *hookname, struct hooks *hooks)
@@ -70,17 +71,23 @@ static int parseconf(const char *fname)
     char line[BUFSIZ + 1];
     char *token = NULL;
 
-    if ((fp = fopen(fname, "r")) == NULL)
-        return elog(1, "could not open config file");
+    if ((fp = fopen(fname, "r")) == NULL) {
+        fprintf(stderr, "could not open config file");
+        return emod_set(TMAN_NODEF_ERR);
+    }
 
     while (retcode == TMAN_OK && fgets(line, BUFSIZ, fp) != NULL) {
         token = strtok(line, delim);
         if (!token || strlen(token) == 0 || token[0] == '\n' || token[0] == '#')
             continue;
-        else if (config.hooks.size >= CONF_MAXHOOK)
-            return elog(1, "Too many hooks in config");
-        else if (config.columns.size >= CONF_MAXCOLDEF)
-            return elog(1, "Too many columns per prj in config");
+        else if (config.hooks.size >= CONF_MAXHOOK) {
+            fprintf(stderr, "Too many hooks in config");
+            return emod_set(TMAN_NODEF_ERR);
+        }
+        else if (config.columns.size >= CONF_MAXCOLDEF) {
+            fprintf(stderr, "Too many columns per prj in config");
+            return emod_set(TMAN_NODEF_ERR);
+        }
 
         if (strcmp(token, "TMANBASE") == 0)
             retcode = parsepath(config.base);
@@ -120,5 +127,6 @@ int config_init(void)
         if (ISFILE(cfg))
             return parseconf(cfg);
     }
-    return elog(1, "could not find system config file");
+    fprintf(stderr, "could not find system config file");
+    return emod_set(TMAN_NODEF_ERR);
 }

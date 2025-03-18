@@ -15,7 +15,10 @@ enum tman_err_enum {
     TMAN_EPGN,    /* Failed to execute plugin */
     TMAN_EOPENPRJDIR,
     TMAN_EINIT_PRJMOD,
+    TMAN_SYS_FS,
 
+    TMAN_PRJ_LOAD,
+    TMAN_PRJ_SAVE,
     TMAN_PRJ_SWAP,
     TMAN_PRJ_TOOLONG,
     TMAN_PRJ_ILLEG,
