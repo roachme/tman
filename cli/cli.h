@@ -6,6 +6,9 @@
 #include "help.h"
 #include "../lib/tman.h"
 
+#define PROGRAM     "tman"
+#define VERSION     "v0.0.6"
+
 typedef struct builtin {
     char name[CMDSIZ + 1];
     int setuplvl;
