@@ -11,6 +11,7 @@
 
 #include "prj.h"
 #include "common.h"
+#include "errmod.h"
 #include "osdep.h"
 
 #define CPRJ        0  /* index of current prj */
@@ -38,7 +39,7 @@ static int load(void)
     FILE *fp;
 
     if ((fp  = fopen(prjfile, "r")) == NULL)
-        return elog(1, "could not load prj state");
+        return emod_set(TMAN_PRJ_LOAD);
 
     for (i = 0; i < NPRJ && fscanf(fp, PRJFMT, prjs[i]) == NPRJITEM; ++i)
         ;
@@ -51,7 +52,7 @@ static int save(void)
     FILE *fp;
 
     if ((fp  = fopen(prjfile, "w")) == NULL)
-        return elog(1, "could not save prj state");
+        return emod_set(TMAN_PRJ_SAVE);
 
     for (i = 0; i < NPRJ && prjs[i][0] != '\0'; ++i)
         fprintf(fp, PRJFMT, prjs[i]);

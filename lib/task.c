@@ -25,7 +25,6 @@ static int addcurr(char *prj, char *id)
 {
     /* Prevent duplicate toggles.  */
     if (strncmp(id, curr, IDSIZ) == 0) {
-        dlog("task: assert: addcurr: tryna add toggle duplicate");
         return 0;
     }
 
@@ -55,7 +54,6 @@ static int delcurr(char *prj)
 static int delprev(char *prj)
 {
     if (curr[0] == '\0') {
-        dlog("task: delprev: curr not set");
         return 1;
     }
 
@@ -76,7 +74,6 @@ static int swap(char *prj)
     char tmp[IDSIZ + 1];
 
     if (curr[0] == '\0' || prev[0] == '\0') {
-        dlog("task: swap: either curr or prev not set");
         return 1;
     }
     strncpy(tmp, prev, IDSIZ);
@@ -222,7 +219,6 @@ int task_add(char *prj, char *id)
 
     strncpy(taskid, id, IDSIZ);
     if (col_set(prj, taskid, COLBLOG)) {
-        dlog("task: task_add: could not add new task to default column");
         return 1;
     }
     return 0;

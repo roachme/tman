@@ -96,19 +96,19 @@ static int fill_sysvars()
 int tman_mkfs(void)
 {
     if (MKDIR(tmanfs.base))
-        return elog(1, "could not create directory %s", tmanfs.base);
+        return emod_set(TMAN_SYS_FS);
     else if (MKDIR(tmanfs.base))
-        return elog(1, "could not create directory %s", tmanfs.base);
+        return emod_set(TMAN_SYS_FS);
     else if (MKDIR(tmanfs.pgn))
-        return elog(1, "could not create directory %s", tmanfs.pgn);
+        return emod_set(TMAN_SYS_FS);
     else if (MKDIR(tmanfs.pgnins))
-        return elog(1, "could not create directory %s", tmanfs.pgnins);
+        return emod_set(TMAN_SYS_FS);
     else if (MKDIR(tmanfs.db))
-        return elog(1, "could not create directory %s", tmanfs.db);
+        return emod_set(TMAN_SYS_FS);
     else if (TOUCH(tmanfs.fstate))
-        return elog(1, "could not create file %s", tmanfs.fstate);
+        return emod_set(TMAN_SYS_FS);
     else if (TOUCH(tmanfs.finit))
-        return elog(1, "could not create init file %s", tmanfs.finit);
+        return emod_set(TMAN_SYS_FS);
     return TMAN_OK;
 }
 
@@ -270,8 +270,7 @@ int tman_id_find_by_desc(tman_ctx_t *ctx, char *prj, char *descpatt)
         else if (descpatt == NULL)
             continue;
         else if (check_input_id(ent->d_name)) {
-            // roach: sholud we leave it here? If not then what?..
-            elog(1, "illegal task ID: '%s'", ent->d_name);
+            // TODO: roach: sholud we leave it here? If not then what?..
             continue;
         }
         else if (unit_getbin(bunit, taskprj, ent->d_name) == NULL) {
@@ -330,8 +329,7 @@ int tman_id_list(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt)
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
         else if (check_input_id(ent->d_name)) {
-            // roach: sholud we leave it here? If not then what?..
-            elog(1, "illegal task ID: '%s'", ent->d_name);
+            // TODO: roach: sholud we leave it here? If not then what?..
             continue;
         }
         else if (unit_getbin(bunit, taskprj, ent->d_name) == NULL) {
@@ -361,7 +359,6 @@ int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char 
 
 
     if ((status = chkargs(srcprj, srcid))) {
-        elog(1, "err: err1");
         return status;
     }
     _srcprj = taskprj;
@@ -370,14 +367,12 @@ int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char 
     if (dstid == NULL)
         dstid = srcid;
     if ((status = chkargs(dstprj, dstid)) && status != TMAN_ID_NOSUCH) {
-        elog(1, "err: err2");
         return status;
     }
     _dstprj = taskprj;
     _dstid = taskid;
 
     if (task_ext(_dstprj, _dstid) == TRUE) {
-        elog(1, "task exists in destination project: %s/%s", _dstprj, _dstid);
         return TMAN_ID_EXISTS;
     }
 
@@ -385,24 +380,16 @@ int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char 
 
     /* Rename task. */
     if (strncmp(_srcprj, _dstprj, PRJSIZ) == 0) {
-        elog(1, "rename task in specified project");
         if (dir_id_rename(tmanfs.base, _srcprj, _dstprj, _srcid, _dstid)) {
-            elog(1, "could not rename task directory");
             return 1;
         }
     } else {
         /* Move task to another project. */
-        elog(1, "move task to another project");
     }
 
     // roach: check this case
-    // elog(1, "source and destination pathes are the same. Do nothing.");
-
-    elog(1, "source path: %s", genpath_full(_srcprj, _srcid));
-    elog(1, "source path: %s", genpath_full(_dstprj, _dstid));
-
+    // fprintf(stderr, "source and destination pathes are the same. Do nothing.");
     // TODO: update curr & prev if needed.
-
     return 0;
 }
 
@@ -525,8 +512,7 @@ int tman_prj_list(tman_ctx_t *ctx, struct tman_prj_list_opt *opt)
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
         else if (check_input_prj(ent->d_name)) {
-            // roach: sholud we leave it here? If not then what?..
-            elog(1, "illegal project name: '%s'", ent->d_name);
+            // TODO: roach: sholud we leave it here? If not then what?..
             continue;
         }
 

@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdarg.h>
 
 #include "cli.h"
 
@@ -9,6 +10,16 @@
     -i      Base dir (where DB is stored)
     -p      Plugin dir (where plugins stored)
 */
+
+int elog(int status, const char *fmt, ...)
+{
+    va_list arg;
+    va_start(arg, fmt);
+    vfprintf(stderr, fmt, arg);
+    fprintf(stderr, "\n");
+    va_end(arg);
+    return status;
+}
 
 static const builtin_t builtins[] = {
     { .name = "add",  .func = &tman_cli_add,  .setuplvl = TMAN_SETUPCHECK },

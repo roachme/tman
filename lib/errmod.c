@@ -17,7 +17,10 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_EPGN] =        "failed to execute plugin command",
     [TMAN_EOPENPRJDIR]=  "could not open project directory",
     [TMAN_EINIT_PRJMOD]= "could not init module prj",
+    [TMAN_SYS_FS]         = "could not create directory",
 
+    [TMAN_PRJ_LOAD]       = "could not load prject names",
+    [TMAN_PRJ_SAVE]       = "could not save prject names",
     [TMAN_PRJ_SWAP]       = "could not swap prjects",
     [TMAN_PRJ_TOOLONG]    = "project name is too long, limit is " xstr(PRJSIZ),
     [TMAN_PRJ_ILLEG]      = "illegal prject name",
