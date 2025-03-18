@@ -594,11 +594,11 @@ const char *tman_strerror(void)
     return emod_strerror();
 }
 
-int tman_deinit(struct tman_context *ctx)
+struct tman_context *tman_deinit(struct tman_context *ctx)
 {
     unit_delpgn(ctx->units.pgn);
     tree_free(ctx->ids);
     tree_free(ctx->prjs);
     free(ctx);
-    return TMAN_OK;
+    return NULL;
 }

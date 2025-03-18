@@ -85,6 +85,6 @@ int main(int argc, char **argv)
     }
 
 out:
-    tman_deinit(ctx);
+    ctx = tman_deinit(ctx);
     return status;
 }

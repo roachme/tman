@@ -91,7 +91,7 @@ extern struct tmanstruct tmanfs;
 /* Core functions.  */
 int tman_setup(int setuplvl);
 struct tman_context *tman_init(void);
-int tman_deinit(struct tman_context *ctx);
+struct tman_context *tman_deinit(struct tman_context *ctx);
 
 /* Core util functions.  */
 int tman_pwd(void);
