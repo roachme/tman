@@ -306,8 +306,7 @@ int tman_id_list(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt)
     char pgnout[PGNOUTSIZ + 1] = { 0 };
 
     /* Free task ID list because it might be called more than once.  */
-    tree_free(ctx->ids);
-    ctx->ids = NULL;
+    ctx->ids = tree_free(ctx->ids);
 
     if ((status = check_input_prj(prj)))
         return status;

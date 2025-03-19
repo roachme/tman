@@ -16,7 +16,7 @@ struct tree {
 
 struct tree *tree_alloc(char *id, int col, char *desc, char *pgnout);
 struct tree *tree_add(struct tree *parent, struct tree *node);
-void tree_free(struct tree *parent);
+struct tree *tree_free(struct tree *parent);
 void tree_print(struct tree *parent);
 
 #endif
