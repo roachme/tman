@@ -3,6 +3,7 @@
 ### Added
 
 - `scripts`: Refactor logic for script updver.sh
+- `cli/find`: Add support for project name
 
 ### Changed
 

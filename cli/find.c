@@ -30,17 +30,17 @@ static int pretty_find(tman_ctx_t *ctx, char *prj, char *descpatt)
 int tman_cli_find(int argc, char **argv, tman_ctx_t *ctx)
 {
     char c, *prj, *pattern;
-    int i, showhelp, status;
-    struct tman_id_list_opt opt = { };
+    int showhelp;
 
     showhelp = FALSE;
     prj = pattern = NULL;
+    /* TODO: add case-sensetive option `-i'.  */
     while ((c = getopt(argc, argv, ":hp:")) != -1) {
         switch (c) {
             case 'h':
                 showhelp = TRUE; break;
             case 'p':
-                prj = optarg;
+                prj = optarg; break;
             case ':':
                 return elog(1, "option `-%c' requires an argument", optopt);
             default:
@@ -48,7 +48,6 @@ int tman_cli_find(int argc, char **argv, tman_ctx_t *ctx)
         }
     }
 
-    // TODO: check that option don't conflict with each other.
     if (showhelp == 1)
         return help_usage("find");
 
@@ -56,10 +55,5 @@ int tman_cli_find(int argc, char **argv, tman_ctx_t *ctx)
         elog(1, "PATTERN is missing");
         return 1;
     }
-
-    i = optind;
-    do {
-        status = pretty_find(ctx, argv[i], pattern);
-    } while (++i < argc);
-    return status;
+    return pretty_find(ctx, prj, pattern);
 }
