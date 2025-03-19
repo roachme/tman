@@ -191,19 +191,8 @@ int tman_id_show(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *
     if ((status = chkargs(prj, id)))
         return status;
 
-    /* FIXME: tman show test1 test2 test3
-     * output previous plugin output.
-    */
-    //unit_delpgn(ctx->units.pgn);
-
-    // TODO: don't wanna lose plugin units if builtin ones
-    // failed to parse. But gotta make user return value
-    // make any sense for caller.
-
-    if (ctx->units.pgn != NULL) {
-        unit_delpgn(ctx->units.pgn);
-        ctx->units.pgn = NULL;
-    }
+    /* Free task units because it might be called more than once.  */
+    ctx->units.pgn = unit_delpgn(ctx->units.pgn);
 
     /* No need to check return value because there might case
      * that no hooks are defined or executed */

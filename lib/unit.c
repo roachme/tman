@@ -246,7 +246,7 @@ struct unit *unit_addpgn(struct unit *head, char *key, char *val)
     return node;
 }
 
-int unit_delpgn(struct unit *pgn)
+struct unit *unit_delpgn(struct unit *pgn)
 {
     struct unit *tmp;
 
@@ -255,5 +255,5 @@ int unit_delpgn(struct unit *pgn)
         pgn = pgn->next;
         free(tmp);
     }
-    return 0;
+    return NULL;
 }
