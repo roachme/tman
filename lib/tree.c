@@ -38,7 +38,7 @@ struct tree *tree_add(struct tree *parent, struct tree *node)
     return parent;
 }
 
-void tree_free(struct tree *parent)
+struct tree *tree_free(struct tree *parent)
 {
     if (parent != NULL) {
         tree_free(parent->left);
@@ -46,6 +46,7 @@ void tree_free(struct tree *parent)
         tree_free(parent->right);
         free(parent);
     }
+    return NULL;
 }
 
 void tree_print(struct tree *parent)
