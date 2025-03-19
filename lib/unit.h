@@ -27,6 +27,6 @@ struct unit *unit_getbin(struct unit *units, char *prj, char *id);
 int unit_delbin(char *prj, char *id);
 
 struct unit *unit_addpgn(struct unit *head, char *key, char *val);
-int unit_delpgn(struct unit *pgn);
+struct unit *unit_delpgn(struct unit *pgn);
 
 #endif
