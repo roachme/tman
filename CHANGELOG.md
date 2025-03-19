@@ -2,7 +2,7 @@
 
 ### Added
 
-- `scritps`: Refactor logic for script updver.sh
+- `scripts`: Refactor logic for script updver.sh
 
 ### Changed
 
@@ -28,14 +28,6 @@
 - `Makefile`: Turn on compiler warning messages
 - `docs`: Add a usage video
 
-### Changed
-
-### Fixed
-
-### Deleted
-
-### Deprecated
-
 
 ## [0.0.5] - (2025-03-03)
 
@@ -51,9 +43,3 @@
 ### Changed
 
 - `cli/prj`: Delete extra space between columns
-
-### Fixed
-
-### Deleted
-
-### Deprecated
