@@ -17,8 +17,6 @@
 #include "errmod.h"
 #include "config.h"
 
-/* Library function's return code */
-static int status;
 
 // TODO: Make NOT global.
 struct tmanstruct tmanfs;
@@ -64,11 +62,13 @@ static int check_input_id(char *id)
 */
 static int chkargs(char *prj, char *id)
 {
+    int status;
+
     if ((status = check_input_prj(prj)))
         return status;
     else if ((status = check_input_id(id)))
         return status;
-    return TMAN_OK;
+    return status;
 }
 
 static tman_ctx_t *make_context(void)
@@ -127,7 +127,8 @@ struct tman_context *tman_init(void)
 
 int tman_setup(int setuplvl)
 {
-    status = TMAN_OK;
+    int status = TMAN_OK;
+
     if (setuplvl == TMAN_SETUPSOFT)
         return TMAN_OK;
     else if (setuplvl == TMAN_SETUPHARD) {
@@ -159,6 +160,7 @@ int tman_pwd(void)
 
 int tman_id_add(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_add_opt *opt)
 {
+    int status;
     // TODO: Add support to pass unit values into unit_add()
     // TODO: maybe it's better to move units to ctx?
     struct unit units[NKEYS] = {0};
@@ -188,6 +190,8 @@ int tman_id_add(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_add_opt *op
 
 int tman_id_show(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *opt)
 {
+    int status;
+
     if ((status = chkargs(prj, id)))
         return status;
 
@@ -206,6 +210,7 @@ int tman_id_show(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *
 
 int tman_id_col(tman_ctx_t *ctx, char *prj, char *id, char *tag, struct tman_id_col_opt *opt)
 {
+    int status;
     // TODO: does not change CWD if curr task was moved.
     // The problem in CLI command `col'.
 
@@ -218,6 +223,8 @@ int tman_id_col(tman_ctx_t *ctx, char *prj, char *id, char *tag, struct tman_id_
 
 int tman_id_del(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_del_opt *opt)
 {
+    int status;
+
     if ((status = chkargs(prj, id)))
         return status;
 
@@ -238,6 +245,7 @@ int tman_id_del(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_del_opt *op
 int tman_id_find_by_desc(tman_ctx_t *ctx, char *prj, char *descpatt)
 {
     DIR *ids;
+    int status;
     struct dirent *ent;
     struct unit bunit[NKEYS];
     struct tree *node;
@@ -300,6 +308,7 @@ int tman_id_find_by_desc(tman_ctx_t *ctx, char *prj, char *descpatt)
 int tman_id_list(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt)
 {
     DIR *ids;
+    int status;
     struct dirent *ent;
     struct unit bunit[NKEYS];
     struct tree *node;
@@ -343,6 +352,7 @@ int tman_id_link(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt)
 
 int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char *dstid)
 {
+    int status;
     char *_srcprj, *_srcid, *_dstprj, *_dstid;
 
 
@@ -383,6 +393,8 @@ int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char 
 
 int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 {
+    int status;
+
     /* Check that current project and task ID are set.  */
     if ((status = chkargs(NULL, NULL)))
         return status;
@@ -398,6 +410,8 @@ int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt)
 
 int tman_id_set(tman_ctx_t *ctx, char *prj, char *id, struct unit *unitbin, struct tman_id_set_opt *opt)
 {
+    int status;
+
     if ((status = chkargs(prj, id)))
         return status;
     else if (unit_chkbin(unitbin) == FALSE)
@@ -412,6 +426,8 @@ int tman_id_set(tman_ctx_t *ctx, char *prj, char *id, struct unit *unitbin, stru
 
 int tman_id_sync(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_sync_opt *opt)
 {
+    int status;
+
     if ((status = chkargs(prj, id)))
         return status;
 
@@ -445,6 +461,8 @@ char *tman_id_getprev(tman_ctx_t *ctx, char *prj)
 
 int tman_prj_add(tman_ctx_t *ctx, char *prj, struct tman_prj_add_opt *opt)
 {
+    int status;
+
     /* Special case: project should not exists. If this's a case - let it go. */
     if ((status = check_input_prj(prj)) && status != TMAN_PRJ_NOSUCH)
         return status;
@@ -462,6 +480,8 @@ int tman_prj_add(tman_ctx_t *ctx, char *prj, struct tman_prj_add_opt *opt)
 
 int tman_prj_del(tman_ctx_t *ctx, char *prj, struct tman_prj_del_opt *opt)
 {
+    int status;
+
     if ((status = check_input_prj(prj)))
         return status;
 
@@ -520,6 +540,7 @@ int tman_prj_list(tman_ctx_t *ctx, struct tman_prj_list_opt *opt)
 
 int tman_prj_prev(tman_ctx_t *ctx, struct tman_prj_prev_opt *opt)
 {
+    int status;
     char *prjprev;
 
     if ((prjprev = prj_getprev()) == NULL)
@@ -541,6 +562,8 @@ int tman_prj_set(tman_ctx_t *ctx, char *prj, struct tman_prj_set_opt *opt)
 
 int tman_prj_sync(tman_ctx_t *ctx, char *prj, struct tman_prj_sync_opt *opt)
 {
+    int status;
+
     if ((status = check_input_prj(prj)))
         return status;
 
@@ -572,6 +595,8 @@ int tman_ispgn(const char *pgn)
 
 int tman_pgnexec(tman_ctx_t *ctx, char *prj, char *id, char *pgname, char *pgncmd, struct tman_pgn_opt *opt)
 {
+    int status;
+
     if ((status = chkargs(prj, id)))
         return status;
     return system(genpath_pgn(taskprj, taskid, pgname, pgncmd));
