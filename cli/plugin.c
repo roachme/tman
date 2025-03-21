@@ -1,7 +1,7 @@
 #include "cli.h"
 #include "plugin.h"
 
-int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
 {
     int status;
     char c, *cmd, *prj, *id;

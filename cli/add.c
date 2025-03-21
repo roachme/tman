@@ -5,7 +5,7 @@
 #include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
 {
     char *prj, *errfmt;
     int quiet, showhelp, status, i, c;

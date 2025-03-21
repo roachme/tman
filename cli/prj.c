@@ -17,7 +17,7 @@ static int tree_print_rec(struct tree *p)
 }
 
 // TODO: Find a good error message in case option fails.  */
-static int _prj_add(int argc, char **argv, tman_ctx_t * ctx)
+static int _prj_add(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     const char *errfmt = "cannot add project '%s': %s";
@@ -62,7 +62,7 @@ static int _prj_add(int argc, char **argv, tman_ctx_t * ctx)
     return status == TMAN_OK ? tman_pwd() : 1;
 }
 
-static int _prj_del(int argc, char **argv, tman_ctx_t * ctx)
+static int _prj_del(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     const char *errfmt = "cannot switch: %s";
@@ -107,7 +107,7 @@ static int _prj_del(int argc, char **argv, tman_ctx_t * ctx)
     return status == TMAN_OK && showpath == TRUE ? tman_pwd() : 1;
 }
 
-static int _prj_list(int argc, char **argv, tman_ctx_t * ctx)
+static int _prj_list(int argc, char **argv, struct tman_context *ctx)
 {
     int status;
 
@@ -118,7 +118,7 @@ static int _prj_list(int argc, char **argv, tman_ctx_t * ctx)
     return tree_print_rec(ctx->prjs);
 }
 
-static int _prj_prev(int argc, char **argv, tman_ctx_t * ctx)
+static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
 {
     int status;
     struct tman_prj_prev_opt opt;
@@ -129,20 +129,20 @@ static int _prj_prev(int argc, char **argv, tman_ctx_t * ctx)
     return tman_pwd();
 }
 
-static int _prj_set(int argc, char **argv, tman_ctx_t * ctx)
+static int _prj_set(int argc, char **argv, struct tman_context *ctx)
 {
     elog(1, "under development");
     return 0;
 }
 
 // roach: maybe it'll be useful
-static int _prj_show(int argc, char **argv, tman_ctx_t * ctx)
+static int _prj_show(int argc, char **argv, struct tman_context *ctx)
 {
     elog(1, "under development");
     return 0;
 }
 
-static int _prj_sync(int argc, char **argv, tman_ctx_t * ctx)
+static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
 {
     int c, i, quiet, showhelp, status;
     const char *errfmt = "cannot switch to '%s': %s";
@@ -195,7 +195,7 @@ static const builtin_t prjcmds[] = {
     {.name = "sync",.func = &_prj_sync},
 };
 
-int tman_cli_prj(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_prj(int argc, char **argv, struct tman_context *ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

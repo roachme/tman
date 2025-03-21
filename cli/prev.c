@@ -1,7 +1,7 @@
 #include "prev.h"
 #include "cli.h"
 
-int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
 {
     char c, *errfmt;
     int quiet, showhelp, status;

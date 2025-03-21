@@ -2,7 +2,7 @@
 #include "move.h"
 #include "cli.h"
 
-int tman_cli_move(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     char *srcprj, *srcid, *dstprj, *dstid;

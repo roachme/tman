@@ -15,7 +15,7 @@ static int recursive_tree_print(struct tree *p)
     return 0;
 }
 
-static int pretty_find(tman_ctx_t * ctx, char *prj, char *descpatt)
+static int pretty_find(struct tman_context *ctx, char *prj, char *descpatt)
 {
     if (tman_id_find_by_desc(ctx, prj, descpatt) != TMAN_OK) {
         elog(1, "could not list task IDs: %s", tman_strerror());
@@ -26,7 +26,7 @@ static int pretty_find(tman_ctx_t * ctx, char *prj, char *descpatt)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_find(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_find(int argc, char **argv, struct tman_context *ctx)
 {
     char c, *prj, *pattern;
     int showhelp;
