@@ -12,10 +12,10 @@
 
 static struct unit unitbin[NKEYS];
 static char *keys[NKEYS] = {
-    "prio",     /* task priority */
-    "type",     /* task type: bugfix, hotfix, feature */
-    "date",     /* task date of creation */
-    "desc",     /* task description */
+    "prio",                     /* task priority */
+    "type",                     /* task type: bugfix, hotfix, feature */
+    "date",                     /* task date of creation */
+    "desc",                     /* task description */
     // "link"   /* child, parent, linked*/
     // "user"   /* who created, who's woring on it */
     // "users"  /* list of users */
@@ -31,14 +31,14 @@ static int valid_desc(const char *val);
 
 struct validval {
     char key[KEYSIZ + 1];
-    int (*func) (const char *val);
+    int (*func)(const char *val);
 };
 
 struct validval validval[NKEYS] = {
-    { .key = "prio", .func = valid_prio, },
-    { .key = "type", .func = valid_type, },
-    { .key = "date", .func = valid_date, },
-    { .key = "desc", .func = valid_desc, },
+    {.key = "prio",.func = valid_prio,},
+    {.key = "type",.func = valid_type,},
+    {.key = "date",.func = valid_date,},
+    {.key = "desc",.func = valid_desc,},
 };
 
 /* roachme: replace all prios if user specifies any in config file */
@@ -75,7 +75,7 @@ static int valid_desc(const char *val)
 {
     if (!isalnum(*val++))
         return FALSE;
-    for ( ; *val; ++val)
+    for (; *val; ++val)
         if (!(isalnum(*val) || isspace(*val) || *val == '_' || *val == '-'))
             return FALSE;
     return isalnum(*--val) != 0;

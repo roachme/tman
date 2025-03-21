@@ -1,7 +1,7 @@
 #include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c, *errfmt, *prj;
     int i, quiet, showhelp, status;
@@ -11,21 +11,25 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t *ctx)
 
     prj = NULL;
     quiet = showhelp = FALSE;
-    errfmt =  "cannot sync '%s': %s";
+    errfmt = "cannot sync '%s': %s";
     while ((c = getopt(argc, argv, ":hnp:q")) != -1) {
         switch (c) {
-            case 'h':
-                showhelp = TRUE; break;
-            case 'n':
-                opt.doswitch = FALSE; break;
-            case 'p':
-                prj = optarg; break ;
-            case 'q':
-                quiet = TRUE; break ;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 'n':
+            opt.doswitch = FALSE;
+            break;
+        case 'p':
+            prj = optarg;
+            break;
+        case 'q':
+            quiet = TRUE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         }
     }
 

@@ -2,30 +2,34 @@
 #include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c, *prj, *id, *errfmt;
     struct tman_id_del_opt opt = { };
     int i, choice, quiet, showhelp, showprompt, status;
 
-    prj = id =  NULL;
+    prj = id = NULL;
     showprompt = TRUE;
     quiet = showhelp = FALSE;
     errfmt = "cannot delete task '%s': %s";
     while ((c = getopt(argc, argv, ":fhnp:q")) != -1) {
         switch (c) {
-            case 'h':
-                showhelp = TRUE; break ;
-            case 'n':
-                showprompt = FALSE; break ;
-            case 'p':
-                prj = optarg; break ;
-            case 'q':
-                quiet = TRUE; break ;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 'n':
+            showprompt = FALSE;
+            break;
+        case 'p':
+            prj = optarg;
+            break;
+        case 'q':
+            quiet = TRUE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         }
     }
 
@@ -39,14 +43,14 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t *ctx)
             return 0;
         }
     }
-
     // TODO: if not current task gets deleted, then no need to
     // change user's current directory.
     i = optind;
     do {
         if ((status = tman_id_del(ctx, prj, argv[i], &opt)) != TMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i] ? argv[i] : "NOCURR", tman_strerror());
+                elog(status, errfmt, argv[i] ? argv[i] : "NOCURR",
+                     tman_strerror());
         }
     } while (++i < argc);
 

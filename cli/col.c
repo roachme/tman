@@ -4,7 +4,7 @@
 #include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_col(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_col(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *prj, *col;
     int i, c, status, showhelp, showlist;
@@ -14,14 +14,16 @@ int tman_cli_col(int argc, char **argv, tman_ctx_t *ctx)
     showhelp = showlist = FALSE;
     while ((c = getopt(argc, argv, ":hl")) != -1) {
         switch (c) {
-            case 'h':
-                showhelp = TRUE; break;
-            case 'l':
-                showlist = TRUE; break;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 'l':
+            showlist = TRUE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         }
     }
 
@@ -35,11 +37,13 @@ int tman_cli_col(int argc, char **argv, tman_ctx_t *ctx)
 
     for (i = optind; i < argc; ++i)
         if ((status = tman_id_col(ctx, prj, argv[i], col, &opt)) != TMAN_OK)
-            elog(status, "cannot move to column '%s': %s", col, tman_strerror());
+            elog(status, "cannot move to column '%s': %s", col,
+                 tman_strerror());
 
-    if (optind == argc) /* operate on current task id */
+    if (optind == argc)         /* operate on current task id */
         if ((status = tman_id_col(ctx, prj, argv[i], col, &opt)) != TMAN_OK)
-            elog(status, "cannot move to column '%s': %s", col, tman_strerror());
+            elog(status, "cannot move to column '%s': %s", col,
+                 tman_strerror());
 
     return status;
 }

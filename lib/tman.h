@@ -9,9 +9,9 @@
 #define TMANPATHSIZE    1024
 
 struct tmanstruct {
-    char db[TMANPATHSIZE + 1];          /* directory for tman metadata */
-    char cfg[TMANPATHSIZE + 1];         /* directory for config files */
-    char pgn[TMANPATHSIZE + 1];         /* directory for plugin data */
+    char db[TMANPATHSIZE + 1];  /* directory for tman metadata */
+    char cfg[TMANPATHSIZE + 1]; /* directory for config files */
+    char pgn[TMANPATHSIZE + 1]; /* directory for plugin data */
     char base[TMANPATHSIZE + 1];        /* directory for all stuff above */
     char pgnins[TMANPATHSIZE + 1];      /* directory for installed plugins */
 
@@ -34,8 +34,8 @@ typedef struct tman_context {
 } tman_ctx_t;
 
 struct tman_id_add_opt {
-    int doswitch;   /* Switch task */
-    int dogenerate; /* Generate task ID */
+    int doswitch;               /* Switch task */
+    int dogenerate;             /* Generate task ID */
 };
 
 struct tman_id_show_opt {
@@ -54,20 +54,17 @@ struct tman_id_prev_opt {
 };
 
 struct tman_id_sync_opt {
-    int doswitch;   /* Switch task */
+    int doswitch;               /* Switch task */
 };
 
 struct tman_id_list_opt {
 };
 
-
-
 struct tman_pgn_opt {
 };
 
-
 struct tman_prj_add_opt {
-    int doswitch;   /* Switch to newly created project  */
+    int doswitch;               /* Switch to newly created project  */
 };
 
 struct tman_prj_del_opt {
@@ -83,7 +80,7 @@ struct tman_prj_set_opt {
 };
 
 struct tman_prj_sync_opt {
-    int doswitch;   /* Switch to project  */
+    int doswitch;               /* Switch to project  */
 };
 
 extern struct tmanstruct tmanfs;
@@ -99,34 +96,42 @@ int tman_mkfs(void);
 const char *tman_strerror(void);
 
 /* Task ID functions.  */
-int tman_id_add (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_add_opt *opt);
-int tman_id_col (tman_ctx_t *ctx, char *prj, char *id, char *tag, struct tman_id_col_opt *opt);
-int tman_id_del (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_del_opt *opt);
+int tman_id_add(tman_ctx_t * ctx, char *prj, char *id,
+                struct tman_id_add_opt *opt);
+int tman_id_col(tman_ctx_t * ctx, char *prj, char *id, char *tag,
+                struct tman_id_col_opt *opt);
+int tman_id_del(tman_ctx_t * ctx, char *prj, char *id,
+                struct tman_id_del_opt *opt);
 
-int tman_id_find_by_desc(tman_ctx_t *ctx, char *prj, char *descpatt);
+int tman_id_find_by_desc(tman_ctx_t * ctx, char *prj, char *descpatt);
 
-int tman_id_list(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt);
-int tman_id_link(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt);
-int tman_id_move(tman_ctx_t *ctx, char *srcprj, char *dstprj, char *srcid, char *dstid);
-int tman_id_prev(tman_ctx_t *ctx, struct tman_id_prev_opt *opt);
-int tman_id_set (tman_ctx_t *ctx, char *prj, char *id, struct unit *unitbin, struct tman_id_set_opt *opt);
-int tman_id_show (tman_ctx_t *ctx, char *prj, char *id, struct tman_id_show_opt *opt);
-int tman_id_sync(tman_ctx_t *ctx, char *prj, char *id, struct tman_id_sync_opt *opt);
-char *tman_id_getcurr(tman_ctx_t *ctx, char *prj);
-char *tman_id_getprev(tman_ctx_t *ctx, char *prj);
+int tman_id_list(tman_ctx_t * ctx, char *prj, struct tman_id_list_opt *opt);
+int tman_id_link(tman_ctx_t * ctx, char *prj, struct tman_id_list_opt *opt);
+int tman_id_move(tman_ctx_t * ctx, char *srcprj, char *dstprj, char *srcid,
+                 char *dstid);
+int tman_id_prev(tman_ctx_t * ctx, struct tman_id_prev_opt *opt);
+int tman_id_set(tman_ctx_t * ctx, char *prj, char *id, struct unit *unitbin,
+                struct tman_id_set_opt *opt);
+int tman_id_show(tman_ctx_t * ctx, char *prj, char *id,
+                 struct tman_id_show_opt *opt);
+int tman_id_sync(tman_ctx_t * ctx, char *prj, char *id,
+                 struct tman_id_sync_opt *opt);
+char *tman_id_getcurr(tman_ctx_t * ctx, char *prj);
+char *tman_id_getprev(tman_ctx_t * ctx, char *prj);
 
 /* Task project functions.  */
-int tman_prj_add (tman_ctx_t *ctx, char *prj, struct tman_prj_add_opt *opt);
-int tman_prj_del (tman_ctx_t *ctx, char *prj, struct tman_prj_del_opt *opt);
-int tman_prj_list(tman_ctx_t *ctx, struct tman_prj_list_opt *opt);
-int tman_prj_prev(tman_ctx_t *ctx, struct tman_prj_prev_opt *opt);
-int tman_prj_set (tman_ctx_t *ctx, char *prj, struct tman_prj_set_opt *opt);
-int tman_prj_sync(tman_ctx_t *ctx, char *prj, struct tman_prj_sync_opt *opt);
-char *tman_prj_getcurr(tman_ctx_t *ctx);
-char *tman_prj_getprev(tman_ctx_t *ctx);
+int tman_prj_add(tman_ctx_t * ctx, char *prj, struct tman_prj_add_opt *opt);
+int tman_prj_del(tman_ctx_t * ctx, char *prj, struct tman_prj_del_opt *opt);
+int tman_prj_list(tman_ctx_t * ctx, struct tman_prj_list_opt *opt);
+int tman_prj_prev(tman_ctx_t * ctx, struct tman_prj_prev_opt *opt);
+int tman_prj_set(tman_ctx_t * ctx, char *prj, struct tman_prj_set_opt *opt);
+int tman_prj_sync(tman_ctx_t * ctx, char *prj, struct tman_prj_sync_opt *opt);
+char *tman_prj_getcurr(tman_ctx_t * ctx);
+char *tman_prj_getprev(tman_ctx_t * ctx);
 
 /* Task plugin functions.  */
 int tman_ispgn(const char *pgn);
-int tman_pgnexec(tman_ctx_t *ctx, char *prj, char *id, char *pgname, char *pgncmd, struct tman_pgn_opt *opt);
+int tman_pgnexec(tman_ctx_t * ctx, char *prj, char *id, char *pgname,
+                 char *pgncmd, struct tman_pgn_opt *opt);
 
 #endif

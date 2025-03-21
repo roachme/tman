@@ -1,7 +1,7 @@
 #include "cli.h"
 #include "plugin.h"
 
-int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t * ctx)
 {
     int status;
     char c, *cmd, *prj, *id;
@@ -9,14 +9,16 @@ int tman_cli_plugin(char *name, int argc, char **argv, tman_ctx_t *ctx)
     id = prj = NULL;
     while ((c = getopt(argc, argv, ":p:i:")) != -1) {
         switch (c) {
-            case 'p':
-                prj = optarg; break;
-            case 'i':
-                id = optarg; break;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'p':
+            prj = optarg;
+            break;
+        case 'i':
+            id = optarg;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         }
     }
 

@@ -25,19 +25,25 @@ static int recursive_tree_print(struct tree *p)
         recursive_tree_print(p->left);
 
         /* Apply filters */
-        if (list_filter.specialonly == TRUE && (p->mark == '*' || p->mark == '^'))
-            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id, p->pgnout, p->desc);
-        else if (list_filter.almostall == TRUE && (p->mark != '-' || p->mark != '-'))
-            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id, p->pgnout, p->desc);
+        if (list_filter.specialonly == TRUE
+            && (p->mark == '*' || p->mark == '^'))
+            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id,
+                   p->pgnout, p->desc);
+        else if (list_filter.almostall == TRUE
+                 && (p->mark != '-' || p->mark != '-'))
+            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id,
+                   p->pgnout, p->desc);
         else if (list_filter.allall == TRUE)
-            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id, p->pgnout, p->desc);
+            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id,
+                   p->pgnout, p->desc);
 
         recursive_tree_print(p->right);
     }
     return 0;
 }
 
-static int pretty_list(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt)
+static int pretty_list(tman_ctx_t * ctx, char *prj,
+                       struct tman_id_list_opt *opt)
 {
     if (tman_id_list(ctx, prj, opt) != TMAN_OK) {
         elog(1, "could not list task IDs: %s", tman_strerror());
@@ -48,35 +54,40 @@ static int pretty_list(tman_ctx_t *ctx, char *prj, struct tman_id_list_opt *opt)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     int i, showhelp, status;
     struct tman_id_list_opt opt = { };
 
     /*
-        -A - list all (even done tasks)
-        -a - almost all (everything but done tasks)
-        -c - specify what column to list
-        -s - default: list only current & previous (maybe?)
-    */
+       -A - list all (even done tasks)
+       -a - almost all (everything but done tasks)
+       -c - specify what column to list
+       -s - default: list only current & previous (maybe?)
+     */
     showhelp = FALSE;
     while ((c = getopt(argc, argv, ":Aac:hs")) != -1) {
         switch (c) {
-            case 'A':
-                list_filter.allall = TRUE; break;
-            case 'a':
-                list_filter.almostall = TRUE; break;
-            case 'c':
-                list_filter.column = optarg; break;
-            case 'h':
-                showhelp = TRUE; break;
-            case 's':
-                list_filter.specialonly = TRUE; break;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'A':
+            list_filter.allall = TRUE;
+            break;
+        case 'a':
+            list_filter.almostall = TRUE;
+            break;
+        case 'c':
+            list_filter.column = optarg;
+            break;
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 's':
+            list_filter.specialonly = TRUE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         }
     }
 
@@ -91,7 +102,6 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t *ctx)
         elog(1, "option `-c' not implemented yet");
         return 1;
     }
-
     // TODO: check that option don't conflict with each other.
     if (showhelp == 1)
         return help_usage("list");

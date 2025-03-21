@@ -15,9 +15,8 @@
 
 #define FUNCSIZ     10
 
-
 struct unit {
-    int prio;  /* in case I'ma use tree data structure */
+    int prio;                   /* in case I'ma use tree data structure */
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
     struct unit *next;
@@ -25,7 +24,7 @@ struct unit {
 
 struct chkfuncs {
     char name[FUNCSIZ + 1];
-    int (*func) (char *val);
+    int (*func)(char *val);
 };
 
 static int check_date(char *type);
@@ -34,10 +33,10 @@ static int check_prio(char *type);
 static int check_type(char *type);
 
 struct chkfuncs chkfuncs[] = {
-    { .name = "date", .func = check_date },
-    { .name = "desc", .func = check_desc },
-    { .name = "prio", .func = check_prio },
-    { .name = "type", .func = check_type },
+    {.name = "date",.func = check_date},
+    {.name = "desc",.func = check_desc},
+    {.name = "prio",.func = check_prio},
+    {.name = "type",.func = check_type},
 };
 
 int unit_add(char *env, char *id, struct unit *units);
@@ -85,7 +84,7 @@ static struct unit *list_reverse(struct unit *units)
 {
     struct unit *prev, *next;
 
-    for (prev = NULL; units; ) {
+    for (prev = NULL; units;) {
         next = units->next;
         units->next = prev;
         prev = units;
@@ -105,7 +104,7 @@ static struct unit *load_units(char *fname)
         return NULL;
 
     /* TODO: add a basic checker, i.e. check for semicolumn.  */
-    for (units = NULL; fgets(line, LINESIZ, fp) != NULL; ) {
+    for (units = NULL; fgets(line, LINESIZ, fp) != NULL;) {
         sscanf(line, FMTUNIT, key, val);
         units = list_add(units, key, val);
     }
@@ -129,7 +128,7 @@ static int save_units(char *fname, struct unit *units)
 /* Check that units' keys and values are valid */
 static int check_units(struct unit *units)
 {
-    for ( ; units; units = units->next) {
+    for (; units; units = units->next) {
         if (chkkey(units->key) == FALSE)
             return FALSE;
         if (chkval(units->val) == FALSE)
@@ -198,7 +197,7 @@ int unit_set(char *env, char *id, struct unit *units)
         return 1;
 
     for (punits = units; punits; punits = punits->next) {
-        for (pcurrunits = currunits ; pcurrunits; pcurrunits = pcurrunits->next)
+        for (pcurrunits = currunits; pcurrunits; pcurrunits = pcurrunits->next)
             if (strncmp(punits->key, pcurrunits->key, KEYSIZ) == 0)
                 strncpy(pcurrunits->val, punits->val, VALSIZ);
     }
@@ -242,7 +241,7 @@ void unit_free(struct unit *units)
 
 void unit_show(struct unit *units)
 {
-    for ( ; units; units = units->next)
+    for (; units; units = units->next)
         printf("%-7s : %s\n", units->key, units->val);
 }
 
@@ -265,4 +264,3 @@ int main(void)
     unit_show(units);
     return 0;
 }
-

@@ -4,6 +4,7 @@
 
 - `scripts`: Refactor logic for script updver.sh
 - `cli/find`: Add support for project name
+- `tman`: Add linux kernel style (trade spaces for tabs)
 
 ### Changed
 
