@@ -16,7 +16,7 @@
 #define CONF_MAXPGNINS  256
 
 struct config {
-    int usehooks;            /* execute hooks from config, by default set */
+    int usehooks;               /* execute hooks from config, by default set */
     char base[100];
     char pgnins[100];
     struct hooks hooks;

@@ -25,32 +25,30 @@ struct helpctx helpctx = {
 
 struct help helptab[] = {
     {
-        .tag = TAGSYSTEM,
-        .name  = "cfg",
-        .synop = "Usage: " PROGRAM " cfg\n",
-        .desc_short = "Manage system configuration file.\n",
-        .desc_long  = "\n\
+     .tag = TAGSYSTEM,
+     .name = "cfg",
+     .synop = "Usage: " PROGRAM " cfg\n",
+     .desc_short = "Manage system configuration file.\n",
+     .desc_long = "\n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGSYSTEM,
-        .name  = "chk",
-        .synop = "Usage: " PROGRAM " chk\n",
-        .desc_short = "Check and repair a system.\n",
-        .desc_long  = "\n\
+     .tag = TAGSYSTEM,
+     .name = "chk",
+     .synop = "Usage: " PROGRAM " chk\n",
+     .desc_short = "Check and repair a system.\n",
+     .desc_long = "\n\
     Options:\n\
       -s      under development: soft fix (without losing any user data)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGSYSTEM,
-        .name  = "help",
-        .synop = "Usage: " PROGRAM " help [OPTION] [CMD]\n",
-        .desc_short = "Show help message for command.\n",
-        .desc_long  = "\n\
+     .tag = TAGSYSTEM,
+     .name = "help",
+     .synop = "Usage: " PROGRAM " help [OPTION] [CMD]\n",
+     .desc_short = "Show help message for command.\n",
+     .desc_long = "\n\
     If no CMD passed, list all commands with short description.\n\
     \n\
     Options:\n\
@@ -61,33 +59,30 @@ struct help helptab[] = {
       CMD     builtin command\n\
     \n\
     Exit status:\n\
-    Returns success unless PATTERN is not found or an invalid option is given.\n"
-    },
+    Returns success unless PATTERN is not found or an invalid option is given.\n"},
     {
-        .tag = TAGSYSTEM,
-        .name  = "init",
-        .synop = "Usage: " PROGRAM " init\n",
-        .desc_short = "Init directory structure.\n",
-        .desc_long = "\n\
+     .tag = TAGSYSTEM,
+     .name = "init",
+     .synop = "Usage: " PROGRAM " init\n",
+     .desc_short = "Init directory structure.\n",
+     .desc_long = "\n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGSYSTEM,
-        .name  = "ver",
-        .synop = "Usage: " PROGRAM " ver\n",
-        .desc_short = "Show version and exit.\n",
-        .desc_long  = "\n\
+     .tag = TAGSYSTEM,
+     .name = "ver",
+     .synop = "Usage: " PROGRAM " ver\n",
+     .desc_short = "Show version and exit.\n",
+     .desc_long = "\n\
     Exit status:\n\
-    Always return success\n"
-    },
+    Always return success\n"},
 
     {
-        .tag = TAGBASIC,
-        .name  = "add",
-        .synop = "Usage: " PROGRAM " add [OPTION]... ID...\n",
-        .desc_short = "Add a new task to project.\n",
-        .desc_long  = "\n\
+     .tag = TAGBASIC,
+     .name = "add",
+     .synop = "Usage: " PROGRAM " add [OPTION]... ID...\n",
+     .desc_short = "Add a new task to project.\n",
+     .desc_long = "\n\
     Under development: If no ID provided then generate task ID.\n\
     \n\
     Options:\n\
@@ -100,14 +95,13 @@ struct help helptab[] = {
       ID      task ID\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGBASIC,
-        .name  = "del",
-        .synop = "Usage: " PROGRAM " del [OPTION]... [ID]...\n",
-        .desc_short = "Delete task from project.\n",
-        .desc_long  = "\n\
+     .tag = TAGBASIC,
+     .name = "del",
+     .synop = "Usage: " PROGRAM " del [OPTION]... [ID]...\n",
+     .desc_short = "Delete task from project.\n",
+     .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
       -n      delete task without confirmation\n\
@@ -118,14 +112,13 @@ struct help helptab[] = {
       ID      task ID (default current)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGMISC,
-        .name  = "find",
-        .synop = "Usage: " PROGRAM " find [OPTION]... PATTERN\n",
-        .desc_short = "Find a task by pattern.\n",
-        .desc_long  = "\n\
+     .tag = TAGMISC,
+     .name = "find",
+     .synop = "Usage: " PROGRAM " find [OPTION]... PATTERN\n",
+     .desc_short = "Find a task by pattern.\n",
+     .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
       -p PRJ  project name (default is current)\n\
@@ -135,14 +128,13 @@ struct help helptab[] = {
       PRJ          project name (default current)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGMISC,
-        .name  = "flow",
-        .synop = "Usage: " PROGRAM " flow [OPTION]... FLOW\n",
-        .desc_short = "Show and set project workflow.\n",
-        .desc_long  = "\n\
+     .tag = TAGMISC,
+     .name = "flow",
+     .synop = "Usage: " PROGRAM " flow [OPTION]... FLOW\n",
+     .desc_short = "Show and set project workflow.\n",
+     .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
       -p PRJ  project name (default is current)\n\
@@ -152,14 +144,13 @@ struct help helptab[] = {
       PRJ          project name (default current)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGMISC,
-        .name  = "grep",
-        .synop = "Usage: " PROGRAM " grep [OPTION]... PATTERN\n",
-        .desc_short = "Find pattern in a task.\n",
-        .desc_long  = "\n\
+     .tag = TAGMISC,
+     .name = "grep",
+     .synop = "Usage: " PROGRAM " grep [OPTION]... PATTERN\n",
+     .desc_short = "Find pattern in a task.\n",
+     .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
       -p PRJ  project name (default is current)\n\
@@ -169,14 +160,13 @@ struct help helptab[] = {
       PRJ          project name (default current)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGBASIC,
-        .name  = "list",
-        .synop = "Usage: " PROGRAM " list [OPTION]... [PRJ]...\n",
-        .desc_short = "List project tasks.\n",
-        .desc_long  = "\n\
+     .tag = TAGBASIC,
+     .name = "list",
+     .synop = "Usage: " PROGRAM " list [OPTION]... [PRJ]...\n",
+     .desc_short = "List project tasks.\n",
+     .desc_long = "\n\
     Options:\n\
       -A      list all tasks\n\
       -a      list almost all tasks (expect for done)\n\
@@ -189,27 +179,25 @@ struct help helptab[] = {
       COL     project column name\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGBASIC,
-        .name  = "prev",
-        .synop = "Usage: " PROGRAM " prev [OPTION]...\n",
-        .desc_short = "Switch to previous task in current project.\n",
-        .desc_long  = "\n\
+     .tag = TAGBASIC,
+     .name = "prev",
+     .synop = "Usage: " PROGRAM " prev [OPTION]...\n",
+     .desc_short = "Switch to previous task in current project.\n",
+     .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    Return success if previous task and current project exists, otherwise fail\n"
-    },
+    Return success if previous task and current project exists, otherwise fail\n"},
     {
-        .tag = TAGBASIC,
-        .name  = "show",
-        .synop = "Usage: " PROGRAM " show [OPTION]... [ID]...\n",
-        .desc_short = "Show task info.\n",
-        .desc_long  = "\n\
+     .tag = TAGBASIC,
+     .name = "show",
+     .synop = "Usage: " PROGRAM " show [OPTION]... [ID]...\n",
+     .desc_short = "Show task info.\n",
+     .desc_long = "\n\
     Options:\n\
       -p PRJ  project name (default is current)\n\
     \n\
@@ -217,14 +205,13 @@ struct help helptab[] = {
       ID      task ID (default current)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGBASIC,
-        .name  = "sync",
-        .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...\n",
-        .desc_short = "Switch to or synchronize (with) task(s).\n",
-        .desc_long  = "\n\
+     .tag = TAGBASIC,
+     .name = "sync",
+     .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...\n",
+     .desc_short = "Switch to or synchronize (with) task(s).\n",
+     .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
       -n      do not switch to task\n\
@@ -235,15 +222,14 @@ struct help helptab[] = {
       ID      task ID (default current)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
 
     {
-        .tag = TAGOBJ,
-        .name  = "prj",
-        .synop = "Usage: " PROGRAM " prj SUBCMD [OPTION] NAME\n",
-        .desc_short = "Manage and show projects.\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJ,
+     .name = "prj",
+     .synop = "Usage: " PROGRAM " prj SUBCMD [OPTION] NAME\n",
+     .desc_short = "Manage and show projects.\n",
+     .desc_long = "\n\
     Arguments:\n\
       SUBCMD  project subcommand\n\
     \n\
@@ -257,14 +243,13 @@ struct help helptab[] = {
       sync    Switch to or synchronize (with) project\n\
     \n\
     Exit status:\n\
-    The return status is return status of subcommand.\n"
-    },
+    The return status is return status of subcommand.\n"},
     {
-        .tag = TAGOBJCMD,
-        .name  = "prj-add",
-        .synop = "Usage: " PROGRAM " prj add [OPTION] NAME...\n",
-        .desc_short = "Add new project(s).\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJCMD,
+     .name = "prj-add",
+     .synop = "Usage: " PROGRAM " prj add [OPTION] NAME...\n",
+     .desc_short = "Add new project(s).\n",
+     .desc_long = "\n\
     Arguments:\n\
       NAME    project name\n\
     \n\
@@ -274,14 +259,13 @@ struct help helptab[] = {
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    Under development.\n"
-    },
+    Under development.\n"},
     {
-        .tag = TAGOBJCMD,
-        .name  = "prj-del",
-        .synop = "Usage: " PROGRAM " prj del [OPTION] NAME...\n",
-        .desc_short = "Delete project(s).\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJCMD,
+     .name = "prj-del",
+     .synop = "Usage: " PROGRAM " prj del [OPTION] NAME...\n",
+     .desc_short = "Delete project(s).\n",
+     .desc_long = "\n\
     Arguments:\n\
       NAME    project name (default current)\n\
     \n\
@@ -290,40 +274,37 @@ struct help helptab[] = {
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    Under development.\n"
-    },
+    Under development.\n"},
     {
-        .tag = TAGOBJCMD,
-        .name  = "prj-list",
-        .synop = "Usage: " PROGRAM " prj list [OPTION]\n",
-        .desc_short = "List project(s).\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJCMD,
+     .name = "prj-list",
+     .synop = "Usage: " PROGRAM " prj list [OPTION]\n",
+     .desc_short = "List project(s).\n",
+     .desc_long = "\n\
     \n\
     Options:\n\
       -h      show this help and exit\n\
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    Under development.\n"
-    },
+    Under development.\n"},
     {
-        .tag = TAGOBJCMD,
-        .name  = "prj-prev",
-        .synop = "Usage: " PROGRAM " prj prev\n",
-        .desc_short = "Switch to previous project.\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJCMD,
+     .name = "prj-prev",
+     .synop = "Usage: " PROGRAM " prj prev\n",
+     .desc_short = "Switch to previous project.\n",
+     .desc_long = "\n\
     Arguments:\n\
       NAME    project name\n\
     \n\
     Exit status:\n\
-    Under development.\n"
-    },
+    Under development.\n"},
     {
-        .tag = TAGOBJCMD,
-        .name  = "prj-set",
-        .synop = "Usage: " PROGRAM " prj set [OPTION] [NAME]...\n",
-        .desc_short = "List project(s).\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJCMD,
+     .name = "prj-set",
+     .synop = "Usage: " PROGRAM " prj set [OPTION] [NAME]...\n",
+     .desc_short = "List project(s).\n",
+     .desc_long = "\n\
     This feature is under development.\n\
     Arguments:\n\
       NAME    project name\n\
@@ -333,14 +314,13 @@ struct help helptab[] = {
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    Under development.\n"
-    },
+    Under development.\n"},
     {
-        .tag = TAGOBJCMD,
-        .name  = "prj-show",
-        .synop = "Usage: " PROGRAM " prj show [OPTION] [NAME]...\n",
-        .desc_short = "Show project(s) info.\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJCMD,
+     .name = "prj-show",
+     .synop = "Usage: " PROGRAM " prj show [OPTION] [NAME]...\n",
+     .desc_short = "Show project(s) info.\n",
+     .desc_long = "\n\
     This feature is under development.\n\
     Arguments:\n\
       NAME    project name\n\
@@ -350,14 +330,13 @@ struct help helptab[] = {
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    Under development.\n"
-    },
+    Under development.\n"},
     {
-        .tag = TAGOBJCMD,
-        .name  = "prj-sync",
-        .synop = "Usage: " PROGRAM " prj sync [OPTION] NAME...\n",
-        .desc_short = "Switch to or synchronize (with) project(s).\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJCMD,
+     .name = "prj-sync",
+     .synop = "Usage: " PROGRAM " prj sync [OPTION] NAME...\n",
+     .desc_short = "Switch to or synchronize (with) project(s).\n",
+     .desc_long = "\n\
     Arguments:\n\
       NAME    project name\n\
     \n\
@@ -367,28 +346,26 @@ struct help helptab[] = {
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
-    Under development.\n"
-    },
+    Under development.\n"},
 
     {
-        .tag = TAGOBJ,
-        .name  = "pgm",
-        .synop = "Usage: " PROGRAM " pgm PLUGIN [OPTION]...\n",
-        .desc_short = "Manage and show plugins.\n",
-        .desc_long  = "\n\
+     .tag = TAGOBJ,
+     .name = "pgm",
+     .synop = "Usage: " PROGRAM " pgm PLUGIN [OPTION]...\n",
+     .desc_short = "Manage and show plugins.\n",
+     .desc_long = "\n\
     Arguments:\n\
       PLUGIN  plugin name\n\
     \n\
     Exit status:\n\
-    The return status is return status of plugin.\n"
-    },
+    The return status is return status of plugin.\n"},
 
     {
-        .tag = TAGMISC,
-        .name  = "col",
-        .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...\n",
-        .desc_short = "Move task to column.\n",
-        .desc_long  = "\n\
+     .tag = TAGMISC,
+     .name = "col",
+     .synop = "Usage: " PROGRAM " col [OPTION]... COLUMN [ID]...\n",
+     .desc_short = "Move task to column.\n",
+     .desc_long = "\n\
     Options:\n\
       -l      list project columns\n\
       -h      show this help and exit\n\
@@ -398,15 +375,14 @@ struct help helptab[] = {
       ID      task ID (default current)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
 
     {
-        .tag = TAGMISC,
-        .name  = "link",
-        .synop = "Usage: " PROGRAM " link [OPTION]... PID CID\n",
-        .desc_short = "Link tasks together.\n",
-        .desc_long  = "\n\
+     .tag = TAGMISC,
+     .name = "link",
+     .synop = "Usage: " PROGRAM " link [OPTION]... PID CID\n",
+     .desc_short = "Link tasks together.\n",
+     .desc_long = "\n\
     Options:\n\
       -c      link task as child\n\
       -l      link two tasks\n\
@@ -417,28 +393,26 @@ struct help helptab[] = {
       PID     parent task ID\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGMISC,
-        .name  = "move",
-        .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]\n",
-        .desc_short = "Move (rename) tasks.\n",
-        .desc_long  = "\n\
+     .tag = TAGMISC,
+     .name = "move",
+     .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]\n",
+     .desc_short = "Move (rename) tasks.\n",
+     .desc_long = "\n\
     Options:\n\
       -f      overwrite destination task\n\
       -d      destination project\n\
       -s      source project\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
     {
-        .tag = TAGMISC,
-        .name  = "set",
-        .synop = "Usage: " PROGRAM " set OPTION... [ID]...\n",
-        .desc_short = "Set task unit values.\n",
-        .desc_long  = "\n\
+     .tag = TAGMISC,
+     .name = "set",
+     .synop = "Usage: " PROGRAM " set OPTION... [ID]...\n",
+     .desc_short = "Set task unit values.\n",
+     .desc_long = "\n\
     Options:\n\
       -d      task description\n\
       -p PRJ  project name (default is current)\n\
@@ -449,8 +423,7 @@ struct help helptab[] = {
       ID      task ID (default current)\n\
     \n\
     Exit status:\n\
-    Under development\n"
-    },
+    Under development\n"},
 };
 
 int help_list_commands(void)
@@ -520,7 +493,7 @@ int help_lookup(const char *cmd)
         if (strcmp(helptab[i].name, cmd) == 0) {
             found = 1;
             if (helpctx.synop) {
-                printf("%s",  helptab[i].synop);
+                printf("%s", helptab[i].synop);
                 continue;
             }
             if (helpctx.desc_short) {
@@ -539,29 +512,29 @@ int help_lookup(const char *cmd)
     return TMAN_OK;
 }
 
-int tman_cli_help(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     int i, status;
 
     while ((c = getopt(argc, argv, ":dhs")) != -1) {
         switch (c) {
-            case 'd':
-                helpctx.desc_short = TRUE;
-                helpctx.synop = FALSE;
-                helpctx.desc_long = FALSE;
-                break;
-            case 'h':
-                break;
-            case 's':
-                helpctx.synop = TRUE;
-                helpctx.desc_short = FALSE;
-                helpctx.desc_long = FALSE;
-                break;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'd':
+            helpctx.desc_short = TRUE;
+            helpctx.synop = FALSE;
+            helpctx.desc_long = FALSE;
+            break;
+        case 'h':
+            break;
+        case 's':
+            helpctx.synop = TRUE;
+            helpctx.desc_short = FALSE;
+            helpctx.desc_long = FALSE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         };
     }
 

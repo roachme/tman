@@ -30,7 +30,8 @@ int dir_id_del(char *base, char *prj, char *id)
     return RMDIR(path);
 }
 
-int dir_id_rename(char *base, char *srcprj, char *dstprj, char *srcid, char *dstid)
+int dir_id_rename(char *base, char *srcprj, char *dstprj, char *srcid,
+                  char *dstid)
 {
     char new_path[PATHSIZ + 1];
     char old_path[PATHSIZ + 1];

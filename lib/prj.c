@@ -14,11 +14,11 @@
 #include "errmod.h"
 #include "osdep.h"
 
-#define CPRJ        0  /* index of current prj */
-#define PPRJ        1  /* index of previous prj */
-#define NPRJ        2  /* number of 'special' project */
-#define PRJFMT      "%s\n" /* project file format */
-#define NPRJITEM    1  /* number of project items per line */
+#define CPRJ        0           /* index of current prj */
+#define PPRJ        1           /* index of previous prj */
+#define NPRJ        2           /* number of 'special' project */
+#define PRJFMT      "%s\n"      /* project file format */
+#define NPRJITEM    1           /* number of project items per line */
 
 static char *prjfile;
 static char prjs[NPRJ][PRJSIZ + 1];
@@ -38,11 +38,10 @@ static int load(void)
     int i;
     FILE *fp;
 
-    if ((fp  = fopen(prjfile, "r")) == NULL)
+    if ((fp = fopen(prjfile, "r")) == NULL)
         return emod_set(TMAN_PRJ_LOAD);
 
-    for (i = 0; i < NPRJ && fscanf(fp, PRJFMT, prjs[i]) == NPRJITEM; ++i)
-        ;
+    for (i = 0; i < NPRJ && fscanf(fp, PRJFMT, prjs[i]) == NPRJITEM; ++i) ;
     return fclose(fp);
 }
 
@@ -51,7 +50,7 @@ static int save(void)
     int i;
     FILE *fp;
 
-    if ((fp  = fopen(prjfile, "w")) == NULL)
+    if ((fp = fopen(prjfile, "w")) == NULL)
         return emod_set(TMAN_PRJ_SAVE);
 
     for (i = 0; i < NPRJ && prjs[i][0] != '\0'; ++i)

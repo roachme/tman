@@ -26,8 +26,7 @@ struct tree *tree_alloc(char *id, int colprio, char *desc, char *pgnout)
 
 struct tree *tree_add(struct tree *parent, struct tree *node)
 {
-    if (node == NULL)
-        ;
+    if (node == NULL) ;
 
     if (parent == NULL)
         parent = node;
@@ -53,7 +52,8 @@ void tree_print(struct tree *parent)
 {
     if (parent != NULL) {
         tree_print(parent->left);
-        printf("-> %c %s [%s] '%s'\n", parent->mark, parent->id, parent->pgnout, parent->desc);
+        printf("-> %c %s [%s] '%s'\n", parent->mark, parent->id,
+               parent->pgnout, parent->desc);
         tree_print(parent->right);
     }
 }

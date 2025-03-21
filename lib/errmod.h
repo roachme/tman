@@ -5,14 +5,14 @@
 #define NERRCODE    50
 
 enum tman_err_enum {
-    TMAN_OK,        /* OK, interpret output as path or output */
-    TMAN_ECORE,    /* ?? Error in core execution (under consideration to include) */
+    TMAN_OK,                    /* OK, interpret output as path or output */
+    TMAN_ECORE,                 /* ?? Error in core execution (under consideration to include) */
     TMAN_ESYSVAR,
     TMAN_EINIT,
     TMAN_EMKDIR,
     TMAN_ECONF,
-    TMAN_EHOOK,    /* Failed to execute hook */
-    TMAN_EPGN,    /* Failed to execute plugin */
+    TMAN_EHOOK,                 /* Failed to execute hook */
+    TMAN_EPGN,                  /* Failed to execute plugin */
     TMAN_EOPENPRJDIR,
     TMAN_EINIT_PRJMOD,
     TMAN_SYS_FS,

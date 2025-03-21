@@ -8,7 +8,7 @@
 /* roachme: delete these constrains */
 
 /* Config file limits */
-#define NHOOKS      10 /* max number of hooks */
-#define NCOLUMNS    10 /* max number of columns per project */
+#define NHOOKS      10          /* max number of hooks */
+#define NCOLUMNS    10          /* max number of columns per project */
 
 #endif

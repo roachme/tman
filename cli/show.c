@@ -3,7 +3,7 @@
 #include "show.h"
 #include "cli.h"
 
-static int pretty_show(tman_ctx_t *ctx, char *prj, char *id, char *key)
+static int pretty_show(tman_ctx_t * ctx, char *prj, char *id, char *key)
 {
     int i, status;
     struct unit *unitbin, *unitpgn;
@@ -23,20 +23,24 @@ static int pretty_show(tman_ctx_t *ctx, char *prj, char *id, char *key)
     return TMAN_OK;
 }
 
-int tman_cli_show(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     int i, status;
-    struct tman_cli_show_opt opt = { .prj = NULL, .help = 0, .force = 0, };
+    struct tman_cli_show_opt opt = {.prj = NULL,.help = 0,.force = 0, };
 
     while ((c = getopt(argc, argv, ":p:hk")) != -1) {
         switch (c) {
-            case 'p': opt.prj = optarg; break;
-            case 'k': opt.key = optarg; break;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'p':
+            opt.prj = optarg;
+            break;
+        case 'k':
+            opt.key = optarg;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         }
     }
 

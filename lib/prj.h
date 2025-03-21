@@ -1,7 +1,7 @@
 #ifndef TMAN_PRJ_H
 #define TMAN_PRJ_H
 
-#define PRJSIZ      10 /* maximum size of project name */
+#define PRJSIZ      10          /* maximum size of project name */
 
 int prj_init(char *fstate);
 int prj_reset(void);

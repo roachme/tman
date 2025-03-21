@@ -84,7 +84,7 @@ static int swap(char *prj)
 static int movecurr(char *prj, char *id, char *col)
 {
     if (strncmp(col, COLCURR, COLSIZ) == 0)
-        return 0; /* do nothing */
+        return 0;               /* do nothing */
     if (strncmp(col, COLPREV, COLSIZ) == 0) {
         /* if previous task ID not set then it's an error, right?  */
         return swap(prj);
@@ -99,7 +99,7 @@ static int movecurr(char *prj, char *id, char *col)
 static int moveprev(char *prj, char *id, char *col)
 {
     if (strncmp(col, COLPREV, COLSIZ) == 0)
-        return 0; /* do nothing */
+        return 0;               /* do nothing */
     if (strncmp(col, COLCURR, COLSIZ) == 0)
         return swap(prj);
     return delprev(prj);
@@ -110,8 +110,7 @@ static int movetask(char *prj, char *id, char *col)
 {
     if (strncmp(col, COLCURR, COLSIZ) == 0) {
         return addcurr(prj, id);
-    }
-    else if (strncmp(col, COLPREV, COLSIZ) == 0) {
+    } else if (strncmp(col, COLPREV, COLSIZ) == 0) {
         return addprev(prj, id);
     }
     return col_set(prj, id, col);
@@ -138,7 +137,8 @@ static int load(char *prj)
         if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
             continue;
         else if ((col = col_get(prj, ent->d_name)) == NULL) {
-            fprintf(stderr, "warn: could not get col file: %s:%s\n", prj, ent->d_name);
+            fprintf(stderr, "warn: could not get col file: %s:%s\n",
+                    prj, ent->d_name);
             continue;
         }
         if (strncmp(col, COLCURR, IDSIZ) == 0)
@@ -184,7 +184,7 @@ int task_chk(char *id)
 {
     if (!isalnum(*id++))
         return 0;
-    for ( ; *id; ++id)
+    for (; *id; ++id)
         if (!(isalnum(*id) || *id == '_' || *id == '-'))
             return 0;
     return isalnum(*--id);
@@ -273,8 +273,7 @@ int task_move(char *prj, char *id, char *col)
     strncpy(taskid, id, IDSIZ);
     if (strncmp(curr, taskid, IDSIZ) == 0) {
         return movecurr(prj, curr, col);
-    }
-    else if (strncmp(prev, taskid, IDSIZ) == 0) {
+    } else if (strncmp(prev, taskid, IDSIZ) == 0) {
         return moveprev(prj, prev, col);
     }
     return movetask(prj, taskid, col);

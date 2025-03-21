@@ -1,24 +1,26 @@
 #include "prev.h"
 #include "cli.h"
 
-int tman_cli_prev(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c, *errfmt;
     int quiet, showhelp, status;
     struct tman_id_prev_opt opt;
 
     quiet = showhelp = FALSE;
-    errfmt =  "cannot switch: %s";
+    errfmt = "cannot switch: %s";
     while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
-            case 'h':
-                showhelp = TRUE; break;
-            case 'q':
-                quiet = TRUE; break;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 'q':
+            quiet = TRUE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         }
     }
 

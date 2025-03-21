@@ -5,7 +5,7 @@
 #include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *prj, *errfmt;
     int quiet, showhelp, status, i, c;
@@ -19,20 +19,25 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t *ctx)
     errfmt = "cannot create task '%s': %s";
     while ((c = getopt(argc, argv, ":p:ghnq")) != -1) {
         switch (c) {
-            case 'p':
-                prj = optarg; break;
-            case 'g':
-                opt.dogenerate = TRUE; break;
-            case 'h':
-                showhelp = TRUE; break;
-            case 'n':
-                opt.doswitch = FALSE; break;
-            case 'q':
-                quiet = TRUE; break;
-            case ':':
-                return elog(1, "option `-%c' requires an argument", optopt);
-            default:
-                return elog(1, "invalid option `%c'", optopt);
+        case 'p':
+            prj = optarg;
+            break;
+        case 'g':
+            opt.dogenerate = TRUE;
+            break;
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 'n':
+            opt.doswitch = FALSE;
+            break;
+        case 'q':
+            quiet = TRUE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
         }
     }
 

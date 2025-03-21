@@ -22,26 +22,26 @@ int elog(int status, const char *fmt, ...)
 }
 
 static const builtin_t builtins[] = {
-    { .name = "add",  .func = &tman_cli_add,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "cfg",  .func = &tman_cli_cfg,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "chk",  .func = &tman_cli_chk,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "col",  .func = &tman_cli_col,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "del",  .func = &tman_cli_del,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "find", .func = &tman_cli_find, .setuplvl = TMAN_SETUPCHECK },
+    {.name = "add",.func = &tman_cli_add,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "cfg",.func = &tman_cli_cfg,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "chk",.func = &tman_cli_chk,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "col",.func = &tman_cli_col,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "del",.func = &tman_cli_del,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "find",.func = &tman_cli_find,.setuplvl = TMAN_SETUPCHECK},
     //{ .name = "flow", .func = &tman_cli_flow, .setuplvl = TMAN_SETUPCHECK },
     //{ .name = "grep", .func = &tman_cli_grep, .setuplvl = TMAN_SETUPCHECK },
-    { .name = "help", .func = &tman_cli_help, .setuplvl = TMAN_SETUPSOFT },
-    { .name = "init", .func = &tman_cli_init, .setuplvl = TMAN_SETUPHARD },
+    {.name = "help",.func = &tman_cli_help,.setuplvl = TMAN_SETUPSOFT},
+    {.name = "init",.func = &tman_cli_init,.setuplvl = TMAN_SETUPHARD},
     //{ .name = "link", .func = &tman_cli_link, .setuplvl = TMAN_SETUPHARD },
-    { .name = "list", .func = &tman_cli_list, .setuplvl = TMAN_SETUPCHECK },
-    { .name = "move", .func = &tman_cli_move, .setuplvl = TMAN_SETUPCHECK },
-    { .name = "pgm",  .func = &tman_cli_pgm,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "prev", .func = &tman_cli_prev, .setuplvl = TMAN_SETUPCHECK },
-    { .name = "prj",  .func = &tman_cli_prj,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "set",  .func = &tman_cli_set,  .setuplvl = TMAN_SETUPCHECK },
-    { .name = "show", .func = &tman_cli_show, .setuplvl = TMAN_SETUPCHECK },
-    { .name = "sync", .func = &tman_cli_sync, .setuplvl = TMAN_SETUPCHECK },
-    { .name = "ver",  .func = &tman_cli_ver,  .setuplvl = TMAN_SETUPSOFT },
+    {.name = "list",.func = &tman_cli_list,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "move",.func = &tman_cli_move,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "pgm",.func = &tman_cli_pgm,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "prev",.func = &tman_cli_prev,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "prj",.func = &tman_cli_prj,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "set",.func = &tman_cli_set,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "show",.func = &tman_cli_show,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "sync",.func = &tman_cli_sync,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "ver",.func = &tman_cli_ver,.setuplvl = TMAN_SETUPSOFT},
 };
 
 int main(int argc, char **argv)
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
         elog(1, "%s: no such command or plugin", cmd);
     }
 
-out:
+ out:
     ctx = tman_deinit(ctx);
     return status;
 }

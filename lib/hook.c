@@ -2,11 +2,11 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "tman.h" // for tmanfs. make it not global
+#include "tman.h"               // for tmanfs. make it not global
 #include "hook.h"
 #include "unit.h"
 #include "osdep.h"
-#include "config.h" // for usehooks. make it not global
+#include "config.h"             // for usehooks. make it not global
 
 int ispgn(const char *pgn)
 {
@@ -36,7 +36,7 @@ struct unit *hookshow(char *prj, char *id)
     FILE *pipe;
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
-    char line[BUFSIZ + 1] = {0};
+    char line[BUFSIZ + 1] = { 0 };
     struct unit *unitpgn = NULL;
 
     if (config.usehooks == FALSE)
@@ -47,7 +47,9 @@ struct unit *hookshow(char *prj, char *id)
         if (strcmp(hook->cmd, "show") != 0)
             continue;
 
-        if ((pipe = popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
+        if ((pipe =
+             popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd),
+                   "r")) == NULL) {
             continue;
         }
         while (fgets(line, BUFSIZ, pipe)) {
@@ -64,7 +66,7 @@ char *hookls(char *pgnout, char *prj, char *id)
     int i;
     FILE *pipe;
     char *prefix = "  ";
-    char line[BUFSIZ + 1] = {0};
+    char line[BUFSIZ + 1] = { 0 };
 
     if (config.usehooks == FALSE)
         return pgnout;
@@ -74,7 +76,9 @@ char *hookls(char *pgnout, char *prj, char *id)
         if (strcmp(hook->cmd, "list") != 0)
             continue;
 
-        if ((pipe = popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd), "r")) == NULL) {
+        if ((pipe =
+             popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd),
+                   "r")) == NULL) {
             return NULL;
         }
 

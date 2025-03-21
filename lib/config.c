@@ -15,6 +15,7 @@ struct config config = {
     .hooks.size = 0,
     .columns.size = 0,
 };
+
 static const char *delim = " =\n";
 
 static int parsepath(char *path)
@@ -30,8 +31,7 @@ static int parse_usehooks(const char *confkey, int *usehooks)
     if (strncmp(confval, "true", 4) == 0) {
         *usehooks = TRUE;
         return 0;
-    }
-    else if (strncmp(confval, "false", 5) == 0) {
+    } else if (strncmp(confval, "false", 5) == 0) {
         *usehooks = FALSE;
         return 0;
     }
@@ -83,8 +83,7 @@ static int parseconf(const char *fname)
         else if (config.hooks.size >= CONF_MAXHOOK) {
             fprintf(stderr, "Too many hooks in config");
             return emod_set(TMAN_NODEF_ERR);
-        }
-        else if (config.columns.size >= CONF_MAXCOLDEF) {
+        } else if (config.columns.size >= CONF_MAXCOLDEF) {
             fprintf(stderr, "Too many columns per prj in config");
             return emod_set(TMAN_NODEF_ERR);
         }

@@ -6,17 +6,17 @@
 #include "cli.h"
 
 static const builtin_t pgmcmds[] = {
-    { .name = "chk",  .func = &_pgm_chk  },
-    { .name = "list", .func = &_pgm_list },
+    {.name = "chk",.func = &_pgm_chk},
+    {.name = "list",.func = &_pgm_list},
 };
 
-int _pgm_chk(int argc, char **argv, tman_ctx_t *ctx)
+int _pgm_chk(int argc, char **argv, tman_ctx_t * ctx)
 {
     printf("check plugins\n");
     return TMAN_OK;
 }
 
-int _pgm_list(int argc, char **argv, tman_ctx_t *ctx)
+int _pgm_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     DIR *dir;
     struct dirent *pgn;
@@ -36,7 +36,7 @@ int _pgm_list(int argc, char **argv, tman_ctx_t *ctx)
     return TMAN_OK;
 }
 
-int tman_cli_pgm(int argc, char **argv, tman_ctx_t *ctx)
+int tman_cli_pgm(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

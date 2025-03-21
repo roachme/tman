@@ -5,7 +5,7 @@
 
 #define NKEYS       4
 #define KEYSIZ      10
-#define VALSIZ      80 /* this big cuz of task description */
+#define VALSIZ      80          /* this big cuz of task description */
 
 struct unit {
     int isset;
