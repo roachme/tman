@@ -4,7 +4,7 @@
 #include "cli.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int i, idx, status;

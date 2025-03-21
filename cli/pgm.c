@@ -10,13 +10,13 @@ static const builtin_t pgmcmds[] = {
     {.name = "list",.func = &_pgm_list},
 };
 
-int _pgm_chk(int argc, char **argv, tman_ctx_t * ctx)
+int _pgm_chk(int argc, char **argv, struct tman_context *ctx)
 {
     printf("check plugins\n");
     return TMAN_OK;
 }
 
-int _pgm_list(int argc, char **argv, tman_ctx_t * ctx)
+int _pgm_list(int argc, char **argv, struct tman_context *ctx)
 {
     DIR *dir;
     struct dirent *pgn;
@@ -36,7 +36,7 @@ int _pgm_list(int argc, char **argv, tman_ctx_t * ctx)
     return TMAN_OK;
 }
 
-int tman_cli_pgm(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_pgm(int argc, char **argv, struct tman_context *ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

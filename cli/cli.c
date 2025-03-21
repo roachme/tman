@@ -46,7 +46,7 @@ static const builtin_t builtins[] = {
 
 int main(int argc, char **argv)
 {
-    tman_ctx_t *ctx;
+    struct tman_context *ctx;
     int i, status, cmdfound;
     char *cmd = argc > 1 ? argv[1] : "list";
 

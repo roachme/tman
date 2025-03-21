@@ -69,14 +69,14 @@ static int chkargs(char *prj, char *id)
     return status;
 }
 
-static tman_ctx_t *make_context(void)
+static struct tman_context *make_context(void)
 {
-    tman_ctx_t *ctx;
+    struct tman_context *ctx;
 
-    if ((ctx = malloc(sizeof(tman_ctx_t))) == NULL)
+    if ((ctx = malloc(sizeof(struct tman_context))) == NULL)
         return NULL;
 
-    memset(ctx, 0, sizeof(tman_ctx_t));
+    memset(ctx, 0, sizeof(struct tman_context));
     return ctx;
 }
 
@@ -153,7 +153,7 @@ int tman_pwd(void)
     return TMAN_OK;
 }
 
-int tman_id_add(tman_ctx_t * ctx, char *prj, char *id,
+int tman_id_add(struct tman_context *ctx, char *prj, char *id,
                 struct tman_id_add_opt *opt)
 {
     int status;
@@ -184,7 +184,7 @@ int tman_id_add(tman_ctx_t * ctx, char *prj, char *id,
     return TMAN_OK;
 }
 
-int tman_id_show(tman_ctx_t * ctx, char *prj, char *id,
+int tman_id_show(struct tman_context *ctx, char *prj, char *id,
                  struct tman_id_show_opt *opt)
 {
     int status;
@@ -205,7 +205,7 @@ int tman_id_show(tman_ctx_t * ctx, char *prj, char *id,
     return status;
 }
 
-int tman_id_col(tman_ctx_t * ctx, char *prj, char *id, char *tag,
+int tman_id_col(struct tman_context *ctx, char *prj, char *id, char *tag,
                 struct tman_id_col_opt *opt)
 {
     int status;
@@ -219,7 +219,7 @@ int tman_id_col(tman_ctx_t * ctx, char *prj, char *id, char *tag,
     return task_move(taskprj, taskid, tag);
 }
 
-int tman_id_del(tman_ctx_t * ctx, char *prj, char *id,
+int tman_id_del(struct tman_context *ctx, char *prj, char *id,
                 struct tman_id_del_opt *opt)
 {
     int status;
@@ -241,7 +241,7 @@ int tman_id_del(tman_ctx_t * ctx, char *prj, char *id,
     return TMAN_OK;
 }
 
-int tman_id_find_by_desc(tman_ctx_t * ctx, char *prj, char *descpatt)
+int tman_id_find_by_desc(struct tman_context *ctx, char *prj, char *descpatt)
 {
     DIR *ids;
     int status;
@@ -304,7 +304,8 @@ int tman_id_find_by_desc(tman_ctx_t * ctx, char *prj, char *descpatt)
  @param prj char * | NULL (then list the current project)
  @return struct item * | NULL (if error happened)
 */
-int tman_id_list(tman_ctx_t * ctx, char *prj, struct tman_id_list_opt *opt)
+int tman_id_list(struct tman_context *ctx, char *prj,
+                 struct tman_id_list_opt *opt)
 {
     DIR *ids;
     int status;
@@ -345,13 +346,14 @@ int tman_id_list(tman_ctx_t * ctx, char *prj, struct tman_id_list_opt *opt)
 }
 
 /* Link task IDs together: parent - children relationship.  */
-int tman_id_link(tman_ctx_t * ctx, char *prj, struct tman_id_list_opt *opt)
+int tman_id_link(struct tman_context *ctx, char *prj,
+                 struct tman_id_list_opt *opt)
 {
     return 0;
 }
 
-int tman_id_move(tman_ctx_t * ctx, char *srcprj, char *dstprj, char *srcid,
-                 char *dstid)
+int tman_id_move(struct tman_context *ctx, char *srcprj, char *dstprj,
+                 char *srcid, char *dstid)
 {
     int status;
     char *_srcprj, *_srcid, *_dstprj, *_dstid;
@@ -391,7 +393,7 @@ int tman_id_move(tman_ctx_t * ctx, char *srcprj, char *dstprj, char *srcid,
     return 0;
 }
 
-int tman_id_prev(tman_ctx_t * ctx, struct tman_id_prev_opt *opt)
+int tman_id_prev(struct tman_context *ctx, struct tman_id_prev_opt *opt)
 {
     int status;
 
@@ -408,8 +410,8 @@ int tman_id_prev(tman_ctx_t * ctx, struct tman_id_prev_opt *opt)
     return TMAN_OK;
 }
 
-int tman_id_set(tman_ctx_t * ctx, char *prj, char *id, struct unit *unitbin,
-                struct tman_id_set_opt *opt)
+int tman_id_set(struct tman_context *ctx, char *prj, char *id,
+                struct unit *unitbin, struct tman_id_set_opt *opt)
 {
     int status;
 
@@ -425,7 +427,7 @@ int tman_id_set(tman_ctx_t * ctx, char *prj, char *id, struct unit *unitbin,
     return TMAN_OK;
 }
 
-int tman_id_sync(tman_ctx_t * ctx, char *prj, char *id,
+int tman_id_sync(struct tman_context *ctx, char *prj, char *id,
                  struct tman_id_sync_opt *opt)
 {
     int status;
@@ -446,14 +448,14 @@ int tman_id_sync(tman_ctx_t * ctx, char *prj, char *id,
     return TMAN_OK;
 }
 
-char *tman_id_getcurr(tman_ctx_t * ctx, char *prj)
+char *tman_id_getcurr(struct tman_context *ctx, char *prj)
 {
     if (chkargs(prj, NULL))
         return NULL;
     return strncpy(task_currid, taskid, IDSIZ);
 }
 
-char *tman_id_getprev(tman_ctx_t * ctx, char *prj)
+char *tman_id_getprev(struct tman_context *ctx, char *prj)
 {
     if (chkargs(prj, task_prev(prj)))
         return NULL;
@@ -462,7 +464,8 @@ char *tman_id_getprev(tman_ctx_t * ctx, char *prj)
     return strncpy(task_previd, taskid, IDSIZ);
 }
 
-int tman_prj_add(tman_ctx_t * ctx, char *prj, struct tman_prj_add_opt *opt)
+int tman_prj_add(struct tman_context *ctx, char *prj,
+                 struct tman_prj_add_opt *opt)
 {
     int status;
 
@@ -481,7 +484,8 @@ int tman_prj_add(tman_ctx_t * ctx, char *prj, struct tman_prj_add_opt *opt)
     return TMAN_OK;
 }
 
-int tman_prj_del(tman_ctx_t * ctx, char *prj, struct tman_prj_del_opt *opt)
+int tman_prj_del(struct tman_context *ctx, char *prj,
+                 struct tman_prj_del_opt *opt)
 {
     int status;
 
@@ -500,7 +504,7 @@ int tman_prj_del(tman_ctx_t * ctx, char *prj, struct tman_prj_del_opt *opt)
 /*
  * roachme: Refactor this shit
 */
-int tman_prj_list(tman_ctx_t * ctx, struct tman_prj_list_opt *opt)
+int tman_prj_list(struct tman_context *ctx, struct tman_prj_list_opt *opt)
 {
     DIR *edir;
     struct dirent *ent;
@@ -540,7 +544,7 @@ int tman_prj_list(tman_ctx_t * ctx, struct tman_prj_list_opt *opt)
     return TMAN_OK;
 }
 
-int tman_prj_prev(tman_ctx_t * ctx, struct tman_prj_prev_opt *opt)
+int tman_prj_prev(struct tman_context *ctx, struct tman_prj_prev_opt *opt)
 {
     int status;
     char *prjprev;
@@ -557,12 +561,14 @@ int tman_prj_prev(tman_ctx_t * ctx, struct tman_prj_prev_opt *opt)
     return TMAN_OK;
 }
 
-int tman_prj_set(tman_ctx_t * ctx, char *prj, struct tman_prj_set_opt *opt)
+int tman_prj_set(struct tman_context *ctx, char *prj,
+                 struct tman_prj_set_opt *opt)
 {
     return TMAN_OK;
 }
 
-int tman_prj_sync(tman_ctx_t * ctx, char *prj, struct tman_prj_sync_opt *opt)
+int tman_prj_sync(struct tman_context *ctx, char *prj,
+                  struct tman_prj_sync_opt *opt)
 {
     int status;
 
@@ -576,14 +582,14 @@ int tman_prj_sync(tman_ctx_t * ctx, char *prj, struct tman_prj_sync_opt *opt)
     return TMAN_OK;
 }
 
-char *tman_prj_getcurr(tman_ctx_t * ctx)
+char *tman_prj_getcurr(struct tman_context *ctx)
 {
     if ((taskprj = prj_getcurr()) == NULL)
         return NULL;
     return strncpy(task_currprj, taskprj, PRJSIZ);
 }
 
-char *tman_prj_getprev(tman_ctx_t * ctx)
+char *tman_prj_getprev(struct tman_context *ctx)
 {
     if ((taskprj = prj_getprev()) == NULL)
         return NULL;
@@ -595,7 +601,7 @@ int tman_ispgn(const char *pgn)
     return ispgn(pgn);
 }
 
-int tman_pgnexec(tman_ctx_t * ctx, char *prj, char *id, char *pgname,
+int tman_pgnexec(struct tman_context *ctx, char *prj, char *id, char *pgname,
                  char *pgncmd, struct tman_pgn_opt *opt)
 {
     int status;

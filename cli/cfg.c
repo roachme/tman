@@ -2,7 +2,7 @@
 
 #include "cli.h"
 
-int tman_cli_cfg(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_cfg(int argc, char **argv, struct tman_context *ctx)
 {
     printf("tman_cli_cfg: under development\n");
     return 1;
