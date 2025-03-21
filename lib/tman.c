@@ -269,8 +269,8 @@ int tman_id_find_by_desc(tman_ctx_t * ctx, char *prj, char *descpatt)
             // TODO: roach: sholud we leave it here? If not then what?..
             continue;
         } else if (unit_getbin(bunit, taskprj, ent->d_name) == NULL) {
-            fprintf(stderr,
-                    "tman_id_list %s: failed to get units\n", ent->d_name);
+            // TODO: roach: sholud we leave it here? If not then what?..
+            // IF builtin units could not get
             continue;
         }
         desc = bunit[3].val;
@@ -328,8 +328,8 @@ int tman_id_list(tman_ctx_t * ctx, char *prj, struct tman_id_list_opt *opt)
             // TODO: roach: sholud we leave it here? If not then what?..
             continue;
         } else if (unit_getbin(bunit, taskprj, ent->d_name) == NULL) {
-            fprintf(stderr,
-                    "tman_id_list %s: failed to get units\n", ent->d_name);
+            // TODO: roach: sholud we leave it here? If not then what?..
+            // IF builtin units could not get
             continue;
         }
 

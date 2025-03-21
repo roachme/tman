@@ -20,6 +20,7 @@
 - `lib`: Remove variable PROGRAM from lib part
 - `lib`: Remove logging functions
 - `lib/tman`: Delete library functions' return code
+- `lib/tman`: Delete fprintf() from library calls
 
 ### Deprecated
 
