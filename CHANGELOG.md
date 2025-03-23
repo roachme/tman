@@ -21,6 +21,7 @@
 - `lib`: Remove logging functions
 - `lib/tman`: Delete library functions' return code
 - `lib/tman`: Delete fprintf() from library calls
+- `cli/cli`: Delete command list as default
 
 ### Deprecated
 
