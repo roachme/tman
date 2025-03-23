@@ -7,20 +7,21 @@
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
 {
-    char *prj, *errfmt;
+    char *errfmt;
+    struct tman_args args;
     int quiet, showhelp, status, i, c;
     struct tman_id_add_opt opt = {
         .doswitch = TRUE,
         .dogenerate = FALSE,
     };
 
-    prj = NULL;
     quiet = showhelp = FALSE;
+    args.id = args.prj = NULL;
     errfmt = "cannot create task '%s': %s";
     while ((c = getopt(argc, argv, ":p:ghnq")) != -1) {
         switch (c) {
         case 'p':
-            prj = optarg;
+            args.prj = optarg;
             break;
         case 'g':
             opt.dogenerate = TRUE;
@@ -49,7 +50,20 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
     }
 
     for (i = optind; i < argc; ++i) {
-        if ((status = tman_id_add(ctx, prj, argv[i], &opt)) != TMAN_OK) {
+        args.id = argv[i];
+        tman_get_args(&args);
+
+        if ((status = tman_check_arg_prj(&args))) {
+            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
+                 tman_strerror());
+            continue;
+        } else if ((status = tman_check_arg_id(&args))
+                   && status != TMAN_ID_NOSUCH) {
+            elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
+            continue;
+        }
+
+        if ((status = tman_id_add(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }

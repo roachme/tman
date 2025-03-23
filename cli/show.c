@@ -3,14 +3,13 @@
 #include "show.h"
 #include "cli.h"
 
-static int pretty_show(struct tman_context *ctx, char *prj, char *id, char *key)
-{
-    int i, status;
-    struct unit *unitbin, *unitpgn;
-    struct tman_id_show_opt opt = { };
+static const char *errfmt = "cannot show units '%s': %s";
 
-    if ((status = tman_id_show(ctx, prj, id, &opt)) != TMAN_OK)
-        return elog(status, "cannot show units '%s': %s", id, tman_strerror());
+static int pretty_show(struct tman_context *ctx, struct tman_args *args,
+                       char *key)
+{
+    int i;
+    struct unit *unitbin, *unitpgn;
 
     printf("%-7s : %s\n", "id", ctx->units.id);
 
@@ -27,12 +26,14 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int i, status;
+    struct tman_args args;
     struct tman_cli_show_opt opt = {.prj = NULL,.help = 0,.force = 0, };
 
+    args.prj = args.id = args.brd = NULL;
     while ((c = getopt(argc, argv, ":p:hk")) != -1) {
         switch (c) {
         case 'p':
-            opt.prj = optarg;
+            args.prj = optarg;
             break;
         case 'k':
             opt.key = optarg;
@@ -46,7 +47,22 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
 
     i = optind;
     do {
-        status = pretty_show(ctx, opt.prj, argv[i], opt.key);
+        args.id = argv[i];
+        tman_get_args(&args);
+
+        if ((status = tman_check_arg_prj(&args))) {
+            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
+                 tman_strerror());
+            continue;
+        } else if ((status = tman_check_arg_id(&args))) {
+            elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
+            continue;
+        }
+
+        if ((status = tman_id_show(ctx, &args, NULL)) != TMAN_OK)
+            elog(status, errfmt, args.id, tman_strerror());
+        pretty_show(ctx, &args, opt.key);
     } while (++i < argc);
+
     return status;
 }

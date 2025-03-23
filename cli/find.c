@@ -2,6 +2,7 @@
 #include "find.h"
 
 #include <bits/getopt_core.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -15,24 +16,16 @@ static int recursive_tree_print(struct tree *p)
     return 0;
 }
 
-static int pretty_find(struct tman_context *ctx, char *prj, char *descpatt)
-{
-    if (tman_id_find_by_desc(ctx, prj, descpatt) != TMAN_OK) {
-        elog(1, "could not list task IDs: %s", tman_strerror());
-        return 1;
-    }
-
-    return recursive_tree_print(ctx->ids);
-}
-
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_find(int argc, char **argv, struct tman_context *ctx)
 {
-    char c, *prj, *pattern;
+    int status;
+    char c, *pattern;
     int showhelp;
+    struct tman_args args;
 
     showhelp = FALSE;
-    prj = pattern = NULL;
+    pattern = args.prj = args.id = NULL;
     /* TODO: add case-sensetive option `-i'.  */
     while ((c = getopt(argc, argv, ":hp:")) != -1) {
         switch (c) {
@@ -40,7 +33,7 @@ int tman_cli_find(int argc, char **argv, struct tman_context *ctx)
             showhelp = TRUE;
             break;
         case 'p':
-            prj = optarg;
+            args.prj = optarg;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -56,5 +49,9 @@ int tman_cli_find(int argc, char **argv, struct tman_context *ctx)
         elog(1, "PATTERN is missing");
         return 1;
     }
-    return pretty_find(ctx, prj, pattern);
+
+    tman_get_args(&args);
+    if ((status = tman_id_find_by_desc(ctx, &args, pattern) != TMAN_OK))
+        return elog(status, "could not list task IDs: %s", tman_strerror());
+    return recursive_tree_print(ctx->ids);
 }

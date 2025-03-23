@@ -4,16 +4,17 @@
 int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
 {
     int status;
-    char c, *cmd, *prj, *id;
+    char c, *cmd;
+    struct tman_args args;
 
-    id = prj = NULL;
+    args.id = args.prj = NULL;
     while ((c = getopt(argc, argv, ":p:i:")) != -1) {
         switch (c) {
         case 'p':
-            prj = optarg;
+            args.prj = optarg;
             break;
         case 'i':
-            id = optarg;
+            args.id = optarg;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -21,14 +22,10 @@ int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
             return elog(1, "invalid option `%c'", optopt);
         }
     }
+    cmd = optind == argc ? "" : argv[optind];
+    tman_get_args(&args);
 
-    /* roachme: system call gotta take care of it.  */
-    if (optind == argc)
-        cmd = "";
-    else
-        cmd = argv[optind];
-
-    if ((status = tman_pgnexec(NULL, prj, id, name, cmd, NULL)) != TMAN_OK)
+    if ((status = tman_pgnexec(NULL, &args, name, cmd, NULL)) != TMAN_OK)
         elog(status, "pgn failed: %s", tman_strerror());
     return status;
 }

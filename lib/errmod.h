@@ -70,6 +70,7 @@ struct tman_err_codes {
     char desc[ERRMSGSIZ + 1];
 };
 
+int emod_get(void);
 int emod_set(int err);
 const char *emod_strerror(void);
 

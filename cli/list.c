@@ -5,6 +5,8 @@
 #include "cli.h"
 #include "color.h"
 
+static const char *errfmt = "cannot list project tasks '%s': %s";
+
 struct list_filter {
     int allall;
     int almostall;
@@ -42,23 +44,12 @@ static int recursive_tree_print(struct tree *p)
     return 0;
 }
 
-static int pretty_list(struct tman_context *ctx, char *prj,
-                       struct tman_id_list_opt *opt)
-{
-    if (tman_id_list(ctx, prj, opt) != TMAN_OK) {
-        elog(1, "could not list task IDs: %s", tman_strerror());
-        return 1;
-    }
-
-    return recursive_tree_print(ctx->ids);
-}
-
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
+    struct tman_args args;
     int i, showhelp, status;
-    struct tman_id_list_opt opt = { };
 
     /*
        -A - list all (even done tasks)
@@ -67,6 +58,7 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
        -s - default: list only current & previous (maybe?)
      */
     showhelp = FALSE;
+    args.id = args.prj = NULL;
     while ((c = getopt(argc, argv, ":Aac:hs")) != -1) {
         switch (c) {
         case 'A':
@@ -108,7 +100,22 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
 
     i = optind;
     do {
-        status = pretty_list(ctx, argv[i], &opt);
+        args.prj = argv[i];
+        tman_get_args(&args);
+
+        if ((status = tman_check_arg_prj(&args))) {
+            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
+                 tman_strerror());
+            continue;
+        }
+
+        if ((status = tman_id_list(ctx, &args, NULL) != TMAN_OK)) {
+            elog(status, errfmt, args.prj, tman_strerror());
+            continue;
+        }
+        // TODO: add hooks
+        recursive_tree_print(ctx->ids);
     } while (++i < argc);
+
     return status;
 }
