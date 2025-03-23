@@ -1,4 +1,3 @@
 [submodule "pgn"]
 	path = pgn
 	url = git@github.com:roachme/tman-pgn.git
-	branch = master
