@@ -2,6 +2,19 @@
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Deleted
+
+### Deprecated
+
+
+## [0.0.7] - (2025-03-24)
+
+### Added
+
 - `scripts`: Refactor logic for script updver.sh
 - `cli/find`: Add support for project name
 - `tman`: Add linux kernel style (trade spaces for tabs)
@@ -23,8 +36,6 @@
 - `lib/tman`: Delete library functions' return code
 - `lib/tman`: Delete fprintf() from library calls
 - `cli/cli`: Delete command list as default
-
-### Deprecated
 
 
 ## [0.0.6] - (2025-03-14)
