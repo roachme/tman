@@ -23,6 +23,8 @@ Prio: high
 Prio: mid
 + 1. Command `set' can't change task type.
   2. Add a style checker.
+  3. Unify commands list and find.
+  4. Add case-sensetive option to command list.
 
 Prio: low
   1. Add command autocomplitions
