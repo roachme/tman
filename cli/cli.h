@@ -7,7 +7,7 @@
 #include "../lib/tman.h"
 
 #define PROGRAM     "tman"
-#define VERSION     "v0.0.6"
+#define VERSION     "v0.0.7"
 
 typedef struct builtin {
     char name[CMDSIZ + 1];
