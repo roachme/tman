@@ -2,6 +2,7 @@
 #include <stdarg.h>
 
 #include "cli.h"
+#include "help.h"
 
 /*
  * Tman util options:
@@ -48,7 +49,12 @@ int main(int argc, char **argv)
 {
     struct tman_context *ctx;
     int i, status, cmdfound;
-    char *cmd = argc > 1 ? argv[1] : "list";
+    char *cmd = argv[1];
+
+    if (cmd == NULL) {
+        help_lookup(NULL);
+        return 1;
+    }
 
     ctx = NULL;
     cmdfound = FALSE;
@@ -64,11 +70,7 @@ int main(int argc, char **argv)
                 elog(status, "%s", tman_strerror());
                 goto out;
             }
-            /* Note: command list is default and can be omited.  */
-            if (argc == 1 && strncmp(cmd, "list", 4) == 0)
-                status = builtins[i].func(argc, argv, ctx);
-            else
-                status = builtins[i].func(argc - 1, argv + 1, ctx);
+            status = builtins[i].func(argc - 1, argv + 1, ctx);
             goto out;
         }
     if (cmdfound == FALSE && (status = tman_ispgn(cmd)) == TRUE) {
