@@ -20,6 +20,16 @@ struct tmanstruct {
     char fstate[TMANPATHSIZE + 1];      /* file to store tman task state */
 };
 
+struct tman_args;
+struct tman_option;
+struct tman_context;
+
+struct tman_args {
+    char *id;
+    char *brd;
+    char *prj;
+};
+
 enum tman_setuplvl {
     TMAN_SETUPSOFT,
     TMAN_SETUPCHECK,
@@ -95,47 +105,56 @@ int tman_pwd(void);
 int tman_mkfs(void);
 const char *tman_strerror(void);
 
+/* Input irguments functions.  */
+int tman_get_args(struct tman_args *args);
+int tman_check_arg_id(struct tman_args *args);
+int tman_check_arg_prj(struct tman_args *args);
+
 /* Task ID functions.  */
-int tman_id_add(struct tman_context *ctx, char *prj, char *id,
+int tman_id_add2(struct tman_context *ctx, struct tman_args *args,
+                 struct tman_option *opt);
+int tman_id_add(struct tman_context *ctx, struct tman_args *args,
                 struct tman_id_add_opt *opt);
-int tman_id_col(struct tman_context *ctx, char *prj, char *id, char *tag,
+int tman_id_col(struct tman_context *ctx, struct tman_args *args, char *tag,
                 struct tman_id_col_opt *opt);
-int tman_id_del(struct tman_context *ctx, char *prj, char *id,
+int tman_id_del(struct tman_context *ctx, struct tman_args *args,
                 struct tman_id_del_opt *opt);
-int tman_id_find_by_desc(struct tman_context *ctx, char *prj, char *descpatt);
-int tman_id_list(struct tman_context *ctx, char *prj,
+int tman_id_find_by_desc(struct tman_context *ctx, struct tman_args *args,
+                         char *descpatt);
+int tman_id_list(struct tman_context *ctx, struct tman_args *args,
                  struct tman_id_list_opt *opt);
-int tman_id_link(struct tman_context *ctx, char *prj,
+int tman_id_link(struct tman_context *ctx, struct tman_args *args,
                  struct tman_id_list_opt *opt);
 int tman_id_move(struct tman_context *ctx, char *srcprj, char *dstprj,
                  char *srcid, char *dstid);
-int tman_id_prev(struct tman_context *ctx, struct tman_id_prev_opt *opt);
-int tman_id_set(struct tman_context *ctx, char *prj, char *id,
+int tman_id_prev(struct tman_context *ctx, struct tman_args *args,
+                 struct tman_id_prev_opt *opt);
+int tman_id_set(struct tman_context *ctx, struct tman_args *args,
                 struct unit *unitbin, struct tman_id_set_opt *opt);
-int tman_id_show(struct tman_context *ctx, char *prj, char *id,
+int tman_id_show(struct tman_context *ctx, struct tman_args *args,
                  struct tman_id_show_opt *opt);
-int tman_id_sync(struct tman_context *ctx, char *prj, char *id,
+int tman_id_sync(struct tman_context *ctx, struct tman_args *args,
                  struct tman_id_sync_opt *opt);
-char *tman_id_getcurr(struct tman_context *ctx, char *prj);
-char *tman_id_getprev(struct tman_context *ctx, char *prj);
+char *tman_id_getcurr(struct tman_context *ctx, struct tman_args *args);
+char *tman_id_getprev(struct tman_context *ctx, struct tman_args *args);
 
 /* Task project functions.  */
-int tman_prj_add(struct tman_context *ctx, char *prj,
+int tman_prj_add(struct tman_context *ctx, struct tman_args *args,
                  struct tman_prj_add_opt *opt);
-int tman_prj_del(struct tman_context *ctx, char *prj,
+int tman_prj_del(struct tman_context *ctx, struct tman_args *args,
                  struct tman_prj_del_opt *opt);
 int tman_prj_list(struct tman_context *ctx, struct tman_prj_list_opt *opt);
 int tman_prj_prev(struct tman_context *ctx, struct tman_prj_prev_opt *opt);
-int tman_prj_set(struct tman_context *ctx, char *prj,
+int tman_prj_set(struct tman_context *ctx, struct tman_args *args,
                  struct tman_prj_set_opt *opt);
-int tman_prj_sync(struct tman_context *ctx, char *prj,
+int tman_prj_sync(struct tman_context *ctx, struct tman_args *args,
                   struct tman_prj_sync_opt *opt);
 char *tman_prj_getcurr(struct tman_context *ctx);
 char *tman_prj_getprev(struct tman_context *ctx);
 
 /* Task plugin functions.  */
 int tman_ispgn(const char *pgn);
-int tman_pgnexec(struct tman_context *ctx, char *prj, char *id, char *pgname,
+int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
                  char *pgncmd, struct tman_pgn_opt *opt);
 
 #endif

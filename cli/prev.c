@@ -4,10 +4,12 @@
 int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
 {
     char c, *errfmt;
+    struct tman_args args;
     int quiet, showhelp, status;
     struct tman_id_prev_opt opt;
 
     quiet = showhelp = FALSE;
+    args.id = args.prj = NULL;
     errfmt = "cannot switch: %s";
     while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
@@ -26,7 +28,8 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
 
     if (showhelp == TRUE)
         return help_usage("prev");
-    if ((status = tman_id_prev(ctx, &opt)) != TMAN_OK) {
+
+    if ((status = tman_id_prev(ctx, &args, &opt)) != TMAN_OK) {
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
     }

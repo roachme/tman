@@ -20,6 +20,7 @@ static int tree_print_rec(struct tree *p)
 static int _prj_add(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
+    struct tman_args args;
     const char *errfmt = "cannot add project '%s': %s";
     int i, quiet, showhelp, status;
     struct tman_prj_add_opt opt = {
@@ -27,6 +28,7 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
     };
 
     showhelp = quiet = FALSE;
+    args.prj = args.id = NULL;
     while ((c = getopt(argc, argv, ":hnq")) != -1) {
         switch (c) {
         case 'h':
@@ -54,7 +56,10 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
         return elog(1, "task prj required");
 
     for (i = optind; i < argc; ++i) {
-        if ((status = tman_prj_add(ctx, argv[i], &opt)) != TMAN_OK) {
+        args.prj = argv[i];
+        if ((status = tman_check_arg_prj(&args)) && status != TMAN_PRJ_NOSUCH)
+            return elog(1, errfmt, argv[i], tman_strerror());
+        if ((status = tman_prj_add(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(1, errfmt, argv[i], tman_strerror());
         }
@@ -65,11 +70,13 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
 static int _prj_del(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
+    struct tman_args args;
     const char *errfmt = "cannot switch: %s";
     int i, quiet, showpath, showhelp, status;
     char *old_cprj = tman_prj_getcurr(NULL);
     struct tman_prj_del_opt opt;
 
+    args.prj = args.id = NULL;
     quiet = showhelp = showpath = FALSE;
     while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
@@ -93,7 +100,13 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
 
     i = optind;
     do {
-        if ((status = tman_prj_del(ctx, argv[i], &opt)) != TMAN_OK) {
+        args.prj = argv[i];
+        tman_get_args(&args);
+
+        if ((status = tman_get_args(&args)))
+            return elog(status, errfmt, args.prj ? args.prj : "NOCURR",
+                        tman_strerror());
+        if ((status = tman_prj_del(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }
@@ -144,6 +157,7 @@ static int _prj_show(int argc, char **argv, struct tman_context *ctx)
 
 static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
 {
+    struct tman_args args;
     int c, i, quiet, showhelp, status;
     const char *errfmt = "cannot switch to '%s': %s";
     struct tman_prj_sync_opt opt = {
@@ -151,6 +165,7 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
     };
 
     quiet = showhelp = FALSE;
+    args.prj = args.id = NULL;
     while ((c = getopt(argc, argv, ":hnq")) != -1) {
         switch (c) {
         case 'h':
@@ -176,7 +191,15 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
 
     i = optind;
     do {
-        if ((status = tman_prj_sync(ctx, argv[i], &opt)) != TMAN_OK) {
+        args.prj = argv[i];
+        tman_get_args(&args);
+
+        if ((status = tman_check_arg_prj(&args))) {
+            if (quiet == FALSE)
+                elog(status, errfmt, argv[i], tman_strerror());
+            return status;
+        }
+        if ((status = tman_prj_sync(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }

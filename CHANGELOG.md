@@ -12,6 +12,7 @@
 - `lib/tman`: Change return value of function tman_deinit()
 - `lib/unit`: Change return value of function unit_delpgn()
 - `lib/tree`: Change return value of function tree_free()
+- `tman`: Use unified structure for input arguments
 
 ### Fixed
 

@@ -3,13 +3,15 @@
 #include "set.h"
 #include "cli.h"
 
+static const char *errfmt = "cannot set units '%s': %s";
+
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int i, idx, status;
+    struct tman_args args;
     int atleast_one_key_set;
-    char *prj = NULL;
     struct unit units[NKEYS] = { 0 };
     struct tman_id_set_opt opt;
 
@@ -20,6 +22,7 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
        -s      set task status.
        -t      set task type. Values: [bugfix|hotfix|feature]
      */
+    args.id = args.prj = NULL;
     atleast_one_key_set = FALSE;
     while ((c = getopt(argc, argv, ":d:p:P:t:")) != -1) {
         switch (c) {
@@ -66,7 +69,19 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 
     i = optind;
     do {
-        status = tman_id_set(ctx, prj, argv[i], units, &opt);
+        args.id = argv[i];
+        tman_get_args(&args);
+
+        if ((status = tman_check_arg_prj(&args))) {
+            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
+                 tman_strerror());
+            continue;
+        } else if ((status = tman_check_arg_id(&args))) {
+            elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
+            continue;
+        }
+
+        status = tman_id_set(ctx, &args, units, &opt);
     } while (++i < argc);
 
     return status;

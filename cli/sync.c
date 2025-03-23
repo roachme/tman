@@ -3,14 +3,15 @@
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
 {
-    char c, *errfmt, *prj;
+    char c, *errfmt;
+    struct tman_args args;
     int i, quiet, showhelp, status;
     struct tman_id_sync_opt opt = {
         .doswitch = TRUE,
     };
 
-    prj = NULL;
     quiet = showhelp = FALSE;
+    args.id = args.prj = NULL;
     errfmt = "cannot sync '%s': %s";
     while ((c = getopt(argc, argv, ":hnp:q")) != -1) {
         switch (c) {
@@ -21,7 +22,7 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
             opt.doswitch = FALSE;
             break;
         case 'p':
-            prj = optarg;
+            args.prj = optarg;
             break;
         case 'q':
             quiet = TRUE;
@@ -38,7 +39,19 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
 
     i = optind;
     do {
-        if ((status = tman_id_sync(ctx, prj, argv[i], &opt)) != TMAN_OK) {
+        args.id = argv[i];
+        tman_get_args(&args);
+
+        if ((status = tman_check_arg_prj(&args))) {
+            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
+                 tman_strerror());
+            continue;
+        } else if ((status = tman_check_arg_id(&args))) {
+            elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
+            continue;
+        }
+
+        if ((status = tman_id_sync(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }
