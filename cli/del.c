@@ -6,7 +6,7 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
 {
     struct tman_args args;
     char c, *errfmt;
-    struct tman_id_del_opt opt = { };
+    struct tman_option opt = { };
     int i, choice, quiet, showhelp, showprompt, status;
 
     showprompt = TRUE;

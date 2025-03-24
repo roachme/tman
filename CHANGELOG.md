@@ -4,6 +4,8 @@
 
 ### Changed
 
+- `tman`: Use unified structure for options
+
 ### Fixed
 
 ### Deleted

@@ -25,9 +25,9 @@ static int pretty_show(struct tman_context *ctx, struct tman_args *args,
 int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
+    char *key;
     int i, status;
     struct tman_args args;
-    struct tman_cli_show_opt opt = {.prj = NULL,.help = 0,.force = 0, };
 
     args.prj = args.id = args.brd = NULL;
     while ((c = getopt(argc, argv, ":p:hk")) != -1) {
@@ -36,7 +36,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             args.prj = optarg;
             break;
         case 'k':
-            opt.key = optarg;
+            key = optarg;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -61,7 +61,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
 
         if ((status = tman_id_show(ctx, &args, NULL)) != TMAN_OK)
             elog(status, errfmt, args.id, tman_strerror());
-        pretty_show(ctx, &args, opt.key);
+        pretty_show(ctx, &args, key);
     } while (++i < argc);
 
     return status;

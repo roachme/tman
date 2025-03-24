@@ -23,8 +23,8 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
     struct tman_args args;
     const char *errfmt = "cannot add project '%s': %s";
     int i, quiet, showhelp, status;
-    struct tman_prj_add_opt opt = {
-        .doswitch = TRUE,
+    struct tman_option opt = {
+        .prj_switch = TRUE,
     };
 
     showhelp = quiet = FALSE;
@@ -35,7 +35,7 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
             showhelp = TRUE;
             break;
         case 'n':
-            opt.doswitch = FALSE;
+            opt.prj_switch = FALSE;
             break;
         case 'q':
             quiet = TRUE;
@@ -74,7 +74,7 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     const char *errfmt = "cannot switch: %s";
     int i, quiet, showpath, showhelp, status;
     char *old_cprj = tman_prj_getcurr(NULL);
-    struct tman_prj_del_opt opt;
+    struct tman_option opt;
 
     args.prj = args.id = NULL;
     quiet = showhelp = showpath = FALSE;
@@ -134,7 +134,7 @@ static int _prj_list(int argc, char **argv, struct tman_context *ctx)
 static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
 {
     int status;
-    struct tman_prj_prev_opt opt;
+    struct tman_option opt;
     const char *errfmt = "cannot switch: %s";
 
     if ((status = tman_prj_prev(ctx, &opt)) != TMAN_OK)
@@ -160,8 +160,8 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
     struct tman_args args;
     int c, i, quiet, showhelp, status;
     const char *errfmt = "cannot switch to '%s': %s";
-    struct tman_prj_sync_opt opt = {
-        .doswitch = TRUE,
+    struct tman_option opt = {
+        .prj_switch = TRUE,
     };
 
     quiet = showhelp = FALSE;
@@ -172,7 +172,7 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
             showhelp = TRUE;
             break;
         case 'n':
-            opt.doswitch = FALSE;
+            opt.prj_switch = FALSE;
             break;
         case 'q':
             quiet = TRUE;
@@ -205,7 +205,7 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
         }
     } while (++i < argc);
 
-    return opt.doswitch && status == TMAN_OK ? tman_pwd() : status;
+    return opt.prj_switch && status == TMAN_OK ? tman_pwd() : status;
 }
 
 static const builtin_t prjcmds[] = {

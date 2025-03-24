@@ -23,6 +23,7 @@ int tman_cli_find(int argc, char **argv, struct tman_context *ctx)
     char c, *pattern;
     int showhelp;
     struct tman_args args;
+    struct tman_option opt;
 
     showhelp = FALSE;
     pattern = args.prj = args.id = NULL;
@@ -51,7 +52,7 @@ int tman_cli_find(int argc, char **argv, struct tman_context *ctx)
     }
 
     tman_get_args(&args);
-    if ((status = tman_id_find_by_desc(ctx, &args, pattern) != TMAN_OK))
+    if ((status = tman_id_find_by_desc(ctx, &args, pattern, &opt) != TMAN_OK))
         return elog(status, "could not list task IDs: %s", tman_strerror());
     return recursive_tree_print(ctx->ids);
 }

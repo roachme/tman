@@ -156,7 +156,7 @@ int tman_pwd(void)
 }
 
 int tman_id_add(struct tman_context *ctx, struct tman_args *args,
-                struct tman_id_add_opt *opt)
+                struct tman_option *options)
 {
     int status;
     // TODO: Add support to pass unit values into unit_add()
@@ -179,7 +179,8 @@ int tman_id_add(struct tman_context *ctx, struct tman_args *args,
         return emod_set(TMAN_UNIT_MAKE);
     else if (task_add(args->prj, args->id))
         return emod_set(TMAN_COL_ADD);
-    else if (opt->doswitch == TRUE && task_move(args->prj, args->id, COLCURR))
+    else if (options->id_switch == TRUE
+             && task_move(args->prj, args->id, COLCURR))
         return emod_set(TMAN_COL_MOVE);
     else if (hookact("add", args->prj, args->id))
         return emod_set(TMAN_EHOOK);
@@ -187,7 +188,7 @@ int tman_id_add(struct tman_context *ctx, struct tman_args *args,
 }
 
 int tman_id_show(struct tman_context *ctx, struct tman_args *args,
-                 struct tman_id_show_opt *opt)
+                 struct tman_option *options)
 {
     int status;
 
@@ -208,7 +209,7 @@ int tman_id_show(struct tman_context *ctx, struct tman_args *args,
 }
 
 int tman_id_col(struct tman_context *ctx, struct tman_args *args, char *tag,
-                struct tman_id_col_opt *opt)
+                struct tman_option *options)
 {
     int status;
     // TODO: does not change CWD if curr task was moved.
@@ -222,7 +223,7 @@ int tman_id_col(struct tman_context *ctx, struct tman_args *args, char *tag,
 }
 
 int tman_id_del(struct tman_context *ctx, struct tman_args *args,
-                struct tman_id_del_opt *opt)
+                struct tman_option *options)
 {
     int status;
 
@@ -244,7 +245,7 @@ int tman_id_del(struct tman_context *ctx, struct tman_args *args,
 }
 
 int tman_id_find_by_desc(struct tman_context *ctx, struct tman_args *args,
-                         char *descpatt)
+                         char *descpatt, struct tman_option *options)
 {
     DIR *ids;
     int status;
@@ -310,7 +311,7 @@ int tman_id_find_by_desc(struct tman_context *ctx, struct tman_args *args,
  @return struct item * | NULL (if error happened)
 */
 int tman_id_list(struct tman_context *ctx, struct tman_args *args,
-                 struct tman_id_list_opt *opt)
+                 struct tman_option *options)
 {
     DIR *ids;
     int status;
@@ -353,7 +354,7 @@ int tman_id_list(struct tman_context *ctx, struct tman_args *args,
 
 /* Link task IDs together: parent - children relationship.  */
 int tman_id_link(struct tman_context *ctx, struct tman_args *args,
-                 struct tman_id_list_opt *opt)
+                 struct tman_option *options)
 {
     return 0;
 }
@@ -402,7 +403,7 @@ int tman_id_move(struct tman_context *ctx, char *srcprj, char *dstprj,
 }
 
 int tman_id_prev(struct tman_context *ctx, struct tman_args *args,
-                 struct tman_id_prev_opt *opt)
+                 struct tman_option *options)
 {
     int status;
 
@@ -426,7 +427,7 @@ int tman_id_prev(struct tman_context *ctx, struct tman_args *args,
 }
 
 int tman_id_set(struct tman_context *ctx, struct tman_args *args,
-                struct unit *unitbin, struct tman_id_set_opt *opt)
+                struct unit *unitbin, struct tman_option *options)
 {
     int status;
 
@@ -443,14 +444,14 @@ int tman_id_set(struct tman_context *ctx, struct tman_args *args,
 }
 
 int tman_id_sync(struct tman_context *ctx, struct tman_args *args,
-                 struct tman_id_sync_opt *opt)
+                 struct tman_option *options)
 {
     int status;
 
     if ((status = check_args(args)))
         return status;
 
-    if (opt->doswitch == TRUE) {
+    if (options->id_switch == TRUE) {
         if (prj_iscurr(args->prj) == FALSE && prj_addcurr(args->prj) != 0)
             return emod_set(TMAN_PRJ_SWITCH);
         else if (task_iscurr(args->prj, args->id) == FALSE
@@ -480,7 +481,7 @@ char *tman_id_getprev(struct tman_context *ctx, struct tman_args *args)
 }
 
 int tman_prj_add(struct tman_context *ctx, struct tman_args *args,
-                 struct tman_prj_add_opt *opt)
+                 struct tman_option *options)
 {
     int status;
 
@@ -494,13 +495,13 @@ int tman_prj_add(struct tman_context *ctx, struct tman_args *args,
 
     if (dir_prj_add(tmanfs.base, args->prj))
         return emod_set(TMAN_DIR_PRJ_MAKE);
-    else if (opt->doswitch == TRUE && prj_addcurr(args->prj))
+    else if (options->prj_switch == TRUE && prj_addcurr(args->prj))
         return emod_set(TMAN_PRJ_SWITCH);
     return TMAN_OK;
 }
 
 int tman_prj_del(struct tman_context *ctx, struct tman_args *args,
-                 struct tman_prj_del_opt *opt)
+                 struct tman_option *options)
 {
     int status;
 
@@ -519,7 +520,7 @@ int tman_prj_del(struct tman_context *ctx, struct tman_args *args,
 /*
  * roachme: Refactor this shit
 */
-int tman_prj_list(struct tman_context *ctx, struct tman_prj_list_opt *opt)
+int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
 {
     DIR *edir;
     struct dirent *ent;
@@ -562,7 +563,7 @@ int tman_prj_list(struct tman_context *ctx, struct tman_prj_list_opt *opt)
     return TMAN_OK;
 }
 
-int tman_prj_prev(struct tman_context *ctx, struct tman_prj_prev_opt *opt)
+int tman_prj_prev(struct tman_context *ctx, struct tman_option *options)
 {
     int status;
     struct tman_args args;
@@ -577,20 +578,20 @@ int tman_prj_prev(struct tman_context *ctx, struct tman_prj_prev_opt *opt)
 }
 
 int tman_prj_set(struct tman_context *ctx, struct tman_args *args,
-                 struct tman_prj_set_opt *opt)
+                 struct tman_option *options)
 {
     return TMAN_OK;
 }
 
 int tman_prj_sync(struct tman_context *ctx, struct tman_args *args,
-                  struct tman_prj_sync_opt *opt)
+                  struct tman_option *options)
 {
     int status;
 
     if ((status = tman_check_arg_prj(args)))
         return status;
 
-    if (opt->doswitch == TRUE) {
+    if (options->prj_switch == TRUE) {
         if (prj_iscurr(args->prj) == FALSE && prj_addcurr(args->prj) != 0)
             return emod_set(TMAN_PRJ_SWITCH);
     }
@@ -621,7 +622,7 @@ int tman_ispgn(const char *pgn)
 }
 
 int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
-                 char *pgncmd, struct tman_pgn_opt *opt)
+                 char *pgncmd, struct tman_option *options)
 {
     int status;
 

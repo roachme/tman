@@ -10,9 +10,10 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
     char *errfmt;
     struct tman_args args;
     int quiet, showhelp, status, i, c;
-    struct tman_id_add_opt opt = {
-        .doswitch = TRUE,
-        .dogenerate = FALSE,
+    struct tman_option opt = {
+        .id_switch = TRUE,
+        .id_generate = FALSE,
+        .prj_switch = FALSE,
     };
 
     quiet = showhelp = FALSE;
@@ -24,13 +25,13 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
             args.prj = optarg;
             break;
         case 'g':
-            opt.dogenerate = TRUE;
+            opt.id_generate = TRUE;
             break;
         case 'h':
             showhelp = TRUE;
             break;
         case 'n':
-            opt.doswitch = FALSE;
+            opt.id_switch = FALSE;
             break;
         case 'q':
             quiet = TRUE;
@@ -68,5 +69,5 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
                 elog(status, errfmt, argv[i], tman_strerror());
         }
     }
-    return opt.doswitch && status == TMAN_OK ? tman_pwd() : status;
+    return opt.id_switch && status == TMAN_OK ? tman_pwd() : status;
 }
