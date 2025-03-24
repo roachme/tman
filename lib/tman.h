@@ -111,4 +111,13 @@ int tman_ispgn(const char *pgn);
 int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
                  char *pgncmd, struct tman_option *options);
 
+int tman_hook_action(struct tman_context *ctx, struct tman_args *args,
+                     char *cmd);
+struct unit *tman_hook_show(struct tman_context *ctx, struct tman_args *args);
+
+int tman_hook_action_free(struct tman_context *ctx, struct tman_args *args,
+                          char *cmd);
+struct unit *tman_hook_show_free(struct tman_context *ctx,
+                                 struct tman_args *args);
+
 #endif

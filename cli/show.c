@@ -59,9 +59,15 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             continue;
         }
 
-        if ((status = tman_id_show(ctx, &args, NULL)) != TMAN_OK)
+        if ((status = tman_id_show(ctx, &args, NULL)) != TMAN_OK) {
             elog(status, errfmt, args.id, tman_strerror());
+            continue;
+        }
+        if (tman_hook_show(ctx, &args) == NULL)
+            elog(status, errfmt, args.id, tman_strerror());
+
         pretty_show(ctx, &args, key);
+        ctx->units.pgn = tman_hook_show_free(ctx, &args);
     } while (++i < argc);
 
     return status;
