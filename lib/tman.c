@@ -182,8 +182,6 @@ int tman_id_add(struct tman_context *ctx, struct tman_args *args,
     else if (options->id_switch == TRUE
              && task_move(args->prj, args->id, COLCURR))
         return emod_set(TMAN_COL_MOVE);
-    else if (hookact("add", args->prj, args->id))
-        return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
 
@@ -195,16 +193,9 @@ int tman_id_show(struct tman_context *ctx, struct tman_args *args,
     if ((status = check_args(args)))
         return status;
 
-    /* Free task units because it might be called more than once.  */
-    ctx->units.pgn = unit_delpgn(ctx->units.pgn);
-
-    /* No need to check return value because there might case
-     * that no hooks are defined or executed */
-    ctx->units.pgn = hookshow(args->prj, args->id);
-
-    if (unit_getbin(ctx->units.bin, args->prj, args->id) == NULL)
-        return emod_set(TMAN_UNIT_GET);
     strncpy(ctx->units.id, args->id, IDSIZ);
+    if (unit_getbin(ctx->units.bin, args->prj, args->id) == NULL)
+        status = TMAN_UNIT_GET;
     return status;
 }
 
@@ -233,9 +224,7 @@ int tman_id_del(struct tman_context *ctx, struct tman_args *args,
     /* FIXME: if current task gets deleted, plugin gun deletes
      * branches but won't switch to new current task branch.  */
 
-    if (hookact("del", args->prj, args->id))
-        return emod_set(TMAN_EHOOK);
-    else if (unit_delbin(args->prj, args->id))
+    if (unit_delbin(args->prj, args->id))
         return emod_set(TMAN_UNIT_DEL);
     else if (task_del(args->prj, args->id))
         return emod_set(TMAN_COL_DEL);
@@ -252,7 +241,6 @@ int tman_id_find_by_desc(struct tman_context *ctx, struct tman_args *args,
     struct dirent *ent;
     struct unit bunit[NKEYS];
     struct tree *node;
-    char pgnout[PGNOUTSIZ + 1] = { 0 };
     char *desc;
 
     /* Free task ID list because it might be called more than once.  */
@@ -295,11 +283,9 @@ int tman_id_find_by_desc(struct tman_context *ctx, struct tman_args *args,
             continue;
         }
 
-        hookls(pgnout, args->prj, args->id);
         struct column column = col_getmark(args->prj, ent->d_name);
-        node = tree_alloc(ent->d_name, col_prio(column.col), desc, pgnout);
+        node = tree_alloc(ent->d_name, col_prio(column.col), desc, "");
         ctx->ids = tree_add(ctx->ids, node);
-        pgnout[0] = '\0';
     }
     closedir(ids);
     return TMAN_OK;
@@ -318,7 +304,6 @@ int tman_id_list(struct tman_context *ctx, struct tman_args *args,
     struct dirent *ent;
     struct unit bunit[NKEYS];
     struct tree *node;
-    char pgnout[PGNOUTSIZ + 1] = { 0 };
 
     /* Free task ID list because it might be called more than once.  */
     ctx->ids = tree_free(ctx->ids);
@@ -341,12 +326,9 @@ int tman_id_list(struct tman_context *ctx, struct tman_args *args,
             // IF builtin units could not get
             continue;
         }
-        hookls(pgnout, args->prj, args->id);
         struct column column = col_getmark(args->prj, ent->d_name);
-        node =
-            tree_alloc(ent->d_name, col_prio(column.col), bunit[3].val, pgnout);
+        node = tree_alloc(ent->d_name, col_prio(column.col), bunit[3].val, "");
         ctx->ids = tree_add(ctx->ids, node);
-        pgnout[0] = '\0';
     }
     closedir(ids);
     return TMAN_OK;
@@ -412,17 +394,11 @@ int tman_id_prev(struct tman_context *ctx, struct tman_args *args,
         return emod_set(TMAN_NODEF_ERR);
     if ((status = check_args(args)))
         return status;
-    else if (task_prev(args->prj) == NULL)
+    else if ((args->id = task_prev(args->prj)) == NULL)
         return emod_set(TMAN_ID_NOPREV);
-    else if (hookact("prev", prj_getcurr(), task_curr(args->prj)))
-        return emod_set(TMAN_EHOOK);
-
     if (task_swap(args->prj))
         return emod_set(TMAN_ID_SWAP);
 
-    /* Get updated task IDs (current and previous. */
-    if (tman_get_args(args))
-        return emod_set(TMAN_NODEF_ERR);
     return TMAN_OK;
 }
 
@@ -438,8 +414,6 @@ int tman_id_set(struct tman_context *ctx, struct tman_args *args,
 
     if (unit_setbin(args->prj, args->id, unitbin))
         return emod_set(TMAN_UNIT_SET);
-    else if (hookact("set", args->prj, args->id))
-        return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
 
@@ -458,9 +432,6 @@ int tman_id_sync(struct tman_context *ctx, struct tman_args *args,
                  && task_move(args->prj, args->id, COLCURR))
             return emod_set(TMAN_ID_SWAP);
     }
-
-    if (hookact("sync", args->prj, args->id))
-        return emod_set(TMAN_EHOOK);
     return TMAN_OK;
 }
 
@@ -486,7 +457,7 @@ int tman_prj_add(struct tman_context *ctx, struct tman_args *args,
     int status;
 
     /* Special case: project should not exists. If this's a case - let it go. */
-    if ((status = check_args(args)) && status != TMAN_PRJ_NOSUCH)
+    if ((status = tman_check_arg_prj(args)) && status != TMAN_PRJ_NOSUCH)
         return status;
     else if (prj_exists(args->prj) == TRUE)
         return emod_set(TMAN_PRJ_EXISTS);
@@ -505,7 +476,7 @@ int tman_prj_del(struct tman_context *ctx, struct tman_args *args,
 {
     int status;
 
-    if ((status = check_args(args)))
+    if ((status = tman_check_arg_prj(args)))
         return status;
 
     if (dir_prj_del(tmanfs.base, args->prj))
@@ -629,6 +600,32 @@ int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
     if ((status = check_args(args)))
         return status;
     return system(genpath_pgn(args->prj, args->id, pgname, pgncmd));
+}
+
+struct unit *tman_hook_show(struct tman_context *ctx, struct tman_args *args)
+{
+    // TODO: if no hooks are executed then what?
+    ctx->units.pgn = hookshow(args->prj, args->id);
+    return ctx->units.pgn;
+}
+
+int tman_hook_action(struct tman_context *ctx, struct tman_args *args,
+                     char *cmd)
+{
+    return hookact(cmd, args->prj, args->id);
+}
+
+int tman_hook_action_free(struct tman_context *ctx, struct tman_args *args,
+                          char *cmd)
+{
+    return 0;
+}
+
+struct unit *tman_hook_show_free(struct tman_context *ctx,
+                                 struct tman_args *args)
+{
+    unit_delpgn(ctx->units.pgn);
+    return NULL;
 }
 
 const char *tman_strerror(void)

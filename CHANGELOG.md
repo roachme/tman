@@ -5,6 +5,7 @@
 ### Changed
 
 - `tman`: Use unified structure for options
+- `tman`: Move hooks to cli part
 
 ### Fixed
 

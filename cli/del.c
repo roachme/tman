@@ -60,10 +60,14 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
             continue;
         }
 
+        if ((status = tman_hook_action(ctx, &args, "del")) != TMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, args.id, tman_strerror());
+            continue;
+        }
         if ((status = tman_id_del(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i] ? argv[i] : "NOCURR",
-                     tman_strerror());
+                elog(status, errfmt, args.id, tman_strerror());
         }
     } while (++i < argc);
 
