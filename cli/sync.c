@@ -6,8 +6,8 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
     char c, *errfmt;
     struct tman_args args;
     int i, quiet, showhelp, status;
-    struct tman_id_sync_opt opt = {
-        .doswitch = TRUE,
+    struct tman_option opt = {
+        .id_switch = TRUE,
     };
 
     quiet = showhelp = FALSE;
@@ -19,7 +19,7 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
             showhelp = TRUE;
             break;
         case 'n':
-            opt.doswitch = FALSE;
+            opt.id_switch = FALSE;
             break;
         case 'p':
             args.prj = optarg;
@@ -57,5 +57,5 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
         }
     } while (++i < argc);
 
-    return opt.doswitch && status == TMAN_OK ? tman_pwd() : status;
+    return opt.id_switch && status == TMAN_OK ? tman_pwd() : status;
 }

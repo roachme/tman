@@ -9,7 +9,7 @@ int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
     char *col;
     struct tman_args args;
     int i, c, status, showhelp, showlist;
-    struct tman_id_col_opt opt;
+    struct tman_option opt;
     const char *errfmt = "cannot move to column '%s': %s";
 
     args.prj = args.id = NULL;

@@ -6,7 +6,7 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
     char c, *errfmt;
     struct tman_args args;
     int quiet, showhelp, status;
-    struct tman_id_prev_opt opt;
+    struct tman_option opt;
 
     quiet = showhelp = FALSE;
     args.id = args.prj = NULL;
