@@ -5,8 +5,32 @@
 
 static const char *errfmt = "cannot show units '%s': %s";
 
-static int pretty_show(struct tman_context *ctx, struct tman_args *args,
-                       char *key)
+static int show_key(struct tman_context *ctx, char *key)
+{
+    int i;
+    struct unit *unitbin, *unitpgn;
+
+    if (strcmp(key, "id") == 0) {
+        printf("%s\n", ctx->units.id);
+        return TMAN_OK;
+    }
+
+    for (unitbin = ctx->units.bin, i = 0; i < NKEYS; ++i)
+        if (strcmp(key, unitbin[i].key) == 0) {
+            printf("%s\n", unitbin[i].val);
+            return TMAN_OK;
+        }
+
+    for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
+        if (strcmp(key, unitpgn->key) == 0) {
+            printf("%s\n", unitpgn->val);
+            return TMAN_OK;
+        }
+
+    return 1;
+}
+
+static int pretty_show(struct tman_context *ctx, char *key)
 {
     int i;
     struct unit *unitbin, *unitpgn;
@@ -29,8 +53,8 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
     int i, status;
     struct tman_args args;
 
-    args.prj = args.id = args.brd = NULL;
-    while ((c = getopt(argc, argv, ":p:hk")) != -1) {
+    key = args.prj = args.id = args.brd = NULL;
+    while ((c = getopt(argc, argv, ":p:hk:")) != -1) {
         switch (c) {
         case 'p':
             args.prj = optarg;
@@ -66,7 +90,13 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
         if (tman_hook_show(ctx, &args) == NULL)
             elog(status, errfmt, args.id, tman_strerror());
 
-        pretty_show(ctx, &args, key);
+        if (key != NULL ) {
+            if (show_key(ctx, key) != TMAN_OK)
+                elog(1, errfmt, args.id, "key not found");
+        }
+        else {
+            pretty_show(ctx, key);
+        }
         ctx->units.pgn = tman_hook_show_free(ctx, &args);
     } while (++i < argc);
 

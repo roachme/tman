@@ -2,6 +2,8 @@
 
 ### Added
 
+- `cli/show`: Add option `-k' to command show
+
 ### Changed
 
 - `tman`: Use unified structure for options

@@ -199,6 +199,8 @@ struct help helptab[] = {
      .desc_short = "Show task info.\n",
      .desc_long = "\n\
     Options:\n\
+      -h      show this help and exit\n\
+      -k key  key to show (builtin or plugin)\n\
       -p PRJ  project name (default is current)\n\
     \n\
     Arguments:\n\
