@@ -1,4 +1,5 @@
 #include "cli.h"
+#include "config.h"
 
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
@@ -55,7 +56,10 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }
-        if ((status = tman_hook_action(ctx, &args, "sync")) != TMAN_OK)
+
+        if ((status =
+             tman_hook_action(ctx, tman_config->hooks, &args,
+                              "sync")) != TMAN_OK)
             elog(status, errfmt, args.id, tman_strerror());
     } while (++i < argc);
 

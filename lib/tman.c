@@ -15,7 +15,9 @@
 #include "common.h"
 #include "osdep.h"
 #include "errmod.h"
-#include "config.h"
+
+// roach: use this private structure
+struct tman_struct;
 
 // TODO: Make NOT global.
 struct tmanstruct tmanfs;
@@ -46,19 +48,20 @@ static struct tman_context *make_context(void)
     return ctx;
 }
 
-static int fill_sysvars()
+static int fill_sysvars(struct tman_base *base)
 {
-    sprintf(tmanfs.base, "%s", config.base);
-    sprintf(tmanfs.db, "%s/%s", tmanfs.base, ".tman");
+    sprintf(tmanfs.base, "%s", base->base);
+    sprintf(tmanfs.db, "%s/%s", base->base, ".tman");
     sprintf(tmanfs.finit, "%s/%s", tmanfs.db, "inited");
-    sprintf(tmanfs.fstate, "%s/%s", tmanfs.db, "state");
-    sprintf(tmanfs.pgn, "%s/%s", tmanfs.base, ".pgn");
-    sprintf(tmanfs.pgnins, "%s", config.pgnins);
+    sprintf(tmanfs.fstate, "%s/%s", tmanfs.db, "state");        // should be called prj
+    sprintf(tmanfs.pgn, "%s/%s", base->base, ".pgn");   //should be called `pgndb`
+    sprintf(tmanfs.pgnins, "%s", base->pgn);
     return TMAN_OK;
 }
 
 /*
  * Get default value if it's not set.
+ * @param args input arguments
 */
 int tman_get_args(struct tman_args *args)
 {
@@ -110,12 +113,9 @@ int tman_mkfs(void)
     return TMAN_OK;
 }
 
-struct tman_context *tman_init(void)
+struct tman_context *tman_init(struct tman_base *base)
 {
-    if (config_init()) {
-        emod_set(TMAN_ECONF);
-        return NULL;
-    } else if (fill_sysvars()) {
+    if (fill_sysvars(base)) {
         emod_set(TMAN_ESYSVAR);
         return NULL;
     }
@@ -587,9 +587,9 @@ char *tman_prj_getprev(struct tman_context *ctx)
     return strncpy(task_prevprj, prj, PRJSIZ);
 }
 
-int tman_ispgn(const char *pgn)
+int tman_ispgn(char *pgndir, const char *pgname)
 {
-    return ispgn(pgn);
+    return ispgn(pgndir, pgname);
 }
 
 int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
@@ -602,17 +602,18 @@ int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
     return system(genpath_pgn(args->prj, args->id, pgname, pgncmd));
 }
 
-struct unit *tman_hook_show(struct tman_context *ctx, struct tman_args *args)
+struct unit *tman_hook_show(struct tman_context *ctx, struct tman_hook *hooks,
+                            struct tman_args *args, char *cmd)
 {
-    // TODO: if no hooks are executed then what?
-    ctx->units.pgn = hookshow(args->prj, args->id);
+    // todo: if no hooks are executed then what?
+    ctx->units.pgn = hookshow(hooks, args->prj, args->id, cmd);
     return ctx->units.pgn;
 }
 
-int tman_hook_action(struct tman_context *ctx, struct tman_args *args,
-                     char *cmd)
+int tman_hook_action(struct tman_context *ctx, struct tman_hook *hooks,
+                     struct tman_args *args, char *cmd)
 {
-    return hookact(cmd, args->prj, args->id);
+    return hookact(hooks, cmd, args->prj, args->id);
 }
 
 int tman_hook_action_free(struct tman_context *ctx, struct tman_args *args,

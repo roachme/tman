@@ -2,53 +2,42 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "tman.h"               // for tmanfs. make it not global
 #include "hook.h"
 #include "unit.h"
 #include "osdep.h"
-#include "config.h"             // for usehooks. make it not global
 
-int ispgn(const char *pgn)
+int ispgn(char *pgndir, const char *pgname)
 {
     char path[PATHSIZ + 1];
-    sprintf(path, "%s/%s/%s", tmanfs.pgnins, pgn, pgn);
+    sprintf(path, "%s/%s/%s", pgndir, pgname, pgname);
     return ISFILE(path);
 }
 
-int hookact(char *cmd, char *prj, char *id)
+int hookact(struct tman_hook *hooks, char *cmd, char *prj, char *id)
 {
-    int i;
-
-    if (config.usehooks == FALSE)
-        return 0;
-
-    for (i = 0; i < config.hooks.size; ++i) {
-        struct hook *hook = &config.hooks.hook[i];
-        if (strcmp(cmd, hook->cmd) == 0)
-            system(genpath_pgn(prj, id, hook->pgname, hook->pgncmd));
+    for (; hooks; hooks = hooks->next) {
+        if (strcmp(cmd, hooks->cmd) == 0) {
+            char *pgncmd = genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd);
+            system(pgncmd);
+        }
     }
     return 0;
 }
 
-struct unit *hookshow(char *prj, char *id)
+struct unit *hookshow(struct tman_hook *hooks, char *prj, char *id, char *cmd)
 {
-    int i;
     FILE *pipe;
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
     char line[BUFSIZ + 1] = { 0 };
     struct unit *unitpgn = NULL;
 
-    if (config.usehooks == FALSE)
-        return NULL;
-
-    for (i = 0; i < config.hooks.size; ++i) {
-        struct hook *hook = &config.hooks.hook[i];
-        if (strcmp(hook->cmd, "show") != 0)
+    for (; hooks; hooks = hooks->next) {
+        if (strcmp(hooks->cmd, cmd) != 0)
             continue;
 
         if ((pipe =
-             popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd),
+             popen(genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd),
                    "r")) == NULL) {
             continue;
         }
@@ -61,27 +50,21 @@ struct unit *hookshow(char *prj, char *id)
     return unitpgn;
 }
 
-char *hookls(char *pgnout, char *prj, char *id)
+char *hookls(struct tman_hook *hooks, char *pgnout, char *prj, char *id)
 {
-    int i;
     FILE *pipe;
     char *prefix = "  ";
     char line[BUFSIZ + 1] = { 0 };
 
-    if (config.usehooks == FALSE)
-        return pgnout;
-
-    for (i = 0; i < config.hooks.size; ++i) {
-        struct hook *hook = &config.hooks.hook[i];
-        if (strcmp(hook->cmd, "list") != 0)
+    for (; hooks; hooks = hooks->next) {
+        if (strcmp(hooks->cmd, "list") != 0)
             continue;
 
         if ((pipe =
-             popen(genpath_pgn(prj, id, hook->pgname, hook->pgncmd),
+             popen(genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd),
                    "r")) == NULL) {
             return NULL;
         }
-
         // NOTE: gotta get a single word
         if (fgets(line, BUFSIZ, pipe)) {
             line[strcspn(line, "\n")] = 0;

@@ -2,6 +2,7 @@
 
 #include "show.h"
 #include "cli.h"
+#include "config.h"
 
 static const char *errfmt = "cannot show units '%s': %s";
 
@@ -87,14 +88,14 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             elog(status, errfmt, args.id, tman_strerror());
             continue;
         }
-        if (tman_hook_show(ctx, &args) == NULL)
+        if (tman_config->usehooks == TRUE
+            && tman_hook_show(ctx, tman_config->hooks, &args, "show") == NULL)
             elog(status, errfmt, args.id, tman_strerror());
 
-        if (key != NULL ) {
+        if (key != NULL) {
             if (show_key(ctx, key) != TMAN_OK)
                 elog(1, errfmt, args.id, "key not found");
-        }
-        else {
+        } else {
             pretty_show(ctx, key);
         }
         ctx->units.pgn = tman_hook_show_free(ctx, &args);
