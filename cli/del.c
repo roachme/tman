@@ -1,5 +1,6 @@
 #include "del.h"
 #include "cli.h"
+#include "config.h"
 
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
@@ -60,7 +61,9 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
             continue;
         }
 
-        if ((status = tman_hook_action(ctx, &args, "del")) != TMAN_OK) {
+        if ((status =
+             tman_hook_action(ctx, tman_config->hooks, &args,
+                              "del")) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;

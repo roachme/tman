@@ -1,5 +1,6 @@
 #include "prev.h"
 #include "cli.h"
+#include "config.h"
 
 int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
 {
@@ -38,7 +39,8 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
     }
 
     /* Switch to new current task ID.  */
-    if ((status = tman_hook_action(ctx, &args, "prev")) != TMAN_OK) {
+    if ((status =
+         tman_hook_action(ctx, tman_config->hooks, &args, "prev")) != TMAN_OK) {
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
         return status;

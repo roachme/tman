@@ -21,7 +21,10 @@ struct tmanstruct {
 };
 
 struct tman_args;
+struct tman_hook;
+struct tman_base;
 struct tman_option;
+struct tman_custom;
 struct tman_context;
 
 struct tman_args {
@@ -30,10 +33,31 @@ struct tman_args {
     char *prj;
 };
 
+struct tman_hook {
+    char cmd[10];
+    char cmdopt[10];
+    char pgntag[10];
+    char pgname[10];
+    char pgncmd[10];
+    char pgnopt[10];
+    struct tman_hook *next;
+};
+
+struct tman_base {
+    char *pgn;
+    char *base;
+};
+
 struct tman_option {
     int id_switch;
     int id_generate;
     int prj_switch;
+};
+
+struct tman_custom {
+    struct tman_hook *hooks;
+    // struct tman_prios *prios;
+    // struct tman_column *column;
 };
 
 enum tman_setuplvl {
@@ -53,7 +77,7 @@ extern struct tmanstruct tmanfs;
 
 /* Core functions.  */
 int tman_setup(int setuplvl);
-struct tman_context *tman_init(void);
+struct tman_context *tman_init(struct tman_base *structure);
 struct tman_context *tman_deinit(struct tman_context *ctx);
 
 /* Core util functions.  */
@@ -107,13 +131,14 @@ char *tman_prj_getcurr(struct tman_context *ctx);
 char *tman_prj_getprev(struct tman_context *ctx);
 
 /* Task plugin functions.  */
-int tman_ispgn(const char *pgn);
+int tman_ispgn(char *pgndir, const char *pgname);
 int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
                  char *pgncmd, struct tman_option *options);
 
-int tman_hook_action(struct tman_context *ctx, struct tman_args *args,
-                     char *cmd);
-struct unit *tman_hook_show(struct tman_context *ctx, struct tman_args *args);
+int tman_hook_action(struct tman_context *ctx, struct tman_hook *hooks,
+                     struct tman_args *args, char *cmd);
+struct unit *tman_hook_show(struct tman_context *ctx, struct tman_hook *hooks,
+                            struct tman_args *args, char *cmd);
 
 int tman_hook_action_free(struct tman_context *ctx, struct tman_args *args,
                           char *cmd);

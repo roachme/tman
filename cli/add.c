@@ -3,6 +3,7 @@
 
 #include "add.h"
 #include "cli.h"
+#include "config.h"
 
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
@@ -68,7 +69,9 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
         }
-        if ((status = tman_hook_action(ctx, &args, "add")) != TMAN_OK)
+        if ((status =
+             tman_hook_action(ctx, tman_config->hooks, &args,
+                              "add")) != TMAN_OK)
             if (quiet == FALSE)
                 elog(TMAN_EHOOK, errfmt, args.id, tman_strerror());
     }

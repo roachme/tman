@@ -2,6 +2,7 @@
 #include <stdarg.h>
 
 #include "cli.h"
+#include "config.h"
 #include "help.h"
 
 /*
@@ -45,20 +46,32 @@ static const builtin_t builtins[] = {
     {.name = "ver",.func = &tman_cli_ver,.setuplvl = TMAN_SETUPSOFT},
 };
 
+struct config *tman_config;
+
 int main(int argc, char **argv)
 {
-    struct tman_context *ctx;
-    int i, status, cmdfound;
     char *cmd = argv[1];
+    struct tman_base base;
+    struct config *config;
+    int i, status, cmdfound;
+    struct tman_context *ctx;
 
     if (cmd == NULL) {
         help_lookup(NULL);
         return 1;
     }
 
+    if ((config = config_init()) == NULL) {
+        elog(1, "could not read config file");
+        return 1;
+    }
+
     ctx = NULL;
     cmdfound = FALSE;
-    if ((ctx = tman_init()) == NULL) {
+    base.base = config->base;
+    base.pgn = config->pgnins;
+
+    if ((ctx = tman_init(&base)) == NULL) {
         elog(1, "could not init util: %s", tman_strerror());
         return 1;
     }
@@ -73,7 +86,7 @@ int main(int argc, char **argv)
             status = builtins[i].func(argc - 1, argv + 1, ctx);
             goto out;
         }
-    if (cmdfound == FALSE && (status = tman_ispgn(cmd)) == TRUE) {
+    if (cmdfound == FALSE && (status = tman_ispgn(base.pgn, cmd)) == TRUE) {
         cmdfound = TRUE;
         if ((status = tman_setup(TMAN_SETUPCHECK)) != TMAN_OK) {
             elog(status, "%s", tman_strerror());
@@ -88,5 +101,6 @@ int main(int argc, char **argv)
 
  out:
     ctx = tman_deinit(ctx);
+    tman_config = config_deinit(tman_config);
     return status;
 }
