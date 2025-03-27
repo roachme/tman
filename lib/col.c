@@ -53,8 +53,10 @@ char *col_get(char *prj, char *id)
 
     if ((fp = fopen(genpath_col(prj, id), "r")) == NULL)
         return NULL;
-    else if (fscanf(fp, "col : %s\n", col) != NCOLITEM)
+    else if (fscanf(fp, "col : %s\n", col) != NCOLITEM) {
+        fclose(fp);
         return NULL;
+    }
     fclose(fp);
     return col;
 }

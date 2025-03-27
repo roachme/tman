@@ -47,7 +47,7 @@ struct tman_hook *parse_hook(const char *hookname, struct tman_hook *hooks)
 
     if ((hook = make_hook()) == NULL) {
         elog(1, "make_hook: ERR");
-        return NULL;
+        return hooks;
     }
 
     strcpy(hook->pgntag, hookname);
@@ -55,7 +55,6 @@ struct tman_hook *parse_hook(const char *hookname, struct tman_hook *hooks)
     strcpy(hook->pgname, strtok(NULL, delim));
     strcpy(hook->pgncmd, strtok(NULL, delim));
     hook->next = hooks;
-    //elog(1, "->>hookcmd: %s", hook->cmd);
     return hook;
 }
 
@@ -75,21 +74,16 @@ static int parse_columns(struct columns *columns)
 }
 */
 
-static struct config *parseconf(const char *fname)
+static int parseconf(struct config *myconfig, const char *fname)
 {
     FILE *fp;
     int retcode = 0;
     char line[BUFSIZ + 1];
     char *token = NULL;
 
-    if ((tman_config = malloc(sizeof(struct config))) == NULL)
-        return NULL;
-    memset(tman_config, 0, sizeof(struct config));
-
     if ((fp = fopen(fname, "r")) == NULL) {
         fprintf(stderr, "could not open config file");
-        emod_set(TMAN_NODEF_ERR);
-        return NULL;
+        return 1;
     }
 
     while (retcode == TMAN_OK && fgets(line, BUFSIZ, fp) != NULL) {
@@ -98,17 +92,17 @@ static struct config *parseconf(const char *fname)
             continue;
 
         if (strcmp(token, "TMANBASE") == 0)
-            retcode = parsepath(tman_config->base);
+            retcode = parsepath(myconfig->base);
         else if (strcmp(token, "TMANPGNINS") == 0)
-            retcode = parsepath(tman_config->pgnins);
+            retcode = parsepath(myconfig->pgnins);
         else if (strcmp(token, "USEHOOKS") == 0)
-            retcode = parse_usehooks(token, &tman_config->usehooks);
+            retcode = parse_usehooks(token, &myconfig->usehooks);
         else if (strcmp(token, "HOOKCMD") == 0)
-            tman_config->hooks = parse_hook(token, tman_config->hooks);
+            myconfig->hooks = parse_hook(token, myconfig->hooks);
         else if (strcmp(token, "HOOKCAT") == 0)
-            tman_config->hooks = parse_hook(token, tman_config->hooks);
+            myconfig->hooks = parse_hook(token, myconfig->hooks);
         else if (strcmp(token, "HOOKLIST") == 0)
-            tman_config->hooks = parse_hook(token, tman_config->hooks);
+            myconfig->hooks = parse_hook(token, myconfig->hooks);
         else if (strcmp(token, "COLUMN") == 0) {
             // TODO: add a parser
         } else {
@@ -120,34 +114,48 @@ static struct config *parseconf(const char *fname)
         }
     }
     fclose(fp);
-    return tman_config;
+    return 0;
 }
 
 struct config *config_init(void)
 {
+    struct config *config;
+
+    if ((config = malloc(sizeof(struct config))) == NULL)
+        return 0;
+    memset(config, 0, sizeof(struct config));
+    return config;
+}
+
+int config_parse(struct config *config)
+{
+    int i;
     const char *progname = "tman";
     char *homedir = getenv("HOME");
-    char cfg[CONFIGSIZ + 1];
+    char cfgfile[CONFIGSIZ + 1];
     const char cfgfmts[NUMCONFIG][CONFIGSIZ + 1] = {
         "%s/.%s/%s.cfg",
         "%s/.config/%s/%s.cfg",
     };
 
-    for (int i = 0; i < NUMCONFIG; ++i) {
-        sprintf(cfg, cfgfmts[i], homedir, progname, progname);
-        if (ISFILE(cfg)) {
-            return parseconf(cfg);
+    for (i = 0; i < NUMCONFIG; ++i) {
+        sprintf(cfgfile, cfgfmts[i], homedir, progname, progname);
+        if (ISFILE(cfgfile)) {
+            return parseconf(config, cfgfile);
         }
     }
-    fprintf(stderr, "could not find system config file");
-    emod_set(TMAN_NODEF_ERR);
-    return NULL;
+    return 1;
 }
 
 void *config_deinit(struct config *config)
 {
-    for (; config->hooks; config->hooks = config->hooks->next)
-        free(config->hooks);
+    struct tman_hook *head;
+
+    for (head = config->hooks; head != NULL;) {
+        struct tman_hook *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
     free(config);
     return NULL;
 }

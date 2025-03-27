@@ -52,7 +52,6 @@ int main(int argc, char **argv)
 {
     char *cmd = argv[1];
     struct tman_base base;
-    struct config *config;
     int i, status, cmdfound;
     struct tman_context *ctx;
 
@@ -61,15 +60,19 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if ((config = config_init()) == NULL) {
-        elog(1, "could not read config file");
+    if ((tman_config = config_init()) == NULL) {
+        fprintf(stderr, "could malloc memory for config");
+        return 1;
+    } else if (config_parse(tman_config)) {
+        config_deinit(tman_config);
+        fprintf(stderr, "could parse config file");
         return 1;
     }
 
     ctx = NULL;
     cmdfound = FALSE;
-    base.base = config->base;
-    base.pgn = config->pgnins;
+    base.base = tman_config->base;
+    base.pgn = tman_config->pgnins;
 
     if ((ctx = tman_init(&base)) == NULL) {
         elog(1, "could not init util: %s", tman_strerror());
