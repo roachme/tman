@@ -24,6 +24,7 @@ struct config {
 extern struct config *tman_config;
 
 struct config *config_init(void);
+int config_parse(struct config *config);
 void *config_deinit(struct config *config);
 
 #endif
