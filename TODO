@@ -25,6 +25,7 @@ Prio: mid
   2. Add a style checker.
   3. Unify commands list and find.
   4. Add case-sensetive option to command list.
+  5. Delete function tman_id_find_by_desc(). Use tman_id_list() instead in cli.
 
 Prio: low
   1. Add command autocomplitions
