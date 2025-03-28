@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "prj.h"
+#include "project.h"
 #include "common.h"
 #include "errmod.h"
 #include "osdep.h"
@@ -26,7 +26,7 @@ static char prjs[NPRJ][PRJSIZ + 1];
 /* Holders for caller functions. This way caller can't mess with module.  */
 static char curr[PRJSIZ + 1], prev[PRJSIZ + 1];
 
-static int is_prjset(char *prj)
+static int is_project_set(char *prj)
 {
     if (prj == NULL || prj[0] == '\0')
         return FALSE;
@@ -58,7 +58,7 @@ static int save(void)
     return fclose(fp);
 }
 
-int prj_init(char *fstate)
+int project_init(char *fstate)
 {
     prjfile = fstate;
 
@@ -66,7 +66,7 @@ int prj_init(char *fstate)
     return load();
 }
 
-int prj_isvalid(char *prj)
+int is_project_valid(char *prj)
 {
     if (!isalnum(*prj++))
         return 0;
@@ -76,62 +76,54 @@ int prj_isvalid(char *prj)
     return isalnum(*--prj);
 }
 
-int prj_exists(char *prj)
+int project_exist(char *prj)
 {
     return ISDIR(genpath_prj(prj));
 }
 
-int prj_reset(void)
+char *project_getcurr()
 {
-    int i;
-
-    for (i = 0; i < NPRJ; ++i)
-        memset(prjs[i], 0, PRJSIZ);
-    return 0;
-}
-
-char *prj_getcurr()
-{
-    if (is_prjset(prjs[CPRJ]) == FALSE)
+    if (is_project_set(prjs[CPRJ]) == FALSE)
         return NULL;
     return strncpy(curr, prjs[CPRJ], PRJSIZ);
 }
 
-char *prj_getprev()
+char *project_getprev()
 {
-    if (is_prjset(prjs[PPRJ]) == FALSE)
+    if (is_project_set(prjs[PPRJ]) == FALSE)
         return NULL;
     return strncpy(prev, prjs[PPRJ], PRJSIZ);
 }
 
-int prj_addcurr(char *prj)
+int project_addcurr(char *prj)
 {
     /* Prevent duplicates in toggles.  */
-    if (prj_iscurr(prj) == TRUE)
+    if (is_project_curr(prj) == TRUE)
         return 0;
     strncpy(prjs[PPRJ], prjs[CPRJ], PRJSIZ);
     strncpy(prjs[CPRJ], prj, PRJSIZ);
     return save();
 }
 
-int prj_delcurr(void)
+int project_delcurr(void)
 {
     strncpy(prjs[CPRJ], prjs[PPRJ], PRJSIZ);
     memset(prjs[PPRJ], 0, PRJSIZ);
     return save();
 }
 
-int prj_delprev(void)
+int project_delprev(void)
 {
     memset(prjs[PPRJ], 0, PRJSIZ);
     return save();
 }
 
-int prj_swapprjs(void)
+int project_swap(void)
 {
     char tmp[PRJSIZ + 1];
 
-    if (is_prjset(prjs[PPRJ]) == FALSE || is_prjset(prjs[CPRJ]) == FALSE)
+    if (is_project_set(prjs[PPRJ]) == FALSE
+        || is_project_set(prjs[CPRJ]) == FALSE)
         return 1;
     strncpy(tmp, prjs[CPRJ], PRJSIZ);
     strncpy(prjs[CPRJ], prjs[PPRJ], PRJSIZ);
@@ -139,21 +131,21 @@ int prj_swapprjs(void)
     return save();
 }
 
-int prj_iscurr(char *prj)
+int is_project_curr(char *prj)
 {
     if (prj == NULL)
         return FALSE;
     return strncmp(prj, prjs[CPRJ], PRJSIZ) == 0;
 }
 
-int prj_isprev(char *prj)
+int is_project_prev(char *prj)
 {
     if (prj == NULL)
         return FALSE;
     return strncmp(prj, prjs[PPRJ], PRJSIZ) == 0;
 }
 
-int prj_chklen(char *prj)
+int project_valid_length(char *prj)
 {
     return strlen(prj) <= PRJSIZ;
 }
