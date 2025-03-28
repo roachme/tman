@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <getopt.h>
 
-#include "prj.h"
+#include "project.h"
 #include "limit.h"
 
 #define TRUE        1

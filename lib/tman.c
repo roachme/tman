@@ -6,7 +6,7 @@
 
 #include "col.h"
 #include "dir.h"
-#include "prj.h"
+#include "project.h"
 #include "hook.h"
 #include "tman.h"
 #include "tree.h"
@@ -66,7 +66,7 @@ static int fill_sysvars(struct tman_base *base)
 int tman_get_args(struct tman_args *args)
 {
     if (args->prj == NULL)
-        args->prj = prj_getcurr();
+        args->prj = project_getcurr();
     if (args->prj && args->id == NULL)
         args->id = task_curr(args->prj);
     return TMAN_OK;
@@ -85,11 +85,11 @@ int tman_check_arg_id(struct tman_args *args)
 
 int tman_check_arg_prj(struct tman_args *args)
 {
-    if (args->prj == NULL && (args->prj = prj_getcurr()) == NULL)
+    if (args->prj == NULL && (args->prj = project_getcurr()) == NULL)
         return emod_set(TMAN_PRJ_NOCURR);
-    else if (prj_isvalid(args->prj) == FALSE)
+    else if (is_project_valid(args->prj) == FALSE)
         return emod_set(TMAN_PRJ_ILLEG);
-    else if (prj_exists(args->prj) == FALSE)
+    else if (project_exist(args->prj) == FALSE)
         return emod_set(TMAN_PRJ_NOSUCH);
     return TMAN_OK;
 }
@@ -135,7 +135,7 @@ int tman_setup(int setuplvl)
     } else if (setuplvl == TMAN_SETUPCHECK) {
         if (ISFILE(tmanfs.finit) != TRUE) {
             status = emod_set(TMAN_EINIT);
-        } else if (prj_init(tmanfs.fstate) != 0)
+        } else if (project_init(tmanfs.fstate) != 0)
             return emod_set(TMAN_EINIT_PRJMOD);
         // roach: is it a good idea to init module column in general
         // and here?
@@ -147,7 +147,7 @@ int tman_pwd(void)
 {
     char *prj, *id;
 
-    if ((prj = prj_getcurr()) == NULL)
+    if ((prj = project_getcurr()) == NULL)
         return emod_set(TMAN_PRJ_NOCURR);
     if ((id = task_curr(prj)) == NULL)
         id = "";
@@ -426,7 +426,8 @@ int tman_id_sync(struct tman_context *ctx, struct tman_args *args,
         return status;
 
     if (options->id_switch == TRUE) {
-        if (prj_iscurr(args->prj) == FALSE && prj_addcurr(args->prj) != 0)
+        if (is_project_curr(args->prj) == FALSE
+            && project_addcurr(args->prj) != 0)
             return emod_set(TMAN_PRJ_SWITCH);
         else if (task_iscurr(args->prj, args->id) == FALSE
                  && task_move(args->prj, args->id, COLCURR))
@@ -459,14 +460,14 @@ int tman_prj_add(struct tman_context *ctx, struct tman_args *args,
     /* Special case: project should not exists. If this's a case - let it go. */
     if ((status = tman_check_arg_prj(args)) && status != TMAN_PRJ_NOSUCH)
         return status;
-    else if (prj_exists(args->prj) == TRUE)
+    else if (project_exist(args->prj) == TRUE)
         return emod_set(TMAN_PRJ_EXISTS);
-    else if (prj_chklen(args->prj) == FALSE)
+    else if (project_valid_length(args->prj) == FALSE)
         return emod_set(TMAN_PRJ_TOOLONG);
 
     if (dir_prj_add(tmanfs.base, args->prj))
         return emod_set(TMAN_DIR_PRJ_MAKE);
-    else if (options->prj_switch == TRUE && prj_addcurr(args->prj))
+    else if (options->prj_switch == TRUE && project_addcurr(args->prj))
         return emod_set(TMAN_PRJ_SWITCH);
     return TMAN_OK;
 }
@@ -481,9 +482,9 @@ int tman_prj_del(struct tman_context *ctx, struct tman_args *args,
 
     if (dir_prj_del(tmanfs.base, args->prj))
         return emod_set(TMAN_DIR_PRJ_DEL);
-    else if (prj_iscurr(args->prj) == TRUE && prj_delcurr())
+    else if (is_project_curr(args->prj) == TRUE && project_delcurr())
         return emod_set(TMAN_PRJ_DEL_CURR);
-    else if (prj_isprev(args->prj) == TRUE && prj_delprev())
+    else if (is_project_prev(args->prj) == TRUE && project_delprev())
         return emod_set(TMAN_PRJ_DEL_CURR);
     return TMAN_OK;
 }
@@ -509,8 +510,8 @@ int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
     tree_free(ctx->prjs);
     ctx->prjs = NULL;
 
-    cprj = prj_getcurr();
-    pprj = prj_getprev();
+    cprj = project_getcurr();
+    pprj = project_getprev();
     while ((ent = readdir(edir)) != NULL) {
         args.prj = ent->d_name;
 
@@ -539,11 +540,11 @@ int tman_prj_prev(struct tman_context *ctx, struct tman_option *options)
     int status;
     struct tman_args args;
 
-    if ((args.prj = prj_getcurr()) && (status = tman_check_arg_prj(&args)))
+    if ((args.prj = project_getcurr()) && (status = tman_check_arg_prj(&args)))
         return status;
-    if ((args.prj = prj_getprev()) && (status = tman_check_arg_prj(&args)))
+    if ((args.prj = project_getprev()) && (status = tman_check_arg_prj(&args)))
         return status;
-    if (prj_swapprjs())
+    if (project_swap())
         return emod_set(TMAN_PRJ_SWAP);
     return TMAN_OK;
 }
@@ -563,7 +564,8 @@ int tman_prj_sync(struct tman_context *ctx, struct tman_args *args,
         return status;
 
     if (options->prj_switch == TRUE) {
-        if (prj_iscurr(args->prj) == FALSE && prj_addcurr(args->prj) != 0)
+        if (is_project_curr(args->prj) == FALSE
+            && project_addcurr(args->prj) != 0)
             return emod_set(TMAN_PRJ_SWITCH);
     }
     return TMAN_OK;
@@ -573,7 +575,7 @@ char *tman_prj_getcurr(struct tman_context *ctx)
 {
     char *prj;
 
-    if ((prj = prj_getcurr()) == NULL)
+    if ((prj = project_getcurr()) == NULL)
         return NULL;
     return strncpy(task_currprj, prj, PRJSIZ);
 }
@@ -582,7 +584,7 @@ char *tman_prj_getprev(struct tman_context *ctx)
 {
     char *prj;
 
-    if ((prj = prj_getprev()) == NULL)
+    if ((prj = project_getprev()) == NULL)
         return NULL;
     return strncpy(task_prevprj, prj, PRJSIZ);
 }
