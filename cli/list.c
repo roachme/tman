@@ -31,8 +31,7 @@ static int recursive_tree_print(struct tree *p)
             && (p->mark == '*' || p->mark == '^'))
             printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id,
                    p->pgnout, p->desc);
-        else if (list_filter.almostall == TRUE
-                 && (p->mark != '-' || p->mark != '-'))
+        else if (list_filter.almostall == TRUE && (p->mark != '-'))
             printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id,
                    p->pgnout, p->desc);
         else if (list_filter.allall == TRUE)
@@ -109,7 +108,7 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
             continue;
         }
 
-        if ((status = tman_id_list(ctx, &args, NULL) != TMAN_OK)) {
+        if ((status = tman_id_list(ctx, &args, NULL)) != TMAN_OK) {
             elog(status, errfmt, args.prj, tman_strerror());
             continue;
         }

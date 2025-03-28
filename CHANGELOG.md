@@ -13,6 +13,7 @@
 ### Fixed
 
 - `cli`: Fix a memory leak in config module
+- `cli`: Fix linter warnings
 
 ### Deleted
 
