@@ -1,4 +1,4 @@
-#ifndef TMAN_CACHE_H
-#define TMAN_CACHE_H
+#ifndef LIBTMAN_CACHE_H
+#define LIBTMAN_CACHE_H
 
 #endif

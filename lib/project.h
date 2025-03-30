@@ -1,5 +1,5 @@
-#ifndef TMAN_PROJECT_H
-#define TMAN_PROJECT_H
+#ifndef LIBTMAN_PROJECT_H
+#define LIBTMAN_PROJECT_H
 
 #define PRJSIZ      10          /* maximum size of project name */
 

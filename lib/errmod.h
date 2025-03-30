@@ -1,5 +1,5 @@
-#ifndef TMAN_ERRMOD_H
-#define TMAN_ERRMOD_H
+#ifndef LIBTMAN_ERRMOD_H
+#define LIBTMAN_ERRMOD_H
 
 #define ERRMSGSIZ   100
 #define NERRCODE    50

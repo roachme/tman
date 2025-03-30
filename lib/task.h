@@ -1,5 +1,5 @@
-#ifndef TMAN_TASK_H
-#define TMAN_TASK_H
+#ifndef LIBTMAN_TASK_H
+#define LIBTMAN_TASK_H
 
 char *task_curr(char *prj);
 char *task_prev(char *prj);

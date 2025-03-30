@@ -1,5 +1,5 @@
-#ifndef TMAN_TREE_H
-#define TMAN_TREE_H
+#ifndef LIBTMAN_TREE_H
+#define LIBTMAN_TREE_H
 
 #include "common.h"
 #include "task.h"

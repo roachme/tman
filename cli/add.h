@@ -4,8 +4,8 @@
     successfully added task ID.
 */
 
-#ifndef TMAN_ADD_H
-#define TMAN_ADD_H
+#ifndef LIBTMAN_ADD_H
+#define LIBTMAN_ADD_H
 
 enum tman_cli_add_errno {
     TMAN_ADD_IDEXT = 20,        /* task ID already exists */
