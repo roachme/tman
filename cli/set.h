@@ -1,4 +1,4 @@
-#ifndef TMAN_SET_H
-#define TMAN_SET_H
+#ifndef LIBTMAN_SET_H
+#define LIBTMAN_SET_H
 
 #endif

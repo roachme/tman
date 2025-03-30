@@ -1,5 +1,5 @@
-#ifndef TMAN_H
-#define TMAN_H
+#ifndef LIBTMAN_H
+#define LIBTMAN_H
 
 #include "unit.h"
 #include "errmod.h"

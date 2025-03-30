@@ -1,4 +1,4 @@
-#ifndef TMAN_COL_H
-#define TMAN_COL_H
+#ifndef LIBTMAN_COL_H
+#define LIBTMAN_COL_H
 
 #endif

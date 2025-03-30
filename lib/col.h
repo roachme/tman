@@ -1,5 +1,5 @@
-#ifndef TMAN_COLUMN_H
-#define TMAN_COLUMN_H
+#ifndef LIBTMAN_COLUMN_H
+#define LIBTMAN_COLUMN_H
 
 #include "common.h"
 

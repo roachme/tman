@@ -1,5 +1,5 @@
-#ifndef TMAN_UNIT_H
-#define TMAN_UNIT_H
+#ifndef LIBTMAN_UNIT_H
+#define LIBTMAN_UNIT_H
 
 #include "common.h"
 

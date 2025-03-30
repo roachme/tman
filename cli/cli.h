@@ -1,5 +1,5 @@
-#ifndef TMAN_CLI_H
-#define TMAN_CLI_H
+#ifndef LIBTMAN_CLI_H
+#define LIBTMAN_CLI_H
 
 #define CMDSIZ          5
 

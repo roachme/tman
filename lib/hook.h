@@ -1,5 +1,5 @@
-#ifndef TMAN_PGN_H
-#define TMAN_PGN_H
+#ifndef LIBTMAN_PGN_H
+#define LIBTMAN_PGN_H
 
 #include "tman.h"
 #include "unit.h"

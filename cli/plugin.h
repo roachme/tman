@@ -1,5 +1,5 @@
-#ifndef TMAN_CLI_PLUGIN_H
-#define TMAN_CLI_PLUGIN_H
+#ifndef LIBTMAN_CLI_PLUGIN_H
+#define LIBTMAN_CLI_PLUGIN_H
 
 #include "cli.h"
 
