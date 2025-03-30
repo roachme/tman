@@ -23,9 +23,6 @@
 static char *prjfile;
 static char prjs[NPRJ][PRJSIZ + 1];
 
-/* Holders for caller functions. This way caller can't mess with module.  */
-static char curr[PRJSIZ + 1], prev[PRJSIZ + 1];
-
 static int is_project_set(char *prj)
 {
     if (prj == NULL || prj[0] == '\0')
@@ -83,6 +80,8 @@ int project_exist(char *prj)
 
 char *project_getcurr()
 {
+    static char curr[PRJSIZ + 1];
+
     if (is_project_set(prjs[CPRJ]) == FALSE)
         return NULL;
     return strncpy(curr, prjs[CPRJ], PRJSIZ);
@@ -90,6 +89,8 @@ char *project_getcurr()
 
 char *project_getprev()
 {
+    static char prev[PRJSIZ + 1];
+
     if (is_project_set(prjs[PPRJ]) == FALSE)
         return NULL;
     return strncpy(prev, prjs[PPRJ], PRJSIZ);
