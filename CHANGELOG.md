@@ -9,6 +9,7 @@
 - `tman`: Use unified structure for options
 - `tman`: Move hooks to cli part
 - `tman`: Move config to cli part
+- `tman`: Rename struct tman_args to struct tman_arg
 
 ### Fixed
 

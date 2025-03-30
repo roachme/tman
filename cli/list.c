@@ -47,7 +47,7 @@ static int recursive_tree_print(struct tree *p)
 int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
-    struct tman_args args;
+    struct tman_arg args;
     int i, showhelp, status;
 
     /*

@@ -20,7 +20,7 @@ static int tree_print_rec(struct tree *p)
 static int _prj_add(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
-    struct tman_args args;
+    struct tman_arg args;
     const char *errfmt = "cannot add project '%s': %s";
     int i, quiet, showhelp, status;
     struct tman_option opt = {
@@ -70,7 +70,7 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
 static int _prj_del(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
-    struct tman_args args;
+    struct tman_arg args;
     const char *errfmt = "cannot switch: %s";
     int i, quiet, showpath, showhelp, status;
     char *old_cprj = tman_prj_getcurr(NULL);
@@ -157,7 +157,7 @@ static int _prj_show(int argc, char **argv, struct tman_context *ctx)
 
 static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
 {
-    struct tman_args args;
+    struct tman_arg args;
     int c, i, quiet, showhelp, status;
     const char *errfmt = "cannot switch to '%s': %s";
     struct tman_option opt = {

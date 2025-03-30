@@ -26,7 +26,7 @@ struct tmanstruct tmanfs;
 static char task_currid[IDSIZ + 1], task_previd[IDSIZ + 1];
 static char task_currprj[PRJSIZ + 1], task_prevprj[PRJSIZ + 1];
 
-static int check_args(struct tman_args *args)
+static int check_args(struct tman_arg *args)
 {
     int status;
 
@@ -63,7 +63,7 @@ static int fill_sysvars(struct tman_base *base)
  * Get default value if it's not set.
  * @param args input arguments
 */
-int tman_get_args(struct tman_args *args)
+int tman_get_args(struct tman_arg *args)
 {
     if (args->prj == NULL)
         args->prj = project_getcurr();
@@ -72,7 +72,7 @@ int tman_get_args(struct tman_args *args)
     return TMAN_OK;
 }
 
-int tman_check_arg_id(struct tman_args *args)
+int tman_check_arg_id(struct tman_arg *args)
 {
     if (args->id == NULL && (args->id = task_curr(args->prj)) == NULL)
         return emod_set(TMAN_ID_NOCURR);
@@ -83,7 +83,7 @@ int tman_check_arg_id(struct tman_args *args)
     return TMAN_OK;
 }
 
-int tman_check_arg_prj(struct tman_args *args)
+int tman_check_arg_prj(struct tman_arg *args)
 {
     if (args->prj == NULL && (args->prj = project_getcurr()) == NULL)
         return emod_set(TMAN_PRJ_NOCURR);
@@ -155,7 +155,7 @@ int tman_pwd(void)
     return TMAN_OK;
 }
 
-int tman_id_add(struct tman_context *ctx, struct tman_args *args,
+int tman_id_add(struct tman_context *ctx, struct tman_arg *args,
                 struct tman_option *options)
 {
     int status;
@@ -185,7 +185,7 @@ int tman_id_add(struct tman_context *ctx, struct tman_args *args,
     return TMAN_OK;
 }
 
-int tman_id_show(struct tman_context *ctx, struct tman_args *args,
+int tman_id_show(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     int status;
@@ -199,7 +199,7 @@ int tman_id_show(struct tman_context *ctx, struct tman_args *args,
     return status;
 }
 
-int tman_id_col(struct tman_context *ctx, struct tman_args *args, char *tag,
+int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
                 struct tman_option *options)
 {
     int status;
@@ -213,7 +213,7 @@ int tman_id_col(struct tman_context *ctx, struct tman_args *args, char *tag,
     return task_move(args->prj, args->id, tag);
 }
 
-int tman_id_del(struct tman_context *ctx, struct tman_args *args,
+int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
                 struct tman_option *options)
 {
     int status;
@@ -233,7 +233,7 @@ int tman_id_del(struct tman_context *ctx, struct tman_args *args,
     return TMAN_OK;
 }
 
-int tman_id_find_by_desc(struct tman_context *ctx, struct tman_args *args,
+int tman_id_find_by_desc(struct tman_context *ctx, struct tman_arg *args,
                          char *descpatt, struct tman_option *options)
 {
     DIR *ids;
@@ -296,7 +296,7 @@ int tman_id_find_by_desc(struct tman_context *ctx, struct tman_args *args,
  @param prj char * | NULL (then list the current project)
  @return struct item * | NULL (if error happened)
 */
-int tman_id_list(struct tman_context *ctx, struct tman_args *args,
+int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     DIR *ids;
@@ -335,7 +335,7 @@ int tman_id_list(struct tman_context *ctx, struct tman_args *args,
 }
 
 /* Link task IDs together: parent - children relationship.  */
-int tman_id_link(struct tman_context *ctx, struct tman_args *args,
+int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     return 0;
@@ -347,7 +347,7 @@ int tman_id_move(struct tman_context *ctx, char *srcprj, char *dstprj,
 /*
     int status;
     char *_srcprj, *_srcid, *_dstprj, *_dstid;
-    struct tman_args args;
+    struct tman_arg args;
 
     if ((status = check_args(&args)) != TMAN_OK)
         return status;
@@ -384,7 +384,7 @@ int tman_id_move(struct tman_context *ctx, char *srcprj, char *dstprj,
     return 0;
 }
 
-int tman_id_prev(struct tman_context *ctx, struct tman_args *args,
+int tman_id_prev(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     int status;
@@ -402,7 +402,7 @@ int tman_id_prev(struct tman_context *ctx, struct tman_args *args,
     return TMAN_OK;
 }
 
-int tman_id_set(struct tman_context *ctx, struct tman_args *args,
+int tman_id_set(struct tman_context *ctx, struct tman_arg *args,
                 struct unit *unitbin, struct tman_option *options)
 {
     int status;
@@ -417,7 +417,7 @@ int tman_id_set(struct tman_context *ctx, struct tman_args *args,
     return TMAN_OK;
 }
 
-int tman_id_sync(struct tman_context *ctx, struct tman_args *args,
+int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     int status;
@@ -436,14 +436,14 @@ int tman_id_sync(struct tman_context *ctx, struct tman_args *args,
     return TMAN_OK;
 }
 
-char *tman_id_getcurr(struct tman_context *ctx, struct tman_args *args)
+char *tman_id_getcurr(struct tman_context *ctx, struct tman_arg *args)
 {
     if (tman_check_arg_prj(args))
         return NULL;
     return strncpy(task_currid, args->id, IDSIZ);
 }
 
-char *tman_id_getprev(struct tman_context *ctx, struct tman_args *args)
+char *tman_id_getprev(struct tman_context *ctx, struct tman_arg *args)
 {
     if (check_args(args))
         return NULL;
@@ -452,7 +452,7 @@ char *tman_id_getprev(struct tman_context *ctx, struct tman_args *args)
     return strncpy(task_previd, args->id, IDSIZ);
 }
 
-int tman_prj_add(struct tman_context *ctx, struct tman_args *args,
+int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     int status;
@@ -472,7 +472,7 @@ int tman_prj_add(struct tman_context *ctx, struct tman_args *args,
     return TMAN_OK;
 }
 
-int tman_prj_del(struct tman_context *ctx, struct tman_args *args,
+int tman_prj_del(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     int status;
@@ -499,7 +499,7 @@ int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
     struct tree *node;
     int colprio = 1;
     char *cprj, *pprj;
-    struct tman_args args;
+    struct tman_arg args;
     char *desc = "some project desc";
     char pgnout[PGNOUTSIZ + 1] = { 0 };
 
@@ -538,7 +538,7 @@ int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
 int tman_prj_prev(struct tman_context *ctx, struct tman_option *options)
 {
     int status;
-    struct tman_args args;
+    struct tman_arg args;
 
     if ((args.prj = project_getcurr()) && (status = tman_check_arg_prj(&args)))
         return status;
@@ -549,13 +549,13 @@ int tman_prj_prev(struct tman_context *ctx, struct tman_option *options)
     return TMAN_OK;
 }
 
-int tman_prj_set(struct tman_context *ctx, struct tman_args *args,
+int tman_prj_set(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     return TMAN_OK;
 }
 
-int tman_prj_sync(struct tman_context *ctx, struct tman_args *args,
+int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
                   struct tman_option *options)
 {
     int status;
@@ -594,7 +594,7 @@ int tman_ispgn(char *pgndir, const char *pgname)
     return ispgn(pgndir, pgname);
 }
 
-int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
+int tman_pgnexec(struct tman_context *ctx, struct tman_arg *args, char *pgname,
                  char *pgncmd, struct tman_option *options)
 {
     int status;
@@ -605,7 +605,7 @@ int tman_pgnexec(struct tman_context *ctx, struct tman_args *args, char *pgname,
 }
 
 struct unit *tman_hook_show(struct tman_context *ctx, struct tman_hook *hooks,
-                            struct tman_args *args, char *cmd)
+                            struct tman_arg *args, char *cmd)
 {
     // todo: if no hooks are executed then what?
     ctx->units.pgn = hookshow(hooks, args->prj, args->id, cmd);
@@ -613,19 +613,19 @@ struct unit *tman_hook_show(struct tman_context *ctx, struct tman_hook *hooks,
 }
 
 int tman_hook_action(struct tman_context *ctx, struct tman_hook *hooks,
-                     struct tman_args *args, char *cmd)
+                     struct tman_arg *args, char *cmd)
 {
     return hookact(hooks, cmd, args->prj, args->id);
 }
 
-int tman_hook_action_free(struct tman_context *ctx, struct tman_args *args,
+int tman_hook_action_free(struct tman_context *ctx, struct tman_arg *args,
                           char *cmd)
 {
     return 0;
 }
 
 struct unit *tman_hook_show_free(struct tman_context *ctx,
-                                 struct tman_args *args)
+                                 struct tman_arg *args)
 {
     unit_delpgn(ctx->units.pgn);
     return NULL;
