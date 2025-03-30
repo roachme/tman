@@ -5,7 +5,7 @@ int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
 {
     int status;
     char c, *cmd;
-    struct tman_args args;
+    struct tman_arg args;
 
     args.id = args.prj = NULL;
     while ((c = getopt(argc, argv, ":p:i:")) != -1) {

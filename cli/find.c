@@ -22,7 +22,7 @@ int tman_cli_find(int argc, char **argv, struct tman_context *ctx)
     int status;
     char c, *pattern;
     int showhelp;
-    struct tman_args args;
+    struct tman_arg args;
     struct tman_option opt;
 
     showhelp = FALSE;

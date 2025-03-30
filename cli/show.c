@@ -52,7 +52,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
     char c;
     char *key;
     int i, status;
-    struct tman_args args;
+    struct tman_arg args;
 
     key = args.prj = args.id = args.brd = NULL;
     while ((c = getopt(argc, argv, ":p:hk:")) != -1) {

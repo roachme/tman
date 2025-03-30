@@ -5,7 +5,7 @@
 int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
 {
     char c, *errfmt;
-    struct tman_args args;
+    struct tman_arg args;
     int i, quiet, showhelp, status;
     struct tman_option opt = {
         .id_switch = TRUE,

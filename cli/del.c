@@ -5,7 +5,7 @@
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
 {
-    struct tman_args args;
+    struct tman_arg args;
     char c, *errfmt;
     struct tman_option opt = { };
     int i, choice, quiet, showhelp, showprompt, status;

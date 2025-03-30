@@ -9,7 +9,7 @@
 int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
 {
     char *errfmt;
-    struct tman_args args;
+    struct tman_arg args;
     int quiet, showhelp, status, i, c;
     struct tman_option opt = {
         .id_switch = TRUE,

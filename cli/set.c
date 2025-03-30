@@ -11,7 +11,7 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     int i, idx, status;
-    struct tman_args args;
+    struct tman_arg args;
     int atleast_one_key_set;
     struct unit units[NKEYS] = { 0 };
     struct tman_option opt;
