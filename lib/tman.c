@@ -341,47 +341,37 @@ int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
     return 0;
 }
 
-int tman_id_move(struct tman_context *ctx, char *srcprj, char *dstprj,
-                 char *srcid, char *dstid)
+int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
+                 struct tman_arg *dst)
 {
-/*
     int status;
-    char *_srcprj, *_srcid, *_dstprj, *_dstid;
-    struct tman_arg args;
 
-    if ((status = check_args(&args)) != TMAN_OK)
-        return status;
-    _srcprj = args.prj;
-    _srcid = args.id;
-
-    if (dstid == NULL)
-        dstid = srcid;
-    if ((status = check_args(dstprj, dstid)) && status != TMAN_ID_NOSUCH) {
-        return status;
-    }
-    _dstprj = args->prj;
-    _dstid = args->id;
-
-    if (task_ext(_dstprj, _dstid) == TRUE) {
-        return TMAN_ID_EXISTS;
+    if ((status = check_args(src)))
+        return emod_set(status);
+    else if ((status = check_args(dst)) && status != TMAN_ID_NOSUCH)
+        return emod_set(status);
+    else if (task_ext(dst->prj, dst->id))
+        return emod_set(TMAN_ID_EXISTS);
+    else if (!strcmp(src->prj, dst->prj) && !strcmp(src->id, dst->id)) {
+        // no need to do anything.
+        return 0;
     }
 
-    // TODO: add support to change user's PWD
-
-    // Rename task.
-    if (strncmp(_srcprj, _dstprj, PRJSIZ) == 0) {
-        if (dir_id_rename(tmanfs.base, _srcprj, _dstprj, _srcid, _dstid)) {
-            return 1;
-        }
-    } else {
-        // Move task to another project.
+    /*
+     * If move task from project to project, update current and previous tasks
+     * in source project. Do it before moving task, cuz there might be
+     * multiple current or previous tasks later.
+     */
+    if (strcmp(src->prj, dst->prj) != 0) {
+        if (task_iscurr(src->prj, src->id))
+            task_del(src->prj, src->id);
+        else if (task_isprev(src->prj, src->id))
+            task_del(src->prj, src->id);
     }
 
-    // roach: check this case
-    // fprintf(stderr, "source and destination pathes are the same. Do nothing.");
-    // TODO: update curr & prev if needed.
-*/
-    return 0;
+    if (dir_id_rename(tmanfs.base, src->prj, dst->prj, src->id, dst->id))
+        return emod_set(TMAN_DIR_ID_REN);
+    return TMAN_OK;
 }
 
 int tman_id_prev(struct tman_context *ctx, struct tman_arg *args,
@@ -533,6 +523,12 @@ int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
     }
     closedir(edir);
     return TMAN_OK;
+}
+
+int tman_prj_rename(struct tman_context *ctx, struct tman_arg *src,
+                    struct tman_arg *dst)
+{
+    return 0;
 }
 
 int tman_prj_prev(struct tman_context *ctx, struct tman_option *options)

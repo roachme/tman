@@ -257,6 +257,17 @@ int task_iscurr(char *prj, char *id)
     return FALSE;
 }
 
+int task_isprev(char *prj, char *id)
+{
+    char *previd = task_prev(prj);
+
+    if (previd == NULL)
+        return FALSE;
+    else if (strncmp(previd, id, IDSIZ) == 0)
+        return TRUE;
+    return FALSE;
+}
+
 /*
  * Move task to another column.
  * @param prj project name

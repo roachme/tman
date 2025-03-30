@@ -46,6 +46,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
 
     [TMAN_DIR_ID_DEL] = "could not delete task directory",
     [TMAN_DIR_ID_MAKE] = "could not create task directory",
+    [TMAN_DIR_ID_REN] = "could not rename task directory",
     [TMAN_DIR_ID_OPEN] = "could not open task directory",
 
     [TMAN_DIR_PRJ_DEL] = "could not delete prj directory",

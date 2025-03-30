@@ -44,6 +44,7 @@ enum tman_err_enum {
 
     TMAN_DIR_ID_MAKE,
     TMAN_DIR_ID_DEL,
+    TMAN_DIR_ID_REN,
     TMAN_UNIT_MAKE,
     TMAN_UNIT_DEL,
     TMAN_DIR_ID_OPEN,

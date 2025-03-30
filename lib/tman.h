@@ -103,8 +103,8 @@ int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
 int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
-int tman_id_move(struct tman_context *ctx, char *srcprj, char *dstprj,
-                 char *srcid, char *dstid);
+int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
+                 struct tman_arg *dst);
 int tman_id_prev(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
 int tman_id_set(struct tman_context *ctx, struct tman_arg *args,

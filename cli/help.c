@@ -403,7 +403,7 @@ struct help helptab[] = {
      .desc_short = "Move (rename) tasks.\n",
      .desc_long = "\n\
     Options:\n\
-      -f      overwrite destination task\n\
+      -f      overwrite destination task (under development)\n\
       -d      destination project\n\
       -s      source project\n\
     \n\
