@@ -5,64 +5,53 @@
 int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
-    char *srcprj, *srcid, *dstprj, *dstid;
+    int i, status;
+    struct tman_arg src = {
+        .id = NULL,
+        .brd = NULL,
+        .prj = NULL,
+    };
+    struct tman_arg dst = {
+        .id = NULL,
+        .brd = NULL,
+        .prj = NULL,
+    };
 
-    srcprj = srcid = dstprj = dstid = NULL;
     while ((c = getopt(argc, argv, ":d:s:")) != -1) {
         switch (c) {
         case 'd':
-            dstprj = optarg;
+            dst.prj = optarg;
             break;
         case 's':
-            srcprj = optarg;
+            src.prj = optarg;
             break;
         }
     }
 
-    printf("argc: %d\n", argc);
-    printf("optind: %d\n", optind);
+    i = optind;
+    tman_get_args(&src);
+    tman_get_args(&dst);
 
-    if ((srcprj == NULL && dstprj == NULL) || strcmp(srcprj, dstprj) == 0) {
-        elog(1, "rename a task ID");
-        if (argc > optind + 2) {
-            elog(1, "err: can't rename more than 2 task at a time");
-            return 1;
-        }
-    } else
-        elog(1, "move a task ID");
-
-    /*
-       if (optind == 1 && (srcprj == NULL || dstprj == NULL)) {
-       printf("can't move task: neither source nor destination prj specified\n");
-       return 1;
-       }
-     */
-
-    /*
-     * Move:
-     1. move a task to another prj.
-     2. move multiple tasks to another prj.
-
-     * Rename:
-     2. rename task from current prj.
-     3. rename task from another prj.
-     */
-
-    /*
-     * tman move test1 test2 -d work (rename: if -s and -d are the same)
-     * tman move test1 test2 -d work (move: if -s and -d are not the same)
-
-     Special cases:
-     * tman move test1 test2 test3 -d work (rename: if -s and -d are the same)
-     *                                     Q: 3 and move task and -s & -d are not the same. Is it an error?
-     *                                     A: not an error. Move task to destination prj.
-     */
-
-    int res =
-        tman_id_move(NULL, srcprj, dstprj, argv[optind], argv[optind + 1]);
-    if (res != TMAN_OK) {
-        elog(1, "err[%d]: %s - %s", res, tman_strerror(), argv[optind]);
+    // some checks
+    if ((argc - i) == 1) {
+        elog(1, "destination task is missing");
+        return 1;
     }
 
-    return 1;
+    if ((argc - i) == 2) {
+        src.id = argv[i];
+        dst.id = argv[i + 1];
+        if ((status = tman_id_move(ctx, &src, &dst))) {
+            return elog(1, "could not (re)move '%s': %s", src.id,
+                        tman_strerror());
+        }
+    } else {
+        do {
+            src.id = dst.id = argv[i];
+            if ((status = tman_id_move(ctx, &src, &dst))) {
+                elog(1, "could not move '%s': %s", src.id, tman_strerror());
+            }
+        } while (++i < argc);
+    }
+    return 0;
 }

@@ -9,6 +9,7 @@ int task_add(char *prj, char *id);
 int task_ext(char *prj, char *id);
 int task_del(char *prj, char *id);
 int task_iscurr(char *prj, char *id);
+int task_isprev(char *prj, char *id);
 int task_move(char *prj, char *id, char *col);
 int task_swap(char *prj);
 

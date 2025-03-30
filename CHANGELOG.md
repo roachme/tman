@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/show`: Add option `-k' to command show
+- `cli/move`: Add support to move and rename tasks
 
 ### Changed
 
