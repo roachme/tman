@@ -23,7 +23,6 @@ struct tman_struct;
 struct tmanstruct tmanfs;
 
 /* Used by caller to get access to default values.  */
-static char task_currid[IDSIZ + 1], task_previd[IDSIZ + 1];
 static char task_currprj[PRJSIZ + 1], task_prevprj[PRJSIZ + 1];
 
 static int check_args(struct tman_arg *args)
@@ -364,22 +363,6 @@ int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
             return emod_set(TMAN_ID_SWAP);
     }
     return TMAN_OK;
-}
-
-char *tman_id_getcurr(struct tman_context *ctx, struct tman_arg *args)
-{
-    if (tman_check_arg_prj(args))
-        return NULL;
-    return strncpy(task_currid, args->id, IDSIZ);
-}
-
-char *tman_id_getprev(struct tman_context *ctx, struct tman_arg *args)
-{
-    if (check_args(args))
-        return NULL;
-    else if (task_prev(args->prj) == NULL)
-        return NULL;
-    return strncpy(task_previd, args->id, IDSIZ);
 }
 
 int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,
