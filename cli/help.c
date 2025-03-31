@@ -117,8 +117,11 @@ struct help helptab[] = {
      .tag = TAGMISC,
      .name = "find",
      .synop = "Usage: " PROGRAM " find [OPTION]... PATTERN\n",
-     .desc_short = "Find a task by pattern.\n",
+     .desc_short = "Find a task by pattern (under development).\n",
      .desc_long = "\n\
+    NOTE:\n\
+        UNDER DEVELOPMENT\n\
+    \n\
     Options:\n\
       -h      show this help and exit\n\
       -p PRJ  project name (default is current)\n\
@@ -133,7 +136,7 @@ struct help helptab[] = {
      .tag = TAGMISC,
      .name = "flow",
      .synop = "Usage: " PROGRAM " flow [OPTION]... FLOW\n",
-     .desc_short = "Show and set project workflow.\n",
+     .desc_short = "Show and set project workflow (under development).\n",
      .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
@@ -149,7 +152,7 @@ struct help helptab[] = {
      .tag = TAGMISC,
      .name = "grep",
      .synop = "Usage: " PROGRAM " grep [OPTION]... PATTERN\n",
-     .desc_short = "Find pattern in a task.\n",
+     .desc_short = "Find pattern in a task (under development).\n",
      .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
@@ -383,7 +386,7 @@ struct help helptab[] = {
      .tag = TAGMISC,
      .name = "link",
      .synop = "Usage: " PROGRAM " link [OPTION]... PID CID\n",
-     .desc_short = "Link tasks together.\n",
+     .desc_short = "Link tasks together (under development).\n",
      .desc_long = "\n\
     Options:\n\
       -c      link task as child\n\

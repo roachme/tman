@@ -233,64 +233,6 @@ int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
     return TMAN_OK;
 }
 
-int tman_id_find_by_desc(struct tman_context *ctx, struct tman_arg *args,
-                         char *descpatt, struct tman_option *options)
-{
-    DIR *ids;
-    int status;
-    struct dirent *ent;
-    struct unit bunit[NKEYS];
-    struct tree *node;
-    char *desc;
-
-    /* Free task ID list because it might be called more than once.  */
-    tree_free(ctx->ids);
-    ctx->ids = NULL;
-
-    if ((status = check_args(args)))
-        return status;
-    else if ((ids = opendir(genpath_prj(args->prj))) == NULL)
-        return emod_set(TMAN_DIR_PRJ_OPEN);
-
-    while ((ent = readdir(ids)) != NULL) {
-        args->id = ent->d_name;
-
-        if (ent->d_name[0] == '.' || ent->d_type != DT_DIR)
-            continue;
-        else if (descpatt == NULL)
-            continue;
-        else if (tman_check_arg_id(args)) {
-            // TODO: roach: sholud we leave it here? If not then what?..
-            continue;
-        } else if (unit_getbin(bunit, args->prj, ent->d_name) == NULL) {
-            // TODO: roach: sholud we leave it here? If not then what?..
-            // IF builtin units could not get
-            continue;
-        }
-        desc = bunit[3].val;
-
-        /* convert to lower case. */
-        for (int i = 0; i < strlen(descpatt); ++i)
-            descpatt[i] = tolower(descpatt[i]);
-
-        char descbuf[BUFSIZ + 1];
-        strncpy(descbuf, desc, BUFSIZ);
-        for (int i = 0; i < strlen(descbuf); ++i)
-            descbuf[i] = tolower(descbuf[i]);
-
-        char *res;
-        if ((res = strstr(descbuf, descpatt)) == NULL) {
-            continue;
-        }
-
-        struct column column = col_getmark(args->prj, ent->d_name);
-        node = tree_alloc(ent->d_name, col_prio(column.col), desc, "");
-        ctx->ids = tree_add(ctx->ids, node);
-    }
-    closedir(ids);
-    return TMAN_OK;
-}
-
 /*
  * roachme: refactor this shit.
  @param prj char * | NULL (then list the current project)

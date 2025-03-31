@@ -29,7 +29,7 @@ static const builtin_t builtins[] = {
     {.name = "chk",.func = &tman_cli_chk,.setuplvl = TMAN_SETUPCHECK},
     {.name = "col",.func = &tman_cli_col,.setuplvl = TMAN_SETUPCHECK},
     {.name = "del",.func = &tman_cli_del,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "find",.func = &tman_cli_find,.setuplvl = TMAN_SETUPCHECK},
+    //{.name = "find",.func = &tman_cli_find,.setuplvl = TMAN_SETUPCHECK},
     //{ .name = "flow", .func = &tman_cli_flow, .setuplvl = TMAN_SETUPCHECK },
     //{ .name = "grep", .func = &tman_cli_grep, .setuplvl = TMAN_SETUPCHECK },
     {.name = "help",.func = &tman_cli_help,.setuplvl = TMAN_SETUPSOFT},

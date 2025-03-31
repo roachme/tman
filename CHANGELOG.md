@@ -20,6 +20,8 @@
 
 ### Deleted
 
+- `cli/cli`: Delete command find
+
 ### Deprecated
 
 
