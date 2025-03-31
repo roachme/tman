@@ -21,6 +21,7 @@
 ### Deleted
 
 - `cli/cli`: Delete command find
+- `lib/tman`: Delete task API functions getcurr() and getprev()
 
 ### Deprecated
 

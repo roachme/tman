@@ -111,8 +111,6 @@ int tman_id_show(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
 int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
-char *tman_id_getcurr(struct tman_context *ctx, struct tman_arg *args);
-char *tman_id_getprev(struct tman_context *ctx, struct tman_arg *args);
 
 /* Task project functions.  */
 int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,
