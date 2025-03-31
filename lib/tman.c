@@ -416,11 +416,9 @@ int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
         return status;
 
     if (options->id_switch == TRUE) {
-        if (is_project_curr(args->prj) == FALSE
-            && project_addcurr(args->prj) != 0)
+        if (project_addcurr(args->prj))
             return emod_set(TMAN_PRJ_SWITCH);
-        else if (task_iscurr(args->prj, args->id) == FALSE
-                 && task_move(args->prj, args->id, COLCURR))
+        else if (task_move(args->prj, args->id, COLCURR))
             return emod_set(TMAN_ID_SWAP);
     }
     return TMAN_OK;
