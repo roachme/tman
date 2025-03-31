@@ -73,7 +73,6 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     struct tman_arg args;
     const char *errfmt = "cannot switch: %s";
     int i, quiet, showpath, showhelp, status;
-    char *old_cprj = tman_prj_getcurr(NULL);
     struct tman_option opt;
 
     args.prj = args.id = NULL;
@@ -113,10 +112,6 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     } while (++i < argc);
 
     // TODO: update current directory if current prj got deleted.
-    if (strcpy(old_cprj, tman_prj_getcurr(NULL))) {
-        showpath = TRUE;
-    }
-
     return status == TMAN_OK && showpath == TRUE ? tman_pwd() : 1;
 }
 
