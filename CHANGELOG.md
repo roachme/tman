@@ -2,6 +2,19 @@
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Deleted
+
+### Deprecated
+
+
+## [0.0.8] - (2025-03-31)
+
+### Added
+
 - `cli/show`: Add option `-k' to command show
 - `cli/move`: Add support to move and rename tasks
 
@@ -24,8 +37,6 @@
 - `cli/cli`: Delete command find
 - `lib/tman`: Delete task API functions getcurr() and getprev()
 - `lib/tman`: Delete project API functions getcurr() and getprev()
-
-### Deprecated
 
 
 ## [0.0.7] - (2025-03-24)
