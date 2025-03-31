@@ -97,8 +97,6 @@ int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
                 struct tman_option *options);
 int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
                 struct tman_option *options);
-int tman_id_find_by_desc(struct tman_context *ctx, struct tman_arg *args,
-                         char *descpatt, struct tman_option *options);
 int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
 int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
