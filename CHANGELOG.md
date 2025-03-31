@@ -17,6 +17,7 @@
 
 - `cli`: Fix a memory leak in config module
 - `cli`: Fix linter warnings
+- `lib/tman`: Fix build warning about overflow
 
 ### Deleted
 

@@ -8,6 +8,9 @@
 #define CMDSIZ          5
 #define TMANPATHSIZE    1024
 
+#define FINITSIZ TMANPATHSIZE + 6 + 10  /* filename + padding */
+#define FSTATESIZ TMANPATHSIZE + 6 + 10 /* filename + padding */
+
 struct tmanstruct {
     char db[TMANPATHSIZE + 1];  /* directory for tman metadata */
     char cfg[TMANPATHSIZE + 1]; /* directory for config files */
@@ -16,8 +19,8 @@ struct tmanstruct {
     char pgnins[TMANPATHSIZE + 1];      /* directory for installed plugins */
 
     char fcfg[TMANPATHSIZE + 1];        /* system config file */
-    char finit[TMANPATHSIZE + 1];       /* file that tells that tman is inited */
-    char fstate[TMANPATHSIZE + 1];      /* file to store tman task state */
+    char finit[FINITSIZ + 1];   /* file that tells that tman is inited */
+    char fstate[FSTATESIZ + 1]; /* file to store tman task state */
 };
 
 struct tman_arg;
