@@ -483,8 +483,7 @@ int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
         return status;
 
     if (options->prj_switch == TRUE) {
-        if (is_project_curr(args->prj) == FALSE
-            && project_addcurr(args->prj) != 0)
+        if (project_addcurr(args->prj))
             return emod_set(TMAN_PRJ_SWITCH);
     }
     return TMAN_OK;
