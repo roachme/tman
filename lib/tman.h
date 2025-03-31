@@ -127,7 +127,6 @@ int tman_prj_set(struct tman_context *ctx, struct tman_arg *args,
 int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
                   struct tman_option *options);
 char *tman_prj_getcurr(struct tman_context *ctx);
-char *tman_prj_getprev(struct tman_context *ctx);
 
 /* Task plugin functions.  */
 int tman_ispgn(char *pgndir, const char *pgname);

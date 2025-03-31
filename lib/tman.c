@@ -22,9 +22,6 @@ struct tman_struct;
 // TODO: Make NOT global.
 struct tmanstruct tmanfs;
 
-/* Used by caller to get access to default values.  */
-static char task_currprj[PRJSIZ + 1], task_prevprj[PRJSIZ + 1];
-
 static int check_args(struct tman_arg *args)
 {
     int status;
@@ -487,24 +484,6 @@ int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
             return emod_set(TMAN_PRJ_SWITCH);
     }
     return TMAN_OK;
-}
-
-char *tman_prj_getcurr(struct tman_context *ctx)
-{
-    char *prj;
-
-    if ((prj = project_getcurr()) == NULL)
-        return NULL;
-    return strncpy(task_currprj, prj, PRJSIZ);
-}
-
-char *tman_prj_getprev(struct tman_context *ctx)
-{
-    char *prj;
-
-    if ((prj = project_getprev()) == NULL)
-        return NULL;
-    return strncpy(task_prevprj, prj, PRJSIZ);
 }
 
 int tman_ispgn(char *pgndir, const char *pgname)
