@@ -68,10 +68,9 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
         if ((status = tman_id_add(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
-        }
-        if ((status =
-             tman_hook_action(ctx, tman_config->hooks, &args,
-                              "add")) != TMAN_OK)
+        } else if ((status =
+                    tman_hook_action(ctx, tman_config->hooks, &args,
+                                     "add")) != TMAN_OK)
             if (quiet == FALSE)
                 elog(TMAN_EHOOK, errfmt, args.id, tman_strerror());
     }

@@ -6,6 +6,8 @@
 
 ### Fixed
 
+- `cli/add`: Fix task ID length check
+
 ### Deleted
 
 ### Deprecated
