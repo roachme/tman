@@ -199,8 +199,6 @@ int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
                 struct tman_option *options)
 {
     int status;
-    // TODO: does not change CWD if curr task was moved.
-    // The problem in CLI command `col'.
 
     if ((status = check_args(args)))
         return status;
@@ -216,9 +214,6 @@ int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
 
     if ((status = check_args(args)))
         return status;
-
-    /* FIXME: if current task gets deleted, plugin gun deletes
-     * branches but won't switch to new current task branch.  */
 
     if (unit_delbin(args->prj, args->id))
         return emod_set(TMAN_UNIT_DEL);
