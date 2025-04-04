@@ -4,6 +4,8 @@
 
 ### Changed
 
+- `cli`: Change API option `-b' to `-B'
+
 ### Fixed
 
 - `cli/add`: Fix task ID length check
