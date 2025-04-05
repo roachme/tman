@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+PGNAME="tag"
+CONF=
+PRJ=
+ID=
+BASE=
+CMD=
+
+while getopts "B:p:i:" opt; do
+    case "${opt}" in
+        B)
+            BASE="$OPTARG"
+            ;;
+        p)
+            PRJ="$OPTARG"
+            ;;
+        i)
+            ID="$OPTARG"
+            ;;
+        *)
+            exit 1
+    esac
+done
+
+shift $((OPTIND-1))
+CMD="$1"
+
+function _find_config()
+{
+    local confdir=("$HOME/.tman/pgns/${PGNAME}.conf" "$HOME/.config/tman/pgns/${PGNAME}.conf")
+
+    for conf in "${confdir[@]}"; do
+        if [ -f "$conf" ]; then
+            CONF="$conf"
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+function tag_init()
+{
+    return 0;
+}
+
+function tag_sync()
+{
+    echo "tag_sync: under development"
+    return 0;
+}
+
+function tag_rsync()
+{
+    echo "tag_rsync: under development"
+    return 0;
+}
+
+function tag_show()
+{
+    echo "fake-branch  : task-branch2"
+    return 0;
+}
+
+function tag_list()
+{
+    echo "roach"
+    return 0;
+}
+
+function tag_date()
+{
+    date "+%Y-%m-%d"
+    return 0;
+}
+
+function tag_help()
+{
+    echo "Usage: repo [sync|rsync|show|help]"
+}
+
+_find_config && source "$CONF" || exit 0
+
+if [ -z "$CMD" -o "$CMD" = "sync" ]; then
+    tag_sync
+elif [ "$CMD" = "rsync" ]; then
+    tag_rsync
+elif [ "$CMD" = "list" ]; then
+    tag_list
+elif [ "$CMD" = "date" ]; then
+    tag_date
+elif [ "$CMD" = "show" ]; then
+    tag_show
+elif [ "$CMD" = "help" ]; then
+    tag_help
+else
+    echo "$PGNAME: no such command '$CMD'" && exit 1
+fi
