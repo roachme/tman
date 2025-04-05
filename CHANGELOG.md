@@ -5,6 +5,7 @@
 ### Changed
 
 - `cli`: Change API option `-b' to `-B'
+- `pgn`: Make pgn submodule part of codebase
 
 ### Fixed
 
