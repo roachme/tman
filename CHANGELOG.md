@@ -4,16 +4,23 @@
 
 ### Changed
 
+### Fixed
+
+### Deleted
+
+### Deprecated
+
+
+## [0.0.9] - (2025-04-09)
+
+### Changed
+
 - `cli`: Change API option `-b' to `-B'
 - `pgn`: Make pgn submodule part of codebase
 
 ### Fixed
 
 - `cli/add`: Fix task ID length check
-
-### Deleted
-
-### Deprecated
 
 
 ## [0.0.8] - (2025-03-31)
