@@ -17,6 +17,7 @@ int elog(int status, const char *fmt, ...)
 {
     va_list arg;
     va_start(arg, fmt);
+    fprintf(stderr, PROGRAM ": ");
     vfprintf(stderr, fmt, arg);
     fprintf(stderr, "\n");
     va_end(arg);
