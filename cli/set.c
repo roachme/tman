@@ -4,7 +4,10 @@
 #include "cli.h"
 #include "config.h"
 
+#define NKEYS   4
+
 static const char *errfmt = "cannot set units '%s': %s";
+
 
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
@@ -25,43 +28,42 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
      */
     args.id = args.prj = NULL;
     atleast_one_key_set = FALSE;
-    while ((c = getopt(argc, argv, ":d:p:P:t:")) != -1) {
+    while ((c = getopt(argc, argv, ":d:p:t:P:")) != -1) {
         switch (c) {
-        case 'P':
-            elog(1, "only current project is supported rn");
-            return 1;
-            break;;
-        case 'p':
-            idx = 0;
-            if (units[idx].isset)
+            case 'p':
+                args.prj = optarg;
                 break;
-            atleast_one_key_set = TRUE;
-            strcpy(units[idx].key, "prio");
-            strcpy(units[idx].val, optarg);
-            units[idx].isset = 1;
-            break;
-        case 't':
-            idx = 1;
-            if (units[idx].isset)
+            case 'P':
+                idx = 0;
+                if (units[idx].isset)
+                    break;
+                atleast_one_key_set = TRUE;
+                units[idx].isset = 1;
+                strcpy(units[idx].key, "prio");
+                strcpy(units[idx].val, optarg);
                 break;
-            atleast_one_key_set = TRUE;
-            strcpy(units[idx].key, "type");
-            strcpy(units[idx].val, optarg);
-            units[idx].isset = 1;
-            break;
-        case 'd':
-            idx = 3;
-            if (units[idx].isset)
+            case 't':
+                idx = 1;
+                if (units[idx].isset)
+                    break;
+                atleast_one_key_set = TRUE;
+                strcpy(units[idx].key, "type");
+                strcpy(units[idx].val, optarg);
+                units[idx].isset = 1;
                 break;
-            atleast_one_key_set = TRUE;
-            strcpy(units[idx].key, "desc");
-            strcpy(units[idx].val, optarg);
-            units[idx].isset = 1;
-            break;
-        case ':':
-            return elog(1, "option `-%c' requires an argument", optopt);
-        default:
-            return elog(1, "invalid option `%c'", optopt);
+            case 'd':
+                idx = 3;
+                if (units[idx].isset)
+                    break;
+                atleast_one_key_set = TRUE;
+                strcpy(units[idx].key, "desc");
+                strcpy(units[idx].val, optarg);
+                units[idx].isset = 1;
+                break;
+            case ':':
+                return elog(1, "option `-%c' requires an argument", optopt);
+            default:
+                return elog(1, "invalid option `%c'", optopt);
         }
     }
 
@@ -84,13 +86,16 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
         if ((status = tman_id_set(ctx, &args, units, &opt)) != TMAN_OK) {
             elog(status, "cannot set unit '%s': %s", args.id, tman_strerror());
             return status;
-        } else
-            if ((status =
-                 tman_hook_action(ctx, tman_config->hooks, &args,
-                                  "set")) != TMAN_OK) {
-            elog(status, "cannot set unit '%s': %s", args.id, tman_strerror());
-            return status;
         }
+        /*
+           else
+           if ((status =
+           tman_hook_action(ctx, tman_config->hooks, &args,
+           "set")) != TMAN_OK) {
+           elog(status, "cannot set unit '%s': %s", args.id, tman_strerror());
+           return status;
+           }
+        */
 
     } while (++i < argc);
 

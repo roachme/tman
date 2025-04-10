@@ -8,21 +8,20 @@ static const char *errfmt = "cannot show units '%s': %s";
 
 static int show_key(struct tman_context *ctx, char *key)
 {
-    int i;
     struct unit *unitbin, *unitpgn;
 
     if (strcmp(key, "id") == 0) {
-        printf("%s\n", ctx->units.id);
+        printf("%s\n", ctx->id);
         return TMAN_OK;
     }
 
-    for (unitbin = ctx->units.bin, i = 0; i < NKEYS; ++i)
-        if (strcmp(key, unitbin[i].key) == 0) {
-            printf("%s\n", unitbin[i].val);
+    for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
+        if (strcmp(key, unitbin->key) == 0) {
+            printf("%s\n", unitbin->val);
             return TMAN_OK;
         }
 
-    for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
+    for (unitpgn = ctx->unitpgn; unitpgn; unitpgn = unitpgn->next)
         if (strcmp(key, unitpgn->key) == 0) {
             printf("%s\n", unitpgn->val);
             return TMAN_OK;
@@ -33,15 +32,14 @@ static int show_key(struct tman_context *ctx, char *key)
 
 static int pretty_show(struct tman_context *ctx, char *key)
 {
-    int i;
     struct unit *unitbin, *unitpgn;
 
-    printf("%-7s : %s\n", "id", ctx->units.id);
+    printf("%-7s : %s\n", "id", ctx->id);
 
-    for (unitbin = ctx->units.bin, i = 0; i < NKEYS; ++i)
-        printf("%-7s : %s\n", unitbin[i].key, unitbin[i].val);
+    for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
+        printf("%-7s : %s\n", unitbin->key, unitbin->val);
 
-    for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
+    for (unitpgn = ctx->unitpgn; unitpgn; unitpgn = unitpgn->next)
         printf("%-7s : %s\n", unitpgn->key, unitpgn->val);
 
     return TMAN_OK;
@@ -84,10 +82,11 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             continue;
         }
 
-        if ((status = tman_id_show(ctx, &args, NULL)) != TMAN_OK) {
+        if ((status = tman_id_unit_get(ctx, &args, NULL)) != TMAN_OK) {
             elog(status, errfmt, args.id, tman_strerror());
             continue;
         }
+
         if (tman_config->usehooks == TRUE
             && tman_hook_show(ctx, tman_config->hooks, &args, "show") == NULL)
             elog(status, errfmt, args.id, tman_strerror());
@@ -98,7 +97,9 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
         } else {
             pretty_show(ctx, key);
         }
-        ctx->units.pgn = tman_hook_show_free(ctx, &args);
+
+        ctx->unitbin = tman_id_unit_free(ctx, &args, NULL);
+        ctx->unitpgn = tman_hook_show_free(ctx, &args);
     } while (++i < argc);
 
     return status;

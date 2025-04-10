@@ -156,7 +156,7 @@ int tman_id_add(struct tman_context *ctx, struct tman_arg *args,
     int status;
     // TODO: Add support to pass unit values into unit_add()
     // TODO: maybe it's better to move units to ctx?
-    struct unit units[NKEYS] = { 0 };
+    //struct unit units[NKEYS] = { 0 };
 
     /* Special case: task ID should not exists. If this's a case - let it go. */
     if ((status = check_args(args)) && status != TMAN_ID_NOSUCH)
@@ -165,13 +165,13 @@ int tman_id_add(struct tman_context *ctx, struct tman_arg *args,
         return emod_set(TMAN_ID_TOOLONG);
     else if (task_ext(args->prj, args->id) == TRUE)
         return emod_set(TMAN_ID_EXISTS);
-    else if (unit_chkbin(units) == FALSE)
-        return emod_set(TMAN_UNIT_ILLEG);
 
     if (dir_id_add(tmanfs.base, args->prj, args->id) != 0)
         return emod_set(TMAN_DIR_ID_MAKE);
-    else if (unit_addbin(args->prj, args->id, units) != 0)
-        return emod_set(TMAN_UNIT_MAKE);
+    /* roach
+       else if (unit_addbin(args->prj, args->id, units) != 0)
+       return emod_set(TMAN_UNIT_MAKE);
+     */
     else if (task_add(args->prj, args->id))
         return emod_set(TMAN_COL_ADD);
     else if (options->id_switch == TRUE
@@ -180,18 +180,27 @@ int tman_id_add(struct tman_context *ctx, struct tman_arg *args,
     return TMAN_OK;
 }
 
-int tman_id_show(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options)
+int tman_id_unit_get(struct tman_context *ctx, struct tman_arg *args,
+                     struct tman_option *options)
 {
     int status;
 
     if ((status = check_args(args)))
         return status;
 
-    strncpy(ctx->units.id, args->id, IDSIZ);
-    if (unit_getbin(ctx->units.bin, args->prj, args->id) == NULL)
+    strncpy(ctx->id, args->id, IDSIZ);
+
+    if ((ctx->unitbin = unit_load(args->prj, args->id)) == NULL)
         status = TMAN_UNIT_GET;
+
     return status;
+}
+
+void *tman_id_unit_free(struct tman_context *ctx, struct tman_arg *args,
+                        struct tman_option *options)
+{
+    unit_del(ctx->unitbin);
+    return ctx->unitbin = NULL;
 }
 
 int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
@@ -214,9 +223,11 @@ int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
     if ((status = check_args(args)))
         return status;
 
-    if (unit_delbin(args->prj, args->id))
-        return emod_set(TMAN_UNIT_DEL);
-    else if (task_del(args->prj, args->id))
+    /* roach
+       if (unit_delbin(args->prj, args->id))
+       return emod_set(TMAN_UNIT_DEL);
+     */
+    if (task_del(args->prj, args->id))
         return emod_set(TMAN_COL_DEL);
     else if (dir_id_del(tmanfs.base, args->prj, args->id))
         return emod_set(TMAN_DIR_ID_DEL);
@@ -234,7 +245,6 @@ int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
     DIR *ids;
     int status;
     struct dirent *ent;
-    struct unit bunit[NKEYS];
     struct tree *node;
 
     // TODO: move to to cli part
@@ -254,13 +264,14 @@ int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
         else if (tman_check_arg_id(args)) {
             // TODO: roach: sholud we leave it here? If not then what?..
             continue;
-        } else if (unit_getbin(bunit, args->prj, ent->d_name) == NULL) {
-            // TODO: roach: sholud we leave it here? If not then what?..
-            // IF builtin units could not get
-            continue;
-        }
+        }                       /* else if (unit_getbin(bunit, args->prj, ent->d_name) == NULL) {
+                                   // TODO: roach: sholud we leave it here? If not then what?..
+                                   // IF builtin units could not get
+                                   continue;
+                                   } */
         struct column column = col_getmark(args->prj, ent->d_name);
-        node = tree_alloc(ent->d_name, col_prio(column.col), bunit[3].val, "");
+        //node = tree_alloc(ent->d_name, col_prio(column.col), bunit[3].val, "");
+        node = tree_alloc(ent->d_name, col_prio(column.col), "bunit", "");
         ctx->ids = tree_add(ctx->ids, node);
     }
     closedir(ids);
@@ -327,15 +338,17 @@ int tman_id_set(struct tman_context *ctx, struct tman_arg *args,
                 struct unit *unitbin, struct tman_option *options)
 {
     int status;
+    struct unit *item;
+    struct unit *units;
 
     if ((status = check_args(args)))
         return status;
-    else if (unit_chkbin(unitbin) == FALSE)
-        return emod_set(TMAN_UNIT_ILLEG);
+    else if ((units = unit_load(args->prj, args->id)) == NULL)
+        return emod_set(TMAN_NODEF_ERR);
 
-    if (unit_setbin(args->prj, args->id, unitbin))
-        return emod_set(TMAN_UNIT_SET);
-    return TMAN_OK;
+    for (item = unitbin; item; item = item->next)
+        unit_set(units, item->key, item->val);
+    return unit_save(args->prj, args->id, units);
 }
 
 int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
@@ -524,9 +537,10 @@ int tman_pgnexec(struct tman_context *ctx, struct tman_arg *args, char *pgname,
 struct unit *tman_hook_show(struct tman_context *ctx, struct tman_hook *hooks,
                             struct tman_arg *args, char *cmd)
 {
+    // roach
     // todo: if no hooks are executed then what?
-    ctx->units.pgn = hookshow(hooks, args->prj, args->id, cmd);
-    return ctx->units.pgn;
+    ctx->unitpgn = hookshow(hooks, args->prj, args->id, cmd);
+    return ctx->unitpgn;
 }
 
 int tman_hook_action(struct tman_context *ctx, struct tman_hook *hooks,
@@ -544,7 +558,7 @@ int tman_hook_action_free(struct tman_context *ctx, struct tman_arg *args,
 struct unit *tman_hook_show_free(struct tman_context *ctx,
                                  struct tman_arg *args)
 {
-    unit_delpgn(ctx->units.pgn);
+    unit_del(ctx->unitpgn);
     return NULL;
 }
 
@@ -555,7 +569,8 @@ const char *tman_strerror(void)
 
 struct tman_context *tman_deinit(struct tman_context *ctx)
 {
-    unit_delpgn(ctx->units.pgn);
+    unit_del(ctx->unitbin);
+    unit_del(ctx->unitpgn);
     tree_free(ctx->ids);
     tree_free(ctx->prjs);
     free(ctx);

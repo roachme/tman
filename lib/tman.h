@@ -1,6 +1,7 @@
 #ifndef LIBTMAN_H
 #define LIBTMAN_H
 
+#include "common.h"
 #include "unit.h"
 #include "errmod.h"
 #include "tree.h"
@@ -25,6 +26,7 @@ struct tmanstruct {
 
 struct tman_arg;
 struct tman_hook;
+struct tman_unit;
 struct tman_base;
 struct tman_option;
 struct tman_custom;
@@ -71,7 +73,9 @@ enum tman_setuplvl {
 
 /* Generic tman structure used by all(?) API functions.  */
 struct tman_context {
-    struct units units;
+    char id[IDSIZ + 1];
+    struct unit *unitbin;
+    struct unit *unitpgn;
     struct tree *ids;
     struct tree *prjs;
 };
@@ -94,26 +98,22 @@ int tman_check_arg_id(struct tman_arg *args);
 int tman_check_arg_prj(struct tman_arg *args);
 
 /* Task ID functions.  */
-int tman_id_add(struct tman_context *ctx, struct tman_arg *args,
-                struct tman_option *options);
-int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
-                struct tman_option *options);
-int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
-                struct tman_option *options);
-int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
-int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
-int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
-                 struct tman_arg *dst);
-int tman_id_prev(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
-int tman_id_set(struct tman_context *ctx, struct tman_arg *args,
-                struct unit *unitbin, struct tman_option *options);
-int tman_id_show(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
-int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
+int tman_id_add(struct tman_context *ctx, struct tman_arg *args, struct tman_option *options);
+int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag, struct tman_option *options);
+int tman_id_del(struct tman_context *ctx, struct tman_arg *args, struct tman_option *options);
+int tman_id_list(struct tman_context *ctx, struct tman_arg *args, struct tman_option *options);
+//int tman_id_link(struct tman_context *ctx, struct tman_arg *args, struct tman_option *options);
+int tman_id_move(struct tman_context *ctx, struct tman_arg *src, struct tman_arg *dst);
+int tman_id_prev(struct tman_context *ctx, struct tman_arg *args, struct tman_option *options);
+int tman_id_set(struct tman_context *ctx, struct tman_arg *args, struct unit *unitbin, struct tman_option *options);
+int tman_id_sync(struct tman_context *ctx, struct tman_arg *args, struct tman_option *options);
+
+int tman_id_unit_get(struct tman_context *ctx, struct tman_arg *args, struct tman_option *options);
+void *tman_id_unit_free(struct tman_context *ctx, struct tman_arg *args, struct tman_option *options);
+int tman_unit_add(struct tman_context *ctx, struct tman_arg *args, struct unit *units); // tman_id_add
+int tman_unit_del(struct tman_context *ctx, struct tman_arg *args, struct unit *units); // context free
+int tman_unit_get(struct tman_context *ctx, struct tman_arg *args, struct unit *units); // tman_show
+int tman_unit_set(struct tman_context *ctx, struct tman_arg *args, struct unit *units); // tman_id_set
 
 /* Task project functions.  */
 int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,
