@@ -26,8 +26,6 @@ struct tree *tree_alloc(char *id, int colprio, char *desc, char *pgnout)
 
 struct tree *tree_add(struct tree *parent, struct tree *node)
 {
-    if (node == NULL) ;
-
     if (parent == NULL)
         parent = node;
     else if (node->colprio <= parent->colprio)
