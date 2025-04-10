@@ -2,6 +2,8 @@
 
 ### Added
 
+- `cli/cli`: Add program name before error messages
+
 ### Changed
 
 ### Fixed
