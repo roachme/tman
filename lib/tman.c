@@ -238,6 +238,7 @@ int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
     struct unit bunit[NKEYS];
     struct tree *node;
 
+    // TODO: move to to cli part
     /* Free task ID list because it might be called more than once.  */
     ctx->ids = tree_free(ctx->ids);
 
@@ -287,6 +288,7 @@ int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
         return emod_set(TMAN_ID_EXISTS);
     else if (!strcmp(src->prj, dst->prj) && !strcmp(src->id, dst->id)) {
         // no need to do anything.
+        // TODO: never occures cuz it throwes an error about existing task ID
         return 0;
     }
 
@@ -481,11 +483,13 @@ int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
     return TMAN_OK;
 }
 
+// TODO: move it to cli part
 int tman_ispgn(char *pgndir, const char *pgname)
 {
     return ispgn(pgndir, pgname);
 }
 
+// TODO: move it to cli part
 int tman_pgnexec(struct tman_context *ctx, struct tman_arg *args, char *pgname,
                  char *pgncmd, struct tman_option *options)
 {
