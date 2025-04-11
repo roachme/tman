@@ -4,9 +4,12 @@ SRCS=$(wildcard lib/*.c cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
 CFLAGS=-I lib -I cli -Wall
 
-all: $(PROGRAM)
-.PHONY: clean $(PROGRAM)
+all: build
+.PHONY: build clean $(PROGRAM) release debug
 
+build: $(PROGRAM)
+
+release: style check $(PROGRAM)
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -17,7 +20,7 @@ $(PROGRAM): $(OBJS)
 clean:
 	rm -rf $(PROGRAM) $(OBJS)
 
-chk:
+check:
 	clear
 	cppcheck --std=c89 --enable=all --language=c cli/*.c lib/*.c
 
