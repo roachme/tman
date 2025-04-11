@@ -40,18 +40,6 @@ int dir_id_rename(char *base, char *srcprj, char *dstprj, char *srcid,
     return rename(old_path, new_path);
 }
 
-int dir_id_move(char *base, char *id, char *dstprj, char *srcprj)
-{
-    char new_path[PATHSIZ + 1];
-    char old_path[PATHSIZ + 1];
-    sprintf(new_path, "%s/%s/%s", base, dstprj, id);
-    sprintf(old_path, "%s/%s/%s", base, srcprj, id);
-
-    if (ISFILE(new_path))
-        return 1;
-    return MOVE(old_path, new_path);
-}
-
 int dir_prj_add(char *base, char *prj)
 {
     char path[PATHSIZ + 1];

@@ -7,15 +7,6 @@
 static char *base = tmanfs.base;
 static char pathname[PATHSIZ + 1];
 
-char *formpath(char *dst, char *fmt, ...)
-{
-    va_list arg;
-    va_start(arg, fmt);
-    vsprintf(dst, fmt, arg);
-    va_end(arg);
-    return dst;
-}
-
 char *genpath_prj(char *prj)
 {
     sprintf(pathname, "%s/%s", base, prj);

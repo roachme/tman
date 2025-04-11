@@ -9,6 +9,8 @@
 
 ### Fixed
 
+- `tman`: Fix linter warnings
+
 ### Deleted
 
 ### Deprecated

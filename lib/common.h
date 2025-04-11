@@ -27,10 +27,6 @@ extern struct tmanstruct tmanfs;
 #define IDSIZ           10
 #define PATHSIZ         4096
 
-int _chkid(char *id);
-int _chkprj(char *prj);
-char *formpath(char *dst, char *fmt, ...);
-
 char *genpath_prj(char *prj);
 char *genpath_col(char *prj, char *id);
 char *genpath_full(char *prj, char *id);
