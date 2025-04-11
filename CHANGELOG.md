@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/cli`: Add program name before error messages
+- `Makefile`: Add release build
 
 ### Changed
 
