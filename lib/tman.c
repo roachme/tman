@@ -269,11 +269,13 @@ int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
 }
 
 /* Link task IDs together: parent - children relationship.  */
+/*
 int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     return 0;
 }
+*/
 
 int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
                  struct tman_arg *dst)

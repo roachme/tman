@@ -108,7 +108,6 @@ static int parseconf(struct config *myconfig, const char *fname)
         } else {
             // TODO: caller can't know that something went wrong
             // cuz callee doesn't return an error or NULL for now.
-            retcode = TMAN_ECONF;
             elog(1, "parse err: unrecognized token '%s'", token);
             break;
         }
