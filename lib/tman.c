@@ -349,13 +349,13 @@ int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
 
     if ((status = check_args(args)))
         return status;
+    else if (options->id_switch == FALSE)
+        return TMAN_OK;         /* here's nothing to do.  */
 
-    if (options->id_switch == TRUE) {
-        if (project_addcurr(args->prj))
-            return emod_set(TMAN_PRJ_SWITCH);
-        else if (task_move(args->prj, args->id, COLCURR))
-            return emod_set(TMAN_ID_SWAP);
-    }
+    if (project_addcurr(args->prj))
+        return emod_set(TMAN_PRJ_SWITCH);
+    else if (task_move(args->prj, args->id, COLCURR))
+        return emod_set(TMAN_ID_SWAP);
     return TMAN_OK;
 }
 
@@ -475,11 +475,11 @@ int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
 
     if ((status = tman_check_arg_prj(args)))
         return status;
+    else if (options->prj_switch == FALSE)
+        return TMAN_OK;
 
-    if (options->prj_switch == TRUE) {
-        if (project_addcurr(args->prj))
-            return emod_set(TMAN_PRJ_SWITCH);
-    }
+    if (project_addcurr(args->prj))
+        return emod_set(TMAN_PRJ_SWITCH);
     return TMAN_OK;
 }
 
