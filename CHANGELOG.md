@@ -10,6 +10,7 @@
 ### Fixed
 
 - `tman`: Fix linter warnings
+- `pgn/time`: Fix invalid option
 
 ### Deleted
 

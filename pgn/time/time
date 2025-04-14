@@ -7,9 +7,9 @@ ID=
 BASE=
 CMD=
 
-while getopts "b:p:i:" opt; do
+while getopts "B:p:i:" opt; do
     case "${opt}" in
-        b)
+        B)
             BASE="$OPTARG"
             ;;
         p)
@@ -17,6 +17,10 @@ while getopts "b:p:i:" opt; do
             ;;
         i)
             ID="$OPTARG"
+            ;;
+        *)
+            echo "invalid option"
+            exit 1
             ;;
     esac
 done
