@@ -4,6 +4,7 @@
 
 - `cli/cli`: Add program name before error messages
 - `Makefile`: Add release build
+- `lib/col`: Show list of project columns
 
 ### Changed
 
