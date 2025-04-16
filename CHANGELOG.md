@@ -17,6 +17,7 @@
 ### Deleted
 
 - `cli/cli`: Delete command ver (replace it with option)
+- `lib/common`: Delete unused function declarations
 
 ### Deprecated
 
