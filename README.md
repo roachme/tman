@@ -87,7 +87,6 @@ System:
   chk    - Check and repair a system.
   help   - Show help message for command.
   init   - Init directory structure.
-  ver    - Show version and exit.
 
 Basic:
   add    - Add a new task to project.
