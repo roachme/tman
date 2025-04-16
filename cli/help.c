@@ -425,12 +425,8 @@ struct help helptab[] = {
 
 int help_list_commands(void)
 {
-    printf("Usage: %s [OPTION]... [OBJECT] COMMAND [OPITONS]... [ARGS]...\n",
-           PROGRAM);
-    printf("    Where OBJECT := { id | prj | pgm }\n");
-    printf("    Where COMMAND is one of the builtin commands\n");
-    printf("    Where ID is task ID\n");
-    printf("Try '" PROGRAM " help COMMAND' for more info.\n\n");
+    printf("Usage: %s [OPTION]... COMMAND [OPITONS]... [ARGS]...\n\n", PROGRAM);
+    printf("These are common Tman commands used in various situations:\n\n");
 
     printf("System:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)
