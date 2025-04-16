@@ -12,6 +12,7 @@
 
 - `tman`: Fix linter warnings
 - `pgn/time`: Fix invalid option
+- `lib/tman`: Fix wrong error code
 
 ### Deleted
 

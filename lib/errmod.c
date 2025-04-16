@@ -30,6 +30,7 @@ const char *errcodes[__TMAN_STATUS_LAST] = {
     [TMAN_PRJ_EXISTS] = "prject already exists",
     [TMAN_PRJ_SWITCH] = "could not switch to prject",
     [TMAN_PRJ_DEL_CURR] = "could not unmark current prject",
+    [TMAN_PRJ_DEL_PREV] = "could not unmark previous prject",
 
     [TMAN_ID_ILLEG] = "illegal task ID",
     [TMAN_ID_TOOLONG] = "task ID is too long, limit is " xstr(IDSIZ),
