@@ -68,14 +68,6 @@ struct help helptab[] = {
      .desc_long = "\n\
     Exit status:\n\
     Under development\n"},
-    {
-     .tag = TAGSYSTEM,
-     .name = "ver",
-     .synop = "Usage: " PROGRAM " ver\n",
-     .desc_short = "Show version and exit.\n",
-     .desc_long = "\n\
-    Exit status:\n\
-    Always return success\n"},
 
     {
      .tag = TAGBASIC,
@@ -433,7 +425,8 @@ struct help helptab[] = {
 
 int help_list_commands(void)
 {
-    printf("Usage: %s [OBJECT] COMMAND [OPITONS]... [ID]...\n", PROGRAM);
+    printf("Usage: %s [OPTION]... [OBJECT] COMMAND [OPITONS]... [ARGS]...\n",
+           PROGRAM);
     printf("    Where OBJECT := { id | prj | pgm }\n");
     printf("    Where COMMAND is one of the builtin commands\n");
     printf("    Where ID is task ID\n");

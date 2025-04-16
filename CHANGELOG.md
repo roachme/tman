@@ -15,6 +15,8 @@
 
 ### Deleted
 
+- `cli/cli`: Delete command ver (replace it with option)
+
 ### Deprecated
 
 

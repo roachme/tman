@@ -13,6 +13,12 @@
     -p      Plugin dir (where plugins stored)
 */
 
+static int show_version()
+{
+    printf("%s: %s\n", PROGRAM, VERSION);
+    return 0;
+}
+
 int elog(int status, const char *fmt, ...)
 {
     va_list arg;
@@ -44,7 +50,6 @@ static const builtin_t builtins[] = {
     {.name = "set",.func = &tman_cli_set,.setuplvl = TMAN_SETUPCHECK},
     {.name = "show",.func = &tman_cli_show,.setuplvl = TMAN_SETUPCHECK},
     {.name = "sync",.func = &tman_cli_sync,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "ver",.func = &tman_cli_ver,.setuplvl = TMAN_SETUPSOFT},
 };
 
 struct config *tman_config;
@@ -59,6 +64,16 @@ int main(int argc, char **argv)
     if (cmd == NULL) {
         help_lookup(NULL);
         return 1;
+    }
+
+    /* Parse util itself options.  */
+    for (int i = 1; i < argc && argv[i][0] == '-'; ++i) {
+        if (strcmp(argv[i], "-V") == 0)
+            return show_version();
+        else if (strcmp(argv[i], "-h") == 0)
+            return help_lookup(NULL);
+        else
+            return elog(1, "invalid option `%s'", argv[i]);
     }
 
     if ((tman_config = config_init()) == NULL) {

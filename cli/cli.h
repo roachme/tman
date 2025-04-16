@@ -34,7 +34,6 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_set(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_show(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_sync(int argc, char **argv, struct tman_context *ctx);
-int tman_cli_ver(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_plugin(char *name, int argc, char **argv,
                     struct tman_context *ctx);
 
