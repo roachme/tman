@@ -394,7 +394,7 @@ int tman_prj_del(struct tman_context *ctx, struct tman_arg *args,
     else if (is_project_curr(args->prj) == TRUE && project_delcurr())
         return emod_set(TMAN_PRJ_DEL_CURR);
     else if (is_project_prev(args->prj) == TRUE && project_delprev())
-        return emod_set(TMAN_PRJ_DEL_CURR);
+        return emod_set(TMAN_PRJ_DEL_PREV);
     return TMAN_OK;
 }
 
