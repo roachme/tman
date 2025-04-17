@@ -287,11 +287,6 @@ int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
         return emod_set(status);
     else if (task_ext(dst->prj, dst->id))
         return emod_set(TMAN_ID_EXISTS);
-    else if (!strcmp(src->prj, dst->prj) && !strcmp(src->id, dst->id)) {
-        // no need to do anything.
-        // TODO: never occures cuz it throwes an error about existing task ID
-        return 0;
-    }
 
     /*
      * If move task from project to project, update current and previous tasks
