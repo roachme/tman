@@ -63,6 +63,7 @@ int project_init(char *fstate)
     return load();
 }
 
+// BUG: it does not return TRUE/FALSE, but number instead.
 int is_project_valid(char *prj)
 {
     if (!isalnum(*prj++))
