@@ -29,6 +29,7 @@ enum tman_err_enum {
     TMAN_PRJ_SWITCH,
     TMAN_PRJ_DEL_CURR,
     TMAN_PRJ_DEL_PREV,
+    TMAN_PRJ_MISSING,
 
     TMAN_ID_ILLEG,
     TMAN_ID_TOOLONG,

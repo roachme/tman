@@ -137,6 +137,48 @@ static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
     return tman_pwd();
 }
 
+static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
+{
+    int c, quiet, showhelp, status;
+    struct tman_arg src, dst;
+
+    quiet = showhelp = FALSE;
+    src.id = src.brd = src.prj = NULL;
+    dst.id = dst.brd = dst.prj = NULL;
+
+    while ((c = getopt(argc, argv, ":hq")) != -1) {
+        switch (c) {
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 'q':
+            quiet = TRUE;
+            break;
+        default:
+            return elog(1, "invalid option `%c'", optopt);
+        }
+    }
+
+    if (showhelp) {
+        printf("show some help\n");
+        return 0;
+    }
+
+    if (argc - optind != 2)
+        return elog(1, "source or destination project name missing");
+
+    src.prj = argv[optind];
+    dst.prj = argv[optind + 1];
+
+    /* TODO: trigger hooks if any */
+
+    if ((status = tman_prj_rename(NULL, &src, &dst))) {
+        if (quiet == FALSE)
+            elog(status, "could not rename project: %s", tman_strerror());
+    }
+    return tman_pwd();
+}
+
 static int _prj_set(int argc, char **argv, struct tman_context *ctx)
 {
     elog(1, "under development");
@@ -208,6 +250,7 @@ static const builtin_t prjcmds[] = {
     {.name = "del",.func = &_prj_del},
     {.name = "list",.func = &_prj_list},
     {.name = "prev",.func = &_prj_prev},
+    {.name = "rename",.func = &_prj_rename},
     {.name = "set",.func = &_prj_set},
     {.name = "show",.func = &_prj_show},        // under consideration
     {.name = "sync",.func = &_prj_sync},
