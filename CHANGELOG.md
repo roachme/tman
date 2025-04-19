@@ -1,4 +1,4 @@
-## [Unreleased] - (format: YYYY-MM-DD)
+## [0.0.10] - (2025-04-20)
 
 ### Added
 
@@ -26,14 +26,12 @@
 - `cli/cli`: Delete command ver (replace it with option)
 - `lib/common`: Delete unused function declarations
 
-### Deprecated
-
 
 ## [0.0.9] - (2025-04-09)
 
 ### Changed
 
-- `cli`: Change API option `-b' to `-B'
+- `cli`: Change API option `-b` to `-B`
 - `pgn`: Make pgn submodule part of codebase
 
 ### Fixed
