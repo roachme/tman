@@ -53,3 +53,13 @@ int dir_prj_del(char *base, char *prj)
     sprintf(path, "%s/%s", base, prj);
     return RMDIR(path);
 }
+
+int dir_prj_rename(char *base, char *src, char *dst)
+{
+    char srcpath[PATHSIZ + 1];
+    char dstpath[PATHSIZ + 1];
+
+    sprintf(srcpath, "%s/%s", base, src);
+    sprintf(dstpath, "%s/%s", base, dst);
+    return MOVE(srcpath, dstpath);
+}

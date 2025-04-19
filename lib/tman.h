@@ -122,6 +122,8 @@ int tman_prj_del(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
 int tman_prj_list(struct tman_context *ctx, struct tman_option *options);
 int tman_prj_prev(struct tman_context *ctx, struct tman_option *options);
+int tman_prj_rename(struct tman_context *ctx, struct tman_arg *src,
+                    struct tman_arg *dst);
 int tman_prj_set(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
 int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,

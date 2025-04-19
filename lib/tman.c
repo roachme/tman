@@ -438,12 +438,6 @@ int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
     return TMAN_OK;
 }
 
-int tman_prj_rename(struct tman_context *ctx, struct tman_arg *src,
-                    struct tman_arg *dst)
-{
-    return 0;
-}
-
 int tman_prj_prev(struct tman_context *ctx, struct tman_option *options)
 {
     int status;
@@ -456,6 +450,37 @@ int tman_prj_prev(struct tman_context *ctx, struct tman_option *options)
     if (project_swap())
         return emod_set(TMAN_PRJ_SWAP);
     return TMAN_OK;
+}
+
+int tman_prj_rename(struct tman_context *ctx, struct tman_arg *src,
+                    struct tman_arg *dst)
+{
+    int status;
+
+    if (src->prj == NULL)
+        return emod_set(TMAN_PRJ_MISSING);
+    else if (dst->prj == NULL)
+        return emod_set(TMAN_PRJ_MISSING);
+    else if ((status = tman_check_arg_prj(src)))
+        return emod_set(status);
+    else if ((status = tman_check_arg_prj(dst)) && status != TMAN_PRJ_NOSUCH)
+        return emod_set(status);
+    else if (project_exist(dst->prj))
+        return emod_set(TMAN_PRJ_EXISTS);
+    else if (is_project_valid(dst->prj) != TRUE)
+        return emod_set(TMAN_PRJ_ILLEG);
+    else if (project_valid_length(dst->prj) == FALSE)
+        return emod_set(TMAN_PRJ_TOOLONG);
+
+    if (is_project_curr(src->prj) == TRUE) {
+        project_delcurr();
+        project_addcurr(dst->prj);
+    } else if (is_project_prev(src->prj) == TRUE) {
+        project_delprev();
+        project_addcurr(dst->prj);
+        project_swap();
+    }
+    return dir_prj_rename(tmanfs.base, src->prj, dst->prj);
 }
 
 int tman_prj_set(struct tman_context *ctx, struct tman_arg *args,

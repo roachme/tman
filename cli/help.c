@@ -235,6 +235,7 @@ struct help helptab[] = {
       del     Delete project with all tasks\n\
       list    List projects\n\
       prev    Switch to previous project\n\
+      rename  Rename project\n\
       set     Set project vaules (under development)\n\
       show    Show project info (under development)\n\
       sync    Switch to or synchronize (with) project\n\
@@ -293,6 +294,18 @@ struct help helptab[] = {
      .desc_long = "\n\
     Arguments:\n\
       NAME    project name\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"},
+    {
+     .tag = TAGOBJCMD,
+     .name = "prj-rename",
+     .synop = "Usage: " PROGRAM " prj list [OPTION]\n",
+     .desc_short = "Rename project.\n",
+     .desc_long = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
     Under development.\n"},

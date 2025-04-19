@@ -9,5 +9,6 @@ int dir_id_move(char *base, char *id, char *dstprj, char *srcprj);
 
 int dir_prj_add(char *base, char *prj);
 int dir_prj_del(char *base, char *prj);
+int dir_prj_rename(char *base, char *src, char *dst);
 
 #endif
