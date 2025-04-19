@@ -180,6 +180,7 @@ char *task_prev(char *prj)
  * @param id task ID
  * @return on success - 1, otherwise 0
 */
+/* TODO: change function name, cuz it's confusing.  */
 int task_chk(char *id)
 {
     if (!isalnum(*id++))

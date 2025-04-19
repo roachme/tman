@@ -64,6 +64,7 @@ int project_init(char *fstate)
 }
 
 // BUG: it does not return TRUE/FALSE, but number instead.
+/* TODO: change function name, cuz it's confusing.  */
 int is_project_valid(char *prj)
 {
     if (!isalnum(*prj++))
@@ -147,6 +148,7 @@ int is_project_prev(char *prj)
     return strncmp(prj, prjs[PPRJ], PRJSIZ) == 0;
 }
 
+/* TODO: change function name, cuz it's confusing.  */
 int project_valid_length(char *prj)
 {
     return strlen(prj) <= PRJSIZ;
