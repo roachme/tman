@@ -9,6 +9,7 @@
 ### Changed
 
 - `Makefile`: Rename executable filename to `_tmancli`
+- `README`: Update shell script
 
 ### Fixed
 
