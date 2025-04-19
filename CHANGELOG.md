@@ -12,6 +12,7 @@
 - `Makefile`: Rename executable filename to `_tmancli`
 - `README`: Update shell script
 - `lib`: Make check function's return value boolean
+- `README`: Update README.md
 
 ### Fixed
 
