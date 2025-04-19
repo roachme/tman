@@ -71,7 +71,7 @@ int is_project_valid(char *prj)
     for (; *prj; ++prj)
         if (!(isalnum(*prj) || *prj == '_' || *prj == '-'))
             return 0;
-    return isalnum(*--prj);
+    return isalnum(*--prj) != 0;
 }
 
 int project_exist(char *prj)
