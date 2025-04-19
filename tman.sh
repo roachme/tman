@@ -3,7 +3,7 @@
 function tman()
 {
     PATHTAG="PWD: "
-    output="$(_tman "$@")"
+    output="$(_tmancli "$@")"
     retcode="$?"
 
     # Check that output contains tag. If so then interpret

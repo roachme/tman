@@ -1,4 +1,4 @@
-PROGRAM=_tman
+PROGRAM=_tmancli
 CC=gcc
 SRCS=$(wildcard lib/*.c cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
@@ -25,13 +25,13 @@ check:
 	cppcheck --std=c89 --enable=all --language=c cli/*.c lib/*.c
 
 valgrind:
-	valgrind  --track-origins=yes --leak-check=full --show-leak-kinds=all ./_tman
+	valgrind  --track-origins=yes --leak-check=full --show-leak-kinds=all ./_tmancli
 
 lnum:
 	find lib -name '*.c' |  xargs wc -l
 
 install:
-	cp _tman $HOME/.local/bin
+	cp _tmancli $HOME/.local/bin
 
 style:
 	find . -name '*.[ch]' | xargs indent -nut -nbad -bap -nbc -bbo -hnl -br -brs -c33 -cd33 -ncdb -ce -ci4 -cli0 -d0 -di1 -nfc1 -i4 -ip0 -l80 -lp -npcs -nprs -npsl -sai -saf -saw -ncs -nsc -sob -nfca -cp33 -ss -ts8 -il1
@@ -41,7 +41,7 @@ style:
 
 #build:
 #	#gcc -g -Wall lib/*.h lib/*.c -o tman
-#	gcc -g  lib/*.h lib/*.c -o _tman
+#	gcc -g  lib/*.h lib/*.c -o _tmancli
 #
 #prof:
 #	# clean up

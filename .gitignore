@@ -1,8 +1,6 @@
-tman
-_tman
+_tmancli
 gmon.out
 prof.txt
-tests
 tman_prof
 *.o
 .tman/
