@@ -76,11 +76,9 @@ TMANPGNINS = /home/user/.tman/pgnins
 
 ## ⇁  Tman builtin commands
 ```
-Usage: tman [OBJECT] COMMAND [OPITONS]... [ID]...
-    Where OBJECT := { id | prj | pgm }
-    Where COMMAND is one of the builtin commands
-    Where ID is task ID
-Try 'tman help COMMAND' for more info.
+Usage: tman [OPTION]... COMMAND [OPITONS]... [ARGS]...
+
+These are common Tman commands used in various situations:
 
 System:
   cfg    - Manage system configuration file.
@@ -97,11 +95,11 @@ Basic:
   sync   - Switch to or synchronize (with) task(s).
 
 Misc:
-  find   - Find a task by pattern.
-  flow   - Show and set project workflow.
-  grep   - Find pattern in a task.
+  find   - Find a task by pattern (under development).
+  flow   - Show and set project workflow (under development).
+  grep   - Find pattern in a task (under development).
   col    - Move task to column.
-  link   - Link tasks together.
+  link   - Link tasks together (under development).
   move   - Move (rename) tasks.
   set    - Set task unit values.
 
