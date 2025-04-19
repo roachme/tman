@@ -39,18 +39,18 @@ make
 
 function tman()
 {
+    PATHTAG="PWD: "
     output="$(_tmancli "$@")"
-    retstatus="$?"
-    if [ "$retstatus" -eq 0 ]; then
-        cd "$output"
-    else
-        [ -n "$output" ] && echo "$output"
-    fi
+    retcode="$?"
 
-    # Status 0 - ok, no error, no need to explain anything.
-    # Status 1 - ok, but output is not a path, so juts output it.
-    [ "$retstatus" -eq 1 ] && return 0 || return "$retstatus"
-    return "$retstatus"
+    # Check that output contains tag. If so then interpret
+    # it as a path not an output.
+    if [ -n "$(echo "$output" | grep -E "^$PATHTAG")" ]; then
+        cd "${output/$PATHTAG/}" || return 1
+    elif [ -n "$output" ]; then
+        echo "$output"
+    fi
+    return "$retcode"
 }
 ```
 3. Create basic Tman config file. Either in `~/.tman/tman.cfg` or `~/.config/tman/tman.cfg` and fill it with content below
