@@ -8,6 +8,8 @@
 
 ### Changed
 
+- `Makefile`: Rename executable filename to `_tmancli`
+
 ### Fixed
 
 - `tman`: Fix linter warnings

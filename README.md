@@ -31,7 +31,7 @@ make
 ```
 
 ## ⇁  Installation
-1. Once you compiled successfully, put executable `_tman` into one of directories defined in env variable `PATH`. I put it in `~/.locil/bin` .
+1. Once you compiled successfully, put executable `_tmancli` into one of directories defined in env variable `PATH`. I put it in `~/.locil/bin` .
 2. Copy the content of tman.sh into your shell rc file. It's `~/.bashrc`, `.zshrc`, etc.
 
 ```bash
@@ -39,7 +39,7 @@ make
 
 function tman()
 {
-    output="$(_tman "$@")"
+    output="$(_tmancli "$@")"
     retstatus="$?"
     if [ "$retstatus" -eq 0 ]; then
         cd "$output"
