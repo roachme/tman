@@ -187,7 +187,7 @@ int task_chk(char *id)
     for (; *id; ++id)
         if (!(isalnum(*id) || *id == '_' || *id == '-'))
             return 0;
-    return isalnum(*--id);
+    return isalnum(*--id) != 0;
 }
 
 /*
