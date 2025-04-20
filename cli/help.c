@@ -300,7 +300,7 @@ struct help helptab[] = {
     {
      .tag = TAGOBJCMD,
      .name = "prj-rename",
-     .synop = "Usage: " PROGRAM " prj list [OPTION]\n",
+     .synop = "Usage: " PROGRAM " prj rename [OPTION]... SRC DST\n",
      .desc_short = "Rename project.\n",
      .desc_long = "\n\
     Options:\n\
