@@ -13,6 +13,7 @@
 - `README`: Update shell script
 - `lib`: Make check function's return value boolean
 - `README`: Update README.md
+- `cli/help`: Amend help for prj-rename command
 
 ### Fixed
 
