@@ -3,6 +3,7 @@
 ### Added
 
 - `git`: Add new plugin to track changes
+- `gun`: Add default values for all projects
 
 ### Changed
 
