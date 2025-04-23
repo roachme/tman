@@ -16,6 +16,17 @@ local pgnver = "v0.0.1"
 
 local isdegub = false
 
+
+-- Default values for all projects
+config._common = {
+    prefix = "TP",
+    dirbase = "repos",
+    commitpatt = "[ID] PART: MSG",
+    branchpatt = "TYPE/PREFIX-ID_DESC_DATE",
+    repos = {},
+}
+
+
 local function showtable(tab)
     for k, v in pairs(tab) do
         print(k, "-", v)
