@@ -508,14 +508,12 @@ int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
     char c;
     int i, status;
 
-    while ((c = getopt(argc, argv, ":dhs")) != -1) {
+    while ((c = getopt(argc, argv, ":ds")) != -1) {
         switch (c) {
         case 'd':
             helpctx.desc_short = TRUE;
             helpctx.synop = FALSE;
             helpctx.desc_long = FALSE;
-            break;
-        case 'h':
             break;
         case 's':
             helpctx.synop = TRUE;
