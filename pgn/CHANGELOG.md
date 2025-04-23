@@ -10,6 +10,8 @@
 
 ### Fixed
 
+- `gun`: Add checks for projects with no config
+
 ### Deleted
 
 ### Deprecated
