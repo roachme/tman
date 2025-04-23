@@ -286,21 +286,16 @@ local function getunits(basic)
 
     units.id = basic.id
 
+    if config[basic.prj] == nil then
+        config[basic.prj] = {}
+    end
+
     -- Set values that all projects share (if set any)
+    units.repos = config[basic.prj].repos or config._common.repos
     units.prefix = config[basic.prj].prefix or config._common.prefix
+    units.dirbase = config[basic.prj].dirbase or config._common.dirbase
     units.commitpatt = config[basic.prj].commitpatt or config._common.commitpatt
     units.branchpatt = config[basic.prj].branchpatt or config._common.branchpatt
-
-    -- Add repos that all projects share (if set any)
-    if next(config[basic.prj].repos) == nil then
-        if next(config._common.repos) == nil then
-            config[basic.prj].repos = config._common.repos
-        else
-            config[basic.prj].repos = {}
-        end
-    else
-        units.repos = config[basic.prj].repos
-    end
     return units
 end
 
