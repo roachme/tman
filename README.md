@@ -97,7 +97,6 @@ Basic:
 Misc:
   find   - Find a task by pattern (under development).
   flow   - Show and set project workflow (under development).
-  grep   - Find pattern in a task (under development).
   col    - Move task to column.
   link   - Link tasks together (under development).
   move   - Move (rename) tasks.

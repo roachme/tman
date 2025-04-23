@@ -1,3 +1,10 @@
+## [Unreleased] - (format: YYYY-MM-DD)
+
+### Added
+
+- `cli/help`: Delete command grep from manual
+
+
 ## [0.0.10] - (2025-04-20)
 
 ### Added
