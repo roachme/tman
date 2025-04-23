@@ -20,6 +20,8 @@ Prio: high
 + 6. Add a good manual system.
   7. Plugin gun (for git repos) depends on system unit date. Outta create its own one.
   8. tman_check_prj() does not fail if prj == NULL, tho it should.
+  9. Add support to config file to parse $HOME in path. It'll be convient for a user.
+
 
 Prio: mid
 + 1. Command `set' can't change task type.
@@ -27,6 +29,7 @@ Prio: mid
   3. Unify commands list and find.
   4. Add case-sensetive option to command list.
   5. Delete function tman_id_find_by_desc(). Use tman_id_list() instead in cli.
+  6. Print PWD in /tmp/tmanpwd. Then shell part will it from there.
 
 Prio: low
   1. Add command autocomplitions
