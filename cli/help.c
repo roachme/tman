@@ -141,22 +141,6 @@ struct help helptab[] = {
     Exit status:\n\
     Under development\n"},
     {
-     .tag = TAGMISC,
-     .name = "grep",
-     .synop = "Usage: " PROGRAM " grep [OPTION]... PATTERN\n",
-     .desc_short = "Find pattern in a task (under development).\n",
-     .desc_long = "\n\
-    Options:\n\
-      -h      show this help and exit\n\
-      -p PRJ  project name (default is current)\n\
-    \n\
-    Arguments:\n\
-      PATTERN      Pattern specifying a description topic\n\
-      PRJ          project name (default current)\n\
-    \n\
-    Exit status:\n\
-    Under development\n"},
-    {
      .tag = TAGBASIC,
      .name = "list",
      .synop = "Usage: " PROGRAM " list [OPTION]... [PRJ]...\n",
