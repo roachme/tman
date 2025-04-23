@@ -4,6 +4,14 @@
 
 - `cli/help`: Delete command grep from manual
 
+### Changed
+
+### Fixed
+
+### Deleted
+
+- `cli/help`: Delete option '-h'
+
 
 ## [0.0.10] - (2025-04-20)
 
