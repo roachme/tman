@@ -75,8 +75,6 @@ struct help helptab[] = {
      .synop = "Usage: " PROGRAM " add [OPTION]... ID...\n",
      .desc_short = "Add a new task to project.\n",
      .desc_long = "\n\
-    Under development: If no ID provided then generate task ID.\n\
-    \n\
     Options:\n\
       -h      show this help and exit\n\
       -n      don't switch to newly created task\n\
