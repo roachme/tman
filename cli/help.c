@@ -222,6 +222,10 @@ struct help helptab[] = {
       show    Show project info (under development)\n\
       sync    Switch to or synchronize (with) project\n\
     \n\
+    Note:\n\
+      Use '" PROGRAM " help prj-SUBCMD' to get help on subcommands. \n\
+      For example: " PROGRAM " help prj-add\n\
+    \n\
     Exit status:\n\
     The return status is return status of subcommand.\n"},
     {
