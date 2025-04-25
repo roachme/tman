@@ -12,10 +12,10 @@ build: $(PROGRAM)
 release: style check $(PROGRAM)
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) -g3 -O0
 
 $(PROGRAM): $(OBJS)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) -g3 -O0
 
 clean:
 	rm -rf $(PROGRAM) $(OBJS)

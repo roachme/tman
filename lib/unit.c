@@ -77,7 +77,7 @@ struct unit *unit_add(struct unit *head, char *key, char *val)
 */
 int unit_set(struct unit *head, char *key, char *val)
 {
-    for (; head && head->next; head = head->next) {
+    for (; head != NULL; head = head->next) {
         if (strcmp(head->key, key) == 0) {
             strcpy(head->val, val);
             return 0;

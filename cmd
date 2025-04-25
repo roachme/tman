@@ -1,1 +1,0 @@
-./_tman show

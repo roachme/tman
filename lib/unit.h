@@ -11,6 +11,14 @@ struct unit {
     struct unit *next;
 };
 
+enum {
+    TMAN_UNIT_IDX_ID,
+    TMAN_UNIT_IDX_PRIO,
+    TMAN_UNIT_IDX_TYPE,
+    TMAN_UNIT_IDX_DATE,
+    TMAN_UNIT_IDX_DESC,
+};
+
 void unit_del(struct unit *units);
 void unit_traverse(struct unit *head);
 struct unit *unit_load(char *prj, char *id);

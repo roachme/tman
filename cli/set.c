@@ -34,7 +34,7 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
                 args.prj = optarg;
                 break;
             case 'P':
-                idx = 0;
+                idx = TMAN_UNIT_IDX_PRIO;
                 if (units[idx].isset)
                     break;
                 atleast_one_key_set = TRUE;
