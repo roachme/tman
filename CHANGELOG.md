@@ -11,6 +11,7 @@
 ### Deleted
 
 - `cli/help`: Delete option '-h'
+- `cli/add`: Delete option for task ID generation from manual
 
 
 ## [0.0.10] - (2025-04-20)
