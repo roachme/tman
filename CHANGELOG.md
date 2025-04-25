@@ -6,6 +6,8 @@
 
 ### Changed
 
+- `cli/help`: Amend help message for command `prj`
+
 ### Fixed
 
 ### Deleted
