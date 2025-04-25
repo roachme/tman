@@ -30,6 +30,7 @@ Prio: mid
   4. Add case-sensetive option to command list.
   5. Delete function tman_id_find_by_desc(). Use tman_id_list() instead in cli.
   6. Print PWD in /tmp/tmanpwd. Then shell part will it from there.
+  7. In command `add`: if no ID provided then generate task ID.
 
 Prio: low
   1. Add command autocomplitions

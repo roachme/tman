@@ -20,13 +20,10 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
     quiet = showhelp = FALSE;
     args.id = args.prj = NULL;
     errfmt = "cannot create task '%s': %s";
-    while ((c = getopt(argc, argv, ":p:ghnq")) != -1) {
+    while ((c = getopt(argc, argv, ":p:hnq")) != -1) {
         switch (c) {
         case 'p':
             args.prj = optarg;
-            break;
-        case 'g':
-            opt.id_generate = TRUE;
             break;
         case 'h':
             showhelp = TRUE;
