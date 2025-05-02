@@ -78,10 +78,12 @@ int emod_set(int err)
     return errcode;
 }
 
+/*
 int emod_get(void)
 {
     return errcode;
 }
+*/
 
 const char *emod_strerror(void)
 {

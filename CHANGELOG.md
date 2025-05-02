@@ -10,6 +10,8 @@
 
 ### Fixed
 
+- `lib`: Fix minor linter warnings
+
 ### Deleted
 
 - `cli/help`: Delete option '-h'
