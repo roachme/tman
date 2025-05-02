@@ -443,6 +443,7 @@ int tman_prj_prev(struct tman_context *ctx, struct tman_option *options)
     int status;
     struct tman_arg args;
 
+    args.prj = args.brd = args.id = NULL;
     if ((args.prj = project_getcurr()) && (status = tman_check_arg_prj(&args)))
         return status;
     if ((args.prj = project_getprev()) && (status = tman_check_arg_prj(&args)))
