@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/help`: Delete command grep from manual
+- `cli`: Add ID generation to cli part
 
 ### Changed
 

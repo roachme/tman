@@ -5,7 +5,23 @@
 #include "cli.h"
 #include "config.h"
 
-// TODO: Find a good error message in case option fails.  */
+#define xstr(s)     str(s)
+#define str(s)      #s
+#define IDLIMIT     99999999
+
+static char genid[IDSIZ + 1];
+
+static int generate_id(struct tman_arg *args)
+{
+    for (unsigned int i = 1; i < IDLIMIT; ++i) {
+        sprintf(genid, "%0" xstr(IDSIZ) "d", i);
+        args->id = genid;
+        if (tman_check_arg_id(args))
+            return 0;
+    }
+    return 1;
+}
+
 int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
 {
     char *errfmt;
@@ -41,15 +57,17 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
         }
     }
 
+    tman_get_args(&args);
+    args.id = NULL;             /* unset current task ID */
+
     if (showhelp == TRUE)
         return help_usage("add");
-    else if (optind == argc) {
-        // TODO: find a good return code
-        return elog(1, errfmt, "NOID", "task ID required");
-    }
+    else if (optind == argc && generate_id(&args))
+        return elog(1, "could not generate task ID");
 
-    for (i = optind; i < argc; ++i) {
-        args.id = argv[i];
+    i = optind;
+    do {
+        args.id = args.id == NULL ? argv[i] : args.id;
         tman_get_args(&args);
 
         if ((status = tman_check_arg_prj(&args))) {
@@ -70,6 +88,7 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
                                      "add")) != TMAN_OK)
             if (quiet == FALSE)
                 elog(TMAN_EHOOK, errfmt, args.id, tman_strerror());
-    }
+        args.id = NULL;
+    } while (++i < argc);
     return opt.id_switch && status == TMAN_OK ? tman_pwd() : status;
 }
