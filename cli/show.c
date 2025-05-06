@@ -81,30 +81,40 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
         return help_usage("show");
 
     i = optind;
+    if ((status = tman_check_arg_prj(&args))) {
+        args.prj = args.prj ? args.prj : "NOCURR";
+        if (quiet == FALSE)
+            elog(status, errfmt, args.prj, tman_strerror());
+        return status;
+    }
+
     do {
         args.id = argv[i];
-        tman_get_args(&args);
 
-        if ((status = tman_check_arg_prj(&args))) {
-            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
-                 tman_strerror());
-            continue;
-        } else if ((status = tman_check_arg_id(&args))) {
-            elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
+        if ((status = tman_check_arg_id(&args))) {
+            args.id = args.id ? args.id : "NOCURR";
+            if (quiet == FALSE)
+                elog(status, errfmt, args.id, tman_strerror());
             continue;
         }
 
         if ((status = tman_task_show(ctx, &args, NULL)) != TMAN_OK) {
-            elog(status, errfmt, args.id, tman_strerror());
+            if (quiet == FALSE)
+                elog(status, errfmt, args.id, tman_strerror());
+            continue;
+        } else if (tman_config->usehooks == TRUE
+                   && tman_hook_show(ctx, tman_config->hooks, &args,
+                                     "show") == NULL) {
+            if (quiet == FALSE)
+                elog(status, errfmt, args.id, tman_strerror());
             continue;
         }
-        if (tman_config->usehooks == TRUE
-            && tman_hook_show(ctx, tman_config->hooks, &args, "show") == NULL)
-            elog(status, errfmt, args.id, tman_strerror());
 
         if (key != NULL) {
-            if (show_key(ctx, key) != TMAN_OK && quiet == FALSE)
-                elog(1, errfmt, args.id, "key not found");
+            if (show_key(ctx, key) != TMAN_OK && quiet == FALSE) {
+                if (quiet == FALSE)
+                    elog(1, errfmt, args.id, "key not found");
+            }
         } else {
             pretty_show(ctx, key);
         }

@@ -61,26 +61,35 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
         return help_usage("add");
     else if ((status = tman_check_arg_prj(&args))) {
         args.prj = args.prj ? args.prj : "NOCURR";
-        return elog(status, errfmt, args.prj, tman_strerror());
-    } else if (optind == argc && generate_id(&args))
-        return elog(1, "could not generate task ID");
+        if (quiet == FALSE)
+            elog(status, errfmt, args.prj, tman_strerror());
+        return status;
+    } else if (optind == argc && generate_id(&args)) {
+        if (quiet == FALSE)
+            elog(1, "could not generate task ID");
+        return 1;
+    }
 
     i = optind;
     do {
         args.id = args.id == NULL ? argv[i] : args.id;
 
         if ((status = tman_check_arg_id(&args)) && status != TMAN_ID_NOSUCH) {
-            elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
+            if (quiet == FALSE)
+                elog(status, errfmt, args.id ? args.id : "NOCURR",
+                     tman_strerror());
             continue;
         }
 
         if ((status = tman_task_add(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
+            continue;
         } else if ((status = tman_hook_action(ctx, tman_config->hooks, &args,
                                               "add")) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(TMAN_EHOOK, errfmt, args.id, tman_strerror());
+            continue;
         }
         args.id = NULL;         /* unset task ID, not to break loop.  */
     } while (++i < argc);
