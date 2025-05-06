@@ -29,14 +29,14 @@ static int recursive_tree_print(struct tree *p)
         /* Apply filters */
         if (list_filter.specialonly == TRUE
             && (p->mark == '*' || p->mark == '^'))
-            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id,
-                   p->pgnout, p->desc);
+            printf("%c " BMAG "%-" xstr(IDSIZ) "s" CRESET "%s %s\n", p->mark,
+                   p->id, p->pgnout, p->desc);
         else if (list_filter.almostall == TRUE && (p->mark != '-'))
-            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id,
-                   p->pgnout, p->desc);
+            printf("%c " BMAG "%-" xstr(IDSIZ) "s" CRESET "%s %s\n", p->mark,
+                   p->id, p->pgnout, p->desc);
         else if (list_filter.allall == TRUE)
-            printf("%c " BMAG "%-10s" CRESET "%s %s\n", p->mark, p->id,
-                   p->pgnout, p->desc);
+            printf("%c " BMAG "%-" xstr(IDSIZ) "s" CRESET "%s %s\n", p->mark,
+                   p->id, p->pgnout, p->desc);
 
         recursive_tree_print(p->right);
     }
