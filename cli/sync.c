@@ -52,7 +52,7 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
             continue;
         }
 
-        if ((status = tman_id_sync(ctx, &args, &opt)) != TMAN_OK) {
+        if ((status = tman_task_sync(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }

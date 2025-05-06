@@ -94,26 +94,26 @@ int tman_check_arg_id(struct tman_arg *args);
 int tman_check_arg_prj(struct tman_arg *args);
 
 /* Task ID functions.  */
-int tman_id_add(struct tman_context *ctx, struct tman_arg *args,
-                struct tman_option *options);
-int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
-                struct tman_option *options);
-int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
-                struct tman_option *options);
-int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
+int tman_task_add(struct tman_context *ctx, struct tman_arg *args,
+                  struct tman_option *options);
+int tman_task_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
+                  struct tman_option *options);
+int tman_task_del(struct tman_context *ctx, struct tman_arg *args,
+                  struct tman_option *options);
+int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
+                   struct tman_option *options);
 int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
-int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
-                 struct tman_arg *dst);
-int tman_id_prev(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
-int tman_id_set(struct tman_context *ctx, struct tman_arg *args,
-                struct unit *unitbin, struct tman_option *options);
-int tman_id_show(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
-int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
+int tman_task_move(struct tman_context *ctx, struct tman_arg *src,
+                   struct tman_arg *dst);
+int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
+                   struct tman_option *options);
+int tman_task_set(struct tman_context *ctx, struct tman_arg *args,
+                  struct unit *unitbin, struct tman_option *options);
+int tman_task_show(struct tman_context *ctx, struct tman_arg *args,
+                   struct tman_option *options);
+int tman_task_sync(struct tman_context *ctx, struct tman_arg *args,
+                   struct tman_option *options);
 
 /* Task project functions.  */
 int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,

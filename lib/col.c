@@ -97,7 +97,7 @@ int col_del(char *prj, char *id)
     return 0;
 }
 
-// Note: used only by tman_id_list(). Get rid of it in the future.
+// Note: used only by tman_task_list(). Get rid of it in the future.
 struct column col_getmark(char *prj, char *id)
 {
     int i;

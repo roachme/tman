@@ -68,7 +68,7 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
         }
-        if ((status = tman_id_del(ctx, &args, &opt)) != TMAN_OK) {
+        if ((status = tman_task_del(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
         }

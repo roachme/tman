@@ -150,8 +150,8 @@ int tman_pwd(void)
     return TMAN_OK;
 }
 
-int tman_id_add(struct tman_context *ctx, struct tman_arg *args,
-                struct tman_option *options)
+int tman_task_add(struct tman_context *ctx, struct tman_arg *args,
+                  struct tman_option *options)
 {
     int status;
     // TODO: Add support to pass unit values into unit_add()
@@ -180,8 +180,8 @@ int tman_id_add(struct tman_context *ctx, struct tman_arg *args,
     return TMAN_OK;
 }
 
-int tman_id_show(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options)
+int tman_task_show(struct tman_context *ctx, struct tman_arg *args,
+                   struct tman_option *options)
 {
     int status;
 
@@ -194,8 +194,8 @@ int tman_id_show(struct tman_context *ctx, struct tman_arg *args,
     return status;
 }
 
-int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
-                struct tman_option *options)
+int tman_task_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
+                  struct tman_option *options)
 {
     int status;
 
@@ -206,8 +206,8 @@ int tman_id_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
     return task_move(args->prj, args->id, tag);
 }
 
-int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
-                struct tman_option *options)
+int tman_task_del(struct tman_context *ctx, struct tman_arg *args,
+                  struct tman_option *options)
 {
     int status;
 
@@ -228,8 +228,8 @@ int tman_id_del(struct tman_context *ctx, struct tman_arg *args,
  @param prj char * | NULL (then list the current project)
  @return struct item * | NULL (if error happened)
 */
-int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options)
+int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
+                   struct tman_option *options)
 {
     DIR *ids;
     int status;
@@ -269,15 +269,15 @@ int tman_id_list(struct tman_context *ctx, struct tman_arg *args,
 
 /* Link task IDs together: parent - children relationship.  */
 /*
-int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
+int tman_task_link(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     return 0;
 }
 */
 
-int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
-                 struct tman_arg *dst)
+int tman_task_move(struct tman_context *ctx, struct tman_arg *src,
+                   struct tman_arg *dst)
 {
     int status;
 
@@ -305,8 +305,8 @@ int tman_id_move(struct tman_context *ctx, struct tman_arg *src,
     return TMAN_OK;
 }
 
-int tman_id_prev(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options)
+int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
+                   struct tman_option *options)
 {
     int status;
 
@@ -323,8 +323,8 @@ int tman_id_prev(struct tman_context *ctx, struct tman_arg *args,
     return TMAN_OK;
 }
 
-int tman_id_set(struct tman_context *ctx, struct tman_arg *args,
-                struct unit *unitbin, struct tman_option *options)
+int tman_task_set(struct tman_context *ctx, struct tman_arg *args,
+                  struct unit *unitbin, struct tman_option *options)
 {
     int status;
 
@@ -338,8 +338,8 @@ int tman_id_set(struct tman_context *ctx, struct tman_arg *args,
     return TMAN_OK;
 }
 
-int tman_id_sync(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options)
+int tman_task_sync(struct tman_context *ctx, struct tman_arg *args,
+                   struct tman_option *options)
 {
     int status;
 

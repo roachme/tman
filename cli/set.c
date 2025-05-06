@@ -81,7 +81,7 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
             elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
             continue;
         }
-        if ((status = tman_id_set(ctx, &args, units, &opt)) != TMAN_OK) {
+        if ((status = tman_task_set(ctx, &args, units, &opt)) != TMAN_OK) {
             elog(status, "cannot set unit '%s': %s", args.id, tman_strerror());
             return status;
         } else

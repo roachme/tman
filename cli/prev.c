@@ -32,7 +32,7 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
 
     tman_get_args(&args);
 
-    if ((status = tman_id_prev(ctx, &args, &opt)) != TMAN_OK) {
+    if ((status = tman_task_prev(ctx, &args, &opt)) != TMAN_OK) {
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
         return status;
