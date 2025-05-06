@@ -84,7 +84,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             continue;
         }
 
-        if ((status = tman_id_show(ctx, &args, NULL)) != TMAN_OK) {
+        if ((status = tman_task_show(ctx, &args, NULL)) != TMAN_OK) {
             elog(status, errfmt, args.id, tman_strerror());
             continue;
         }

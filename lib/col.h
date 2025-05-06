@@ -32,7 +32,7 @@ char col_get2(int prio);
 int col_set(char *prj, char *id, char *col);
 int col_del(char *prj, char *id);
 
-// Note: used only by tman_id_list(). Do somethnig about it.
+// Note: used only by tman_task_list(). Do somethnig about it.
 struct column col_getmark(char *prj, char *id);
 
 #endif

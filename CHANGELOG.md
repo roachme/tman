@@ -8,6 +8,7 @@
 ### Changed
 
 - `cli/help`: Amend help message for command `prj`
+- `tman`: Rename lib API names from id to task
 
 ### Fixed
 
