@@ -51,17 +51,24 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     char *key;
-    int i, status;
+    int i, quiet, showhelp, status;
     struct tman_arg args;
 
+    quiet = showhelp = FALSE;
     key = args.prj = args.id = args.brd = NULL;
-    while ((c = getopt(argc, argv, ":p:hk:")) != -1) {
+    while ((c = getopt(argc, argv, ":p:hkq:")) != -1) {
         switch (c) {
-        case 'p':
-            args.prj = optarg;
+        case 'h':
+            showhelp = TRUE;
             break;
         case 'k':
             key = optarg;
+            break;
+        case 'p':
+            args.prj = optarg;
+            break;
+        case 'q':
+            quiet = TRUE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -69,6 +76,9 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             return elog(1, "invalid option `%c'", optopt);
         }
     }
+
+    if (showhelp == TRUE)
+        return help_usage("show");
 
     i = optind;
     do {
@@ -93,7 +103,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             elog(status, errfmt, args.id, tman_strerror());
 
         if (key != NULL) {
-            if (show_key(ctx, key) != TMAN_OK)
+            if (show_key(ctx, key) != TMAN_OK && quiet == FALSE)
                 elog(1, errfmt, args.id, "key not found");
         } else {
             pretty_show(ctx, key);

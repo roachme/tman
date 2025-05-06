@@ -179,6 +179,7 @@ struct help helptab[] = {
       -h      show this help and exit\n\
       -k key  key to show (builtin or plugin)\n\
       -p PRJ  project name (default is current)\n\
+      -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
       ID      task ID (default current)\n\
