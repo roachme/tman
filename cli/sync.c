@@ -39,28 +39,32 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
         return help_usage("sync");
 
     i = optind;
+    if ((status = tman_check_arg_prj(&args))) {
+        args.prj = args.prj ? args.prj : "NOCURR";
+        if (quiet == FALSE)
+            elog(status, errfmt, args.prj, tman_strerror());
+        return status;
+    }
+
     do {
         args.id = argv[i];
-        tman_get_args(&args);
 
-        if ((status = tman_check_arg_prj(&args))) {
-            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
-                 tman_strerror());
-            continue;
-        } else if ((status = tman_check_arg_id(&args))) {
-            elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
+        if ((status = tman_check_arg_id(&args))) {
+            args.id = args.id ? args.id : "NOCURR";
+            elog(status, errfmt, args.id, tman_strerror());
             continue;
         }
 
         if ((status = tman_task_sync(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
+            continue;
+        } else if ((status = tman_hook_action(ctx, tman_config->hooks, &args,
+                                              "sync")) != TMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, args.id, tman_strerror());
+            continue;
         }
-
-        if ((status =
-             tman_hook_action(ctx, tman_config->hooks, &args,
-                              "sync")) != TMAN_OK)
-            elog(status, errfmt, args.id, tman_strerror());
     } while (++i < argc);
 
     return opt.id_switch && status == TMAN_OK ? tman_pwd() : status;

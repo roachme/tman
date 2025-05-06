@@ -14,6 +14,7 @@
 ### Fixed
 
 - `lib`: Fix minor linter warnings
+- `cli`: Move project name check outta loop
 
 ### Deleted
 
