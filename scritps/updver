@@ -7,7 +7,7 @@
 
 VERSION="$1"
 FILEVERSION="VERSION.txt"
-FILECHANGELOG="CHANGELOG.txt"
+FILECHANGELOG="CHANGELOG.md"
 # TODO: regex does not check number limits 0 < VERSION <= 255
 VERSION_PATTERN="v[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}"
 
@@ -46,12 +46,13 @@ function update_version()
 
 function update_changelog()
 {
-    # TODO: update CHANGELOG.txt
-    #
-    # git add "$FILEVERSION"
-    # git add "$FILECHANGELOG"
-    # git commit -m "tman: Bump version to $VERSION"
-    echo "under development"
+    RELEASE_HEADER="## [$VERSION] - ($(date '+%Y-%m-%d'))"
+    sed -i "/## \[Unreleased\]/d" "$FILECHANGELOG" # delete unreleased header
+    sed -i "1i ${RELEASE_HEADER}" "$FILECHANGELOG" # add release header
+
+    git add "$FILEVERSION"
+    git add "$FILECHANGELOG"
+    git commit -m "tman: Bump version to $VERSION"
 }
 
 function update_remote()
@@ -74,9 +75,9 @@ elif ! echo "$VERSION" | grep -wq "$VERSION_PATTERN"; then
     die
 fi
 
-# Uncomment 'em when update_changelog is implemented
-#update_master
-#update_version
-#update_changelog
-#update_develop
-#update_remote
+# Interface logic
+update_master
+update_version
+update_changelog
+update_develop
+update_remote
