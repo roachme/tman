@@ -12,10 +12,11 @@ build: $(PROGRAM)
 release: style check $(PROGRAM)
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) -DVERSION=\"$(shell cat VERSION.txt)\"
 
 $(PROGRAM): $(OBJS)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	echo "fuck me there from Makefile"
 
 clean:
 	rm -rf $(PROGRAM) $(OBJS)
