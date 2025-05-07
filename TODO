@@ -3,13 +3,16 @@ Priorities:
   mid  - constant stuff like make it faster, smaller, etc.
   low  - when you get time
 
+Bugs:
+  1. Command `tman col prev <TASKID>` moves task to column 'prev' even if no current task ID is set.
+
 Ideas:
   1. Replace cat & ls hooks with reading from file. Gonna highly optimize
      command exection.
   2. Add multiple users.
   3. Add support for plugin to use libtman/tman commands.
   4. Add support to pass system config values via option to util.
-  5. Add option to show task columns in command `tman list`.
++ 5. Add option to show task columns in command `tman col`.
 
 Prio: high
 + 1. Write config file parser and define config itself.
@@ -21,6 +24,7 @@ Prio: high
   7. Plugin gun (for git repos) depends on system unit date. Outta create its own one.
   8. tman_check_prj() does not fail if prj == NULL, tho it should.
   9. Add support to config file to parse $HOME in path. It'll be convient for a user.
+ 10. Add debug prints to commands. Pro'ly as option -v.
 
 
 Prio: mid

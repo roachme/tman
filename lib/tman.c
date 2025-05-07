@@ -459,6 +459,7 @@ int tman_prj_rename(struct tman_context *ctx, struct tman_arg *src,
 {
     int status;
 
+    /* TODO: Use tman_check_arg_prj() to remove code duplication.  */
     if (src->prj == NULL)
         return emod_set(TMAN_PRJ_MISSING);
     else if (dst->prj == NULL)
