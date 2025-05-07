@@ -58,7 +58,7 @@ function update_changelog()
 
 function update_remote()
 {
-    git tag "$VERSION"
+    git tag "$VERSION" master
     git tag -f latest "$VERSION"
 
     git push origin master
