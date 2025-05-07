@@ -30,17 +30,13 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
     if (showhelp == TRUE)
         return help_usage("prev");
 
-    tman_get_args(&args);
-
     if ((status = tman_task_prev(ctx, &args, &opt)) != TMAN_OK) {
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
         return status;
-    }
-
-    /* Switch to new current task ID.  */
-    if ((status =
-         tman_hook_action(ctx, tman_config->hooks, &args, "prev")) != TMAN_OK) {
+    } else if ((status =
+                tman_hook_action(ctx, tman_config->hooks, &args,
+                                 "prev")) != TMAN_OK) {
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
         return status;
