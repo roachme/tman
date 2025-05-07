@@ -57,6 +57,7 @@ static int fill_sysvars(struct tman_base *base)
 /*
  * Get default value if it's not set.
  * @param args input arguments
+ * DEPRICATED. Use tman_check_arg_id() and tman_check_arg_prj() instead.
 */
 int tman_get_args(struct tman_arg *args)
 {
