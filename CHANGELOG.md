@@ -3,6 +3,7 @@
 ### Changed
 
 - `cli/help`: Update command `add` help message
+- `scripts/updver`: Update some of the logic
 
 ### Fixed
 
