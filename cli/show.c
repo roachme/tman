@@ -81,24 +81,11 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
         return help_usage("show");
 
     i = optind;
-    if ((status = tman_check_arg_prj(&args))) {
-        args.prj = args.prj ? args.prj : "NOCURR";
-        if (quiet == FALSE)
-            elog(status, errfmt, args.prj, tman_strerror());
-        return status;
-    }
-
     do {
         args.id = argv[i];
 
-        if ((status = tman_check_arg_id(&args))) {
-            args.id = args.id ? args.id : "NOCURR";
-            if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
-            continue;
-        }
-
         if ((status = tman_task_show(ctx, &args, NULL)) != TMAN_OK) {
+            args.id = args.id ? args.id : "NOCURR";
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;

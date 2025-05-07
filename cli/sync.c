@@ -39,25 +39,13 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
         return help_usage("sync");
 
     i = optind;
-    if ((status = tman_check_arg_prj(&args))) {
-        args.prj = args.prj ? args.prj : "NOCURR";
-        if (quiet == FALSE)
-            elog(status, errfmt, args.prj, tman_strerror());
-        return status;
-    }
-
     do {
         args.id = argv[i];
 
-        if ((status = tman_check_arg_id(&args))) {
-            args.id = args.id ? args.id : "NOCURR";
-            elog(status, errfmt, args.id, tman_strerror());
-            continue;
-        }
-
         if ((status = tman_task_sync(ctx, &args, &opt)) != TMAN_OK) {
+            args.id = args.id ? args.id : "NOCURR";
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_strerror());
+                elog(status, errfmt, args.id, tman_strerror());
             continue;
         } else if ((status = tman_hook_action(ctx, tman_config->hooks, &args,
                                               "sync")) != TMAN_OK) {

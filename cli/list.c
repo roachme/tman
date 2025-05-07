@@ -100,13 +100,6 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
     i = optind;
     do {
         args.prj = argv[i];
-        tman_get_args(&args);
-
-        if ((status = tman_check_arg_prj(&args))) {
-            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
-                 tman_strerror());
-            continue;
-        }
 
         if ((status = tman_task_list(ctx, &args, NULL)) != TMAN_OK) {
             elog(status, errfmt, args.prj, tman_strerror());

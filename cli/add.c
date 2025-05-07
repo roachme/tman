@@ -74,13 +74,6 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
     do {
         args.id = args.id == NULL ? argv[i] : args.id;
 
-        if ((status = tman_check_arg_id(&args)) && status != TMAN_ID_NOSUCH) {
-            if (quiet == FALSE)
-                elog(status, errfmt, args.id ? args.id : "NOCURR",
-                     tman_strerror());
-            continue;
-        }
-
         if ((status = tman_task_add(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());

@@ -57,8 +57,6 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
 
     for (i = optind; i < argc; ++i) {
         args.prj = argv[i];
-        if ((status = tman_check_arg_prj(&args)) && status != TMAN_PRJ_NOSUCH)
-            return elog(1, errfmt, argv[i], tman_strerror());
         if ((status = tman_prj_add(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(1, errfmt, argv[i], tman_strerror());
@@ -100,11 +98,6 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     i = optind;
     do {
         args.prj = argv[i];
-        tman_get_args(&args);
-
-        if ((status = tman_get_args(&args)))
-            return elog(status, errfmt, args.prj ? args.prj : "NOCURR",
-                        tman_strerror());
         if ((status = tman_prj_del(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
@@ -229,13 +222,6 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
     i = optind;
     do {
         args.prj = argv[i];
-        tman_get_args(&args);
-
-        if ((status = tman_check_arg_prj(&args))) {
-            if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_strerror());
-            return status;
-        }
         if ((status = tman_prj_sync(ctx, &args, &opt)) != TMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());

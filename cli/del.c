@@ -45,16 +45,9 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
             return 0;
         }
     }
-
-    i = optind;
-    if ((status = tman_check_arg_prj(&args))) {
-        args.prj = args.prj ? args.prj : "NOCURR";
-        if (quiet == FALSE)
-            elog(status, errfmt, args.prj, tman_strerror());
-        return status;
-    }
     // TODO: if not current task gets deleted, then no need to
     // change user's current directory.
+    i = optind;
     do {
         args.id = argv[i];
 

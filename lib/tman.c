@@ -25,9 +25,9 @@ static int check_args(struct tman_arg *args)
 {
     int status;
 
-    if ((status = tman_check_arg_id(args)))
+    if ((status = tman_check_arg_prj(args)))
         return status;
-    else if ((status = tman_check_arg_prj(args)))
+    else if ((status = tman_check_arg_id(args)))
         return status;
     return status;
 }
