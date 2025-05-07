@@ -7,6 +7,7 @@
 - `cli`: Add fixed padding to output
 - `cli/help`: Add help message for util itself
 - `scripts/updver`: Refactor logic
+- `cli`: Move version to file
 
 ### Changed
 
