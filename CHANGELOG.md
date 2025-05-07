@@ -4,6 +4,10 @@
 
 - `cli/help`: Update command `add` help message
 
+### Fixed
+
+- `scripts/updver`: Tag from master branch
+
 
 ## [v0.0.11] - (2025-05-07)
 
