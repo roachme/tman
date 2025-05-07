@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Changed
+
+- `cli/help`: Update command `add` help message
+
+
 ## [v0.0.11] - (2025-05-07)
 
 ### Added
