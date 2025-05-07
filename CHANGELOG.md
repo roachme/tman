@@ -1,4 +1,4 @@
-## [Unreleased] - (format: YYYY-MM-DD)
+## [v0.0.11] - (2025-05-07)
 
 ### Added
 
