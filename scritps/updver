@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
 
+set -e
+
 #TODO: check NEWVERSION value. Pattern: v<0-255>.<0-255>.<0-255>.
-#TODO: check NEWVERSION is greater than previous and does not exist already
-#TODO: update CHANGELOG: set new version and date
-#TODO: Add commands: make, update (push to remote), revert
 
 
-VERSION="$1"
+CMD=
+VERSION_NEW=
+PROGRAM="./scripts/release"
+
 FILEVERSION="VERSION.txt"
 FILECHANGELOG="CHANGELOG.md"
+CHANGELOG_MARK="## \[Unreleased\]"
+
 # TODO: regex does not check number limits 0 < VERSION <= 255
 VERSION_PATTERN="v[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}"
+VERSION_CURR="$(cat "$FILEVERSION")"
 
 function usage()
 {
@@ -23,6 +28,53 @@ function die()
 {
     usage
     exit 1
+}
+
+function get_last_version_tag()
+{
+    VERSION_NEW="$(cat "$FILEVERSION")"
+    VERSION_TAGS="$(git tag --sort=committerdate | grep latest -A 2 | grep -v latest)"
+    echo "VERSION_TAGS: $VERSION_TAGS"
+    return 0
+}
+
+# Reference link
+# https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+function verlte() {
+    [ "$1" = "$(echo -e "$1\n$2" | sort -V | head -n1)" ]
+}
+
+function verlt() {
+    # shorter version
+    [ "$1" = "$2" ] && return 1 || verlte "$1" "$2"
+}
+
+function check_version()
+{
+    if [ -z "$VERSION_NEW" ]; then
+        echo "$PROGRAM: version is missing"
+        return 1
+    elif ! echo "$VERSION_NEW" | grep -wq "$VERSION_PATTERN"; then
+        echo "$PROGRAM: version is invalid"
+        return 1
+    elif git tag | grep -wq "$VERSION_NEW"; then
+        echo "$PROGRAM: such version '$VERSION_NEW' already exists"
+        return 1
+    elif verlt "$VERSION_NEW" "$VERSION_CURR" ; then
+        echo "$PROGRAM: version '$VERSION_NEW' lower than current"
+        echo "$PROGRAM: current version is '$VERSION_CURR'"
+        return 1
+    fi
+    return 0
+}
+
+function check_changelog_mark()
+{
+    if ! grep -q "$CHANGELOG_MARK" "$FILECHANGELOG"; then
+        echo "$PROGRAM: CHANGELOG mark '$CHANGELOG_MARK' is missing"
+        return 1
+    fi
+    return 0;
 }
 
 function update_master()
@@ -42,43 +94,101 @@ function update_develop()
 
 function update_version()
 {
-    echo "$VERSION" > "$FILEVERSION"
+    echo "$VERSION_NEW" > "$FILEVERSION"
 }
 
 function update_changelog()
 {
-    RELEASE_HEADER="## [$VERSION] - ($(date '+%Y-%m-%d'))"
+    set -x
+    RELEASE_HEADER="## [$VERSION_NEW] - ($(date '+%Y-%m-%d'))"
     sed -i "/## \[Unreleased\]/d" "$FILECHANGELOG" # delete unreleased header
     sed -i "1i ${RELEASE_HEADER}" "$FILECHANGELOG" # add release header
+}
 
+function make_version_commit()
+{
     git add "$FILEVERSION"
     git add "$FILECHANGELOG"
-    git commit -m "tman: Bump version to $VERSION"
+    git commit -m "tman: Bump version to $VERSION_NEW"
+}
+
+function update_tags()
+{
+    git tag "$VERSION_NEW" master
+    git tag -f latest "$VERSION_NEW"
 }
 
 function update_remote()
 {
-    git tag "$VERSION" master
-    git tag -f latest "$VERSION"
-
     git push origin master
     git push origin develop
     git push --force origin latest
-    git push origin "$VERSION"
+    git push origin "$VERSION_NEW"
     return 0
 }
 
-if [ -z "$VERSION" ]; then
-    echo "updver: Version is missing"
-    die
-elif ! echo "$VERSION" | grep -wq "$VERSION_PATTERN"; then
-    echo "updver: Invalid version"
-    die
-fi
+function revert_branches()
+{
+    # TODO: revert specific branch in `git reset` or sth
+    git checkout master && git reset --hard origin/master
+    git checkout develop && git reset --hard origin/develop
+}
 
-# Interface logic
-update_master
-update_version
-update_changelog
-update_develop
-update_remote
+function revert_tags()
+{
+    VERSION_CURR="$(cat "$FILEVERSION")"
+    LAST_VERSION="$(get_last_version_tag)"
+
+    if [ "$VERSION_CURR" = "$LAST_VERSION" ]; then
+        echo "$PROGRAM: can revert ONLY 1 version"
+        return 1
+    fi
+
+    # TODO: shortcut, find a better way
+    git tag | xargs git tag -d > /dev/null
+    git pull
+    return 0;
+}
+
+while getopts ":hv:" opt; do
+    case "$opt" in
+        h)
+            usage
+            exit 0
+            ;;
+        v)
+            VERSION_NEW="$OPTARG"
+            ;;
+        :)
+            echo "option -$opt requires an argument"
+            exit 1
+            ;;
+        *)
+            echo "no such option -$opt"
+            exit 1
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+CMD="$1"
+
+if [ -z "$CMD" ] || [ "$CMD" = "make" ]; then
+    if ! check_version || ! check_changelog_mark; then
+        exit 1
+    fi
+    update_master
+    update_version
+    update_changelog
+    make_version_commit
+    update_develop
+    update_tags
+elif [ "$CMD" = "update" ]; then
+    update_remote
+elif [ "$CMD" = "revert" ]; then
+    revert_branches
+    revert_tags
+else
+    echo "$PROGRAM: no such command '$CMD'"
+    exit 1
+fi
