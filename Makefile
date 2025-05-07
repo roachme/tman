@@ -16,7 +16,6 @@ release: style check $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
-	echo "fuck me there from Makefile"
 
 clean:
 	rm -rf $(PROGRAM) $(OBJS)
