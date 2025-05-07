@@ -7,6 +7,7 @@
 ### Fixed
 
 - `scripts/updver`: Tag from master branch
+- `cli/show`: Fix option parser
 
 
 ## [v0.0.11] - (2025-05-07)
