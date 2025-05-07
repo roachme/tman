@@ -5,6 +5,7 @@
 - `cli/help`: Delete command grep from manual
 - `cli`: Add ID generation to cli part
 - `cli`: Add fixed padding to output
+- `cli/help`: Add help message for util itself
 
 ### Changed
 

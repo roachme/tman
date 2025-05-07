@@ -4,6 +4,7 @@
 #include "help.h"
 #include "cli.h"
 
+#define SYSTEM      "system"
 #define TAGOBJ      "bin-object"
 #define TAGOBJCMD   "bin-object-cmd"
 #define TAGSYSTEM   "bin-system"
@@ -24,6 +25,18 @@ struct helpctx helpctx = {
 };
 
 struct help helptab[] = {
+    {
+     .tag = SYSTEM,
+     .name = "tman",
+     .synop = "Usage: " PROGRAM " [OPTION]... [COMMAND|PLUGIN]\n",
+     .desc_short = "Terminal task (project) manager.\n",
+     .desc_long = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -V      show version and exit\n\
+    \n\
+    Exit status:\n\
+    Return status of builtin command or plugin\n"},
     {
      .tag = TAGSYSTEM,
      .name = "cfg",
