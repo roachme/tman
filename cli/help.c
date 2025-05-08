@@ -163,6 +163,7 @@ struct help helptab[] = {
       -c COL  specify what column to list task from (under development)\n\
       -h      show this help and exit\n\
       -s      list only current and previous tasks\n\
+      -v      under development: show more info\n\
     \n\
     Arguments:\n\
       PRJ     project name (default current)\n\
@@ -283,6 +284,7 @@ struct help helptab[] = {
     Options:\n\
       -h      show this help and exit\n\
       -q      do not write anything to standard error output\n\
+      -v      under development: show more info\n\
     \n\
     Exit status:\n\
     Under development.\n"},
