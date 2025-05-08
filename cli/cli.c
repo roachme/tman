@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     }
 
     /* Parse util itself options.  */
-    for (int i = 1; i < argc && argv[i][0] == '-'; ++i) {
+    for (i = 1; i < argc && argv[i][0] == '-'; ++i) {
         if (strcmp(argv[i], "-V") == 0)
             return show_version();
         else if (strcmp(argv[i], "-h") == 0)

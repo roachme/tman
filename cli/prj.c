@@ -123,10 +123,9 @@ static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
 {
     int status;
     struct tman_option opt;
-    const char *errfmt = "cannot switch: %s";
 
     if ((status = tman_prj_prev(ctx, &opt)) != TMAN_OK)
-        return elog(status, errfmt, tman_strerror());
+        return elog(status, "cannot switch: %s", tman_strerror());
     return tman_pwd();
 }
 
