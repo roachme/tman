@@ -9,6 +9,7 @@
 
 - `scripts/updver`: Tag from master branch
 - `cli/show`: Fix option parser
+- `cli`: Fix linter warnings
 
 
 ## [v0.0.11] - (2025-05-07)

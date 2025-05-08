@@ -14,7 +14,7 @@ static char genid[IDSIZ + 1];
 static int generate_id(struct tman_arg *args)
 {
     for (unsigned int i = 1; i < IDLIMIT; ++i) {
-        sprintf(genid, "%0" xstr(IDSIZ) "d", i);
+        sprintf(genid, "%0" xstr(IDSIZ) "u", i);
         args->id = genid;
         if (tman_check_arg_id(args))
             return 0;
