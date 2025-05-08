@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `cli/help`: Add notion about new option
+
 ### Changed
 
 - `cli/help`: Update command `add` help message
