@@ -4,6 +4,7 @@
 
 - `cli/help`: Add notion about new option
 - `lib/tman`: Add skeleton to check board name
+- `lib/task`: Add support to move current task to any column
 
 ### Changed
 
