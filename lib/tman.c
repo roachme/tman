@@ -494,11 +494,13 @@ int tman_prj_rename(struct tman_context *ctx, struct tman_arg *src,
     return dir_prj_rename(tmanfs.base, src->prj, dst->prj);
 }
 
+/*
 int tman_prj_set(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options)
 {
     return TMAN_OK;
 }
+*/
 
 int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
                   struct tman_option *options)
@@ -546,11 +548,14 @@ int tman_hook_action(struct tman_context *ctx, struct tman_hook *hooks,
     return hookact(hooks, cmd, args->prj, args->id);
 }
 
+/*
+ * NOTE: pro'ly redundant cuz hook_action doesn't alloc memory
 int tman_hook_action_free(struct tman_context *ctx, struct tman_arg *args,
                           char *cmd)
 {
     return 0;
 }
+*/
 
 struct unit *tman_hook_show_free(struct tman_context *ctx,
                                  struct tman_arg *args)
