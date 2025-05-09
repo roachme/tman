@@ -91,6 +91,7 @@ const char *tman_strerror(void);
 /* Input irguments functions.  */
 int tman_get_args(struct tman_arg *args);
 int tman_check_arg_id(struct tman_arg *args);
+int tman_check_arg_brd(struct tman_arg *args);
 int tman_check_arg_prj(struct tman_arg *args);
 
 /* Task ID functions.  */

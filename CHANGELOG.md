@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/help`: Add notion about new option
+- `lib/tman`: Add skeleton to check board name
 
 ### Changed
 
