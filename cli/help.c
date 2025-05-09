@@ -479,17 +479,6 @@ int help_usage(const char *cmd)
     return elog(1, "%s: command not found", cmd);
 }
 
-int help_usage_description(const char *cmd)
-{
-    for (int i = 0; i < ARRAY_SIZE(helptab); ++i) {
-        if (strcmp(helptab[i].name, cmd) == 0) {
-            printf("%s\n", helptab[i].desc_short);
-            return 1;
-        }
-    }
-    return elog(1, "%s: command not found", cmd);
-}
-
 int help_lookup(const char *cmd)
 {
     int i, found;
