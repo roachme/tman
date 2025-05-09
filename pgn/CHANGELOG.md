@@ -8,6 +8,7 @@
 ### Changed
 
 - `tag`: Rename command cat to show
+- `struct`: Rename command `create` to `make`
 
 ### Fixed
 
