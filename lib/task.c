@@ -40,9 +40,9 @@ static int addcurr(char *prj, char *id)
     return 0;
 }
 
-static int delcurr(char *prj)
+static int delcurr(char *prj, char *colname)
 {
-    col_set(prj, curr, COLBLOG);
+    col_set(prj, curr, colname);
     memset(curr, 0, IDSIZ);
     if (prev[0] != '\0') {
         col_set(prj, prev, COLCURR);
@@ -90,9 +90,7 @@ static int movecurr(char *prj, char *id, char *col)
         return swap(prj);
     }
     /* note: maybe it's better to use movetask() ?  */
-    /* Delete current task ID and move it to another column.  */
-    /* FIXME: can't move current task ID to another column.  */
-    return delcurr(prj);
+    return delcurr(prj, col);
 }
 
 /* Move previous task to another column.  */
@@ -241,7 +239,7 @@ int task_del(char *prj, char *id)
 
     strncpy(taskid, id, IDSIZ);
     if (strncmp(taskid, curr, IDSIZ) == 0)
-        return delcurr(prj);
+        return delcurr(prj, COLBLOG);
     else if (strncmp(taskid, prev, IDSIZ) == 0)
         return delprev(prj);
     return col_del(prj, taskid);
