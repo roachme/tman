@@ -100,7 +100,7 @@ function update_version()
 function update_changelog()
 {
     set -x
-    RELEASE_HEADER="## [$VERSION_NEW] - ($(date '+%Y-%m-%d'))"
+    RELEASE_HEADER="## [${VERSION_NEW/v/}] - ($(date '+%Y-%m-%d'))"
     sed -i "/## \[Unreleased\]/d" "$FILECHANGELOG" # delete unreleased header
     sed -i "1i ${RELEASE_HEADER}" "$FILECHANGELOG" # add release header
 }
