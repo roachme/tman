@@ -9,6 +9,7 @@
 
 - `cli/help`: Update command `add` help message
 - `scripts/updver`: Update some of the logic
+- `lib/tman`: Move name checks to common function
 
 ### Fixed
 

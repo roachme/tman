@@ -76,6 +76,8 @@ int tman_check_arg_id(struct tman_arg *args)
         return emod_set(TMAN_ID_NOCURR);
     else if (task_chk(args->id) == FALSE)
         return emod_set(TMAN_ID_ILLEG);
+    else if (task_chklen(args->id) == FALSE)
+        return emod_set(TMAN_ID_TOOLONG);
     else if (task_ext(args->prj, args->id) == FALSE)
         return emod_set(TMAN_ID_NOSUCH);
     return TMAN_OK;
@@ -93,6 +95,8 @@ int tman_check_arg_prj(struct tman_arg *args)
         return emod_set(TMAN_PRJ_NOCURR);
     else if (is_project_valid(args->prj) == FALSE)
         return emod_set(TMAN_PRJ_ILLEG);
+    else if (project_valid_length(args->prj) == FALSE)
+        return emod_set(TMAN_PRJ_TOOLONG);
     else if (project_exist(args->prj) == FALSE)
         return emod_set(TMAN_PRJ_NOSUCH);
     return TMAN_OK;
@@ -170,8 +174,6 @@ int tman_task_add(struct tman_context *ctx, struct tman_arg *args,
     /* Special case: task ID should not exists. If this's a case - let it go. */
     if ((status = check_args(args)) && status != TMAN_ID_NOSUCH)
         return status;
-    else if (task_chklen(args->id) == FALSE)
-        return emod_set(TMAN_ID_TOOLONG);
     else if (task_ext(args->prj, args->id) == TRUE)
         return emod_set(TMAN_ID_EXISTS);
     else if (unit_chkbin(units) == FALSE)
@@ -374,8 +376,6 @@ int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,
         return status;
     else if (project_exist(args->prj) == TRUE)
         return emod_set(TMAN_PRJ_EXISTS);
-    else if (project_valid_length(args->prj) == FALSE)
-        return emod_set(TMAN_PRJ_TOOLONG);
 
     if (dir_prj_add(tmanfs.base, args->prj))
         return emod_set(TMAN_DIR_PRJ_MAKE);
