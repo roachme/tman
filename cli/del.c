@@ -51,7 +51,14 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
     do {
         args.id = argv[i];
 
-        if ((status = tman_check_arg_id(&args))) {
+        /* Get and check input values explicitly because it's one of the rare
+         * cases when hooks get exectude before the main action.  */
+        if ((status = tman_check_arg_prj(&args))) {
+            args.prj = args.prj ? args.prj : "NOCURR";
+            if (quiet == FALSE)
+                elog(status, errfmt, args.prj, tman_strerror());
+            continue;
+        } else if ((status = tman_check_arg_id(&args))) {
             args.id = args.id ? args.id : "NOCURR";
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
