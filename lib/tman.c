@@ -27,6 +27,8 @@ static int check_args(struct tman_arg *args)
 
     if ((status = tman_check_arg_prj(args)))
         return status;
+    else if ((status = tman_check_arg_brd(args)))
+        return status;
     else if ((status = tman_check_arg_id(args)))
         return status;
     return status;
@@ -76,6 +78,12 @@ int tman_check_arg_id(struct tman_arg *args)
         return emod_set(TMAN_ID_ILLEG);
     else if (task_ext(args->prj, args->id) == FALSE)
         return emod_set(TMAN_ID_NOSUCH);
+    return TMAN_OK;
+}
+
+int tman_check_arg_brd(struct tman_arg *args)
+{
+    /* TODO: add board name checks.  */
     return TMAN_OK;
 }
 
