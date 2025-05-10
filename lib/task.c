@@ -178,8 +178,7 @@ char *task_prev(char *prj)
  * @param id task ID
  * @return on success - 1, otherwise 0
 */
-/* TODO: change function name, cuz it's confusing.  */
-int task_chk(char *id)
+int task_is_valid_name(char *id)
 {
     if (!isalnum(*id++))
         return 0;
@@ -192,7 +191,7 @@ int task_chk(char *id)
 /*
  * Return true if ID length's less or equal LIMIT, otherwise false.
  */
-int task_chklen(char *id)
+int task_is_valid_length(char *id)
 {
     return strlen(id) <= IDSIZ;
 }
@@ -202,7 +201,7 @@ int task_chklen(char *id)
  * @param prj project name
  * @param id task ID
 */
-int task_ext(char *prj, char *id)
+int task_exist(char *prj, char *id)
 {
     return ISDIR(genpath_full(prj, id));
 }
