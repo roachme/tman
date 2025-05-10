@@ -4,7 +4,7 @@ Priorities:
   low  - when you get time
 
 Bugs:
-  1. Command `tman col prev <TASKID>` moves task to column 'prev' even if no current task ID is set.
++ 1. Command `tman col prev <TASKID>` moves task to column 'prev' even if no current task ID is set.
 
 Ideas:
   1. Replace cat & ls hooks with reading from file. Gonna highly optimize

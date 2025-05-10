@@ -210,11 +210,15 @@ int tman_task_col(struct tman_context *ctx, struct tman_arg *args, char *tag,
 {
     int status;
 
+    /* TODO: make task_move() failure more descriptive.  */
+
     if ((status = check_args(args)))
         return status;
     else if (col_ext(tag) == FALSE)
         return emod_set(TMAN_COL_EXISTS);
-    return task_move(args->prj, args->id, tag);
+    else if (task_move(args->prj, args->id, tag))
+        return emod_set(TMAN_COL_MOVE);
+    return TMAN_OK;
 }
 
 int tman_task_del(struct tman_context *ctx, struct tman_arg *args,
