@@ -64,6 +64,9 @@ static int delprev(char *prj)
 
 static int addprev(char *prj, char *id)
 {
+    /* Return an error if current task is not set yet.  */
+    if (curr[0] == '\0')
+        return 1;
     col_set(prj, id, COLPREV);
     strncpy(prev, id, IDSIZ);
     return 0;

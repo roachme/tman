@@ -21,6 +21,7 @@
 - `cli`: Fix linter warnings
 - `tman`: Fix linter warnings
 - `cli/del`: Fix project name check
+- `lib/task`: Fix move task to previous column if current not set
 
 ### Optimized
 
