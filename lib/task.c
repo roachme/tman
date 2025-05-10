@@ -86,10 +86,10 @@ static int movecurr(char *prj, char *id, char *col)
     if (strncmp(col, COLCURR, COLSIZ) == 0)
         return 0;               /* do nothing */
     if (strncmp(col, COLPREV, COLSIZ) == 0) {
-        /* if previous task ID not set then it's an error, right?  */
+        /* If previous task ID not set then it's an error
+         * cuz you can't do swapping.  */
         return swap(prj);
     }
-    /* note: maybe it's better to use movetask() ?  */
     return delcurr(prj, col);
 }
 
