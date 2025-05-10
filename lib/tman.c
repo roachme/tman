@@ -229,9 +229,7 @@ int tman_task_del(struct tman_context *ctx, struct tman_arg *args,
     if ((status = check_args(args)))
         return status;
 
-    if (unit_delbin(args->prj, args->id))
-        return emod_set(TMAN_UNIT_DEL);
-    else if (task_del(args->prj, args->id))
+    if (task_del(args->prj, args->id))
         return emod_set(TMAN_COL_DEL);
     else if (dir_id_del(tmanfs.base, args->prj, args->id))
         return emod_set(TMAN_DIR_ID_DEL);
