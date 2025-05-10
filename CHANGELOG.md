@@ -12,6 +12,7 @@
 - `scripts/updver`: Update some of the logic
 - `lib/tman`: Move name checks to common function
 - `scripts/updver`: Delete `v` from version in CHANGELOG.md
+- `lib`: Rename confusing private function names
 
 ### Fixed
 

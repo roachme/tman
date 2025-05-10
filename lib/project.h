@@ -11,9 +11,9 @@ int project_delprev(void);
 int project_swap(void);
 int project_addcurr(char *project);
 int project_exist(char *project);
-int is_project_valid(char *project);
-int is_project_curr(char *project);
-int is_project_prev(char *project);
-int project_valid_length(char *project);
+int project_is_valid_name(char *project);
+int project_is_curr(char *project);
+int project_is_prev(char *project);
+int project_is_valid_length(char *project);
 
 #endif

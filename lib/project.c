@@ -23,7 +23,7 @@
 static char *prjfile;
 static char prjs[NPRJ][PRJSIZ + 1];
 
-static int is_project_set(char *prj)
+static int project_is_set(char *prj)
 {
     if (prj == NULL || prj[0] == '\0')
         return FALSE;
@@ -65,7 +65,7 @@ int project_init(char *fstate)
 
 // BUG: it does not return TRUE/FALSE, but number instead.
 /* TODO: change function name, cuz it's confusing.  */
-int is_project_valid(char *prj)
+int project_is_valid_name(char *prj)
 {
     if (!isalnum(*prj++))
         return 0;
@@ -84,7 +84,7 @@ char *project_getcurr()
 {
     static char curr[PRJSIZ + 1];
 
-    if (is_project_set(prjs[CPRJ]) == FALSE)
+    if (project_is_set(prjs[CPRJ]) == FALSE)
         return NULL;
     return strncpy(curr, prjs[CPRJ], PRJSIZ);
 }
@@ -93,7 +93,7 @@ char *project_getprev()
 {
     static char prev[PRJSIZ + 1];
 
-    if (is_project_set(prjs[PPRJ]) == FALSE)
+    if (project_is_set(prjs[PPRJ]) == FALSE)
         return NULL;
     return strncpy(prev, prjs[PPRJ], PRJSIZ);
 }
@@ -101,7 +101,7 @@ char *project_getprev()
 int project_addcurr(char *prj)
 {
     /* Prevent duplicates in toggles.  */
-    if (is_project_curr(prj) == TRUE)
+    if (project_is_curr(prj) == TRUE)
         return 0;
     strncpy(prjs[PPRJ], prjs[CPRJ], PRJSIZ);
     strncpy(prjs[CPRJ], prj, PRJSIZ);
@@ -125,8 +125,8 @@ int project_swap(void)
 {
     char tmp[PRJSIZ + 1];
 
-    if (is_project_set(prjs[PPRJ]) == FALSE
-        || is_project_set(prjs[CPRJ]) == FALSE)
+    if (project_is_set(prjs[PPRJ]) == FALSE
+        || project_is_set(prjs[CPRJ]) == FALSE)
         return 1;
     strncpy(tmp, prjs[CPRJ], PRJSIZ);
     strncpy(prjs[CPRJ], prjs[PPRJ], PRJSIZ);
@@ -134,14 +134,14 @@ int project_swap(void)
     return save();
 }
 
-int is_project_curr(char *prj)
+int project_is_curr(char *prj)
 {
     if (prj == NULL)
         return FALSE;
     return strncmp(prj, prjs[CPRJ], PRJSIZ) == 0;
 }
 
-int is_project_prev(char *prj)
+int project_is_prev(char *prj)
 {
     if (prj == NULL)
         return FALSE;
@@ -149,7 +149,7 @@ int is_project_prev(char *prj)
 }
 
 /* TODO: change function name, cuz it's confusing.  */
-int project_valid_length(char *prj)
+int project_is_valid_length(char *prj)
 {
     return strlen(prj) <= PRJSIZ;
 }
