@@ -22,6 +22,10 @@
 - `tman`: Fix linter warnings
 - `cli/del`: Fix project name check
 
+### Optimized
+
+- `lib/tman`: Optimize switch to previous task
+
 
 ## [v0.0.11] - (2025-05-07)
 
