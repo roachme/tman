@@ -56,7 +56,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
 
     quiet = showhelp = FALSE;
     key = args.prj = args.id = args.brd = NULL;
-    while ((c = getopt(argc, argv, ":p:hk:q:")) != -1) {
+    while ((c = getopt(argc, argv, ":p:hk:q")) != -1) {
         switch (c) {
         case 'h':
             showhelp = TRUE;
