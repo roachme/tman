@@ -123,7 +123,7 @@ function update_remote()
     git push origin master
     git push origin develop
     git push --force origin latest
-    git push origin "$VERSION_NEW"
+    git push origin "$VERSION_CURR"
     return 0
 }
 
