@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Fixed
+
+- `scripts/updver`: Fix tag update
+
+
 ## [0.0.12] - (2025-05-10)
 
 ### Added
