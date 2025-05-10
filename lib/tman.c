@@ -321,16 +321,12 @@ int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
 {
     int status;
 
-    /* Check that current project and task ID are set.  */
-    if (tman_get_args(args))
-        return emod_set(TMAN_NODEF_ERR);
     if ((status = check_args(args)))
         return status;
-    else if ((args->id = task_prev(args->prj)) == NULL)
+    else if (task_prev(args->prj) == NULL)
         return emod_set(TMAN_ID_NOPREV);
     if (task_swap(args->prj))
         return emod_set(TMAN_ID_SWAP);
-
     return TMAN_OK;
 }
 
