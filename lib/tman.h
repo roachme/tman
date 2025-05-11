@@ -84,8 +84,9 @@ struct tman_context *tman_init(struct tman_base *structure);
 struct tman_context *tman_deinit(struct tman_context *ctx);
 
 /* Core util functions.  */
-int tman_pwd(void);
 int tman_mkfs(void);
+int tman_clean_pwd(void);
+int tman_pwd(struct tman_arg *args);
 const char *tman_strerror(void);
 
 /* Input irguments functions.  */

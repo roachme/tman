@@ -42,5 +42,5 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
         return status;
     }
 
-    return status == TMAN_OK ? tman_pwd() : status;
+    return status == TMAN_OK ? tman_pwd(&args) : status;
 }

@@ -62,7 +62,7 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
                 elog(1, errfmt, argv[i], tman_strerror());
         }
     }
-    return status == TMAN_OK ? tman_pwd() : 1;
+    return status == TMAN_OK ? tman_pwd(&args) : 1;
 }
 
 static int _prj_del(int argc, char **argv, struct tman_context *ctx)
@@ -105,7 +105,7 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     } while (++i < argc);
 
     // TODO: update current directory if current prj got deleted.
-    return status == TMAN_OK && showpath == TRUE ? tman_pwd() : 1;
+    return status == TMAN_OK && showpath == TRUE ? tman_pwd(&args) : 1;
 }
 
 static int _prj_list(int argc, char **argv, struct tman_context *ctx)
@@ -126,7 +126,9 @@ static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
 
     if ((status = tman_prj_prev(ctx, &opt)) != TMAN_OK)
         return elog(status, "cannot switch: %s", tman_strerror());
-    return tman_pwd();
+    // TODO: fix me roach
+    //return tman_pwd(&args);
+    return 0;
 }
 
 static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
@@ -168,7 +170,9 @@ static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
         if (quiet == FALSE)
             elog(status, "could not rename project: %s", tman_strerror());
     }
-    return tman_pwd();
+    // FIXME: roach fix me
+    //return tman_pwd(&args);
+    return 0;
 }
 
 static int _prj_set(int argc, char **argv, struct tman_context *ctx)
@@ -227,7 +231,7 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
         }
     } while (++i < argc);
 
-    return opt.prj_switch && status == TMAN_OK ? tman_pwd() : status;
+    return opt.prj_switch && status == TMAN_OK ? tman_pwd(&args) : status;
 }
 
 static const builtin_t prjcmds[] = {

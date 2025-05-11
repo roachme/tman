@@ -71,6 +71,7 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
     }
 
     i = optind;
+    tman_clean_pwd();
     do {
         args.id = args.id == NULL ? argv[i] : args.id;
 
@@ -86,5 +87,5 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
         }
         args.id = NULL;         /* unset task ID, not to break loop.  */
     } while (++i < argc);
-    return opt.id_switch && status == TMAN_OK ? tman_pwd() : status;
+    return opt.id_switch && status == TMAN_OK ? tman_pwd(&args) : status;
 }

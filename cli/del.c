@@ -48,6 +48,7 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
     // TODO: if not current task gets deleted, then no need to
     // change user's current directory.
     i = optind;
+    tman_clean_pwd();
     do {
         args.id = argv[i];
 
@@ -82,5 +83,5 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
     // FIXME: when delete task ID from non-current prj,
     // it switches to current task in current prj.
     // BUT should not change user's CWD at all.
-    return status == TMAN_OK ? tman_pwd() : status;
+    return status == TMAN_OK ? tman_pwd(&args) : status;
 }

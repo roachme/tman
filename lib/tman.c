@@ -15,11 +15,11 @@
 #include "osdep.h"
 #include "errmod.h"
 
-// roach: use this private structure
-struct tman_struct;
-
 // TODO: Make NOT global.
 struct tmanstruct tmanfs;
+
+/* File to store user's new current working directory.  */
+static const char *pwdfile = "/tmp/tmanpwd";
 
 static int check_args(struct tman_arg *args)
 {
@@ -151,16 +151,26 @@ int tman_setup(int setuplvl)
     return status;
 }
 
-int tman_pwd(void)
+int tman_clean_pwd(void)
 {
-    char *prj, *id;
+    FILE *fp;
 
-    if ((prj = project_getcurr()) == NULL)
-        return emod_set(TMAN_PRJ_NOCURR);
-    if ((id = task_curr(prj)) == NULL)
-        id = "";
-    printf("PWD: %s/%s/%s\n", tmanfs.base, prj, id);
-    return TMAN_OK;
+    if ((fp = fopen(pwdfile, "w")) == NULL)
+        return emod_set(TMAN_NODEF_ERR);
+    return fclose(fp);
+}
+
+int tman_pwd(struct tman_arg *args)
+{
+    FILE *fp;
+
+    if ((fp = fopen(pwdfile, "w")) == NULL)
+        return emod_set(TMAN_NODEF_ERR);
+    if (args->id == NULL)
+        args->id = "";
+
+    fprintf(fp, "%s/%s/%s\n", tmanfs.base, args->prj, args->id);
+    return fclose(fp);
 }
 
 int tman_task_add(struct tman_context *ctx, struct tman_arg *args,
@@ -329,7 +339,7 @@ int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
         return emod_set(TMAN_ID_NOPREV);
     if (task_swap(args->prj))
         return emod_set(TMAN_ID_SWAP);
-    return TMAN_OK;
+    return tman_get_args(args);
 }
 
 int tman_task_set(struct tman_context *ctx, struct tman_arg *args,

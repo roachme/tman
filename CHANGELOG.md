@@ -4,6 +4,10 @@
 
 - `scripts/makevideo`: Add a script to produce video of how to use tman
 
+### Changed
+
+- `tman`: Use tmp file for pwd
+
 ### Fixed
 
 - `scripts/updver`: Fix tag update

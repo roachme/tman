@@ -39,6 +39,7 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
         return help_usage("sync");
 
     i = optind;
+    tman_clean_pwd();
     do {
         args.id = argv[i];
 
@@ -55,5 +56,5 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
         }
     } while (++i < argc);
 
-    return opt.id_switch && status == TMAN_OK ? tman_pwd() : status;
+    return opt.id_switch && status == TMAN_OK ? tman_pwd(&args) : status;
 }
