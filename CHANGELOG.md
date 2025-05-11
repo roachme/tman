@@ -7,6 +7,7 @@
 ### Fixed
 
 - `scripts/updver`: Fix tag update
+- `lib/tman`: Get new current arguments when switch to previous task
 
 
 ## [0.0.12] - (2025-05-10)

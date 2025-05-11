@@ -15,9 +15,6 @@
 #include "osdep.h"
 #include "errmod.h"
 
-// roach: use this private structure
-struct tman_struct;
-
 // TODO: Make NOT global.
 struct tmanstruct tmanfs;
 
@@ -329,7 +326,7 @@ int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
         return emod_set(TMAN_ID_NOPREV);
     if (task_swap(args->prj))
         return emod_set(TMAN_ID_SWAP);
-    return TMAN_OK;
+    return tman_get_args(args);
 }
 
 int tman_task_set(struct tman_context *ctx, struct tman_arg *args,
