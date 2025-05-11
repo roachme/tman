@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+FILESCRIPT="docs/cmdscript.txt"
+TMUX_SESSION="tman-video"       # To get it use <PREFIX>s
+TMUX_WINDOW_ID="1"              # To get it use <PREFIX>w
+TMUX_PANE_ID="0"                # To get it use <PREFIX>q
+
+set -e
+
+
+function check_dependencies()
+{
+    local deps=(tmux flameshot)
+    for dep in "${deps[@]}"; do
+        if ! apt list | grep -qw "$dep"; then
+            echo "Util '$dep' is missing on the system. Install it"
+            exit 1
+        fi
+    done
+}
+
+function switch_session()
+{
+    if ! tmux has-session -t "$TMUX_SESSION"; then
+        tmux new -s "$TMUX_SESSION" -d
+    fi
+    tmux switch-client -t "$TMUX_SESSION"
+}
+
+function video_produce()
+{
+    while IFS= read -rn1 char; do
+        if [ -z "${char-}" ]; then
+            echo
+            tmux send-keys -t "$TMUX_SESSION"."$TMUX_PANE_ID" ENTER
+        else
+            tmux send-keys -t "$TMUX_SESSION"."$TMUX_PANE_ID" "$char"
+            printf "%s" "${char:-$'\n'}"
+        fi
+        sleep 0.1
+    done < "$FILESCRIPT"
+}
+
+function video_record()
+{
+    return 0;
+}
+
+#check_dependencies
+#switch_session
+#video_produce
