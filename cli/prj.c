@@ -47,10 +47,8 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
         }
     }
 
-    if (showhelp) {
-        printf("prj add -h: under development\n");
-        return 0;
-    }
+    if (showhelp)
+        return help_usage("prj-add");
 
     if (optind == argc)
         return elog(1, "task prj required");
@@ -94,10 +92,9 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
         }
     }
 
-    if (showhelp) {
-        printf("prj del -h: under development\n");
-        return 0;
-    } else if (showprompt) {
+    if (showhelp)
+        return help_usage("prj-del");
+    else if (showprompt) {
         /* Hotfix: if you add to stdout, than it'll be catched in my shell.  */
         fprintf(stderr, "Are you sure to delete projects(s)? [y/N] ");
         choice = getchar();
@@ -162,10 +159,8 @@ static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
         }
     }
 
-    if (showhelp) {
-        printf("show some help\n");
-        return 0;
-    }
+    if (showhelp)
+        return help_usage("prj-rename");
 
     if (argc - optind != 2)
         return elog(1, "source or destination project name missing");
@@ -224,10 +219,8 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
         }
     }
 
-    if (showhelp) {
-        printf("prj sync -h: under development\n");
-        return 0;
-    }
+    if (showhelp)
+        return help_usage("prj-sync");
 
     i = optind;
     do {
