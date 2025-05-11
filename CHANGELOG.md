@@ -3,6 +3,7 @@
 ### Added
 
 - `scripts/makevideo`: Add a script to produce video of how to use tman
+- `cli/prj`: Add prompt before deleting a project
 
 ### Fixed
 

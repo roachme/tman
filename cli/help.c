@@ -270,6 +270,7 @@ struct help helptab[] = {
     \n\
     Options:\n\
       -h      show this help and exit\n\
+      -n      delete project without confirmation\n\
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
