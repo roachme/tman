@@ -7,7 +7,7 @@ set -e
 
 CMD=
 VERSION_NEW=
-PROGRAM="./scripts/release"
+PROGRAM="./scripts/updver"
 
 FILEVERSION="VERSION.txt"
 FILECHANGELOG="CHANGELOG.md"
@@ -71,7 +71,7 @@ function check_version()
 function check_changelog_mark()
 {
     if ! grep -q "$CHANGELOG_MARK" "$FILECHANGELOG"; then
-        echo "$PROGRAM: CHANGELOG mark '$CHANGELOG_MARK' is missing"
+        echo "$PROGRAM: CHANGELOG mark '${CHANGELOG_MARK//\\/}' is missing"
         return 1
     fi
     return 0;
