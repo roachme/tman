@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `scripts/makevideo`: Add a script to produce video of how to use tman
+
 ### Fixed
 
 - `scripts/updver`: Fix tag update
