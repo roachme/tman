@@ -70,15 +70,19 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     char c;
     struct tman_arg args;
     const char *errfmt = "cannot switch: %s";
-    int i, quiet, showpath, showhelp, status;
+    int i, choice, quiet, showpath, showhelp, showprompt, status;
     struct tman_option opt;
 
+    showprompt = TRUE;
     args.prj = args.id = NULL;
-    quiet = showhelp = showpath = FALSE;
-    while ((c = getopt(argc, argv, ":hq")) != -1) {
+    choice = quiet = showhelp = showpath = FALSE;
+    while ((c = getopt(argc, argv, ":hnq")) != -1) {
         switch (c) {
         case 'h':
             showhelp = TRUE;
+            break;
+        case 'n':
+            showprompt = FALSE;
             break;
         case 'q':
             quiet = TRUE;
@@ -93,6 +97,13 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     if (showhelp) {
         printf("prj del -h: under development\n");
         return 0;
+    } else if (showprompt) {
+        /* Hotfix: if you add to stdout, than it'll be catched in my shell.  */
+        fprintf(stderr, "Are you sure to delete projects(s)? [y/N] ");
+        choice = getchar();
+        if (choice != 'y' && choice != 'Y') {
+            return 0;
+        }
     }
 
     i = optind;
