@@ -9,6 +9,7 @@
 ### Changed
 
 - `lib`: Delete depricated function
+- `cli/help`: Update help messages
 
 ### Fixed
 
