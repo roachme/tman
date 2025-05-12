@@ -53,20 +53,6 @@ static int fill_sysvars(struct tman_base *base)
     return TMAN_OK;
 }
 
-/*
- * Get default value if it's not set.
- * @param args input arguments
- * DEPRICATED. Use tman_check_arg_id() and tman_check_arg_prj() instead.
-*/
-int tman_get_args(struct tman_arg *args)
-{
-    if (args->prj == NULL)
-        args->prj = project_getcurr();
-    if (args->prj && args->id == NULL)
-        args->id = task_curr(args->prj);
-    return TMAN_OK;
-}
-
 int tman_check_arg_id(struct tman_arg *args)
 {
     if (args->id == NULL && (args->id = task_curr(args->prj)) == NULL)
@@ -324,9 +310,14 @@ int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
         return status;
     else if (task_prev(args->prj) == NULL)
         return emod_set(TMAN_ID_NOPREV);
+
     if (task_swap(args->prj))
         return emod_set(TMAN_ID_SWAP);
-    return tman_get_args(args);
+
+    /* Get new current task ID explicitly. check_args() won't work, cuz
+     * there's args->id == old current task ID.  */
+    args->id = task_curr(args->prj);
+    return check_args(args);
 }
 
 int tman_task_set(struct tman_context *ctx, struct tman_arg *args,

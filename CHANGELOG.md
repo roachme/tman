@@ -5,6 +5,10 @@
 - `scripts/makevideo`: Add a script to produce video of how to use tman
 - `cli/prj`: Add prompt before deleting a project
 
+### Changed
+
+- `lib`: Delete depricated function
+
 ### Fixed
 
 - `scripts/updver`: Fix tag update

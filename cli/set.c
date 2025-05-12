@@ -4,8 +4,6 @@
 #include "cli.h"
 #include "config.h"
 
-static const char *errfmt = "cannot set units '%s': %s";
-
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 {
@@ -15,6 +13,7 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
     int atleast_one_key_set;
     struct unit units[NKEYS] = { 0 };
     struct tman_option opt;
+    const char *errfmt = "cannot show units '%s': %s";
 
     /*
        Options:
@@ -71,24 +70,14 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
     i = optind;
     do {
         args.id = argv[i];
-        tman_get_args(&args);
-
-        if ((status = tman_check_arg_prj(&args))) {
-            elog(status, errfmt, args.prj ? args.prj : "NOCURR",
-                 tman_strerror());
-            continue;
-        } else if ((status = tman_check_arg_id(&args))) {
-            elog(status, errfmt, args.id ? args.id : "NOCURR", tman_strerror());
-            continue;
-        }
         if ((status = tman_task_set(ctx, &args, units, &opt)) != TMAN_OK) {
-            elog(status, "cannot set unit '%s': %s", args.id, tman_strerror());
+            elog(status, errfmt, args.id, tman_strerror());
             return status;
         } else
             if ((status =
                  tman_hook_action(ctx, tman_config->hooks, &args,
                                   "set")) != TMAN_OK) {
-            elog(status, "cannot set unit '%s': %s", args.id, tman_strerror());
+            elog(status, errfmt, args.id, tman_strerror());
             return status;
         }
 
