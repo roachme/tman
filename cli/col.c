@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-#include "col.h"
 #include "cli.h"
 
 static int show_columns(char *prj)

@@ -1,7 +1,6 @@
 #include <string.h>
 #include <dirent.h>
 
-#include "prj.h"
 #include "cli.h"
 #include "color.h"
 

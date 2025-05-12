@@ -1,7 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "col.h"
 #include "../lib/common.h"
 #include "../lib/tman.h"
 

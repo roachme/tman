@@ -1,7 +1,3 @@
-#include <string.h>
-#include <stdlib.h>
-
-#include "list.h"
 #include "cli.h"
 #include "color.h"
 

@@ -1,6 +1,5 @@
 #include <string.h>
 
-#include "set.h"
 #include "cli.h"
 #include "config.h"
 

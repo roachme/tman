@@ -2,13 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "pgm.h"
 #include "cli.h"
-
-static const builtin_t pgmcmds[] = {
-    {.name = "chk",.func = &_pgm_chk},
-    {.name = "list",.func = &_pgm_list},
-};
 
 int _pgm_chk(int argc, char **argv, struct tman_context *ctx)
 {
@@ -35,6 +29,11 @@ int _pgm_list(int argc, char **argv, struct tman_context *ctx)
     closedir(dir);
     return TMAN_OK;
 }
+
+static const builtin_t pgmcmds[] = {
+    {.name = "chk",.func = &_pgm_chk},
+    {.name = "list",.func = &_pgm_list},
+};
 
 int tman_cli_pgm(int argc, char **argv, struct tman_context *ctx)
 {
