@@ -29,8 +29,6 @@ int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
     }
 
     i = optind;
-    tman_get_args(&src);
-    tman_get_args(&dst);
 
     // some checks
     if ((argc - i) == 1) {

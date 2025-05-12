@@ -22,9 +22,8 @@ int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
             return elog(1, "invalid option `%c'", optopt);
         }
     }
-    cmd = optind == argc ? "" : argv[optind];
-    tman_get_args(&args);
 
+    cmd = optind == argc ? "" : argv[optind];
     if ((status = tman_pgnexec(NULL, &args, name, cmd, NULL)) != TMAN_OK)
         elog(status, "pgn failed: %s", tman_strerror());
     return status;
