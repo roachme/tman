@@ -1,6 +1,5 @@
 #include <string.h>
 
-#include "show.h"
 #include "cli.h"
 #include "config.h"
 

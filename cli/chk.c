@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "chk.h"
 
 /*
     What could be fixed with no user data lost.

@@ -15,6 +15,10 @@
 - `lib/tman`: Get new current arguments when switch to previous task
 - `cli/prj`: Fix option `-h` for project subcommands
 
+### Deleted
+
+- `tman`: Delete unused header files
+
 
 ## [0.0.12] - (2025-05-10)
 

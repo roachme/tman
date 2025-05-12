@@ -1,5 +1,4 @@
 #include "cli.h"
-#include "plugin.h"
 
 int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
 {
