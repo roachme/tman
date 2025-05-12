@@ -32,8 +32,20 @@ struct help helptab[] = {
      .desc_short = "Terminal task (project) manager.\n",
      .desc_long = "\n\
     Options:\n\
+      -b DIR  base dir (where tasks are stored)\n\
+      -c TOG  enbale colors (default: disabled)\n\
+      -d TOG  enbale debug mode (under development)\n\
       -h      show this help and exit\n\
+      -p DIR  plugin directory\n\
+      -H TOG  enbale hooks (default: disabled)\n\
       -V      show version and exit\n\
+    \n\
+    Arguments:\n\
+      TOG     can be either 'on' or 'off'\n\
+    \n\
+    Notes:\n\
+    It's more convient to set options in config file. This way no need\n\
+    to type them every time.\n\
     \n\
     Exit status:\n\
     Return status of builtin command or plugin\n"},

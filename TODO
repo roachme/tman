@@ -12,7 +12,7 @@ Ideas:
      command exection.
   2. Add multiple users.
   3. Add support for plugin to use libtman/tman commands.
-  4. Add support to pass system config values via option to util.
++ 4. Add support to pass system config values via option to util.
 + 5. Add option to show task columns in command `tman col`.
 
 Prio: high
