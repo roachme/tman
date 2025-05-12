@@ -46,14 +46,8 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
     struct tman_arg args;
     int i, showhelp, status;
 
-    /*
-       -A - list all (even done tasks)
-       -a - almost all (everything but done tasks)
-       -c - specify what column to list
-       -s - default: list only current & previous (maybe?)
-     */
     showhelp = FALSE;
-    args.id = args.prj = NULL;
+    args.id = args.brd = args.prj = NULL;
     while ((c = getopt(argc, argv, ":Aac:hs")) != -1) {
         switch (c) {
         case 'A':

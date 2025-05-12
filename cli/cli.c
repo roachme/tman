@@ -55,24 +55,46 @@ struct config *tman_config;
 
 int main(int argc, char **argv)
 {
-    char *cmd = argv[1];
-    struct tman_base base;
+    char *cmd = NULL;
+    int usehooks = -1;
+    struct tman_base base = {.base = NULL,.pgn = NULL };
     int i, status, cmdfound;
     struct tman_context *ctx;
 
-    if (cmd == NULL) {
-        help_lookup(NULL);
-        return 1;
-    }
-
     /* Parse util itself options.  */
     for (i = 1; i < argc && argv[i][0] == '-'; ++i) {
-        if (strcmp(argv[i], "-V") == 0)
-            return show_version();
-        else if (strcmp(argv[i], "-h") == 0)
+        if (strcmp(argv[i], "-b") == 0) {
+            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
+                return elog(1, "option `%s' requires an argument", argv[i]);
+            base.base = argv[++i];
+        } else if (strcmp(argv[i], "-c") == 0) {
+            // Under development
+            //usecolors = TRUE;
+        } else if (strcmp(argv[i], "-h") == 0)
             return help_lookup(NULL);
+        else if (strcmp(argv[i], "-p") == 0) {
+            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
+                return elog(1, "option `%s' requires an argument", argv[i]);
+            base.pgn = argv[++i];
+        } else if (strcmp(argv[i], "-H") == 0) {
+            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
+                return elog(1, "option `%s' requires an argument", argv[i]);
+            if (strncmp(argv[i + 1], "on", 2) == 0)
+                usehooks = TRUE;
+            else if (strncmp(argv[i + 1], "off", 2) == 0)
+                usehooks = FALSE;
+            else
+                return elog(1, "option `-H' accepts either 'on' or 'off'");
+            ++i;                /* Skip option.  */
+        } else if (strcmp(argv[i], "-V") == 0)
+            return show_version();
         else
             return elog(1, "invalid option `%s'", argv[i]);
+    }
+
+    if ((cmd = argv[i]) == NULL) {
+        help_lookup(NULL);
+        return 1;
     }
 
     if ((tman_config = config_init()) == NULL) {
@@ -86,22 +108,30 @@ int main(int argc, char **argv)
 
     ctx = NULL;
     cmdfound = FALSE;
-    base.base = tman_config->base;
-    base.pgn = tman_config->pgnins;
+    base.base = base.base != NULL ? base.base : tman_config->base;
+    base.pgn = base.pgn != NULL ? base.pgn : tman_config->pgnins;
+    if (usehooks != -1)
+        tman_config->usehooks = usehooks;
+
+    /* NOTE: maybe it's better to use default BASEDIR?  */
+    if (base.base == NULL || base.base[0] == '\0')
+        return elog(1, "no basedir passed");
+    else if (base.pgn == NULL || base.pgn[0] == '\0')
+        return elog(1, "no pgndir passed");
 
     if ((ctx = tman_init(&base)) == NULL) {
         elog(1, "could not init util: %s", tman_strerror());
         return 1;
     }
 
-    for (i = 0; i < ARRAY_SIZE(builtins); ++i)
-        if (strcmp(cmd, builtins[i].name) == 0) {
+    for (int idx = 0; idx < ARRAY_SIZE(builtins); ++idx)
+        if (strcmp(cmd, builtins[idx].name) == 0) {
             cmdfound = TRUE;
-            if ((status = tman_setup(builtins[i].setuplvl)) != TMAN_OK) {
+            if ((status = tman_setup(builtins[idx].setuplvl)) != TMAN_OK) {
                 elog(status, "%s", tman_strerror());
                 goto out;
             }
-            status = builtins[i].func(argc - 1, argv + 1, ctx);
+            status = builtins[idx].func(argc - i, argv + i, ctx);
             goto out;
         }
     if (cmdfound == FALSE && (status = tman_ispgn(base.pgn, cmd)) == TRUE) {
