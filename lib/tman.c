@@ -44,11 +44,11 @@ static struct tman_context *make_context(void)
 
 static int fill_sysvars(struct tman_base *base)
 {
-    sprintf(tmanfs.base, "%s", base->base);
-    sprintf(tmanfs.db, "%s/%s", base->base, ".tman");
+    sprintf(tmanfs.base, "%s", base->task);
+    sprintf(tmanfs.db, "%s/%s", base->task, ".tman");
     sprintf(tmanfs.finit, "%s/%s", tmanfs.db, "inited");
     sprintf(tmanfs.fstate, "%s/%s", tmanfs.db, "state");        // should be called prj
-    sprintf(tmanfs.pgn, "%s/%s", base->base, ".pgn");   //should be called `pgndb`
+    sprintf(tmanfs.pgn, "%s/%s", base->task, ".pgn");   //should be called `pgndb`
     sprintf(tmanfs.pgnins, "%s", base->pgn);
     return TMAN_OK;
 }

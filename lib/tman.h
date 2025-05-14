@@ -47,8 +47,8 @@ struct tman_hook {
 };
 
 struct tman_base {
-    char *pgn;
-    char *base;
+    char *pgn;                  /* directory where plugins are installed */
+    char *task;                 /* directory where tasks are stored */
 };
 
 struct tman_option {

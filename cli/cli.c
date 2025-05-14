@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 {
     char *cmd = NULL;
     int usehooks = -1;
-    struct tman_base base = {.base = NULL,.pgn = NULL };
+    struct tman_base base = {.task = NULL,.pgn = NULL };
     int i, status, cmdfound;
     struct tman_context *ctx;
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
         if (strcmp(argv[i], "-b") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", argv[i]);
-            base.base = argv[++i];
+            base.task = argv[++i];
         } else if (strcmp(argv[i], "-c") == 0) {
             // Under development
             //usecolors = TRUE;
@@ -108,13 +108,13 @@ int main(int argc, char **argv)
 
     ctx = NULL;
     cmdfound = FALSE;
-    base.base = base.base != NULL ? base.base : tman_config->base;
+    base.task = base.task != NULL ? base.task : tman_config->base;
     base.pgn = base.pgn != NULL ? base.pgn : tman_config->pgnins;
     if (usehooks != -1)
         tman_config->usehooks = usehooks;
 
     /* NOTE: maybe it's better to use default BASEDIR?  */
-    if (base.base == NULL || base.base[0] == '\0')
+    if (base.task == NULL || base.task[0] == '\0')
         return elog(1, "no basedir passed");
     else if (base.pgn == NULL || base.pgn[0] == '\0')
         return elog(1, "no pgndir passed");

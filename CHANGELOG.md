@@ -10,6 +10,7 @@
 
 - `lib`: Delete depricated function
 - `cli/help`: Update help messages
+- `lib/tman`: Rename structure member
 
 ### Fixed
 
