@@ -91,7 +91,7 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
     do {
         args.prj = argv[i];
 
-        if ((status = tman_task_list(ctx, &args, NULL)) != TMAN_OK) {
+        if ((status = tman_task_list(ctx, &args, NULL)) != LIBTMAN_OK) {
             elog(status, errfmt, args.prj, tman_strerror());
             continue;
         }

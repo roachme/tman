@@ -66,12 +66,12 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
 
         if ((status =
              tman_hook_action(ctx, tman_config->hooks, &args,
-                              "del")) != TMAN_OK) {
+                              "del")) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
         }
-        if ((status = tman_task_del(ctx, &args, &opt)) != TMAN_OK) {
+        if ((status = tman_task_del(ctx, &args, &opt)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
@@ -81,5 +81,5 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
     // FIXME: when delete task ID from non-current prj,
     // it switches to current task in current prj.
     // BUT should not change user's CWD at all.
-    return status == TMAN_OK ? tman_pwd() : status;
+    return status == LIBTMAN_OK ? tman_pwd() : status;
 }

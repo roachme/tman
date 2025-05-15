@@ -69,13 +69,13 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
     i = optind;
     do {
         args.id = argv[i];
-        if ((status = tman_task_set(ctx, &args, units, &opt)) != TMAN_OK) {
+        if ((status = tman_task_set(ctx, &args, units, &opt)) != LIBTMAN_OK) {
             elog(status, errfmt, args.id, tman_strerror());
             return status;
         } else
             if ((status =
                  tman_hook_action(ctx, tman_config->hooks, &args,
-                                  "set")) != TMAN_OK) {
+                                  "set")) != LIBTMAN_OK) {
             elog(status, errfmt, args.id, tman_strerror());
             return status;
         }

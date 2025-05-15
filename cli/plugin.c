@@ -23,7 +23,7 @@ int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
     }
 
     cmd = optind == argc ? "" : argv[optind];
-    if ((status = tman_pgnexec(NULL, &args, name, cmd, NULL)) != TMAN_OK)
+    if ((status = tman_pgnexec(NULL, &args, name, cmd, NULL)) != LIBTMAN_OK)
         elog(status, "pgn failed: %s", tman_strerror());
     return status;
 }

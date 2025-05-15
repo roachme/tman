@@ -42,18 +42,18 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
     do {
         args.id = argv[i];
 
-        if ((status = tman_task_sync(ctx, &args, &opt)) != TMAN_OK) {
+        if ((status = tman_task_sync(ctx, &args, &opt)) != LIBTMAN_OK) {
             args.id = args.id ? args.id : "NOCURR";
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
         } else if ((status = tman_hook_action(ctx, tman_config->hooks, &args,
-                                              "sync")) != TMAN_OK) {
+                                              "sync")) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
         }
     } while (++i < argc);
 
-    return opt.id_switch && status == TMAN_OK ? tman_pwd() : status;
+    return opt.id_switch && status == LIBTMAN_OK ? tman_pwd() : status;
 }

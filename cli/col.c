@@ -70,7 +70,7 @@ int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
     i = optind;
     do {
         args.id = argv[i];
-        if ((status = tman_task_col(ctx, &args, col, &opt)) != TMAN_OK)
+        if ((status = tman_task_col(ctx, &args, col, &opt)) != LIBTMAN_OK)
             elog(status, errfmt, col, tman_strerror());
     } while (++i < argc);
 

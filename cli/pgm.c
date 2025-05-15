@@ -7,7 +7,7 @@
 int _pgm_chk(int argc, char **argv, struct tman_context *ctx)
 {
     printf("check plugins\n");
-    return TMAN_OK;
+    return LIBTMAN_OK;
 }
 
 int _pgm_list(int argc, char **argv, struct tman_context *ctx)
@@ -27,7 +27,7 @@ int _pgm_list(int argc, char **argv, struct tman_context *ctx)
         printf(pgmfmt, pgn->d_name, "inst", "some plugin description");
     }
     closedir(dir);
-    return TMAN_OK;
+    return LIBTMAN_OK;
 }
 
 static const builtin_t pgmcmds[] = {
