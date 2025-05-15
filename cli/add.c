@@ -73,17 +73,17 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
     do {
         args.id = args.id == NULL ? argv[i] : args.id;
 
-        if ((status = tman_task_add(ctx, &args, &opt)) != TMAN_OK) {
+        if ((status = tman_task_add(ctx, &args, &opt)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
         } else if ((status = tman_hook_action(ctx, tman_config->hooks, &args,
-                                              "add")) != TMAN_OK) {
+                                              "add")) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(TMAN_EHOOK, errfmt, args.id, tman_strerror());
+                elog(LIBTMAN_EHOOK, errfmt, args.id, tman_strerror());
             continue;
         }
         args.id = NULL;         /* unset task ID, not to break loop.  */
     } while (++i < argc);
-    return opt.id_switch && status == TMAN_OK ? tman_pwd() : status;
+    return opt.id_switch && status == LIBTMAN_OK ? tman_pwd() : status;
 }

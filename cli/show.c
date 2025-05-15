@@ -12,19 +12,19 @@ static int show_key(struct tman_context *ctx, char *key)
 
     if (strcmp(key, "id") == 0) {
         printf("%s\n", ctx->units.id);
-        return TMAN_OK;
+        return LIBTMAN_OK;
     }
 
     for (unitbin = ctx->units.bin, i = 0; i < NKEYS; ++i)
         if (strcmp(key, unitbin[i].key) == 0) {
             printf("%s\n", unitbin[i].val);
-            return TMAN_OK;
+            return LIBTMAN_OK;
         }
 
     for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
         if (strcmp(key, unitpgn->key) == 0) {
             printf("%s\n", unitpgn->val);
-            return TMAN_OK;
+            return LIBTMAN_OK;
         }
 
     return 1;
@@ -43,7 +43,7 @@ static int pretty_show(struct tman_context *ctx, char *key)
     for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
         printf("%-7s : %s\n", unitpgn->key, unitpgn->val);
 
-    return TMAN_OK;
+    return LIBTMAN_OK;
 }
 
 int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
@@ -83,7 +83,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
     do {
         args.id = argv[i];
 
-        if ((status = tman_task_show(ctx, &args, NULL)) != TMAN_OK) {
+        if ((status = tman_task_show(ctx, &args, NULL)) != LIBTMAN_OK) {
             args.id = args.id ? args.id : "NOCURR";
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
@@ -97,7 +97,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
         }
 
         if (key != NULL) {
-            if (show_key(ctx, key) != TMAN_OK && quiet == FALSE) {
+            if (show_key(ctx, key) != LIBTMAN_OK && quiet == FALSE) {
                 if (quiet == FALSE)
                     elog(1, errfmt, args.id, "key not found");
             }

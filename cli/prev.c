@@ -29,17 +29,17 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
     if (showhelp == TRUE)
         return help_usage("prev");
 
-    if ((status = tman_task_prev(ctx, &args, &opt)) != TMAN_OK) {
+    if ((status = tman_task_prev(ctx, &args, &opt)) != LIBTMAN_OK) {
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
         return status;
     } else if ((status =
                 tman_hook_action(ctx, tman_config->hooks, &args,
-                                 "prev")) != TMAN_OK) {
+                                 "prev")) != LIBTMAN_OK) {
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
         return status;
     }
 
-    return status == TMAN_OK ? tman_pwd() : status;
+    return status == LIBTMAN_OK ? tman_pwd() : status;
 }

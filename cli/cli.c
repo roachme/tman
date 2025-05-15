@@ -31,24 +31,24 @@ int elog(int status, const char *fmt, ...)
 }
 
 static const builtin_t builtins[] = {
-    {.name = "add",.func = &tman_cli_add,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "cfg",.func = &tman_cli_cfg,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "chk",.func = &tman_cli_chk,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "col",.func = &tman_cli_col,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "del",.func = &tman_cli_del,.setuplvl = TMAN_SETUPCHECK},
-    //{.name = "find",.func = &tman_cli_find,.setuplvl = TMAN_SETUPCHECK},
-    //{ .name = "flow", .func = &tman_cli_flow, .setuplvl = TMAN_SETUPCHECK },
-    {.name = "help",.func = &tman_cli_help,.setuplvl = TMAN_SETUPSOFT},
-    {.name = "init",.func = &tman_cli_init,.setuplvl = TMAN_SETUPHARD},
-    //{ .name = "link", .func = &tman_cli_link, .setuplvl = TMAN_SETUPHARD },
-    {.name = "list",.func = &tman_cli_list,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "move",.func = &tman_cli_move,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "pgm",.func = &tman_cli_pgm,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "prev",.func = &tman_cli_prev,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "prj",.func = &tman_cli_prj,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "set",.func = &tman_cli_set,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "show",.func = &tman_cli_show,.setuplvl = TMAN_SETUPCHECK},
-    {.name = "sync",.func = &tman_cli_sync,.setuplvl = TMAN_SETUPCHECK},
+    {.name = "add",.func = &tman_cli_add,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "cfg",.func = &tman_cli_cfg,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "chk",.func = &tman_cli_chk,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "col",.func = &tman_cli_col,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "del",.func = &tman_cli_del,.setuplvl = LIBTMAN_SETUPCHECK},
+    //{.name = "find",.func = &tman_cli_find,.setuplvl = LIBTMAN_SETUPCHECK},
+    //{ .name = "flow", .func = &tman_cli_flow, .setuplvl = LIBTMAN_SETUPCHECK },
+    {.name = "help",.func = &tman_cli_help,.setuplvl = LIBTMAN_SETUPSOFT},
+    {.name = "init",.func = &tman_cli_init,.setuplvl = LIBTMAN_SETUPHARD},
+    //{ .name = "link", .func = &tman_cli_link, .setuplvl = LIBTMAN_SETUPHARD },
+    {.name = "list",.func = &tman_cli_list,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "move",.func = &tman_cli_move,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "pgm",.func = &tman_cli_pgm,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "prev",.func = &tman_cli_prev,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "prj",.func = &tman_cli_prj,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "set",.func = &tman_cli_set,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "show",.func = &tman_cli_show,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "sync",.func = &tman_cli_sync,.setuplvl = LIBTMAN_SETUPCHECK},
 };
 
 struct config *tman_config;
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
     for (int idx = 0; idx < ARRAY_SIZE(builtins); ++idx)
         if (strcmp(cmd, builtins[idx].name) == 0) {
             cmdfound = TRUE;
-            if ((status = tman_setup(builtins[idx].setuplvl)) != TMAN_OK) {
+            if ((status = tman_setup(builtins[idx].setuplvl)) != LIBTMAN_OK) {
                 elog(status, "%s", tman_strerror());
                 goto out;
             }
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
         }
     if (cmdfound == FALSE && (status = tman_ispgn(base.pgn, cmd)) == TRUE) {
         cmdfound = TRUE;
-        if ((status = tman_setup(TMAN_SETUPCHECK)) != TMAN_OK) {
+        if ((status = tman_setup(LIBTMAN_SETUPCHECK)) != LIBTMAN_OK) {
             elog(status, "%s", tman_strerror());
             goto out;
         }

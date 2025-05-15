@@ -29,7 +29,7 @@ static int parse_usehooks(const char *confkey, int *usehooks)
         return 0;
     }
     fprintf(stderr, "'%s': invalid usehooks value", confval);
-    return emod_set(TMAN_NODEF_ERR);
+    return emod_set(LIBTMAN_NODEF_ERR);
 }
 
 struct tman_hook *make_hook()
@@ -87,7 +87,7 @@ static int parseconf(struct config *myconfig, const char *fname)
         return 1;
     }
 
-    while (retcode == TMAN_OK && fgets(line, BUFSIZ, fp) != NULL) {
+    while (retcode == LIBTMAN_OK && fgets(line, BUFSIZ, fp) != NULL) {
         token = strtok(line, delim);
         if (!token || strlen(token) == 0 || token[0] == '\n' || token[0] == '#')
             continue;

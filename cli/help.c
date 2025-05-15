@@ -495,7 +495,7 @@ int help_list_commands(void)
         if (strcmp(helptab[i].tag, TAGOBJ) == 0)
             printf("  %-6s - %s", helptab[i].name, helptab[i].desc_short);
 
-    return TMAN_OK;
+    return LIBTMAN_OK;
 }
 
 int help_usage(const char *cmd)
@@ -538,8 +538,8 @@ int help_lookup(const char *cmd)
         }
     }
     if (!found)
-        return emod_set(TMAN_CMD_BIN);
-    return TMAN_OK;
+        return emod_set(LIBTMAN_CMD_BIN);
+    return LIBTMAN_OK;
 }
 
 int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
@@ -570,7 +570,7 @@ int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
         return help_list_commands();
 
     for (i = optind; i < argc; ++i) {
-        if ((status = help_lookup(argv[i])) != TMAN_OK)
+        if ((status = help_lookup(argv[i])) != LIBTMAN_OK)
             elog(status, "%s: %s", argv[i], tman_strerror());
     }
     return status;

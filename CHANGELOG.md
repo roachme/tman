@@ -11,6 +11,7 @@
 - `lib`: Delete depricated function
 - `cli/help`: Update help messages
 - `lib/tman`: Rename structure member
+- `lib`: Add prefix `LIB` to library macros
 
 ### Fixed
 

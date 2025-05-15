@@ -36,7 +36,7 @@ static int load(void)
     FILE *fp;
 
     if ((fp = fopen(prjfile, "r")) == NULL)
-        return emod_set(TMAN_PRJ_LOAD);
+        return emod_set(LIBTMAN_PRJ_LOAD);
 
     for (i = 0; i < NPRJ && fscanf(fp, PRJFMT, prjs[i]) == NPRJITEM; ++i) ;
     return fclose(fp);
@@ -48,7 +48,7 @@ static int save(void)
     FILE *fp;
 
     if ((fp = fopen(prjfile, "w")) == NULL)
-        return emod_set(TMAN_PRJ_SAVE);
+        return emod_set(LIBTMAN_PRJ_SAVE);
 
     for (i = 0; i < NPRJ && prjs[i][0] != '\0'; ++i)
         fprintf(fp, PRJFMT, prjs[i]);

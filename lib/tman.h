@@ -64,9 +64,9 @@ struct tman_custom {
 };
 
 enum tman_setuplvl {
-    TMAN_SETUPSOFT,
-    TMAN_SETUPCHECK,
-    TMAN_SETUPHARD,
+    LIBTMAN_SETUPSOFT,
+    LIBTMAN_SETUPCHECK,
+    LIBTMAN_SETUPHARD,
 };
 
 /* Generic tman structure used by all(?) API functions.  */
