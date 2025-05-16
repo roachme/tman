@@ -11,9 +11,27 @@
 
 static const char *delim = " =\n";
 
+static char *resolve_env_var_home(char *str)
+{
+    char *home = getenv("HOME");
+    char taskdir[PATHSIZ + 1] = { 0 };
+    char *found = strstr(str, "$HOME");
+
+    if (found) {
+        strcat(taskdir, home);  /* TODO: it might be unset in some envs.  */
+        strcat(taskdir, str + strlen("$HOME"));
+        strcpy(str, taskdir);
+    }
+    return str;
+}
+
 static int parsepath(char *path)
 {
-    strcpy(path, strtok(NULL, delim));
+    char *taskdir = strtok(NULL, delim);
+
+    if (taskdir != NULL)
+        taskdir = resolve_env_var_home(taskdir);
+    strcpy(path, taskdir);
     return 0;
 }
 
