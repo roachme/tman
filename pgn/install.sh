@@ -1,1 +1,1 @@
-luarocks install luaposix
+#luarocks install luaposix
