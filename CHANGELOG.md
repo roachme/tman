@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Added
+
+- `cli/move`: Add option `-h` for help
+
+
 ## [0.0.13] - (2025-05-15)
 
 ### Added
