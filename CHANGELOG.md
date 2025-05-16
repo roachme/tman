@@ -4,6 +4,10 @@
 
 - `cli/move`: Add option `-h` for help
 
+### Fixed
+
+- `scripts`: Fix a typo in directory name
+
 
 ## [0.0.13] - (2025-05-15)
 
