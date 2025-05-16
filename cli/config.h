@@ -15,8 +15,8 @@
 
 struct config {
     int usehooks;               /* execute hooks from config, by default set */
-    char base[100];
-    char pgnins[100];
+    char base[PATHSIZ + 1];
+    char pgnins[PATHSIZ + 1];
     struct tman_hook *hooks;
 };
 
