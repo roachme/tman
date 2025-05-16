@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+
+PROGRAM="_tmancli"
+
+DIR_TMANCONF="$HOME/.config/tman"
+DIR_PLUGIN="$HOME/.local/lib/tman"
+DIR_BIN="$HOME/.local/bin"
+FILE_CONFIG="$DIR_TMANCONF/tman.cfg"
+
+mkdir -p "$DIR_TMANCONF"
+mkdir -p "$DIR_BIN"
+mkdir -p "$DIR_PLUGIN"
+
+
+cp templates/tman.cfg "$FILE_CONFIG"
+rm -rf "$DIR_PLUGIN" && cp -r pgn "$DIR_PLUGIN"
+
+cp "$PROGRAM" "$DIR_BIN"
+echo "NOTE: Make sure '$DIR_BIN' is in your environment variable '$$PATH'"
+
+# TODO: Install plugin default configs too
+bash pgn/install.sh
+

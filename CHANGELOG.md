@@ -4,6 +4,7 @@
 
 - `cli/move`: Add option `-h` for help
 - `cli/config`: Add support for environment variable `HOME` in path
+- `scripts/install`: Add skeleton for installation script
 
 ### Fixed
 
