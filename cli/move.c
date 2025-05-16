@@ -1,9 +1,10 @@
 #include "cli.h"
+#include "help.h"
 
 int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
-    int i, status;
+    int i, showhelp, status;
     struct tman_arg src = {
         .id = NULL,
         .brd = NULL,
@@ -15,16 +16,23 @@ int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
         .prj = NULL,
     };
 
-    while ((c = getopt(argc, argv, ":d:s:")) != -1) {
+    showhelp = FALSE;
+    while ((c = getopt(argc, argv, ":d:hs:")) != -1) {
         switch (c) {
         case 'd':
             dst.prj = optarg;
+            break;
+        case 'h':
+            showhelp = TRUE;
             break;
         case 's':
             src.prj = optarg;
             break;
         }
     }
+
+    if (showhelp)
+        return help_usage("move");
 
     i = optind;
 
