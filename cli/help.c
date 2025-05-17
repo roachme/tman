@@ -178,6 +178,7 @@ struct help helptab[] = {
       -h      show this help and exit\n\
       -s      list only current and previous tasks\n\
       -v      under development: show more info\n\
+      -H      show project name header\n\
     \n\
     Arguments:\n\
       COL     project column name\n\

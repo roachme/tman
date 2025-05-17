@@ -44,11 +44,11 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     struct tman_arg args;
-    int i, showhelp, status;
+    int i, showhelp, showprjname, status;
 
-    showhelp = FALSE;
+    showhelp = showprjname = FALSE;
     args.id = args.brd = args.prj = NULL;
-    while ((c = getopt(argc, argv, ":Aac:hs")) != -1) {
+    while ((c = getopt(argc, argv, ":Aac:hsvH")) != -1) {
         switch (c) {
         case 'A':
             list_filter.allall = TRUE;
@@ -64,6 +64,11 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
             break;
         case 's':
             list_filter.specialonly = TRUE;
+            break;
+        case 'v':
+            return elog(1, "option `-v' under development");
+        case 'H':
+            showprjname = TRUE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -95,6 +100,9 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
             elog(status, errfmt, args.prj, tman_strerror());
             continue;
         }
+
+        if (showprjname == TRUE)
+            printf("Project: %s\n", args.prj);
         // TODO: add hooks
         recursive_tree_print(ctx->ids);
     } while (++i < argc);
