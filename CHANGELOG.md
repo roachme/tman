@@ -6,6 +6,10 @@
 - `cli/config`: Add support for environment variable `HOME` in path
 - `scripts/install`: Add skeleton for installation script
 
+### Changed
+
+- `cli/config`: Change depricated hook names
+
 ### Fixed
 
 - `scripts`: Fix a typo in directory name

@@ -69,8 +69,8 @@ TMANPGNINS = /home/user/.tman/pgnins
 #HOOKCMD = prev gun sync
 #HOOKCMD = del gun del
 #HOOKCMD = prev gun sync
-#HOOKCAT = cat time cat
-#HOOKCAT = cat gun cat
+#HOOKSHOW = show time show
+#HOOKSHOW = show gun show
 #HOOKLIST = list tag list
 ```
 
@@ -112,7 +112,9 @@ Object:
 2. Now you're ready to create a project: `tman prj add test`
 3. Once task project is created you can fill it with tasks: `tman add test1`
 4. List all your task in current project: `tman list`
-5. Show the content of task: `tman cat test1`
+5. Show the content of task: `tman show test1`
+6. Sync with current task: `tman sync`
+7. Or quickly switch to previous task: `tman prev`
 
 
 ## ⇁  Tips

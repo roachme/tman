@@ -7,7 +7,7 @@
 #define NUMCONFIG       2
 #define CONFIGSIZ       256
 
-// FIXME: add an expression max_hookact + max_hookcat + max_hookls
+// FIXME: add an expression max_hookact + max_hookshow + max_hookls
 #define CONF_MAXHOOK    10
 #define CONF_MAXCOLDEF  10
 #define CONF_MAXBASE    256
