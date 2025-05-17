@@ -118,7 +118,7 @@ static int parseconf(struct config *myconfig, const char *fname)
             retcode = parse_usehooks(token, &myconfig->usehooks);
         else if (strcmp(token, "HOOKCMD") == 0)
             myconfig->hooks = parse_hook(token, myconfig->hooks);
-        else if (strcmp(token, "HOOKCAT") == 0)
+        else if (strcmp(token, "HOOKSHOW") == 0)
             myconfig->hooks = parse_hook(token, myconfig->hooks);
         else if (strcmp(token, "HOOKLIST") == 0)
             myconfig->hooks = parse_hook(token, myconfig->hooks);
