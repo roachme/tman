@@ -14,6 +14,7 @@
 ### Fixed
 
 - `scripts`: Fix a typo in directory name
+- `cli/set`: Fix options mismatching with help message
 
 
 ## [0.0.13] - (2025-05-15)

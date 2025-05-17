@@ -7,7 +7,7 @@
 int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
-    int i, idx, status;
+    int i, idx, quiet, status;
     struct tman_arg args;
     int atleast_one_key_set;
     struct unit units[NKEYS] = { 0 };
@@ -22,21 +22,14 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
        -t      set task type. Values: [bugfix|hotfix|feature]
      */
     args.id = args.prj = NULL;
-    atleast_one_key_set = FALSE;
-    while ((c = getopt(argc, argv, ":d:p:P:t:")) != -1) {
+    quiet = atleast_one_key_set = FALSE;
+    while ((c = getopt(argc, argv, ":d:hp:qt:P:")) != -1) {
         switch (c) {
-        case 'P':
-            elog(1, "only current project is supported rn");
-            return 1;
-            break;;
         case 'p':
-            idx = 0;
-            if (units[idx].isset)
-                break;
-            atleast_one_key_set = TRUE;
-            strcpy(units[idx].key, "prio");
-            strcpy(units[idx].val, optarg);
-            units[idx].isset = 1;
+            args.prj = optarg;
+            break;
+        case 'q':
+            quiet = TRUE;
             break;
         case 't':
             idx = 1;
@@ -56,6 +49,15 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
             strcpy(units[idx].val, optarg);
             units[idx].isset = 1;
             break;
+        case 'P':
+            idx = 0;
+            if (units[idx].isset)
+                break;
+            atleast_one_key_set = TRUE;
+            strcpy(units[idx].key, "prio");
+            strcpy(units[idx].val, optarg);
+            units[idx].isset = 1;
+            break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
         default:
@@ -70,13 +72,16 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
     do {
         args.id = argv[i];
         if ((status = tman_task_set(ctx, &args, units, &opt)) != LIBTMAN_OK) {
-            elog(status, errfmt, args.id, tman_strerror());
+            args.id = args.id ? args.id : "NOCURR";
+            if (quiet == FALSE)
+                elog(status, errfmt, args.id, tman_strerror());
             return status;
         } else
             if ((status =
                  tman_hook_action(ctx, tman_config->hooks, &args,
                                   "set")) != LIBTMAN_OK) {
-            elog(status, errfmt, args.id, tman_strerror());
+            if (quiet == FALSE)
+                elog(status, errfmt, args.id, tman_strerror());
             return status;
         }
 
