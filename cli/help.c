@@ -459,9 +459,11 @@ struct help helptab[] = {
      .desc_long = "\n\
     Options:\n\
       -d      task description\n\
+      -h      show this help and exit\n\
       -p PRJ  project name\n\
-      -P      task priority\n\
+      -q      do not write anything to standard error output\n\
       -t      task type\n\
+      -P      task priority\n\
     \n\
     Arguments:\n\
       ID      task ID (default current)\n\
