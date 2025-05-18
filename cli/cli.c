@@ -55,36 +55,58 @@ struct config *tman_config;
 
 int main(int argc, char **argv)
 {
-    char *cmd = NULL;
     int usehooks = -1;
+    char *cmd = NULL, *option, *togfmt;
     struct tman_base base = {.task = NULL,.pgn = NULL };
     int i, status, cmdfound;
     struct tman_context *ctx;
 
+    cmd = option = NULL;
+    togfmt = "option `%s' accepts either 'on' or 'off'";
+
     /* Parse util itself options.  */
     for (i = 1; i < argc && argv[i][0] == '-'; ++i) {
-        if (strcmp(argv[i], "-b") == 0) {
+        if ((option = argv[i]) && strcmp(option, "-b") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
-                return elog(1, "option `%s' requires an argument", argv[i]);
+                return elog(1, "option `%s' requires an argument", option);
             base.task = argv[++i];
-        } else if (strcmp(argv[i], "-c") == 0) {
-            // Under development
-            //usecolors = TRUE;
+        } else if ((option = argv[i]) && strcmp(option, "-c") == 0) {
+            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
+                return elog(1, "option `%s' requires an argument", option);
+            if (strcmp(argv[i + 1], "on") == 0)
+                usehooks = TRUE;
+            else if (strcmp(argv[i + 1], "off") == 0)
+                usehooks = FALSE;
+            else
+                return elog(1, togfmt, option);
+            ++i;                /* Skip option.  */
+            return elog(1, "this option is under development");
+        } else if ((option = argv[i]) && strcmp(option, "-d") == 0) {
+            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
+                return elog(1, "option `%s' requires an argument", option);
+            if (strcmp(argv[i + 1], "on") == 0)
+                usehooks = TRUE;
+            else if (strcmp(argv[i + 1], "off") == 0)
+                usehooks = FALSE;
+            else
+                return elog(1, togfmt, option);
+            ++i;                /* Skip option.  */
+            return elog(1, "this option is under development");
         } else if (strcmp(argv[i], "-h") == 0)
             return help_lookup(NULL);
         else if (strcmp(argv[i], "-p") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", argv[i]);
             base.pgn = argv[++i];
-        } else if (strcmp(argv[i], "-H") == 0) {
+        } else if ((option = argv[i]) && strcmp(argv[i], "-H") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", argv[i]);
-            if (strncmp(argv[i + 1], "on", 2) == 0)
+            if (strcmp(argv[i + 1], "on") == 0)
                 usehooks = TRUE;
-            else if (strncmp(argv[i + 1], "off", 2) == 0)
+            else if (strcmp(argv[i + 1], "off") == 0)
                 usehooks = FALSE;
             else
-                return elog(1, "option `-H' accepts either 'on' or 'off'");
+                return elog(1, togfmt, option);
             ++i;                /* Skip option.  */
         } else if (strcmp(argv[i], "-V") == 0)
             return show_version();
