@@ -11,6 +11,7 @@
 #include "tree.h"
 #include "task.h"
 #include "unit.h"
+#include "link.h"
 #include "common.h"
 #include "osdep.h"
 #include "errmod.h"
@@ -185,6 +186,14 @@ int tman_task_show(struct tman_context *ctx, struct tman_arg *args,
     strncpy(ctx->units.id, args->id, IDSIZ);
     if (unit_getbin(ctx->units.bin, args->prj, args->id) == NULL)
         status = LIBTMAN_UNIT_GET;
+
+    link_get_parent(args->prj, args->id, ctx->linkparent);
+    link_get_child(args->prj, args->id, ctx->linkchild);
+
+    if (ctx->linkparent[0] == '\0')
+        strcpy(ctx->linkparent, "None");
+    if (ctx->linkchild[0] == '\0')
+        strcpy(ctx->linkchild, "None");
     return status;
 }
 
@@ -263,14 +272,26 @@ int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
     return LIBTMAN_OK;
 }
 
-/* Link task IDs together: parent - children relationship.  */
 /*
-int tman_task_link(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options)
+ * TODO: make changes atomic
+ * TODO: make it possible to add multiple childs/parents to task
+ */
+int tman_task_link(struct tman_context *ctx, struct tman_arg *parent,
+                   struct tman_arg *child, struct tman_option *options)
 {
-    return 0;
+    int status;
+
+    if ((status = check_args(parent)))
+        return emod_set(status);
+    else if ((status = check_args(child)))
+        return emod_set(status);
+
+    if (link_set_parent(parent->prj, parent->id, child->id))
+        return emod_set(LIBTMAN_NODEF_ERR);
+    if (link_set_child(parent->prj, parent->id, child->id))
+        return emod_set(LIBTMAN_NODEF_ERR);
+    return LIBTMAN_OK;
 }
-*/
 
 int tman_task_move(struct tman_context *ctx, struct tman_arg *src,
                    struct tman_arg *dst)

@@ -21,6 +21,15 @@ static int show_key(struct tman_context *ctx, char *key)
             return LIBTMAN_OK;
         }
 
+    /* Look up addition fields.  */
+    if (strcmp(key, "parent") == 0) {
+        printf("%s\n", ctx->linkparent);
+        return 0;
+    } else if (strcmp(key, "child") == 0) {
+        printf("%s\n", ctx->linkchild);
+        return 0;
+    }
+
     for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
         if (strcmp(key, unitpgn->key) == 0) {
             printf("%s\n", unitpgn->val);
@@ -30,7 +39,7 @@ static int show_key(struct tman_context *ctx, char *key)
     return 1;
 }
 
-static int pretty_show(struct tman_context *ctx, char *key)
+static int pretty_show(struct tman_context *ctx, int showaddition)
 {
     int i;
     struct unit *unitbin, *unitpgn;
@@ -39,6 +48,12 @@ static int pretty_show(struct tman_context *ctx, char *key)
 
     for (unitbin = ctx->units.bin, i = 0; i < NKEYS; ++i)
         printf("%-7s : %s\n", unitbin[i].key, unitbin[i].val);
+
+    /* Show links if needed.  */
+    if (showaddition) {
+        printf("%-7s : %s\n", "parent", ctx->linkparent);
+        printf("%-7s : %s\n", "child", ctx->linkchild);
+    }
 
     for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
         printf("%-7s : %s\n", unitpgn->key, unitpgn->val);
@@ -50,13 +65,16 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     char *key;
-    int i, quiet, showhelp, status;
+    int i, quiet, showaddition, showhelp, status;
     struct tman_arg args;
 
-    quiet = showhelp = FALSE;
+    quiet = showaddition = showhelp = FALSE;
     key = args.prj = args.id = args.brd = NULL;
-    while ((c = getopt(argc, argv, ":p:hk:q")) != -1) {
+    while ((c = getopt(argc, argv, ":ap:hk:q")) != -1) {
         switch (c) {
+        case 'a':
+            showaddition = TRUE;
+            break;
         case 'h':
             showhelp = TRUE;
             break;
@@ -102,7 +120,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
                     elog(1, errfmt, args.id, "key not found");
             }
         } else {
-            pretty_show(ctx, key);
+            pretty_show(ctx, showaddition);
         }
         ctx->units.pgn = tman_hook_show_free(ctx, &args);
     } while (++i < argc);

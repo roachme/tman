@@ -205,6 +205,7 @@ struct help helptab[] = {
      .desc_short = "Show task info.\n",
      .desc_long = "\n\
     Options:\n\
+      -a      show additional fields as well\n\
       -h      show this help and exit\n\
       -k KEY  key to show (builtin or plugin)\n\
       -p PRJ  project name\n\
@@ -418,17 +419,20 @@ struct help helptab[] = {
      .tag = TAGMISC,
      .name = "link",
      .synop = "Usage: " PROGRAM " link [OPTION]... PID CID\n",
-     .desc_short = "Link tasks together (under development).\n",
+     .desc_short = "Link and unlink tasks.\n",
      .desc_long = "\n\
     Options:\n\
-      -c      link task as child\n\
-      -l      link two tasks\n\
+      -r      remove link between tasks (under development)\n\
       -p PRJ  project name\n\
     \n\
     Arguments:\n\
       CID     child task ID\n\
       PID     parent task ID\n\
       PRJ     project name (default is current)\n\
+    \n\
+    Note:\n\
+    Testing command. Be careful.\n\
+    Not possible to add multiple childs/parents to task\n\
     \n\
     Exit status:\n\
     Under development\n"},

@@ -40,7 +40,7 @@ static const builtin_t builtins[] = {
     //{ .name = "flow", .func = &tman_cli_flow, .setuplvl = LIBTMAN_SETUPCHECK },
     {.name = "help",.func = &tman_cli_help,.setuplvl = LIBTMAN_SETUPSOFT},
     {.name = "init",.func = &tman_cli_init,.setuplvl = LIBTMAN_SETUPHARD},
-    //{ .name = "link", .func = &tman_cli_link, .setuplvl = LIBTMAN_SETUPHARD },
+    {.name = "link",.func = &tman_cli_link,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "list",.func = &tman_cli_list,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "move",.func = &tman_cli_move,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "pgm",.func = &tman_cli_pgm,.setuplvl = LIBTMAN_SETUPCHECK},
