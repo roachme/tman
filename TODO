@@ -26,6 +26,7 @@ Prio: high
 + 8. tman_check_prj() does not fail if prj == NULL, tho it should.
   9. Add support to config file to parse $HOME in path. It'll be convient for a user.
  10. Add debug prints to commands. Pro'ly as option -v.
+ 11. Maybe it's better to move `tman link` to plugin?
 
 
 Prio: mid
@@ -37,6 +38,7 @@ Prio: mid
 ? 6. Print PWD in /tmp/tmanpwd. Then shell part will it from there.
 + 7. In command `add`: if no ID provided then generate task ID.
 + 8. Why use tman_get_args() if tman_check_arg_id() get default values anyway?
+  9. Delete option `-A' from command `tman list`. Cuz i can use option `-a'
 
 Prio: low
   1. Add command autocomplitions
