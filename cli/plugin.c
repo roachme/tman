@@ -1,5 +1,13 @@
 #include "cli.h"
 
+/* TODO:
+    Structure: tman PGN -i -b -p COMMAND [OPTION]... [APRS]
+    1. Can't use getopt cuz there might be different options for plugins and
+       their commads.
+    2. Use for/while loop to circle through options and their arguments.
+    3. Separate plugin options from plugin command options.
+    4. Or maybe it's better to let the plugin to handle plugin options and the rest.
+*/
 int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
 {
     int status;

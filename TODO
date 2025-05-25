@@ -6,6 +6,7 @@ Priorities:
 Bugs:
 + 1. Command `tman col prev <TASKID>` moves task to column 'prev' even if no current task ID is set.
   2. Command `tman move` can't move multiple task to another project.
+  3. Command `tman move` cant move 2 task to destination. It simply renames it.
 
 Ideas:
   1. Replace cat & ls hooks with reading from file. Gonna highly optimize
@@ -14,6 +15,7 @@ Ideas:
   3. Add support for plugin to use libtman/tman commands.
 + 4. Add support to pass system config values via option to util.
 + 5. Add option to show task columns in command `tman col`.
+  6. Add plugin `note` to take notes. Synopsis: tman note [OPTION]... COMMAND
 
 Prio: high
 + 1. Write config file parser and define config itself.
@@ -27,6 +29,10 @@ Prio: high
   9. Add support to config file to parse $HOME in path. It'll be convient for a user.
  10. Add debug prints to commands. Pro'ly as option -v.
  11. Maybe it's better to move `tman link` to plugin?
+ 12. Refactor plugin's option and argument parser
+ 13. Add tman option -C for config path
+ 14. `struct unit` is duplicated in tman.h and unit.h
+ 15. Move `tman find` to plugin.
 
 
 Prio: mid
