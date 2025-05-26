@@ -32,15 +32,16 @@ struct help helptab[] = {
      .desc_short = "Terminal task (project) manager.\n",
      .desc_long = "\n\
     Options:\n\
-      -b DIR  base dir (where tasks are stored)\n\
-      -c TOG  enbale colors (default: disabled)\n\
-      -d TOG  enbale debug mode (under development)\n\
+      -C TOG  enbale colors (default: disabled)\n\
+      -D TOG  enbale debug mode (under development)\n\
       -h      show this help and exit\n\
-      -p DIR  plugin directory\n\
       -H TOG  enbale hooks (default: disabled)\n\
+      -P DIR  directory where plugins are stored\n\
+      -T DIR  directory where tasks are stored\n\
       -V      show version and exit\n\
     \n\
     Arguments:\n\
+      DIR     path to directory\n\
       TOG     can be either 'on' or 'off'\n\
     \n\
     Notes:\n\
