@@ -66,11 +66,11 @@ int main(int argc, char **argv)
 
     /* Parse util itself options.  */
     for (i = 1; i < argc && argv[i][0] == '-'; ++i) {
-        if ((option = argv[i]) && strcmp(option, "-b") == 0) {
+        if ((option = argv[i]) && strcmp(option, "-T") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
             base.task = argv[++i];
-        } else if ((option = argv[i]) && strcmp(option, "-c") == 0) {
+        } else if ((option = argv[i]) && strcmp(option, "-C") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
             if (strcmp(argv[i + 1], "on") == 0)
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
                 return elog(1, togfmt, option);
             ++i;                /* Skip option.  */
             return elog(1, "this option is under development");
-        } else if ((option = argv[i]) && strcmp(option, "-d") == 0) {
+        } else if ((option = argv[i]) && strcmp(option, "-D") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
             if (strcmp(argv[i + 1], "on") == 0)
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
             return elog(1, "this option is under development");
         } else if (strcmp(argv[i], "-h") == 0)
             return help_lookup(NULL);
-        else if (strcmp(argv[i], "-p") == 0) {
+        else if (strcmp(argv[i], "-P") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", argv[i]);
             base.pgn = argv[++i];
@@ -162,7 +162,8 @@ int main(int argc, char **argv)
             elog(status, "%s", tman_strerror());
             goto out;
         }
-        status = tman_cli_plugin(cmd, argc - 1, argv + 1, ctx);
+        /* skip program name and plugin name, that's why shift 2.  */
+        status = tman_cli_plugin(cmd, argc - 2, argv + 2, ctx);
     }
     if (cmdfound == FALSE) {
         status = 1;

@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Fixed
+
+- `cli/help`: Update help message
+
+
 ## [0.0.14] - (2025-05-24)
 
 ### Added
