@@ -97,7 +97,7 @@ function struct_rename()
 
 _find_config && source "$CONF" || exit 0
 
-if [ -z "$CMD" -o "$CMD" = "create" ]; then
+if [ -z "$CMD" -o "$CMD" = "make" ]; then
     struct_create
 elif [ "$CMD" = "delete" ]; then
     struct_delete
