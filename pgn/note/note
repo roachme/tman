@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+CONF=
+
+PRJ=
+ID=
+BASE=
+CMD=
+
+# tman -B base -P pgndir note COMMAND -i ID -p PRJ -b BRD [OPTION]... [ARGS]...
+#
+while getopts "b:i:p:u" opt; do
+    case "${opt}" in
+        i)
+            ID="$OPTARG"
+            ;;
+        b)
+            ID="$OPTARG"
+            ;;
+        p)
+            PRJ="$OPTARG"
+            ;;
+        u)
+            echo "undefined option"
+            ;;
+        *)
+            echo "error: invalid option"
+            exit 1
+            ;;
+    esac
+done
+
+
+

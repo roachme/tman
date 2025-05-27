@@ -13,11 +13,12 @@ char *genpath_prj(char *prj)
     return pathname;
 }
 
-char *genpath_pgn(char *prj, char *id, char *name, char *cmd)
+char *genpath_pgn(char *prj, char *id, char *name, char *cmd, char *opts)
 {
-    const char *fmt = "%s/%s/%s -p %s -i %s -B %s %s";
-    sprintf(pathname, fmt, tmanfs.pgnins, name, name, prj, id, tmanfs.base,
-            cmd);
+    /* Synopsis: tman [TMANOPTS] PLUGIN COMMAND [OPTIONS] [ARGS]  */
+    const char *fmt = "%s/%s/%s -B %s %s -p %s -i %s %s";
+    sprintf(pathname, fmt, tmanfs.pgnins, name, name, tmanfs.base, cmd, prj, id,
+            opts);
     return pathname;
 }
 

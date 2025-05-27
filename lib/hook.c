@@ -17,7 +17,9 @@ int hookact(struct tman_hook *hooks, char *cmd, char *prj, char *id)
 {
     for (; hooks; hooks = hooks->next) {
         if (strcmp(cmd, hooks->cmd) == 0) {
-            char *pgncmd = genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd);
+            char pgnopts[10] = "";
+            char *pgncmd =
+                genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd, pgnopts);
             system(pgncmd);
         }
     }
@@ -29,6 +31,7 @@ struct unit *hookshow(struct tman_hook *hooks, char *prj, char *id, char *cmd)
     FILE *pipe;
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
+    char pgnopts[10] = "";
     char line[BUFSIZ + 1] = { 0 };
     struct unit *unitpgn = NULL;
 
@@ -37,7 +40,7 @@ struct unit *hookshow(struct tman_hook *hooks, char *prj, char *id, char *cmd)
             continue;
 
         if ((pipe =
-             popen(genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd),
+             popen(genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd, pgnopts),
                    "r")) == NULL) {
             continue;
         }
@@ -54,6 +57,7 @@ char *hookls(struct tman_hook *hooks, char *pgnout, char *prj, char *id)
 {
     FILE *pipe;
     char *prefix = "  ";
+    char pgnopts[10] = "";
     char line[BUFSIZ + 1] = { 0 };
 
     for (; hooks; hooks = hooks->next) {
@@ -61,7 +65,7 @@ char *hookls(struct tman_hook *hooks, char *pgnout, char *prj, char *id)
             continue;
 
         if ((pipe =
-             popen(genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd),
+             popen(genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd, pgnopts),
                    "r")) == NULL) {
             return NULL;
         }

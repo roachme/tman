@@ -139,7 +139,7 @@ char *tman_prj_getcurr(struct tman_context *ctx);
 /* Task plugin functions.  */
 int tman_ispgn(char *pgndir, const char *pgname);
 int tman_pgnexec(struct tman_context *ctx, struct tman_arg *args, char *pgname,
-                 char *pgncmd, struct tman_option *options);
+                 char *pgncmd, struct tman_option *options, char *pgnopts);
 
 int tman_hook_action(struct tman_context *ctx, struct tman_hook *hooks,
                      struct tman_arg *args, char *cmd);

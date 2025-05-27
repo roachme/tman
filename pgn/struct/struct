@@ -4,13 +4,38 @@ CONF=
 
 PRJ=
 ID=
-BASE=
+TASKDIR=
 CMD=
+
+# Parse plugin system options
+
+# '/home/roach/.local/lib/tman/pgn/struct/struct -B /home/roach/workspace show -p train -i cpp '
+for ((i = 1; i <= $#; i++)); do
+    echo "$i, ${!i}"
+done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Parse plugin command options
 
 while getopts "B:p:i:s" opt; do
     case "${opt}" in
         B)
-            BASE="$OPTARG"
+            TASKDIR="$OPTARG"
             ;;
         p)
             PRJ="$OPTARG"
@@ -56,10 +81,10 @@ function _find_config()
 function struct_create()
 {
     for dir in "${STRUCT_DIRS[@]}"; do
-        mkdir -p "$BASE/$PRJ/$ID/$dir"
+        mkdir -p "$TASKDIR/$PRJ/$ID/$dir"
     done
     for file in "${STRUCT_FILES[@]}"; do
-        touch "$BASE/$PRJ/$ID/$file"
+        touch "$TASKDIR/$PRJ/$ID/$file"
     done
     return 0;
 }
@@ -67,10 +92,10 @@ function struct_create()
 function struct_delete()
 {
     for dir in "${STRUCT_DIRS[@]}"; do
-        rm -rf "$BASE/$PRJ/$ID/$dir"
+        rm -rf "$TASKDIR/$PRJ/$ID/$dir"
     done
     for file in "${STRUCT_FILES[@]}"; do
-        rm -rf "$BASE/$PRJ/$ID/$file"
+        rm -rf "$TASKDIR/$PRJ/$ID/$file"
     done
     return 0;
 }

@@ -32,6 +32,6 @@ char *genpath_col(char *prj, char *id);
 char *genpath_link(char *prj, char *id);
 char *genpath_full(char *prj, char *id);
 char *genpath_unit(char *prj, char *id);
-char *genpath_pgn(char *prj, char *id, char *name, char *cmd);
+char *genpath_pgn(char *prj, char *id, char *name, char *cmd, char *opts);
 
 #endif

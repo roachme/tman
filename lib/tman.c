@@ -532,13 +532,16 @@ int tman_ispgn(char *pgndir, const char *pgname)
 
 // TODO: move it to cli part
 int tman_pgnexec(struct tman_context *ctx, struct tman_arg *args, char *pgname,
-                 char *pgncmd, struct tman_option *options)
+                 char *pgncmd, struct tman_option *options, char *pgnopts)
 {
+    // '/home/roach/.local/lib/tman/pgn/gun/gun -B /home/roach/workspace show -p train -i cpp -e -l ou '
     int status;
 
     if ((status = check_args(args)))
         return status;
-    return system(genpath_pgn(args->prj, args->id, pgname, pgncmd));
+    fprintf(stderr, "tman_pgnexec: '%s'\n",
+            genpath_pgn(args->prj, args->id, pgname, pgncmd, pgnopts));
+    return system(genpath_pgn(args->prj, args->id, pgname, pgncmd, pgnopts));
 }
 
 struct unit *tman_hook_show(struct tman_context *ctx, struct tman_hook *hooks,
