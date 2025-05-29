@@ -7,17 +7,16 @@ static const char *errfmt = "cannot show units '%s': %s";
 
 static int show_key(struct tman_context *ctx, char *key)
 {
-    int i;
     struct unit *unitbin, *unitpgn;
 
     if (strcmp(key, "id") == 0) {
-        printf("%s\n", ctx->units.id);
+        printf("%s\n", ctx->id);
         return LIBTMAN_OK;
     }
 
-    for (unitbin = ctx->units.bin, i = 0; i < NKEYS; ++i)
-        if (strcmp(key, unitbin[i].key) == 0) {
-            printf("%s\n", unitbin[i].val);
+    for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
+        if (strcmp(key, unitbin->key) == 0) {
+            printf("%s\n", unitbin->val);
             return LIBTMAN_OK;
         }
 
@@ -30,7 +29,7 @@ static int show_key(struct tman_context *ctx, char *key)
         return 0;
     }
 
-    for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
+    for (unitpgn = ctx->unitpgn; unitpgn; unitpgn = unitpgn->next)
         if (strcmp(key, unitpgn->key) == 0) {
             printf("%s\n", unitpgn->val);
             return LIBTMAN_OK;
@@ -41,13 +40,12 @@ static int show_key(struct tman_context *ctx, char *key)
 
 static int pretty_show(struct tman_context *ctx, int showaddition)
 {
-    int i;
     struct unit *unitbin, *unitpgn;
 
-    printf("%-7s : %s\n", "id", ctx->units.id);
+    printf("%-7s : %s\n", "id", ctx->id);
 
-    for (unitbin = ctx->units.bin, i = 0; i < NKEYS; ++i)
-        printf("%-7s : %s\n", unitbin[i].key, unitbin[i].val);
+    for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
+        printf("%-7s : %s\n", unitbin->key, unitbin->val);
 
     /* Show links if needed.  */
     if (showaddition) {
@@ -55,7 +53,7 @@ static int pretty_show(struct tman_context *ctx, int showaddition)
         printf("%-7s : %s\n", "child", ctx->linkchild);
     }
 
-    for (unitpgn = ctx->units.pgn; unitpgn != NULL; unitpgn = unitpgn->next)
+    for (unitpgn = ctx->unitpgn; unitpgn; unitpgn = unitpgn->next)
         printf("%-7s : %s\n", unitpgn->key, unitpgn->val);
 
     return LIBTMAN_OK;
@@ -122,7 +120,9 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
         } else {
             pretty_show(ctx, showaddition);
         }
-        ctx->units.pgn = tman_hook_show_free(ctx, &args);
+
+        ctx->unitbin = tman_unit_free(ctx, &args, NULL);
+        ctx->unitpgn = tman_hook_show_free(ctx, &args);
     } while (++i < argc);
 
     return status;

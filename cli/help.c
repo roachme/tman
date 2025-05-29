@@ -474,6 +474,10 @@ struct help helptab[] = {
       ID      task ID (default current)\n\
       PRJ     project name (default is current)\n\
     \n\
+    Values:\n\
+      Type    task, bugfix, feature, hotfix\n\
+      Prio    lowest, low, mid, high, highest\n\
+    \n\
     Exit status:\n\
     Under development\n"},
 };

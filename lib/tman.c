@@ -7,6 +7,7 @@
 #include "dir.h"
 #include "project.h"
 #include "hook.h"
+#include "unit.h"
 #include "tman.h"
 #include "tree.h"
 #include "task.h"
@@ -153,19 +154,16 @@ int tman_task_add(struct tman_context *ctx, struct tman_arg *args,
     int status;
     // TODO: Add support to pass unit values into unit_add()
     // TODO: maybe it's better to move units to ctx?
-    struct unit units[NKEYS] = { 0 };
 
     /* Special case: task ID should not exists. If this's a case - let it go. */
     if ((status = check_args(args)) && status != LIBTMAN_ID_NOSUCH)
         return status;
     else if (task_exist(args->prj, args->id) == TRUE)
         return emod_set(LIBTMAN_ID_EXISTS);
-    else if (unit_chkbin(units) == FALSE)
-        return emod_set(LIBTMAN_UNIT_ILLEG);
 
     if (dir_id_add(tmanfs.base, args->prj, args->id) != 0)
         return emod_set(LIBTMAN_DIR_ID_MAKE);
-    else if (unit_addbin(args->prj, args->id, units) != 0)
+    else if (unit_generate(args->prj, args->id))
         return emod_set(LIBTMAN_UNIT_MAKE);
     else if (task_add(args->prj, args->id))
         return emod_set(LIBTMAN_COL_ADD);
@@ -183,8 +181,8 @@ int tman_task_show(struct tman_context *ctx, struct tman_arg *args,
     if ((status = check_args(args)))
         return status;
 
-    strncpy(ctx->units.id, args->id, IDSIZ);
-    if (unit_getbin(ctx->units.bin, args->prj, args->id) == NULL)
+    strncpy(ctx->id, args->id, IDSIZ);
+    if ((ctx->unitbin = unit_load(args->prj, args->id)) == NULL)
         status = LIBTMAN_UNIT_GET;
 
     link_get_parent(args->prj, args->id, ctx->linkparent);
@@ -239,12 +237,14 @@ int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
     DIR *ids;
     int status;
     struct dirent *ent;
-    struct unit bunit[NKEYS];
     struct tree *node;
+    struct unit *units;
 
     // TODO: move to to cli part
     /* Free task ID list because it might be called more than once.  */
-    ctx->ids = tree_free(ctx->ids);
+
+    node = NULL;
+    units = NULL;
 
     if ((status = tman_check_arg_prj(args)) != LIBTMAN_OK)
         return status;
@@ -259,13 +259,15 @@ int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
         else if (tman_check_arg_id(args)) {
             // TODO: roach: sholud we leave it here? If not then what?..
             continue;
-        } else if (unit_getbin(bunit, args->prj, ent->d_name) == NULL) {
+        } else if ((units = unit_load(args->prj, args->id)) == NULL) {
             // TODO: roach: sholud we leave it here? If not then what?..
             // IF builtin units could not get
             continue;
         }
         struct column column = col_getmark(args->prj, ent->d_name);
-        node = tree_alloc(ent->d_name, col_prio(column.col), bunit[3].val, "");
+        node =
+            tree_alloc(ent->d_name, col_prio(column.col),
+                       unit_get(units, "desc"), "");
         ctx->ids = tree_add(ctx->ids, node);
     }
     closedir(ids);
@@ -341,18 +343,36 @@ int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
     return check_args(args);
 }
 
+struct unit *tman_unit_add(struct unit *head, char *key, char *val)
+{
+    return unit_add(head, key, val);
+}
+
+void *tman_unit_free(struct tman_context *ctx, struct tman_arg *args,
+                     struct tman_option *options)
+{
+    unit_free(ctx->unitbin);
+    return ctx->unitbin = NULL;
+}
+
 int tman_task_set(struct tman_context *ctx, struct tman_arg *args,
                   struct unit *unitbin, struct tman_option *options)
 {
     int status;
+    struct unit *item;
+    struct unit *units;
 
     if ((status = check_args(args)))
         return status;
-    else if (unit_chkbin(unitbin) == FALSE)
-        return emod_set(LIBTMAN_UNIT_ILLEG);
+    else if ((units = unit_load(args->prj, args->id)) == NULL)
+        return emod_set(LIBTMAN_NODEF_ERR);
 
-    if (unit_setbin(args->prj, args->id, unitbin))
+    for (item = unitbin; item; item = item->next) {
+        unit_set(units, item->key, item->val);
+    }
+    if (unit_save(args->prj, args->id, units))
         return emod_set(LIBTMAN_UNIT_SET);
+    unit_free(units);
     return LIBTMAN_OK;
 }
 
@@ -544,9 +564,10 @@ int tman_pgnexec(struct tman_context *ctx, struct tman_arg *args, char *pgname,
 struct unit *tman_hook_show(struct tman_context *ctx, struct tman_hook *hooks,
                             struct tman_arg *args, char *cmd)
 {
+    // roach
     // todo: if no hooks are executed then what?
-    ctx->units.pgn = hookshow(hooks, args->prj, args->id, cmd);
-    return ctx->units.pgn;
+    ctx->unitpgn = hookshow(hooks, args->prj, args->id, cmd);
+    return ctx->unitpgn;
 }
 
 int tman_hook_action(struct tman_context *ctx, struct tman_hook *hooks,
@@ -567,7 +588,7 @@ int tman_hook_action_free(struct tman_context *ctx, struct tman_arg *args,
 struct unit *tman_hook_show_free(struct tman_context *ctx,
                                  struct tman_arg *args)
 {
-    unit_delpgn(ctx->units.pgn);
+    unit_free(ctx->unitpgn);
     return NULL;
 }
 
@@ -578,7 +599,8 @@ const char *tman_strerror(void)
 
 struct tman_context *tman_deinit(struct tman_context *ctx)
 {
-    unit_delpgn(ctx->units.pgn);
+    unit_free(ctx->unitbin);
+    unit_free(ctx->unitpgn);
     tree_free(ctx->ids);
     tree_free(ctx->prjs);
     free(ctx);

@@ -1,62 +1,99 @@
-#include <string.h>
-
 #include "cli.h"
-#include "config.h"
+#include "cli.h"
+#include "help.h"
+#include <string.h>
+#include <ctype.h>
+
+// "prio",  /* task priority */
+// "type",  /* task type: bugfix, hotfix, feature */
+// "date",  /* task date of creation */
+// "desc",  /* task description */
+// "link"   /* child, parent, linked*/
+// "user"   /* who created, who's woring on it */
+// "users"  /* list of users */
+// "teams"  /* list of teams */
+// "label"  /* list of labels */
+// "time"   /* time tracker */
+
+/* roachme: replace all prios if user specifies any in config file */
+static int valid_prio(const char *val)
+{
+    char *prios[] = { "lowest", "low", "mid", "high", "highest" };
+    int size = sizeof(prios) / sizeof(prios[0]);
+
+    for (int i = 0; i < size; ++i)
+        if (strncmp(val, prios[i], 10) == 0)
+            return TRUE;
+    return FALSE;
+}
+
+/* roachme: replace all types if user specifies any in config file */
+static int valid_type(const char *val)
+{
+    char *types[] = { "task", "bugfix", "feature", "hotfix" };
+    int size = sizeof(types) / sizeof(types[0]);
+
+    for (int i = 0; i < size; ++i) {
+        if (strncmp(val, types[i], 10) == 0)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+static int valid_desc(const char *val)
+{
+    if (!isalnum(*val++))
+        return FALSE;
+    for (; *val; ++val)
+        if (!(isalnum(*val) || isspace(*val) || *val == '_' || *val == '-'))
+            return FALSE;
+    return isalnum(*--val) != 0;
+}
 
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
-    int i, idx, quiet, status;
+    int i, status;
     struct tman_arg args;
     int atleast_one_key_set;
-    struct unit units[NKEYS] = { 0 };
     struct tman_option opt;
-    const char *errfmt = "cannot show units '%s': %s";
+    const char *errfmt = "cannot set task units '%s': %s";
 
-    /*
-       Options:
-       -d      set task description
-       -p      set task priority. Values: [highest|high|mid|low|lowest]
-       -s      set task status.
-       -t      set task type. Values: [bugfix|hotfix|feature]
-     */
     args.id = args.prj = NULL;
-    quiet = atleast_one_key_set = FALSE;
-    while ((c = getopt(argc, argv, ":d:hp:qt:P:")) != -1) {
+    atleast_one_key_set = FALSE;
+    while ((c = getopt(argc, argv, ":d:p:t:P:")) != -1) {
+        // TODO: add a protection for duplicates, use map data structure
         switch (c) {
         case 'p':
             args.prj = optarg;
             break;
-        case 'q':
-            quiet = TRUE;
-            break;
         case 't':
-            idx = 1;
-            if (units[idx].isset)
-                break;
+            if (valid_type(optarg) == FALSE) {
+                elog(1, "invalid priority '%s'", optarg);
+                help_usage("set");
+                return 1;
+            }
             atleast_one_key_set = TRUE;
-            strcpy(units[idx].key, "type");
-            strcpy(units[idx].val, optarg);
-            units[idx].isset = 1;
+            ctx->unitbin = tman_unit_add(ctx->unitbin, "type", optarg);
             break;
         case 'd':
-            idx = 3;
-            if (units[idx].isset)
-                break;
+            if (valid_desc(optarg) == FALSE) {
+                elog(1, "invalid description '%s'", optarg);
+                help_usage("set");
+                return 1;
+            }
             atleast_one_key_set = TRUE;
-            strcpy(units[idx].key, "desc");
-            strcpy(units[idx].val, optarg);
-            units[idx].isset = 1;
+            ctx->unitbin = tman_unit_add(ctx->unitbin, "desc", optarg);
             break;
         case 'P':
-            idx = 0;
-            if (units[idx].isset)
-                break;
+            if (valid_prio(optarg) == FALSE) {
+                elog(1, "invalid priority '%s'", optarg);
+                help_usage("set");
+                return 1;
+            }
             atleast_one_key_set = TRUE;
-            strcpy(units[idx].key, "prio");
-            strcpy(units[idx].val, optarg);
-            units[idx].isset = 1;
+            ctx->unitbin = tman_unit_add(ctx->unitbin, "prio", optarg);
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -65,27 +102,24 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
         }
     }
 
-    if (atleast_one_key_set == FALSE)
-        return elog(1, "gotta supply one of the options");
+    if (atleast_one_key_set == FALSE) {
+        elog(1, "gotta supply one of the options");
+        help_usage("set");
+        return 1;
+    }
 
     i = optind;
     do {
         args.id = argv[i];
-        if ((status = tman_task_set(ctx, &args, units, &opt)) != LIBTMAN_OK) {
+        if ((status =
+             tman_task_set(ctx, &args, ctx->unitbin, &opt)) != LIBTMAN_OK) {
             args.id = args.id ? args.id : "NOCURR";
-            if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
-            return status;
-        } else
-            if ((status =
-                 tman_hook_action(ctx, tman_config->hooks, &args,
-                                  "set")) != LIBTMAN_OK) {
-            if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
+            elog(status, errfmt, args.id, tman_strerror());
             return status;
         }
-
+        // TODO: add support for hooks (if needed)
     } while (++i < argc);
 
+    ctx->unitbin = tman_unit_free(ctx, &args, NULL);
     return status;
 }
