@@ -28,6 +28,7 @@ struct tmanstruct {
 struct tman_arg;
 struct tman_hook;
 struct tman_base;
+struct tman_unit;
 struct tman_option;
 struct tman_custom;
 struct tman_context;
@@ -53,6 +54,12 @@ struct tman_base {
     char *task;                 /* directory where tasks are stored */
 };
 
+struct tman_unit {
+    char *key;
+    char *val;
+    struct unit *next;
+};
+
 struct tman_option {
     int id_switch;
     int id_generate;
@@ -73,7 +80,9 @@ enum tman_setuplvl {
 
 /* Generic tman structure used by all(?) API functions.  */
 struct tman_context {
-    struct units units;
+    char id[IDSIZ + 1];
+    struct unit *unitbin;
+    struct unit *unitpgn;
     struct tree *ids;
     struct tree *prjs;
     char linkparent[LINKSIZ + 1];
@@ -120,6 +129,10 @@ int tman_task_show(struct tman_context *ctx, struct tman_arg *args,
                    struct tman_option *options);
 int tman_task_sync(struct tman_context *ctx, struct tman_arg *args,
                    struct tman_option *options);
+
+struct unit *tman_unit_add(struct unit *head, char *key, char *val);
+void *tman_unit_free(struct tman_context *ctx, struct tman_arg *args,
+                     struct tman_option *options);
 
 /* Task project functions.  */
 int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,

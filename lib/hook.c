@@ -43,7 +43,7 @@ struct unit *hookshow(struct tman_hook *hooks, char *prj, char *id, char *cmd)
         }
         while (fgets(line, BUFSIZ, pipe)) {
             sscanf(line, "%s : %[^\n]s", key, val);
-            unitpgn = unit_addpgn(unitpgn, key, val);
+            unitpgn = unit_add(unitpgn, key, val);
         }
         pclose(pipe);
     }

@@ -1,32 +1,21 @@
 #ifndef LIBTMAN_UNIT_H
 #define LIBTMAN_UNIT_H
 
-#include "common.h"
-
-#define NKEYS       4
-#define KEYSIZ      10
-#define VALSIZ      80          /* this big cuz of task description */
+#define KEYSIZ 20
+#define VALSIZ 80
 
 struct unit {
-    int isset;
-    char key[KEYSIZ + 1];
-    char val[VALSIZ + 1];
+    char *key;
+    char *val;
     struct unit *next;
 };
 
-struct units {
-    char id[IDSIZ + 1];
-    struct unit *pgn;
-    struct unit bin[NKEYS];
-};
-
-int unit_chkbin(struct unit *units);
-int unit_addbin(char *prj, char *id, struct unit *units);
-int unit_setbin(char *prj, char *id, struct unit *units);
-struct unit *unit_getbin(struct unit *units, char *prj, char *id);
-int unit_delbin(char *prj, char *id);
-
-struct unit *unit_addpgn(struct unit *head, char *key, char *val);
-struct unit *unit_delpgn(struct unit *pgn);
+void unit_free(struct unit *units);
+int unit_generate(char *prj, char *id);
+struct unit *unit_load(char *prj, char *id);
+char *unit_get(struct unit *head, char *key);
+int unit_set(struct unit *head, char *key, char *val);
+int unit_save(char *prj, char *id, struct unit *units);
+struct unit *unit_add(struct unit *head, char *key, char *val);
 
 #endif

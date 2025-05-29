@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Changed
+
+- `tman`: Refactor unit module
+
 ### Fixed
 
 - `cli/help`: Update help message
