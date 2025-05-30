@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `pgn/find`: Add plugin to find in database
+
 ### Changed
 
 - `tman`: Refactor unit module
