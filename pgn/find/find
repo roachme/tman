@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+CONF=
+
+PRJ=
+ID=
+BASE=
+CMD=
+
+while getopts "B:p:i:s" opt; do
+    case "${opt}" in
+        B)
+            BASE="$OPTARG"
+            ;;
+        p)
+            PRJ="$OPTARG"
+            ;;
+        i)
+            ID="$OPTARG"
+            ;;
+        *)
+            exit 1
+    esac
+done
+
+shift $((OPTIND-1))
+CMD="$1"
+
+function usage()
+{
+    cat << EOF
+Usage: tman find [OPTION]... PATTERN
+    Find items in database.
+
+    Options:
+      -i    find task ID by PATTERN
+      -b    find board name by PATTERN
+      -p    find project name by PATTERN
+EOF
+}
+
+function _find_config()
+{
+    local confdir=("$HOME/.tman/pgns/struct.conf" "$HOME/.config/tman/pgns/struct.conf")
+
+    for conf in "${confdir[@]}"; do
+        if [ -f "$conf" ]; then
+            CONF="$conf"
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+_find_config && source "$CONF" || exit 0
+
+if [ "$CMD" == "help" ]; then
+    usage
+else
+    echo "no such command or empty '$CMD'"
+    exit 1
+fi
