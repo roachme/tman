@@ -8,10 +8,10 @@
     3. Separate plugin options from plugin command options.
     4. Or maybe it's better to let the plugin to handle plugin options and the rest.
 */
-int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
+int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
 {
     int status;
-    char c, *cmd;
+    char c, *cmd, *name;
     struct tman_arg args;
 
     args.id = args.prj = NULL;
@@ -30,7 +30,8 @@ int tman_cli_plugin(char *name, int argc, char **argv, struct tman_context *ctx)
         }
     }
 
-    cmd = optind == argc ? "" : argv[optind];
+    name = argv[optind++];
+    cmd = optind == argc ? "" : argv[optind++];
     if ((status = tman_pgnexec(NULL, &args, name, cmd, NULL)) != LIBTMAN_OK)
         elog(status, "pgn failed: %s", tman_strerror());
     return status;

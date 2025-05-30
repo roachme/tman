@@ -161,8 +161,7 @@ int main(int argc, char **argv)
             elog(status, "%s", tman_strerror());
             goto out;
         }
-        /* skip program name and plugin name, that's why shift 2.  */
-        status = tman_cli_plugin(cmd, argc - 2, argv + 2, ctx);
+        status = tman_cli_plugin(argc, argv, ctx);
     }
     if (cmdfound == FALSE) {
         status = 1;

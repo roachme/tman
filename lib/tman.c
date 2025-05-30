@@ -558,7 +558,10 @@ int tman_pgnexec(struct tman_context *ctx, struct tman_arg *args, char *pgname,
 
     if ((status = check_args(args)))
         return status;
-    return system(genpath_pgn(args->prj, args->id, pgname, pgncmd));
+
+    if (system(genpath_pgn(args->prj, args->id, pgname, pgncmd)))
+        return emod_set(LIBTMAN_EPGN);
+    return LIBTMAN_OK;
 }
 
 struct unit *tman_hook_show(struct tman_context *ctx, struct tman_hook *hooks,
