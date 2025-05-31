@@ -408,6 +408,8 @@ int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,
 
     if (dir_prj_add(tmanfs.base, args->prj))
         return emod_set(LIBTMAN_DIR_PRJ_MAKE);
+    else if (unit_generate_prj(args->prj))
+        return emod_set(LIBTMAN_UNIT_MAKE);
     else if (options->prj_switch == TRUE && project_addcurr(args->prj))
         return emod_set(LIBTMAN_PRJ_SWITCH);
     return LIBTMAN_OK;
@@ -436,12 +438,12 @@ int tman_prj_del(struct tman_context *ctx, struct tman_arg *args,
 int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
 {
     DIR *edir;
+    struct unit *units;
     struct dirent *ent;
     struct tree *node;
     int colprio = 1;
     char *cprj, *pprj;
     struct tman_arg args;
-    char *desc = "some project desc";
     char pgnout[PGNOUTSIZ + 1] = { 0 };
 
     if ((edir = opendir(tmanfs.base)) == NULL)
@@ -461,6 +463,10 @@ int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
         else if (tman_check_arg_prj(&args)) {
             // TODO: roach: sholud we leave it here? If not then what?..
             continue;
+        } else if ((units = unit_load(genpath_unit_prj(args.prj))) == NULL) {
+            // TODO: roach: sholud we leave it here? If not then what?..
+            // IF builtin units could not get
+            continue;
         }
         // TODO: unify this shit
         if (cprj != NULL && strncmp(cprj, ent->d_name, PRJSIZ) == 0)
@@ -469,9 +475,11 @@ int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
             colprio = 2;
         else
             colprio = 3;
-        node = tree_alloc(ent->d_name, colprio, desc, pgnout);
+        node =
+            tree_alloc(ent->d_name, colprio, unit_get(units, "desc"), pgnout);
         ctx->prjs = tree_add(ctx->prjs, node);
     }
+
     closedir(edir);
     return LIBTMAN_OK;
 }
@@ -523,13 +531,26 @@ int tman_prj_rename(struct tman_context *ctx, struct tman_arg *src,
     return dir_prj_rename(tmanfs.base, src->prj, dst->prj);
 }
 
-/*
 int tman_prj_set(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options)
+                 struct unit *unitbin, struct tman_option *options)
 {
+    int status;
+    struct unit *item;
+    struct unit *units;
+
+    if ((status = tman_check_arg_prj(args)))
+        return status;
+    else if ((units = unit_load(genpath_unit_prj(args->prj))) == NULL)
+        return emod_set(LIBTMAN_NODEF_ERR);
+
+    for (item = unitbin; item; item = item->next) {
+        unit_set(units, item->key, item->val);
+    }
+    if (unit_save(genpath_unit_prj(args->prj), units))
+        return emod_set(LIBTMAN_UNIT_SET);
+    unit_free(units);
     return LIBTMAN_OK;
 }
-*/
 
 int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
                   struct tman_option *options)

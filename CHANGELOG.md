@@ -3,6 +3,7 @@
 ### Added
 
 - `pgn/find`: Add plugin to find in database
+- `cli/prj`: Add command `set` to project object
 
 ### Changed
 

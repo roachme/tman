@@ -234,7 +234,7 @@ struct help helptab[] = {
       list    List projects\n\
       prev    Switch to previous project\n\
       rename  Rename project\n\
-      set     Set project vaules (under development)\n\
+      set     Set project vaules\n\
       show    Show project info (under development)\n\
       sync    Switch to or synchronize (with) project\n\
     \n\
@@ -321,13 +321,13 @@ struct help helptab[] = {
      .tag = TAGOBJCMD,
      .name = "prj-set",
      .synop = "Usage: " PROGRAM " prj set [OPTION] [NAME]...\n",
-     .desc_short = "List project(s).\n",
+     .desc_short = "Set project unit values.\n",
      .desc_long = "\n\
-    This feature is under development.\n\
     Arguments:\n\
       NAME    project name\n\
     \n\
     Options:\n\
+      -d      project description\n\
       -h      show this help and exit\n\
       -q      do not write anything to standard error output\n\
     \n\

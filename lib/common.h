@@ -28,6 +28,7 @@ extern struct tmanstruct tmanfs;
 #define PATHSIZ         4096
 
 char *genpath_prj(char *prj);
+char *genpath_unit_prj(char *prj);
 char *genpath_col(char *prj, char *id);
 char *genpath_link(char *prj, char *id);
 char *genpath_full(char *prj, char *id);

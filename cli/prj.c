@@ -1,8 +1,19 @@
+#include <ctype.h>
 #include <string.h>
 #include <dirent.h>
 
 #include "cli.h"
 #include "color.h"
+
+static int valid_desc(const char *val)
+{
+    if (!isalnum(*val++))
+        return FALSE;
+    for (; *val; ++val)
+        if (!(isalnum(*val) || isspace(*val) || *val == '_' || *val == '-'))
+            return FALSE;
+    return isalnum(*--val) != 0;
+}
 
 static int tree_print_rec(struct tree *p)
 {
@@ -178,7 +189,59 @@ static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
 
 static int _prj_set(int argc, char **argv, struct tman_context *ctx)
 {
-    elog(1, "under development");
+    struct tman_arg args;
+    int atleast_one_key_set;
+    int c, i, quiet, showhelp;
+    const char *errfmt = "could not set project unit value '%s': %s";
+
+    quiet = showhelp = FALSE;
+    atleast_one_key_set = FALSE;
+    args.id = args.brd = args.prj = NULL;
+    while ((c = getopt(argc, argv, ":d:hq")) != -1) {
+        switch (c) {
+        case 'd':
+            if (valid_desc(optarg) == FALSE) {
+                elog(1, "invalid description '%s'", optarg);
+                help_usage("prj-set");
+                return 1;
+            }
+            atleast_one_key_set = TRUE;
+            ctx->unitbin = tman_unit_add(ctx->unitbin, "desc", optarg);
+            break;
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 'q':
+            quiet = TRUE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
+        }
+    }
+
+    if (showhelp)
+        return help_usage("prj-set");
+    if (atleast_one_key_set == FALSE) {
+        elog(1, "gotta supply one of the options");
+        help_usage("prj-set");
+        return 1;
+    }
+
+    i = optind;
+    do {
+        int status;
+        args.prj = argv[i];
+
+        if ((status =
+             tman_prj_set(ctx, &args, ctx->unitbin, NULL)) != LIBTMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, argv[i], tman_strerror());
+        }
+    } while (++i < argc);
+
+    ctx->unitbin = tman_unit_free(ctx, &args, NULL);
     return 0;
 }
 
