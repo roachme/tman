@@ -67,6 +67,20 @@ struct unit *unit_add(struct unit *head, char *key, char *val)
     return head;
 }
 
+int unit_generate_prj(char *prj)
+{
+    struct unit *units = NULL;
+    char desc[100] = "autogenerate desciption for project ";
+
+    strcat(desc, prj);
+    units = unit_add(units, "desc", desc);
+    if (unit_save(genpath_unit_prj(prj), units))
+        return 1;
+    // roach: make return value int ??
+    unit_free(units);
+    return 0;
+}
+
 int unit_generate(char *prj, char *id)
 {
     char buff[BUFSIZ + 1];

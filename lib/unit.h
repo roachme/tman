@@ -11,6 +11,7 @@ struct unit {
 };
 
 void unit_free(struct unit *units);
+int unit_generate_prj(char *prj);
 int unit_generate(char *prj, char *id);
 struct unit *unit_load(char *filename);
 char *unit_get(struct unit *head, char *key);
