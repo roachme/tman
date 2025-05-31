@@ -182,7 +182,7 @@ int tman_task_show(struct tman_context *ctx, struct tman_arg *args,
         return status;
 
     strncpy(ctx->id, args->id, IDSIZ);
-    if ((ctx->unitbin = unit_load(args->prj, args->id)) == NULL)
+    if ((ctx->unitbin = unit_load(genpath_unit(args->prj, args->id))) == NULL)
         status = LIBTMAN_UNIT_GET;
 
     link_get_parent(args->prj, args->id, ctx->linkparent);
@@ -259,7 +259,8 @@ int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
         else if (tman_check_arg_id(args)) {
             // TODO: roach: sholud we leave it here? If not then what?..
             continue;
-        } else if ((units = unit_load(args->prj, args->id)) == NULL) {
+        } else if ((units = unit_load(genpath_unit(args->prj, args->id))) ==
+                   NULL) {
             // TODO: roach: sholud we leave it here? If not then what?..
             // IF builtin units could not get
             continue;
@@ -362,15 +363,16 @@ int tman_task_set(struct tman_context *ctx, struct tman_arg *args,
     struct unit *item;
     struct unit *units;
 
+    // TODO: move genpath_unit to a variable to not call it twice
     if ((status = check_args(args)))
         return status;
-    else if ((units = unit_load(args->prj, args->id)) == NULL)
+    else if ((units = unit_load(genpath_unit(args->prj, args->id))) == NULL)
         return emod_set(LIBTMAN_NODEF_ERR);
 
     for (item = unitbin; item; item = item->next) {
         unit_set(units, item->key, item->val);
     }
-    if (unit_save(args->prj, args->id, units))
+    if (unit_save(genpath_unit(args->prj, args->id), units))
         return emod_set(LIBTMAN_UNIT_SET);
     unit_free(units);
     return LIBTMAN_OK;

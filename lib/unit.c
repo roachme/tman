@@ -5,11 +5,11 @@
 #include "unit.h"
 #include "common.h"
 
-int unit_save(char *prj, char *id, struct unit *units)
+int unit_save(char *filename, struct unit *units)
 {
     FILE *fp;
 
-    if ((fp = fopen(genpath_unit(prj, id), "w")) == NULL)
+    if ((fp = fopen(filename, "w")) == NULL)
         return 1;
 
     for (; units; units = units->next)
@@ -20,7 +20,7 @@ int unit_save(char *prj, char *id, struct unit *units)
 /*
  * Get units all units.
 */
-struct unit *unit_load(char *prj, char *id)
+struct unit *unit_load(char *filename)
 {
     FILE *fp;
     struct unit *units;
@@ -28,7 +28,7 @@ struct unit *unit_load(char *prj, char *id)
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
 
-    if ((fp = fopen(genpath_unit(prj, id), "r")) == NULL)
+    if ((fp = fopen(filename, "r")) == NULL)
         return NULL;
 
     // TODO: write a better parser
@@ -82,7 +82,7 @@ int unit_generate(char *prj, char *id)
     units = unit_add(units, "type", "task");
     units = unit_add(units, "date", buff);
     units = unit_add(units, "desc", desc);
-    if (unit_save(prj, id, units)) {
+    if (unit_save(genpath_unit(prj, id), units)) {
         fprintf(stderr, "unit_save_bin\n");
         return 1;
     }
