@@ -7,6 +7,7 @@
 ### Changed
 
 - `tman`: Refactor unit module
+- `lib/unit`: Update unit module's API
 
 ### Fixed
 
