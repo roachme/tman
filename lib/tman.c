@@ -552,6 +552,18 @@ int tman_prj_set(struct tman_context *ctx, struct tman_arg *args,
     return LIBTMAN_OK;
 }
 
+int tman_prj_show(struct tman_context *ctx, struct tman_arg *args,
+                  struct tman_option *options)
+{
+    int status;
+
+    if ((status = tman_check_arg_prj(args)))
+        return status;
+    else if ((ctx->unitbin = unit_load(genpath_unit_prj(args->prj))) == NULL)
+        return emod_set(LIBTMAN_NODEF_ERR);
+    return LIBTMAN_OK;
+}
+
 int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
                   struct tman_option *options)
 {

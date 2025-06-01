@@ -248,8 +248,49 @@ static int _prj_set(int argc, char **argv, struct tman_context *ctx)
 // roach: maybe it'll be useful
 static int _prj_show(int argc, char **argv, struct tman_context *ctx)
 {
-    elog(1, "under development");
-    return 0;
+    struct tman_arg args;
+    int c, i, quiet, showhelp, status;
+    struct unit *unitbin, *unitpgn;
+    const char *errfmt = "cannot show project units '%s': %s";
+
+    unitbin = unitpgn = NULL;
+    quiet = showhelp = FALSE;
+    args.prj = args.id = NULL;
+    while ((c = getopt(argc, argv, ":hq")) != -1) {
+        switch (c) {
+        case 'h':
+            showhelp = TRUE;
+            break;
+        case 'q':
+            quiet = TRUE;
+            break;
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `%c'", optopt);
+        }
+    }
+
+    if (showhelp)
+        return help_usage("prj-show");
+
+    i = optind;
+    do {
+        args.prj = argv[i];
+        if ((status = tman_prj_show(ctx, &args, NULL)) != LIBTMAN_OK) {
+            if (quiet == FALSE)
+                elog(status, errfmt, argv[i], tman_strerror());
+            continue;
+        }
+
+        printf("%-7s : %s\n", "prj", args.prj);
+        for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
+            printf("%-7s : %s\n", unitbin->key, unitbin->val);
+
+        // TODO: add plugin output
+    } while (++i < argc);
+
+    return status;
 }
 
 static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
@@ -303,7 +344,7 @@ static const builtin_t prjcmds[] = {
     {.name = "prev",.func = &_prj_prev},
     {.name = "rename",.func = &_prj_rename},
     {.name = "set",.func = &_prj_set},
-    {.name = "show",.func = &_prj_show},        // under consideration
+    {.name = "show",.func = &_prj_show},
     {.name = "sync",.func = &_prj_sync},
 };
 
