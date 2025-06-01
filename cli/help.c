@@ -339,7 +339,6 @@ struct help helptab[] = {
      .synop = "Usage: " PROGRAM " prj show [OPTION] [NAME]...\n",
      .desc_short = "Show project(s) info.\n",
      .desc_long = "\n\
-    This feature is under development.\n\
     \n\
     Options:\n\
       -h      show this help and exit\n\
