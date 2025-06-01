@@ -14,6 +14,8 @@
 #define CONF_MAXPGNINS  256
 
 struct config {
+    int usecolors;              /* use colors */
+    int usedebug;               /* output debug info */
     int usehooks;               /* execute hooks from config, by default set */
     char base[PATHSIZ + 1];
     char pgnins[PATHSIZ + 1];

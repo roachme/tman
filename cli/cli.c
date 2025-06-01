@@ -54,13 +54,14 @@ struct config *tman_config;
 
 int main(int argc, char **argv)
 {
-    int usehooks = -1;
+    int usecolors, usedebug, usehooks;
     char *cmd = NULL, *option, *togfmt;
     struct tman_base base = {.task = NULL,.pgn = NULL };
     int i, status, cmdfound;
     struct tman_context *ctx;
 
     cmd = option = NULL;
+    usecolors = usedebug = usehooks = -1;
     togfmt = "option `%s' accepts either 'on' or 'off'";
 
     /* Parse util itself options.  */
@@ -73,9 +74,9 @@ int main(int argc, char **argv)
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
             if (strcmp(argv[i + 1], "on") == 0)
-                usehooks = TRUE;
+                usecolors = TRUE;
             else if (strcmp(argv[i + 1], "off") == 0)
-                usehooks = FALSE;
+                usecolors = FALSE;
             else
                 return elog(1, togfmt, option);
             ++i;                /* Skip option.  */
@@ -84,9 +85,9 @@ int main(int argc, char **argv)
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
             if (strcmp(argv[i + 1], "on") == 0)
-                usehooks = TRUE;
+                usedebug = TRUE;
             else if (strcmp(argv[i + 1], "off") == 0)
-                usehooks = FALSE;
+                usedebug = FALSE;
             else
                 return elog(1, togfmt, option);
             ++i;                /* Skip option.  */
@@ -131,8 +132,11 @@ int main(int argc, char **argv)
     cmdfound = FALSE;
     base.task = base.task != NULL ? base.task : tman_config->base;
     base.pgn = base.pgn != NULL ? base.pgn : tman_config->pgnins;
-    if (usehooks != -1)
-        tman_config->usehooks = usehooks;
+
+    tman_config->usehooks = usehooks == -1 ? tman_config->usehooks : usehooks;
+    tman_config->usedebug = usedebug == -1 ? tman_config->usedebug : usedebug;
+    tman_config->usecolors =
+        usecolors == -1 ? tman_config->usecolors : usecolors;
 
     /* NOTE: maybe it's better to use default BASEDIR?  */
     if (base.task == NULL || base.task[0] == '\0')
