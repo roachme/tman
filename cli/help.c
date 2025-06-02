@@ -397,24 +397,6 @@ struct help helptab[] = {
 
     {
      .tag = TAGMISC,
-     .name = "link",
-     .synop = "Usage: " PROGRAM " link [OPTION]... PID CID\n",
-     .desc_short = "Link tasks together (under development).\n",
-     .desc_long = "\n\
-    Options:\n\
-      -c      link task as child\n\
-      -l      link two tasks\n\
-      -p PRJ  project name\n\
-    \n\
-    Arguments:\n\
-      CID     child task ID\n\
-      PID     parent task ID\n\
-      PRJ     project name (default is current)\n\
-    \n\
-    Exit status:\n\
-    Under development\n"},
-    {
-     .tag = TAGMISC,
      .name = "move",
      .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]\n",
      .desc_short = "Move (rename) tasks.\n",

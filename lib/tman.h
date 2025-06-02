@@ -111,8 +111,6 @@ int tman_task_del(struct tman_context *ctx, struct tman_arg *args,
                   struct tman_option *options);
 int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
                    struct tman_option *options);
-int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options);
 int tman_task_move(struct tman_context *ctx, struct tman_arg *src,
                    struct tman_arg *dst);
 int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
