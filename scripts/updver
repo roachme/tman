@@ -19,8 +19,17 @@ VERSION_CURR="$(cat "$FILEVERSION")"
 
 function usage()
 {
-    echo "Usage: updver.sh VERSION"
+    echo "Usage: updver.sh [OPTION]... COMMAND [-v VERSION]"
     echo "VERSION pattern v[0-255].[0-255].[0-255]"
+    echo
+    echo "Commands:"
+    echo "  make      create a new version (requires VERSION)"
+    echo "  help      show this help message and exit"
+    echo "  revert    revert newly created version"
+    echo "  update    push new version to remote server"
+    echo
+    echo "Options:"
+    echo "  -h        show this help message and exit"
     return 0
 }
 
@@ -188,6 +197,8 @@ elif [ "$CMD" = "update" ]; then
 elif [ "$CMD" = "revert" ]; then
     revert_branches
     revert_tags
+elif [ "$CMD" = "help" ]; then
+    usage
 else
     echo "$PROGRAM: no such command '$CMD'"
     exit 1
