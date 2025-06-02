@@ -53,7 +53,7 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
         default:
-            return elog(1, "invalid option `%c'", optopt);
+            return elog(1, "invalid option `-%c'", optopt);
         }
     }
 
@@ -98,7 +98,7 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
         default:
-            return elog(1, "invalid option `%c'", optopt);
+            return elog(1, "invalid option `-%c'", optopt);
         }
     }
 
@@ -165,7 +165,7 @@ static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
             quiet = TRUE;
             break;
         default:
-            return elog(1, "invalid option `%c'", optopt);
+            return elog(1, "invalid option `-%c'", optopt);
         }
     }
 
@@ -217,7 +217,7 @@ static int _prj_set(int argc, char **argv, struct tman_context *ctx)
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
         default:
-            return elog(1, "invalid option `%c'", optopt);
+            return elog(1, "invalid option `-%c'", optopt);
         }
     }
 
@@ -267,7 +267,7 @@ static int _prj_show(int argc, char **argv, struct tman_context *ctx)
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
         default:
-            return elog(1, "invalid option `%c'", optopt);
+            return elog(1, "invalid option `-%c'", optopt);
         }
     }
 
@@ -318,7 +318,7 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
         default:
-            return elog(1, "invalid option `%c'", optopt);
+            return elog(1, "invalid option `-%c'", optopt);
         }
     }
 

@@ -111,7 +111,7 @@ int main(int argc, char **argv)
         } else if (strcmp(argv[i], "-V") == 0)
             return show_version();
         else
-            return elog(1, "invalid option `%s'", argv[i]);
+            return elog(1, "invalid option `-%s'", argv[i]);
     }
 
     if ((cmd = argv[i]) == NULL) {
