@@ -7,9 +7,9 @@ ID=
 BASE=
 CMD=
 
-while getopts "B:p:i:s" opt; do
+while getopts "T:p:i:s" opt; do
     case "${opt}" in
-        B)
+        T)
             BASE="$OPTARG"
             ;;
         p)

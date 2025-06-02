@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Fixed
+
+- `pgn`: Update option for task directory
+
+
 ## [0.0.15] - (2025-06-02)
 
 ### Added
