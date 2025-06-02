@@ -20,15 +20,6 @@ static int show_key(struct tman_context *ctx, char *key)
             return LIBTMAN_OK;
         }
 
-    /* Look up addition fields.  */
-    if (strcmp(key, "parent") == 0) {
-        printf("%s\n", ctx->linkparent);
-        return 0;
-    } else if (strcmp(key, "child") == 0) {
-        printf("%s\n", ctx->linkchild);
-        return 0;
-    }
-
     for (unitpgn = ctx->unitpgn; unitpgn; unitpgn = unitpgn->next)
         if (strcmp(key, unitpgn->key) == 0) {
             printf("%s\n", unitpgn->val);
@@ -38,7 +29,7 @@ static int show_key(struct tman_context *ctx, char *key)
     return 1;
 }
 
-static int pretty_show(struct tman_context *ctx, int showaddition)
+static int pretty_show(struct tman_context *ctx, char *key)
 {
     struct unit *unitbin, *unitpgn;
 
@@ -46,12 +37,6 @@ static int pretty_show(struct tman_context *ctx, int showaddition)
 
     for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
         printf("%-7s : %s\n", unitbin->key, unitbin->val);
-
-    /* Show links if needed.  */
-    if (showaddition) {
-        printf("%-7s : %s\n", "parent", ctx->linkparent);
-        printf("%-7s : %s\n", "child", ctx->linkchild);
-    }
 
     for (unitpgn = ctx->unitpgn; unitpgn; unitpgn = unitpgn->next)
         printf("%-7s : %s\n", unitpgn->key, unitpgn->val);
@@ -63,16 +48,13 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
     char *key;
-    int i, quiet, showaddition, showhelp, status;
+    int i, quiet, showhelp, status;
     struct tman_arg args;
 
-    quiet = showaddition = showhelp = FALSE;
+    quiet = showhelp = FALSE;
     key = args.prj = args.id = args.brd = NULL;
-    while ((c = getopt(argc, argv, ":ap:hk:q")) != -1) {
+    while ((c = getopt(argc, argv, ":p:hk:q")) != -1) {
         switch (c) {
-        case 'a':
-            showaddition = TRUE;
-            break;
         case 'h':
             showhelp = TRUE;
             break;
@@ -118,7 +100,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
                     elog(1, errfmt, args.id, "key not found");
             }
         } else {
-            pretty_show(ctx, showaddition);
+            pretty_show(ctx, key);
         }
 
         ctx->unitbin = tman_unit_free(ctx, &args, NULL);
