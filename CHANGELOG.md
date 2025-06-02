@@ -5,6 +5,7 @@
 - `pgn/find`: Add plugin to find in database
 - `cli/prj`: Add command `set` to project object
 - `cli/prj`: Add command `show` to project object
+- `scripts/updver`: Add help message command
 
 ### Changed
 
