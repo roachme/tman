@@ -8,7 +8,6 @@
 // "type",  /* task type: bugfix, hotfix, feature */
 // "date",  /* task date of creation */
 // "desc",  /* task description */
-// "link"   /* child, parent, linked*/
 // "user"   /* who created, who's woring on it */
 // "users"  /* list of users */
 // "teams"  /* list of teams */

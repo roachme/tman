@@ -266,15 +266,6 @@ int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
     return LIBTMAN_OK;
 }
 
-/* Link task IDs together: parent - children relationship.  */
-/*
-int tman_task_link(struct tman_context *ctx, struct tman_arg *args,
-                 struct tman_option *options)
-{
-    return 0;
-}
-*/
-
 int tman_task_move(struct tman_context *ctx, struct tman_arg *src,
                    struct tman_arg *dst)
 {

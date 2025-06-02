@@ -8,6 +8,10 @@
 
 - `pgn`: Update option for task directory
 
+### Deleted
+
+- `cli`: Delete link command skeletons
+
 
 ## [0.0.15] - (2025-06-02)
 
