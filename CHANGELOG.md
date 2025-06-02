@@ -16,6 +16,7 @@
 - `cli/help`: Update help message
 - `cli/plugin`: Fix plugin options parser
 - `cli/cli`: Fix config options
+- `cli`: Fix missing usehooks option
 
 
 ## [0.0.14] - (2025-05-24)

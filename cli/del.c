@@ -13,7 +13,7 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
     quiet = showhelp = FALSE;
     args.id = args.prj = NULL;
     errfmt = "cannot delete task '%s': %s";
-    while ((c = getopt(argc, argv, ":fhnp:q")) != -1) {
+    while ((c = getopt(argc, argv, ":hnp:q")) != -1) {
         switch (c) {
         case 'h':
             showhelp = TRUE;
@@ -64,7 +64,8 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
             continue;
         }
 
-        if ((status =
+        if (tman_config->usehooks == TRUE &&
+            (status =
              tman_hook_action(ctx, tman_config->hooks, &args,
                               "del")) != LIBTMAN_OK) {
             if (quiet == FALSE)
