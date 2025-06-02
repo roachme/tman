@@ -33,12 +33,6 @@ char *genpath_col(char *prj, char *id)
     return pathname;
 }
 
-char *genpath_link(char *prj, char *id)
-{
-    sprintf(pathname, "%s/%s/%s/.tman/link", base, prj, id);
-    return pathname;
-}
-
 char *genpath_unit(char *prj, char *id)
 {
     sprintf(pathname, "%s/%s/%s/.tman/unit", base, prj, id);

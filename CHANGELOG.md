@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Changed
+
+- `cli/link`: revert "Add skeleton to link tasks"
+
 ### Fixed
 
 - `pgn`: Update option for task directory
@@ -35,7 +39,6 @@
 - `cli/config`: Add support for environment variable `HOME` in path
 - `scripts/install`: Add skeleton for installation script
 - `cli/list`: Add option to show project name header
-- `cli/link`: Add skeleton to link tasks
 
 ### Changed
 

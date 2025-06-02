@@ -7,8 +7,6 @@
 
 #define CMDSIZ          5
 #define TMANPATHSIZE    1024
-#define LINKSIZ         40      /* TODO: should be task ID size.  */
-                            /* Or even better, link of task IDs cuz there might be many links.  */
 
 #define FINITSIZ TMANPATHSIZE + 6 + 10  /* filename + padding */
 #define FSTATESIZ TMANPATHSIZE + 6 + 10 /* filename + padding */
@@ -85,8 +83,6 @@ struct tman_context {
     struct unit *unitpgn;
     struct tree *ids;
     struct tree *prjs;
-    char linkparent[LINKSIZ + 1];
-    char linkchild[LINKSIZ + 1];
 };
 
 extern struct tmanstruct tmanfs;
@@ -117,8 +113,6 @@ int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
                    struct tman_option *options);
 int tman_id_link(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
-int tman_task_link(struct tman_context *ctx, struct tman_arg *parent,
-                   struct tman_arg *child, struct tman_option *options);
 int tman_task_move(struct tman_context *ctx, struct tman_arg *src,
                    struct tman_arg *dst);
 int tman_task_prev(struct tman_context *ctx, struct tman_arg *args,
