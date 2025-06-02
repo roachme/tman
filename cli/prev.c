@@ -33,7 +33,8 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
         return status;
-    } else if ((status =
+    } else if (tman_config->usehooks == TRUE &&
+               (status =
                 tman_hook_action(ctx, tman_config->hooks, &args,
                                  "prev")) != LIBTMAN_OK) {
         if (quiet == FALSE)
