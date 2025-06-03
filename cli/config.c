@@ -11,6 +11,8 @@
 
 static const char *delim = " =\n";
 
+// TODO: refactor this logic:
+// `str`: use another variable, cuz it may cause buffer overflow
 static char *resolve_env_var_home(char *str)
 {
     char *home = getenv("HOME");
@@ -93,6 +95,18 @@ static int parse_columns(struct columns *columns)
 }
 */
 
+static int set_defaults(struct config *myconfig)
+{
+    char default_taskdir[BUFSIZ + 1] = "$HOME/tmantasks";
+    char default_pgndir[BUFSIZ + 1] = "$HOME/.local/lib/tman/pgn";
+
+    if (myconfig->base[0] == '\0')
+        strcpy(myconfig->base, resolve_env_var_home(default_taskdir));
+    if (myconfig->pgnins[0] == '\0')
+        strcpy(myconfig->base, resolve_env_var_home(default_pgndir));
+    return 0;
+}
+
 static int parseconf(struct config *myconfig, const char *fname)
 {
     FILE *fp;
@@ -132,7 +146,7 @@ static int parseconf(struct config *myconfig, const char *fname)
         }
     }
     fclose(fp);
-    return 0;
+    return set_defaults(myconfig);
 }
 
 struct config *config_init(void)
