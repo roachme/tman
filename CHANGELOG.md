@@ -7,6 +7,7 @@
 ### Fixed
 
 - `pgn`: Update option for task directory
+- `cli/show`: Hotfix show hooks
 
 ### Deleted
 
