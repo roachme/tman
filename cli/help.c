@@ -219,31 +219,6 @@ struct help helptab[] = {
     Under development\n"},
 
     {
-     .tag = TAGOBJ,
-     .name = "prj",
-     .synop = "Usage: " PROGRAM " prj SUBCMD [OPTION] NAME\n",
-     .desc_short = "Manage and show projects.\n",
-     .desc_long = "\n\
-    Arguments:\n\
-      SUBCMD  project subcommand\n\
-    \n\
-    SUBCMD list:\n\
-      add     Add a new project\n\
-      del     Delete project with all tasks\n\
-      list    List projects\n\
-      prev    Switch to previous project\n\
-      rename  Rename project\n\
-      set     Set project vaules\n\
-      show    Show project info (under development)\n\
-      sync    Switch to or synchronize (with) project\n\
-    \n\
-    Note:\n\
-      Use '" PROGRAM " help prj-SUBCMD' to get help on subcommands. \n\
-      For example: " PROGRAM " help prj-add\n\
-    \n\
-    Exit status:\n\
-    The return status is return status of subcommand.\n"},
-    {
      .tag = TAGOBJCMD,
      .name = "prj-add",
      .synop = "Usage: " PROGRAM " prj add [OPTION] NAME...\n",
@@ -367,6 +342,18 @@ struct help helptab[] = {
 
     {
      .tag = TAGOBJ,
+     .name = "brd",
+     .synop = "Usage: " PROGRAM " brd SUBCMD [OPTION] NAME\n",
+     .desc_short = "Manage and show boards (under development).\n",
+     .desc_long = "\n\
+    THIS FEATURE IS UNDER DEVELOPMENT\n\
+    Arguments:\n\
+      SUBCMD  board subcommand\n\
+    \n\
+    Exit status:\n\
+    The return status is return status of subcommand.\n"},
+    {
+     .tag = TAGOBJ,
      .name = "pgm",
      .synop = "Usage: " PROGRAM " pgm PLUGIN [OPTION]...\n",
      .desc_short = "Manage and show plugins.\n",
@@ -376,6 +363,31 @@ struct help helptab[] = {
     \n\
     Exit status:\n\
     The return status is return status of plugin.\n"},
+    {
+     .tag = TAGOBJ,
+     .name = "prj",
+     .synop = "Usage: " PROGRAM " prj SUBCMD [OPTION] NAME\n",
+     .desc_short = "Manage and show projects.\n",
+     .desc_long = "\n\
+    Arguments:\n\
+      SUBCMD  project subcommand\n\
+    \n\
+    SUBCMD list:\n\
+      add     Add a new project\n\
+      del     Delete project with all tasks\n\
+      list    List projects\n\
+      prev    Switch to previous project\n\
+      rename  Rename project\n\
+      set     Set project vaules\n\
+      show    Show project info (under development)\n\
+      sync    Switch to or synchronize (with) project\n\
+    \n\
+    Note:\n\
+      Use '" PROGRAM " help prj-SUBCMD' to get help on subcommands. \n\
+      For example: " PROGRAM " help prj-add\n\
+    \n\
+    Exit status:\n\
+    The return status is return status of subcommand.\n"},
 
     {
      .tag = TAGMISC,
