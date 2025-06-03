@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `cli/config`: Add default values
+
 ### Changed
 
 - `cli/link`: revert "Add skeleton to link tasks"
