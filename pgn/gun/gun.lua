@@ -339,6 +339,22 @@ function gun.rsync(basic)
     return 0
 end
 
+function gun.merge(basic)
+    local units = getunits(basic)
+    local sysbranch = branch_generate(units.branchpatt, units)
+    local branchname = units.branch or sysbranch
+
+    for _, repo in pairs(units.repos) do
+        if gitlib.repo_isuncommited(repo.name, basic.repodir) then
+            elog(string.format("Cannot delete branch in '%s': has uncommited changes", repo.name));
+        elseif not gitlib.branch_switch(repo.name, repo.branch, basic.repodir) then
+            elog("could not switch to default branch", repo.name)
+        elseif not gitlib.branch_rebase(repo.name, branchname, basic.repodir) then
+            elog("could not rebase against default branch", repo.name)
+        end
+    end
+end
+
 function gun.del(basic)
     local units = getunits(basic)
     local sysbranch = branch_generate(units.branchpatt, units)
@@ -413,6 +429,7 @@ local function main()
         { name = "commit", func = gun.commit },
         { name = "del",    func = gun.del    },
         { name = "help",   func = gun.help   },
+        { name = "merge",  func = gun.merge  },
         { name = "rsync",  func = gun.rsync  },
         { name = "show",   func = gun.show   },
         { name = "sync",   func = gun.sync   },
