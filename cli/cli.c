@@ -1,9 +1,12 @@
 #include <string.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #include "cli.h"
 #include "config.h"
 #include "help.h"
+
+#define NONEBOOL        -1      /* Not yet set boolean value */
 
 /*
  * Tman util options:
@@ -60,7 +63,7 @@ int main(int argc, char **argv)
     struct tman_context *ctx;
 
     cmd = option = NULL;
-    usecolors = usedebug = usehooks = -1;
+    usecolors = usedebug = usehooks = NONEBOOL;
     togfmt = "option `%s' accepts either 'on' or 'off'";
 
     /* Parse util itself options.  */
@@ -118,32 +121,33 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if ((tman_config = config_init()) == NULL) {
-        fprintf(stderr, "could malloc memory for config");
-        return 1;
-    } else if (config_parse(tman_config)) {
-        config_deinit(tman_config);
-        fprintf(stderr, "could parse config file");
+    if ((tman_config = myconfig_create()) == NULL) {
+        fprintf(stderr, "myconfig_create: FAIL\n");
+    }
+
+    if (tman_config_parse(tman_config)) {
+        fprintf(stderr, "could parse config file\n");
         return 1;
     }
 
     ctx = NULL;
     cmdfound = FALSE;
-    base.task = base.task != NULL ? base.task : tman_config->base;
-    base.pgn = base.pgn != NULL ? base.pgn : tman_config->pgnins;
 
-    tman_config->usehooks = usehooks == -1 ? tman_config->usehooks : usehooks;
-    tman_config->usedebug = usedebug == -1 ? tman_config->usedebug : usedebug;
-    tman_config->usecolors =
-        usecolors == -1 ? tman_config->usecolors : usecolors;
+    if (base.task != NULL) {
+        free(tman_config->base.task);
+        tman_config->base.task = strdup(base.task);
+    }
+    if (base.pgn != NULL) {
+        free(tman_config->base.pgn);
+        tman_config->base.pgn = strdup(base.pgn);
+    }
 
-    /* NOTE: maybe it's better to use default BASEDIR?  */
-    if (base.task == NULL || base.task[0] == '\0')
-        return elog(1, "no basedir passed");
-    else if (base.pgn == NULL || base.pgn[0] == '\0')
-        return elog(1, "no pgndir passed");
+    tman_config->usehooks =
+        usehooks != NONEBOOL ? usehooks : tman_config->usehooks;
+    tman_config->usecolors = usecolors;
+    tman_config->usedebug = usedebug;
 
-    if ((ctx = tman_init(&base)) == NULL) {
+    if ((ctx = tman_init(&tman_config->base)) == NULL) {
         elog(1, "could not init util: %s", tman_strerror());
         return 1;
     }
@@ -158,7 +162,8 @@ int main(int argc, char **argv)
             status = builtins[idx].func(argc - i, argv + i, ctx);
             goto out;
         }
-    if (cmdfound == FALSE && (status = tman_ispgn(base.pgn, cmd)) == TRUE) {
+    if (cmdfound == FALSE
+        && (status = tman_ispgn(tman_config->base.pgn, cmd)) == TRUE) {
         cmdfound = TRUE;
         if ((status = tman_setup(LIBTMAN_SETUPCHECK)) != LIBTMAN_OK) {
             elog(status, "%s", tman_strerror());
@@ -173,6 +178,6 @@ int main(int argc, char **argv)
 
  out:
     ctx = tman_deinit(ctx);
-    tman_config = config_deinit(tman_config);
+    myconfig_destroy(tman_config);
     return status;
 }

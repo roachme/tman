@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <libconfig.h>
+
 #include "../lib/common.h"
 #include "../lib/tman.h"
 
@@ -17,15 +19,12 @@ struct config {
     int usecolors;              /* use colors */
     int usedebug;               /* output debug info */
     int usehooks;               /* execute hooks from config, by default set */
-    char base[PATHSIZ + 1];
-    char pgnins[PATHSIZ + 1];
+    struct tman_base base;
     struct tman_hook *hooks;
 };
 
+struct config *myconfig_create(void);
 extern struct config *tman_config;
-
-struct config *config_init(void);
-int config_parse(struct config *config);
-void *config_deinit(struct config *config);
-
+int tman_config_parse(struct config *config);
+void myconfig_destroy(struct config *myconfig);
 #endif

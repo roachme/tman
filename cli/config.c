@@ -1,6 +1,8 @@
+#include <linux/limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <libconfig.h>
 
 #include "../lib/osdep.h"
 #include "config.h"
@@ -9,50 +11,20 @@
 // TODO: gotta define default columns: curr, prev, blog, done
 // TODO: gotta add config checker so a program doesn't fail.
 
-static const char *delim = " =\n";
-
-// TODO: refactor this logic:
-// `str`: use another variable, cuz it may cause buffer overflow
-static char *resolve_env_var_home(char *str)
+static void resolve_env_var_home(char *dst, const char *src)
 {
     char *home = getenv("HOME");
-    char taskdir[PATHSIZ + 1] = { 0 };
-    char *found = strstr(str, "$HOME");
+    char *found = strstr(src, "$HOME");
 
     if (found) {
-        strcat(taskdir, home);  /* TODO: it might be unset in some envs.  */
-        strcat(taskdir, str + strlen("$HOME"));
-        strcpy(str, taskdir);
+        strcpy(dst, home);      /* TODO: it might be unset in some envs.  */
+        strcat(dst, src + strlen("$HOME"));
+    } else {
+        strcpy(dst, src);
     }
-    return str;
 }
 
-static int parsepath(char *path)
-{
-    char *taskdir = strtok(NULL, delim);
-
-    if (taskdir != NULL)
-        taskdir = resolve_env_var_home(taskdir);
-    strcpy(path, taskdir);
-    return 0;
-}
-
-static int parse_usehooks(const char *confkey, int *usehooks)
-{
-    char *confval = strtok(NULL, delim);
-
-    if (strncmp(confval, "true", 4) == 0) {
-        *usehooks = TRUE;
-        return 0;
-    } else if (strncmp(confval, "false", 5) == 0) {
-        *usehooks = FALSE;
-        return 0;
-    }
-    fprintf(stderr, "'%s': invalid usehooks value", confval);
-    return emod_set(LIBTMAN_NODEF_ERR);
-}
-
-struct tman_hook *make_hook()
+static struct tman_hook *make_hook()
 {
     struct tman_hook *hook;
 
@@ -62,94 +34,136 @@ struct tman_hook *make_hook()
     return hook;
 }
 
-struct tman_hook *parse_hook(const char *hookname, struct tman_hook *hooks)
+static int myconfig_get_hooks(config_t * cfg, struct config *myconfig)
 {
-    struct tman_hook *hook;
+    config_setting_t *setting;
 
-    if ((hook = make_hook()) == NULL) {
-        elog(1, "make_hook: ERR");
-        return hooks;
+    if ((setting = config_lookup(cfg, "hooks.show")) != NULL) {
+        unsigned int count = config_setting_length(setting);
+        for (unsigned int i = 0; i < count; ++i) {
+            struct tman_hook *hook;
+            const char *bincmd, *pgname, *pgncmd;
+            config_setting_t *hook_conf = config_setting_get_elem(setting, i);
+
+            if ((hook = make_hook()) != NULL) {
+                if (!(config_setting_lookup_string(hook_conf, "bincmd", &bincmd)
+                      && config_setting_lookup_string(hook_conf, "pgname",
+                                                      &pgname)
+                      && config_setting_lookup_string(hook_conf, "pgncmd",
+                                                      &pgncmd))) {
+                    elog(1, "FAILED: to parse hook.shows");
+                    continue;
+                }
+                strcpy(hook->pgntag, "HOOKSHOW");
+                strcpy(hook->cmd, bincmd);
+                strcpy(hook->pgname, pgname);
+                strcpy(hook->pgncmd, pgncmd);
+                hook->next = myconfig->hooks;
+                myconfig->hooks = hook;
+            }
+        }
     }
 
-    strcpy(hook->pgntag, hookname);
-    strcpy(hook->cmd, strtok(NULL, delim));
-    strcpy(hook->pgname, strtok(NULL, delim));
-    strcpy(hook->pgncmd, strtok(NULL, delim));
-    hook->next = hooks;
-    return hook;
-}
+    if ((setting = config_lookup(cfg, "hooks.action")) != NULL) {
+        unsigned int count = config_setting_length(setting);
+        for (unsigned int i = 0; i < count; ++i) {
+            struct tman_hook *hook;
+            const char *bincmd, *pgname, *pgncmd;
+            config_setting_t *hook_conf = config_setting_get_elem(setting, i);
 
-/*
-static int parse_columns(struct columns *columns)
-{
-    char *prio;
-    int i = columns->size;
-
-    strcpy(columns->column[i].prj, strtok(NULL, delim));
-    strcpy(&columns->column[i].mark, strtok(NULL, delim));
-    strcpy(columns->column[i].col, strtok(NULL, delim));
-    prio = strtok(NULL, delim);
-    if (prio != NULL)
-        columns->column[i].prio = atoi(prio);
+            if ((hook = make_hook()) != NULL) {
+                if (!(config_setting_lookup_string(hook_conf, "bincmd", &bincmd)
+                      && config_setting_lookup_string(hook_conf, "pgname",
+                                                      &pgname)
+                      && config_setting_lookup_string(hook_conf, "pgncmd",
+                                                      &pgncmd))) {
+                    elog(1, "FAILED: to parse hook.shows");
+                    continue;
+                }
+                strcpy(hook->pgntag, "HOOKCMD");
+                strcpy(hook->cmd, bincmd);
+                strcpy(hook->pgname, pgname);
+                strcpy(hook->pgncmd, pgncmd);
+                hook->next = myconfig->hooks;
+                myconfig->hooks = hook;
+            }
+        }
+    }
     return 0;
 }
-*/
 
-static int set_defaults(struct config *myconfig)
+static int myconfig_get_base(config_t * cfg, struct config *myconfig)
 {
-    char default_taskdir[BUFSIZ + 1] = "$HOME/tmantasks";
-    char default_pgndir[BUFSIZ + 1] = "$HOME/.local/lib/tman/pgn";
+    const char *task, *pgn;
+    char pathname[PATH_MAX + 1];
+    config_setting_t *setting;
+    char default_task[] = "$HOME/tmantask";
+    char default_pgn[] = "$HOME/.local/lib/tman/pgn";
 
-    if (myconfig->base[0] == '\0')
-        strcpy(myconfig->base, resolve_env_var_home(default_taskdir));
-    if (myconfig->pgnins[0] == '\0')
-        strcpy(myconfig->base, resolve_env_var_home(default_pgndir));
+    task = pgn = NULL;
+    if ((setting = config_lookup(cfg, "base")) == NULL)
+        return 0;
+
+    if (config_setting_lookup_string(setting, "task", &task)) {
+        pathname[0] = '\0';     /* unset pathname value */
+        resolve_env_var_home(pathname, task);
+        myconfig->base.task = strdup(pathname);
+    } else {
+        pathname[0] = '\0';     /* unset pathname value */
+        resolve_env_var_home(pathname, default_task);
+        myconfig->base.task = strdup(pathname);
+    }
+
+    if (config_setting_lookup_string(setting, "pgn", &pgn)) {
+        pathname[0] = '\0';     /* unset pathname value */
+        resolve_env_var_home(pathname, pgn);
+        myconfig->base.pgn = strdup(pathname);
+    } else {
+        pathname[0] = '\0';     /* unset pathname value */
+        resolve_env_var_home(pathname, default_pgn);
+        myconfig->base.pgn = strdup(pathname);
+    }
+    return 0;
+}
+
+static int myconfig_get_options(config_t * cfg, struct config *myconfig)
+{
+    config_setting_t *setting;
+    myconfig->usecolors = FALSE;
+    myconfig->usedebug = FALSE;
+    myconfig->usehooks = FALSE;
+
+    if ((setting = config_lookup(cfg, "options")) == NULL)
+        return 0;
+
+    config_setting_lookup_bool(setting, "hook", &myconfig->usehooks);
+    config_setting_lookup_bool(setting, "color", &myconfig->usecolors);
+    config_setting_lookup_bool(setting, "debug", &myconfig->usedebug);
     return 0;
 }
 
 static int parseconf(struct config *myconfig, const char *fname)
 {
-    FILE *fp;
-    int retcode = 0;
-    char line[BUFSIZ + 1];
-    char *token = NULL;
+    config_t cfg;
 
-    if ((fp = fopen(fname, "r")) == NULL) {
-        fprintf(stderr, "could not open config file");
-        return 1;
+    config_init(&cfg);
+    if (!config_read_file(&cfg, fname)) {
+        return elog(1, "%s:%d - %s", config_error_file(&cfg),
+                    config_error_line(&cfg), config_error_text(&cfg));
     }
 
-    while (retcode == LIBTMAN_OK && fgets(line, BUFSIZ, fp) != NULL) {
-        token = strtok(line, delim);
-        if (!token || strlen(token) == 0 || token[0] == '\n' || token[0] == '#')
-            continue;
+    if (myconfig_get_base(&cfg, myconfig))
+        elog(1, "myconfig_get_base: FAILED\n");
+    else if (myconfig_get_options(&cfg, myconfig))
+        elog(1, "myconfig_get_options: FAILED\n");
+    else if (myconfig_get_hooks(&cfg, myconfig))
+        elog(1, "myconfig_get_hooks: FAILED\n");
 
-        if (strcmp(token, "TMANBASE") == 0)
-            retcode = parsepath(myconfig->base);
-        else if (strcmp(token, "TMANPGNINS") == 0)
-            retcode = parsepath(myconfig->pgnins);
-        else if (strcmp(token, "USEHOOKS") == 0)
-            retcode = parse_usehooks(token, &myconfig->usehooks);
-        else if (strcmp(token, "HOOKCMD") == 0)
-            myconfig->hooks = parse_hook(token, myconfig->hooks);
-        else if (strcmp(token, "HOOKSHOW") == 0)
-            myconfig->hooks = parse_hook(token, myconfig->hooks);
-        else if (strcmp(token, "HOOKLIST") == 0)
-            myconfig->hooks = parse_hook(token, myconfig->hooks);
-        else if (strcmp(token, "COLUMN") == 0) {
-            // TODO: add a parser
-        } else {
-            // TODO: caller can't know that something went wrong
-            // cuz callee doesn't return an error or NULL for now.
-            elog(1, "parse err: unrecognized token '%s'", token);
-            break;
-        }
-    }
-    fclose(fp);
-    return set_defaults(myconfig);
+    config_destroy(&cfg);
+    return 0;
 }
 
-struct config *config_init(void)
+struct config *myconfig_create(void)
 {
     struct config *config;
 
@@ -159,35 +173,33 @@ struct config *config_init(void)
     return config;
 }
 
-int config_parse(struct config *config)
+int tman_config_parse(struct config *myconfig)
 {
-    int i;
-    const char *progname = "tman";
-    char *homedir = getenv("HOME");
     char cfgfile[CONFIGSIZ + 1];
+    char *homedir = getenv("HOME");
     const char cfgfmts[NUMCONFIG][CONFIGSIZ + 1] = {
         "%s/.%s/%s.cfg",
         "%s/.config/%s/%s.cfg",
     };
 
-    for (i = 0; i < NUMCONFIG; ++i) {
-        sprintf(cfgfile, cfgfmts[i], homedir, progname, progname);
-        if (ISFILE(cfgfile)) {
-            return parseconf(config, cfgfile);
-        }
+    for (int i = 0; i < NUMCONFIG; ++i) {
+        sprintf(cfgfile, cfgfmts[i], homedir, PROGRAM, PROGRAM);
+        if (ISFILE(cfgfile))
+            return parseconf(myconfig, cfgfile);
     }
     return 1;
 }
 
-void *config_deinit(struct config *config)
+void myconfig_destroy(struct config *myconfig)
 {
     struct tman_hook *head;
 
-    for (head = config->hooks; head != NULL;) {
+    for (head = myconfig->hooks; head != NULL;) {
         struct tman_hook *tmp = head;
         head = head->next;
         free(tmp);
     }
-    free(config);
-    return NULL;
+    free(myconfig->base.task);
+    free(myconfig->base.pgn);
+    free(myconfig);
 }
