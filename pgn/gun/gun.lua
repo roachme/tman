@@ -372,7 +372,18 @@ function gun.show(basic)
 end
 
 function gun.help(basic)
-    print("show some help")
+    print([[
+Usage: gun [OPITONS]... COMMAND [ARGS]...
+
+Here is list of commands:
+  commit    - commit changes via commit pattern
+  del       - delete branch
+  help      - show this help message and exit
+  merge     - merge to default branch (rebase, merge, cherry-pick)
+  rsync     - remote sync with remote git repo
+  show      - show plugin units
+  sync      - switch to task branch
+  ver       - show version and exit ]])
 end
 
 function gun.ver(basic)
