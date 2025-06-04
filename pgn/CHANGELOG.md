@@ -5,6 +5,7 @@
 - `git`: Add new plugin to track changes
 - `gun`: Add default values for all projects
 - `gun`: Add help message
+- `gun`: Add commit command to plugin gun
 
 ### Changed
 

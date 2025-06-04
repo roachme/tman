@@ -237,24 +237,17 @@ end
 
 ---Create commit.
 ---@param reponame string
----@param commitpatt string
----@param id string
 ---@param desc string
 ---@param path string | nil
-function git.commit_create(reponame, commitpatt, id, desc, path)
+function git.commit_create(reponame, desc, path)
     path = path or "."
     local fmt = "git -C %s/%s add ."
     local cmd = string.format(fmt, path, reponame)
     utils.exec(cmd)
 
-    local commitmsg = generate_commit_msg(id, commitpatt)
     fmt = "git -C %s/%s commit -m '%s'"
-    cmd = string.format(fmt, path, reponame, commitmsg)
-
-    print("cmd", cmd)
-    print("commitpatt", commitpatt)
-    print("commitmsg", commitmsg)
-    --return utils.exec(cmd)
+    cmd = string.format(fmt, path, reponame, desc)
+    utils.exec(cmd)
 end
 
 return git
