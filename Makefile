@@ -3,6 +3,7 @@ CC=gcc
 SRCS=$(wildcard lib/*.c cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
 CFLAGS=-I lib -I cli -Wall
+LFLAGS=-lconfig
 
 all: build
 .PHONY: build clean $(PROGRAM) release debug
@@ -12,10 +13,10 @@ build: $(PROGRAM)
 release: style check $(PROGRAM)
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) -DVERSION=\"$(shell cat VERSION.txt)\"
+	$(CC) -c -o $@ $< $(CFLAGS) $(LFLAGS) -DVERSION=\"$(shell cat VERSION.txt)\"
 
 $(PROGRAM): $(OBJS)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) $(LFLAGS)
 
 clean:
 	rm -rf $(PROGRAM) $(OBJS)

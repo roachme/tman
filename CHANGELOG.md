@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/config`: Add default values
+- `cli/config`: Use libconfig package for config
 
 ### Changed
 
