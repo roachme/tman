@@ -361,7 +361,22 @@ function gun.del(basic)
 end
 
 function gun.commit(basic)
+    local commitdesc = ""
+    basic.commitpatt = "tman: MSG" -- TODO: this default somewhere else
+    local sysunits = load(basic.sysfile);
+    local units = getunits(basic)
+
+
+    commitdesc = basic.commitpatt:gsub("ID", basic.id)
+    commitdesc = commitdesc:gsub("MSG", sysunits.desc)
+    -- if not gitlib.repo_clone(repo.link, repo.name, repodir) then
+    -- if gitlib.branch_exist(repo.name, branchname, repodir) then
+    for _, repo in pairs(units.repos) do
+        print(repo.name)
+        gitlib.commit_create(repo.name, commitdesc, basic.repodir)
+    end
 end
+
 
 function gun.show(basic)
     local pgnunits = load(basic.pgnfile)
