@@ -144,8 +144,10 @@ int main(int argc, char **argv)
 
     tman_config->usehooks =
         usehooks != NONEBOOL ? usehooks : tman_config->usehooks;
-    tman_config->usecolors = usecolors;
-    tman_config->usedebug = usedebug;
+    tman_config->usecolors =
+        usecolors != NONEBOOL ? usecolors : tman_config->usecolors;
+    tman_config->usedebug =
+        usedebug != NONEBOOL ? usedebug : tman_config->usedebug;
 
     if ((ctx = tman_init(&tman_config->base)) == NULL) {
         elog(1, "could not init util: %s", tman_strerror());
