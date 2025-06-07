@@ -14,6 +14,7 @@
 
 - `pgn`: Update option for task directory
 - `cli/show`: Hotfix show hooks
+- `CICD`: Fix CICD dependency
 
 ### Deleted
 
