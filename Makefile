@@ -1,4 +1,5 @@
 PROGRAM=_tmancli
+README=README.md
 CC=gcc
 SRCS=$(wildcard lib/*.c cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
@@ -6,17 +7,20 @@ CFLAGS=-I lib -I cli -Wall
 LFLAGS=-lconfig
 
 all: build
-.PHONY: build clean $(PROGRAM) release debug
+.PHONY: build clean debug generate $(PROGRAM) release
 
 build: $(PROGRAM)
 
-release: style check $(PROGRAM)
+release: style check $(PROGRAM) generate
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS) $(LFLAGS) -DVERSION=\"$(shell cat VERSION.txt)\"
 
 $(PROGRAM): $(OBJS)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) $(LFLAGS)
+
+generate: $(PROGRAM)
+	$(shell m4 ./scripts/genreadme > $(README))
 
 clean:
 	rm -rf $(PROGRAM) $(OBJS)

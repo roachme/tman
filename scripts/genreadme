@@ -1,0 +1,73 @@
+define(MACRO_USAGE, `esyscmd(./_tmancli)')dnl
+define(MACRO_CODE, changequote([,])[changequote([,])```changequote(`,')]changequote(`,'))dnl
+define(MACRO_INLINE_CODE, changequote([,])[changequote([,])`changequote(`,')]changequote(`,'))dnl
+## Tman
+##### Terminal task manager
+
+
+![command example](docs/tman.gif)
+
+
+## ⇁  Problems
+During my work I encounter many subtaks I gotta do on the daily basis.
+Among them
+1. Clone Git repos to my machine and create branches in multiple repos (usually different for each task)
+2. Keep my task logs, sketches, notes and repos for each task somewhere. Structured and seperately
+3. Often switch between task, which involves context, notes, sketches, and especially Git branches
+
+## ⇁  Solution
+Tman comes with 3 basic ideas
+1. Structure your workspace for each task
+2. Get you exactly where you want with fewest keystrokes
+3. Automate stuff that you're tired of during the work. Here plugins are for
+
+## ⇁  Structure
+- Customize: Adjust the util for your workflow via config file.
+- Extensible: Extend util with predefined or your own plugins. You can get full list of Tman plugins in MACRO_CODE tman-pgn MACRO_CODE.
+
+## ⇁  Dependencies
+Plugins might have dependencies. Take a look at plugins README.md for more info.
+Main program uses the some dependencies. To install them run commands below:
+MACRO_CODE
+sudo apt install -y libconfig-dev
+MACRO_CODE
+
+
+## ⇁  Build
+Simply run the command below.
+MACRO_CODE bash
+make
+MACRO_CODE
+
+## ⇁  Installation
+1. Once you compiled successfully, put executable MACRO_INLINE_CODE _tmancli MACRO_INLINE_CODE into one of directories defined in env variable MACRO_INLINE_CODE PATH MACRO_INLINE_CODE . I put it in MACRO_INLINE_CODE ~/.locil/bin MACRO_INLINE_CODE .
+2. Copy the content of tman.sh into your shell rc file. It's MACRO_INLINE_CODE ~/.bashrc MACRO_INLINE_CODE , MACRO_INLINE_CODE .zshrc MACRO_INLINE_CODE , etc.
+
+MACRO_CODE bash
+include(tman.sh)dnl
+MACRO_CODE
+
+3. Create basic Tman config file. Either in MACRO_INLINE_CODE ~/.tman/tman.cfg MACRO_INLINE_CODE or MACRO_INLINE_CODE ~/.config/tman/tman.cfg MACRO_INLINE_CODE and fill it with content below
+
+MACRO_CODE
+include(templates/tman.cfg)dnl
+MACRO_CODE
+
+## ⇁  Tman builtin commands
+MACRO_CODE
+MACRO_USAGE
+MACRO_CODE
+
+## ⇁  Basic workflow
+1. To initalize util type in MACRO_INLINE_CODE tman init MACRO_INLINE_CODE
+2. Now you're ready to create a project: MACRO_INLINE_CODE tman prj add test MACRO_INLINE_CODE
+3. Once task project is created you can fill it with tasks: MACRO_INLINE_CODE tman add test1 MACRO_INLINE_CODE
+4. List all your task in current project: MACRO_INLINE_CODE tman list MACRO_INLINE_CODE
+5. Show the content of task: MACRO_INLINE_CODE tman show test1 MACRO_INLINE_CODE
+6. Sync with current task: MACRO_INLINE_CODE tman sync MACRO_INLINE_CODE
+7. Or quickly switch to previous task: MACRO_INLINE_CODE tman prev MACRO_INLINE_CODE
+
+
+## ⇁  Tips
+1. Use MACRO_INLINE_CODE tman help MACRO_INLINE_CODE to get list off commands.
+2. Or MACRO_INLINE_CODE tman help COMMAND MACRO_INLINE_CODE to get help on specified command.

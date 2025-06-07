@@ -4,6 +4,7 @@
 
 - `cli/config`: Add default values
 - `cli/config`: Use libconfig package for config
+- `script/genreadme`: Add generator to generate README.md file
 
 ### Changed
 
