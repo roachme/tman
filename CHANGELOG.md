@@ -8,6 +8,7 @@
 ### Changed
 
 - `cli/link`: revert "Add skeleton to link tasks"
+- `pgn`: Move plugins to submodule
 
 ### Fixed
 
