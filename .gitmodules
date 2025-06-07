@@ -1,0 +1,3 @@
+[submodule "pgn"]
+	path = pgn
+	url = https://github.com/roachme/tman-pgn.git
