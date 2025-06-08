@@ -1,4 +1,5 @@
 PROGRAM=_tmancli
+VERSION=$(shell cat VERSION.txt)
 README=README.md
 CC=gcc
 SRCS=$(wildcard lib/*.c cli/*.c)
@@ -6,42 +7,69 @@ OBJS=$(patsubst %.c, %.o, $(SRCS))
 CFLAGS=-I lib -I cli -Wall
 LFLAGS=-lconfig
 
-all: build
-.PHONY: build clean debug generate $(PROGRAM) release
+# TODO: add debug mode
+# TODO: add user and developer builds
 
-build: $(PROGRAM)
+all: release
+.PHONY: clean debug generate release
 
-release: style check $(PROGRAM) generate
+init:
+	mkdir -p artifacts
+	mkdir -p artifacts/build/debug
+	mkdir -p artifacts/build/release
+	mkdir -p artifacts/docs
+	mkdir -p artifacts/reports
+	mkdir -p artifacts/cppcheck
+	mkdir -p artifacts/doxygen
+	mkdir -p artifacts/flawfinder
+	mkdir -p artifacts/ldoc
+	mkdir -p artifacts/luacheck
+	#ln -s ../build/artifacts/gcov artifacts/gcov ||:
+	#ln -s ../build/gtest artifacts/gtest ||:
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) $(LFLAGS) -DVERSION=\"$(shell cat VERSION.txt)\"
+	$(CC) -c -o $@ $< $(CFLAGS) -DVERSION=\"$(VERSION)\"
 
 $(PROGRAM): $(OBJS)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) $(LFLAGS)
+	$(CC) -o $@ $^ $(LFLAGS)
 
 generate: $(PROGRAM)
 	$(shell m4 ./scripts/genreadme > $(README))
 
 clean:
+	rm -rf artifacts build
 	rm -rf $(PROGRAM) $(OBJS)
 
 check:
-	clear
-	cppcheck --std=c89 --enable=all --language=c cli/*.c lib/*.c
+	cppcheck --std=c89 --enable=all --language=c $(SRCS)
 
 valgrind:
-	valgrind  --track-origins=yes --leak-check=full --show-leak-kinds=all ./_tmancli
+	valgrind  --track-origins=yes --leak-check=full --show-leak-kinds=all ./$(PROGRAM)
 
 lnum:
-	find lib -name '*.c' |  xargs wc -l
+	find lib -name '*.c' | xargs wc -l
 
 install:
-	cp _tmancli $HOME/.local/bin
+	cp $(PROGRAM) $HOME/.local/bin
 
 style:
 	find . -name '*.[ch]' | xargs indent -nut -nbad -bap -nbc -bbo -hnl -br -brs -c33 -cd33 -ncdb -ce -ci4 -cli0 -d0 -di1 -nfc1 -i4 -ip0 -l80 -lp -npcs -nprs -npsl -sai -saf -saw -ncs -nsc -sob -nfca -cp33 -ss -ts8 -il1
 	find . -name '*.[ch]\~' | xargs	rm
 
+# Build project in debug configuration into ./artifacts/build/debug
+.PHONY: build_debug
+build_debug:
+	make debug
+
+
+# Build project in release configuraiton into ./artifacts/build/release
+.PHONY: build_release
+build_release:
+	make
+
+
+#all_release: clean init check_style test_unit test_integration test_system test_e2e check_static check_security build_release docs_build ;
+release: clean init style check $(PROGRAM) generate
 
 
 #build:
