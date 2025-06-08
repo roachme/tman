@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Changed
+
+- `Makefile`: Refactor some logic
+
+
 ## [0.0.16] - (2025-06-08)
 
 ### Added
