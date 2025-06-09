@@ -173,7 +173,7 @@ struct config *myconfig_create(void)
     return config;
 }
 
-int tman_config_parse(struct config *myconfig)
+int tmancfg_parse(struct config *myconfig)
 {
     char cfgfile[CONFIGSIZ + 1];
     char *homedir = getenv("HOME");

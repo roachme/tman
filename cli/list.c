@@ -105,7 +105,7 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
         if (showprjname == TRUE)
             printf("Project: %s\n", args.prj);
         // TODO: add hooks
-        recursive_tree_print(ctx->ids, tman_config);
+        recursive_tree_print(ctx->ids, tmancfg);
     } while (++i < argc);
 
     chdir("/home/roach");
