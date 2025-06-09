@@ -39,6 +39,7 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
         return help_usage("sync");
 
     i = optind;
+    tman_pwd_unset();
     do {
         args.id = argv[i];
 

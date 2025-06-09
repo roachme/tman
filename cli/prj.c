@@ -63,6 +63,7 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
     if (optind == argc)
         return elog(1, "task prj required");
 
+    tman_pwd_unset();
     for (i = optind; i < argc; ++i) {
         args.prj = argv[i];
         if ((status = tman_prj_add(ctx, &args, &opt)) != LIBTMAN_OK) {
@@ -113,6 +114,7 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
         }
     }
 
+    tman_pwd_unset();
     i = optind;
     do {
         args.prj = argv[i];
@@ -142,6 +144,7 @@ static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
     int status;
     struct tman_option opt;
 
+    tman_pwd_unset();
     if ((status = tman_prj_prev(ctx, &opt)) != LIBTMAN_OK)
         return elog(status, "cannot switch: %s", tman_strerror());
     return tman_pwd();
@@ -180,6 +183,7 @@ static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
 
     /* TODO: trigger hooks if any */
 
+    tman_pwd_unset();
     if ((status = tman_prj_rename(NULL, &src, &dst))) {
         if (quiet == FALSE)
             elog(status, "could not rename project: %s", tman_strerror());
@@ -325,6 +329,7 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
     if (showhelp)
         return help_usage("prj-sync");
 
+    tman_pwd_unset();
     i = optind;
     do {
         args.prj = argv[i];

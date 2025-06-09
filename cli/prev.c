@@ -29,6 +29,7 @@ int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
     if (showhelp == TRUE)
         return help_usage("prev");
 
+    tman_pwd_unset();
     if ((status = tman_task_prev(ctx, &args, &opt)) != LIBTMAN_OK) {
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
