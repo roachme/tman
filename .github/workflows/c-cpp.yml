@@ -8,6 +8,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
-      run: sudo apt install -y libconfig-dev
+      run: sudo apt install -y indent cppcheck libconfig-dev
     - name: make
       run: make
