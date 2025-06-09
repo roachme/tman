@@ -529,6 +529,7 @@ int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
     char c;
     int i, status;
 
+    tman_pwd_unset();
     while ((c = getopt(argc, argv, ":ds")) != -1) {
         switch (c) {
         case 'd':
