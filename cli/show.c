@@ -86,8 +86,8 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
-        } else if (tman_config->usehooks == TRUE
-                   && tman_hook_show(ctx, tman_config->hooks, &args,
+        } else if (tmancfg->usehooks == TRUE
+                   && tman_hook_show(ctx, tmancfg->hooks, &args,
                                      "show") == NULL) {
             // TODO: what to do if no show hooks get executed?
             // Disabled check for rn, cuz it fails if no show hooks exist.

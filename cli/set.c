@@ -120,9 +120,9 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
             args.id = args.id ? args.id : "NOCURR";
             elog(status, errfmt, args.id, tman_strerror());
             return status;
-        } else if (tman_config->usehooks == TRUE
+        } else if (tmancfg->usehooks == TRUE
                    && (status =
-                       tman_hook_action(ctx, tman_config->hooks, &args,
+                       tman_hook_action(ctx, tmancfg->hooks, &args,
                                         "set")) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(LIBTMAN_EHOOK, errfmt, args.id, tman_strerror());

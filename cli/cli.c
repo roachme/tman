@@ -52,7 +52,7 @@ static const builtin_t builtins[] = {
     {.name = "sync",.func = &tman_cli_sync,.setuplvl = LIBTMAN_SETUPCHECK},
 };
 
-struct config *tman_config;
+struct config *tmancfg;
 
 int main(int argc, char **argv)
 {
@@ -120,11 +120,11 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if ((tman_config = myconfig_create()) == NULL) {
+    if ((tmancfg = myconfig_create()) == NULL) {
         fprintf(stderr, "myconfig_create: FAIL\n");
     }
 
-    if (tman_config_parse(tman_config)) {
+    if (tmancfg_parse(tmancfg)) {
         fprintf(stderr, "could parse config file\n");
         return 1;
     }
@@ -133,22 +133,19 @@ int main(int argc, char **argv)
     cmdfound = FALSE;
 
     if (base.task != NULL) {
-        free(tman_config->base.task);
-        tman_config->base.task = strdup(base.task);
+        free(tmancfg->base.task);
+        tmancfg->base.task = strdup(base.task);
     }
     if (base.pgn != NULL) {
-        free(tman_config->base.pgn);
-        tman_config->base.pgn = strdup(base.pgn);
+        free(tmancfg->base.pgn);
+        tmancfg->base.pgn = strdup(base.pgn);
     }
 
-    tman_config->usehooks =
-        usehooks != NONEBOOL ? usehooks : tman_config->usehooks;
-    tman_config->usecolors =
-        usecolors != NONEBOOL ? usecolors : tman_config->usecolors;
-    tman_config->usedebug =
-        usedebug != NONEBOOL ? usedebug : tman_config->usedebug;
+    tmancfg->usehooks = usehooks != NONEBOOL ? usehooks : tmancfg->usehooks;
+    tmancfg->usecolors = usecolors != NONEBOOL ? usecolors : tmancfg->usecolors;
+    tmancfg->usedebug = usedebug != NONEBOOL ? usedebug : tmancfg->usedebug;
 
-    if ((ctx = tman_init(&tman_config->base)) == NULL) {
+    if ((ctx = tman_init(&tmancfg->base)) == NULL) {
         elog(1, "could not init util: %s", tman_strerror());
         return 1;
     }
@@ -164,7 +161,7 @@ int main(int argc, char **argv)
             goto out;
         }
     if (cmdfound == FALSE
-        && (status = tman_ispgn(tman_config->base.pgn, cmd)) == TRUE) {
+        && (status = tman_ispgn(tmancfg->base.pgn, cmd)) == TRUE) {
         cmdfound = TRUE;
         if ((status = tman_setup(LIBTMAN_SETUPCHECK)) != LIBTMAN_OK) {
             elog(status, "%s", tman_strerror());
@@ -179,6 +176,6 @@ int main(int argc, char **argv)
 
  out:
     ctx = tman_deinit(ctx);
-    myconfig_destroy(tman_config);
+    myconfig_destroy(tmancfg);
     return status;
 }

@@ -24,7 +24,7 @@ struct config {
 };
 
 struct config *myconfig_create(void);
-extern struct config *tman_config;
-int tman_config_parse(struct config *config);
+extern struct config *tmancfg;
+int tmancfg_parse(struct config *config);
 void myconfig_destroy(struct config *myconfig);
 #endif
