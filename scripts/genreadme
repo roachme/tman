@@ -69,5 +69,5 @@ MACRO_CODE
 
 
 ## ⇁  Tips
-1. Use MACRO_INLINE_CODE tman help MACRO_INLINE_CODE to get list off commands.
+1. Use MACRO_INLINE_CODE tman help MACRO_INLINE_CODE to get list of commands.
 2. Or MACRO_INLINE_CODE tman help COMMAND MACRO_INLINE_CODE to get help on specified command.

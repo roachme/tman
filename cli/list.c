@@ -1,5 +1,7 @@
+#include <unistd.h>
+
 #include "cli.h"
-#include "color.h"
+#include "config.h"
 
 static const char *errfmt = "cannot list project tasks '%s': %s";
 
@@ -17,24 +19,22 @@ static struct list_filter list_filter = {
     .column = NULL,
 };
 
-static int recursive_tree_print(struct tree *p)
+static int recursive_tree_print(struct tree *p, struct config *myconfig)
 {
     if (p != NULL) {
-        recursive_tree_print(p->left);
+        char mark = p->mark;
+        recursive_tree_print(p->left, myconfig);
 
         /* Apply filters */
-        if (list_filter.specialonly == TRUE
-            && (p->mark == '*' || p->mark == '^'))
-            printf("%c " BMAG "%-" xstr(IDSIZ) "s" CRESET "%s %s\n", p->mark,
-                   p->id, p->pgnout, p->desc);
-        else if (list_filter.almostall == TRUE && (p->mark != '-'))
-            printf("%c " BMAG "%-" xstr(IDSIZ) "s" CRESET "%s %s\n", p->mark,
-                   p->id, p->pgnout, p->desc);
-        else if (list_filter.allall == TRUE)
-            printf("%c " BMAG "%-" xstr(IDSIZ) "s" CRESET "%s %s\n", p->mark,
-                   p->id, p->pgnout, p->desc);
+        if (list_filter.specialonly == TRUE && (mark == '*' || mark == '^')) {
+            LIST_TASK_UNITS(p);
+        } else if (list_filter.almostall == TRUE && (mark != '-')) {
+            LIST_TASK_UNITS(p);
+        } else if (list_filter.allall == TRUE) {
+            LIST_TASK_UNITS(p);
+        }
 
-        recursive_tree_print(p->right);
+        recursive_tree_print(p->right, myconfig);
     }
     return 0;
 }
@@ -105,8 +105,9 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
         if (showprjname == TRUE)
             printf("Project: %s\n", args.prj);
         // TODO: add hooks
-        recursive_tree_print(ctx->ids);
+        recursive_tree_print(ctx->ids, tman_config);
     } while (++i < argc);
 
+    chdir("/home/roach");
     return status;
 }

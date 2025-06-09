@@ -139,5 +139,5 @@ Object:
 
 
 ## ⇁  Tips
-1. Use ` tman help ` to get list off commands.
+1. Use ` tman help ` to get list of commands.
 2. Or ` tman help COMMAND ` to get help on specified command.

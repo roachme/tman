@@ -82,7 +82,6 @@ int main(int argc, char **argv)
             else
                 return elog(1, togfmt, option);
             ++i;                /* Skip option.  */
-            return elog(1, "this option is under development");
         } else if ((option = argv[i]) && strcmp(option, "-D") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);

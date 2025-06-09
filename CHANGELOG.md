@@ -5,6 +5,10 @@
 - `Makefile`: Refactor some logic
 - `tman`: Use tmp file for pwd
 
+### Fixed
+
+- `cli/color`: Color output only if it is a TTY
+
 
 ## [0.0.16] - (2025-06-08)
 
