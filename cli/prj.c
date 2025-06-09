@@ -3,7 +3,6 @@
 #include <dirent.h>
 
 #include "cli.h"
-#include "color.h"
 
 static int valid_desc(const char *val)
 {
@@ -19,8 +18,7 @@ static int tree_print_rec(struct tree *p)
 {
     if (p != NULL) {
         tree_print_rec(p->left);
-        printf(GRN "%c " CRESET BBLU "%-" xstr(PRJSIZ) "s " CRESET "[%s] %s\n",
-               p->mark, p->id, p->pgnout, p->desc);
+        LIST_PRJ_UNITS(p);
         tree_print_rec(p->right);
     }
     return 0;

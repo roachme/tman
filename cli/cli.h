@@ -4,9 +4,27 @@
 #define CMDSIZ          5
 
 #include "help.h"
+#include "color.h"
 #include "../lib/tman.h"
 
 #define PROGRAM     "tman"
+
+#define LIST_PRJ_UNITS(p) {\
+    color_print_char("%c ", (p)->mark, BGRN); \
+    color_print_str("%-" xstr(IDSIZ) "s ", (p)->id, BBLU); \
+    color_print_str("%s\n", (p)->desc, BWHT); \
+}\
+
+/* TODO: add the same function for board list.  */
+#define LIST_BRD_UNITS(p) {\
+}\
+
+/* TODO: add a plugin output too */
+#define LIST_TASK_UNITS(p) {\
+    color_print_char("%c ", (p)->mark, BGRN); \
+    color_print_str("%-" xstr(IDSIZ) "s ", (p)->id, BMAG); \
+    color_print_str("%s\n", (p)->desc, BWHT); \
+}\
 
 typedef struct builtin {
     char name[CMDSIZ + 1];
