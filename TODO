@@ -41,7 +41,7 @@ Prio: mid
   3. Unify commands list and find.
 + 4. Add case-sensetive option to command list.
   5. Delete function tman_id_find_by_desc(). Use tman_id_list() instead in cli.
-? 6. Print PWD in /tmp/tmanpwd. Then shell part will it from there.
++ 6. Print PWD in /tmp/tmanpwd. Then shell part will it from there.
 + 7. In command `add`: if no ID provided then generate task ID.
 + 8. Why use tman_get_args() if tman_check_arg_id() get default values anyway?
   9. Delete option `-A' from command `tman list`. Cuz i can use option `-a'

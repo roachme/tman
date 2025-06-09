@@ -2,16 +2,12 @@
 
 function tman()
 {
-    PATHTAG="PWD: "
-    output="$(_tmancli "$@")"
-    retcode="$?"
+    local tmanstatus;
+    local pwdfile="/tmp/tmanpwd"
 
-    # Check that output contains tag. If so then interpret
-    # it as a path not an output.
-    if echo "$output" | grep -qE "^$PATHTAG"; then
-        cd "${output/$PATHTAG/}" || return 1
-    elif [ -n "$output" ]; then
-        echo "$output"
-    fi
-    return "$retcode"
+    _tmancli "$@"
+    tmanstatus="$?"
+
+    test -s "$pwdfile" && cd "$(cat "$pwdfile")" || return "$tmanstatus"
+    return "$tmanstatus"
 }

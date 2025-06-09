@@ -92,6 +92,7 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
     if (showhelp == 1)
         return help_usage("list");
 
+    tman_pwd_unset();
     i = optind;
     do {
         args.prj = argv[i];

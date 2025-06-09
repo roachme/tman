@@ -46,6 +46,7 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
     }
     // TODO: if not current task gets deleted, then no need to
     // change user's current directory.
+    tman_pwd_unset();
     i = optind;
     do {
         args.id = argv[i];
