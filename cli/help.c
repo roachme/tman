@@ -28,7 +28,7 @@ struct help helptab[] = {
     {
      .tag = SYSTEM,
      .name = "tman",
-     .synop = "Usage: " PROGRAM " [OPTION]... [COMMAND|PLUGIN]\n",
+     .synop = "Usage: " PROGRAM " [SYSOPT]... [COMMAND|PLUGIN]\n",
      .desc_short = "Terminal task (project) manager.\n",
      .desc_long = "\n\
     Options:\n\
@@ -454,8 +454,10 @@ struct help helptab[] = {
 
 int help_list_commands(void)
 {
-    printf("Usage: %s [OPTION]... COMMAND [OPITONS]... [ARGS]...\n\n", PROGRAM);
-    printf("These are common Tman commands used in various situations:\n\n");
+    printf("Usage: " PROGRAM
+           " [SYSOPT]... COMMAND|PLUGIN [OPTION]... [ARGS]...\n"
+           "  Run `" PROGRAM " help " PROGRAM "' to get info about options\n"
+           "  These are common Tman commands used in various situations:\n\n");
 
     printf("System:\n");
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i)

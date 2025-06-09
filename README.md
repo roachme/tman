@@ -97,9 +97,9 @@ projects = {
 
 ## ⇁  Tman builtin commands
 ```
-Usage: tman [OPTION]... COMMAND [OPITONS]... [ARGS]...
-
-These are common Tman commands used in various situations:
+Usage: tman [SYSOPT]... COMMAND|PLUGIN [OPTION]... [ARGS]...
+  Run tman help tman to get info about options
+  These are common Tman commands used in various situations:
 
 System:
   cfg    - Manage system configuration file.
