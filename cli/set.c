@@ -1,6 +1,7 @@
 #include "cli.h"
 #include "cli.h"
 #include "help.h"
+#include "config.h"
 #include <string.h>
 #include <ctype.h>
 
@@ -53,19 +54,23 @@ static int valid_desc(const char *val)
 int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
 {
     char c;
-    int i, status;
+    int i, quiet, status;
     struct tman_arg args;
     int atleast_one_key_set;
     struct tman_option opt;
     const char *errfmt = "cannot set task units '%s': %s";
 
+    quiet = FALSE;
     args.id = args.prj = NULL;
     atleast_one_key_set = FALSE;
-    while ((c = getopt(argc, argv, ":d:p:t:P:")) != -1) {
+    while ((c = getopt(argc, argv, ":d:p:qt:P:")) != -1) {
         // TODO: add a protection for duplicates, use map data structure
         switch (c) {
         case 'p':
             args.prj = optarg;
+            break;
+        case 'q':
+            quiet = TRUE;
             break;
         case 't':
             if (valid_type(optarg) == FALSE) {
@@ -115,8 +120,14 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
             args.id = args.id ? args.id : "NOCURR";
             elog(status, errfmt, args.id, tman_strerror());
             return status;
+        } else if (tman_config->usehooks == TRUE
+                   && (status =
+                       tman_hook_action(ctx, tman_config->hooks, &args,
+                                        "set")) != LIBTMAN_OK) {
+            if (quiet == FALSE)
+                elog(LIBTMAN_EHOOK, errfmt, args.id, tman_strerror());
+            continue;
         }
-        // TODO: add support for hooks (if needed)
     } while (++i < argc);
 
     ctx->unitbin = tman_unit_free(ctx, &args, NULL);

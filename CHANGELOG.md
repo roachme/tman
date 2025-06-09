@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `cli/set`: Add hook support for command `set`
+
 ### Changed
 
 - `Makefile`: Refactor some logic
