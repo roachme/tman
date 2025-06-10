@@ -8,6 +8,7 @@
 
 - `Makefile`: Refactor some logic
 - `tman`: Use tmp file for pwd
+- `cli/plugin`: Refactor plugin API for options
 
 ### Fixed
 
