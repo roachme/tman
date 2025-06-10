@@ -32,7 +32,7 @@ Prio: high
  12. Refactor plugin's option and argument parser
  13. Add tman option -F for config path
  14. `struct unit` is duplicated in tman.h and unit.h
- 15. Move `tman find` to plugin.
++15. Move `tman find` to plugin.
 
 
 Prio: mid
