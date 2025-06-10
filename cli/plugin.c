@@ -1,4 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "cli.h"
+#include "config.h"
 
 /* TODO:
     Structure: tman PGN -i -b -p COMMAND [OPTION]... [APRS]
@@ -10,29 +14,99 @@
 */
 int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
 {
-    int status;
-    char c, *cmd, *name;
+    int i;
+    char *pgn;
+    char *pgncmd;
+    char *option;
     struct tman_arg args;
+    char pgnopts[BUFSIZ + 1] = { 0 };
+    char pgnexec[BUFSIZ + 1] = { 0 };
+    int status;
 
-    args.id = args.prj = NULL;
-    while ((c = getopt(argc, argv, ":p:i:")) != -1) {
-        switch (c) {
-        case 'p':
-            args.prj = optarg;
-            break;
-        case 'i':
-            args.id = optarg;
-            break;
-        case ':':
-            return elog(1, "option `-%c' requires an argument", optopt);
-        default:
-            return elog(1, "invalid option `-%c'", optopt);
+    i = 1;                      /* skip program name, i.e. tman.  */
+    pgn = pgncmd = option = NULL;
+    args.brd = args.id = args.prj = NULL;
+
+    pgn = argv[i++];
+    pgncmd = argc > i && argv[i][0] != '-' ? argv[i++] : "";
+
+    tman_pwd_unset();
+
+    /* Parse plugin command options.  */
+    for (; i < argc; ++i) {
+        option = argv[i];
+
+        if (strcmp(option, "-b") == 0) {
+            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
+                return elog(1, "option `%s' requires an argument", option);
+            args.brd = argv[++i];
+        } else if (strcmp(option, "-i") == 0) {
+            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
+                return elog(1, "option `%s' requires an argument", option);
+            args.id = argv[++i];
+        } else if (strcmp(option, "-p") == 0) {
+            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
+                return elog(1, "option `%s' requires an argument", option);
+            args.prj = argv[++i];
+        } else {
+            // NOTE: Lua cannot handle non-optional arguments first.
+            //       Should i fix it or let it go?
+            /*
+               if (argv[i][0] != '-' && ((i + 1) < argc && argv[i + 1][0] == '-')) {
+               elog(1, "ERROR: non-optional argument goes first: %s", argv[i]);
+               fprintf(stderr, "ERROR: non-optional argument goes first: '%s' - '%s'\n", argv[i], argv[i + 1]);
+               return 1;
+               }
+             */
+            strcat(pgnopts, option);
+            strcat(pgnopts, " ");
         }
     }
 
-    name = argv[optind++];
-    cmd = optind == argc ? "" : argv[optind++];
-    if ((status = tman_pgnexec(NULL, &args, name, cmd, NULL)) != LIBTMAN_OK)
-        elog(status, "pgn failed: %s", tman_strerror());
+    /* Check system options.  */
+    if ((status = tman_check_arg_prj(&args)) && status != LIBTMAN_PRJ_NOCURR)
+        return elog(status, "invalid project: %s", tman_strerror());
+    else if ((status = tman_check_arg_brd(&args))
+             && status != LIBTMAN_BRD_NOCURR)
+        return elog(1, "invalid board: %s", tman_strerror());
+    else if ((status = tman_check_arg_id(&args)) && status != LIBTMAN_ID_NOCURR)
+        return elog(1, "invalid task ID: %s", tman_strerror());
+
+    strcat(pgnexec, tmancfg->base.pgn);
+    strcat(pgnexec, "/");
+    strcat(pgnexec, pgn);
+    strcat(pgnexec, "/");
+    strcat(pgnexec, pgn);
+
+    strcat(pgnexec, " -T ");
+    strcat(pgnexec, tmancfg->base.task);
+
+    strcat(pgnexec, " ");
+    strcat(pgnexec, pgncmd);
+
+    if (args.prj != NULL) {
+        strcat(pgnexec, " -p ");
+        strcat(pgnexec, args.prj);
+    }
+    if (args.brd != NULL) {
+        strcat(pgnexec, " -b ");
+        strcat(pgnexec, args.brd);
+    }
+    if (args.id != NULL) {
+        strcat(pgnexec, " -i ");
+        strcat(pgnexec, args.id);
+    }
+    strcat(pgnexec, " ");
+    strcat(pgnexec, pgnopts);
+
+    /*
+       printf("pgnopts: %s\n", pgnopts);
+       printf("argc: %d, i: %d\n", argc, i);
+       printf("pgncmd: %s\n", pgncmd);
+       printf("pgnexec: %s\n", pgnexec);
+     */
+
+    if ((status = system(pgnexec)))
+        elog(status, "failed to execute plugin");
     return status;
 }
