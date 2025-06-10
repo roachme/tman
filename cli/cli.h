@@ -33,6 +33,7 @@ typedef struct builtin {
 } builtin_t;
 
 int elog(int status, const char *fmt, ...);
+int dlog(int level, const char *fmt, ...);
 
 // TODO: make argv const
 int tman_cli_add(int argc, char **argv, struct tman_context *ctx);

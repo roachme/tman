@@ -33,6 +33,18 @@ int elog(int status, const char *fmt, ...)
     return status;
 }
 
+int dlog(int level, const char *fmt, ...)
+{
+    // TODO: add a debug log level
+    va_list arg;
+    va_start(arg, fmt);
+    printf(PROGRAM ": ");
+    vprintf(fmt, arg);
+    printf("\n");
+    va_end(arg);
+    return 0;
+}
+
 static const builtin_t builtins[] = {
     {.name = "add",.func = &tman_cli_add,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "cfg",.func = &tman_cli_cfg,.setuplvl = LIBTMAN_SETUPCHECK},
