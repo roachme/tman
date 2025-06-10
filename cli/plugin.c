@@ -106,7 +106,5 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
        printf("pgnexec: %s\n", pgnexec);
      */
 
-    if ((status = system(pgnexec)))
-        elog(status, "failed to execute plugin");
-    return status;
+    return system(pgnexec);
 }
