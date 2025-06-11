@@ -7,6 +7,8 @@ Bugs:
 + 1. Command `tman col prev <TASKID>` moves task to column 'prev' even if no current task ID is set.
   2. Command `tman move` can't move multiple task to another project.
   3. Command `tman move` cant move 2 task to destination. It simply renames it.
+  4. Command `tman set -d 'description'` causes malloc fail, when set longer
+     description than before.
 
 Ideas:
   1. Replace cat & ls hooks with reading from file. Gonna highly optimize
