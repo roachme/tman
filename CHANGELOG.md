@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Fixed
+
+- `lib/unit`: Fix memory heap corruption
+
+
 ## [0.0.17] - (2025-06-11)
 
 ### Added

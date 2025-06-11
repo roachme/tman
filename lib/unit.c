@@ -112,7 +112,8 @@ int unit_set(struct unit *head, char *key, char *val)
 {
     for (; head != NULL; head = head->next) {
         if (strcmp(head->key, key) == 0) {
-            strcpy(head->val, val);
+            free(head->val);
+            head->val = strdup(val);
             return 0;
         }
     }
