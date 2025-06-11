@@ -4,6 +4,7 @@ FILESCRIPT="docs/cmdscript.txt"
 TMUX_SESSION="tman-video"       # To get it use <PREFIX>s
 TMUX_WINDOW_ID="1"              # To get it use <PREFIX>w
 TMUX_PANE_ID="0"                # To get it use <PREFIX>q
+FILECAST="tman.cast"
 
 set -e
 
@@ -13,7 +14,7 @@ function check_dependencies()
     local deps=(tmux flameshot)
     for dep in "${deps[@]}"; do
         if ! apt list | grep -qw "$dep"; then
-            echo "Util '$dep' is missing on the system. Install it"
+            echo "Util '$dep' is missing on the system. Install it" >&2
             exit 1
         fi
     done
@@ -25,6 +26,25 @@ function switch_session()
         tmux new -s "$TMUX_SESSION" -d
     fi
     tmux switch-client -t "$TMUX_SESSION"
+}
+
+function execmd()
+{
+    local command="$1"
+    for (( i=0; i<${#command}; ++i )); do
+        local char="${command:$i:1}"
+        tmux send-keys -t "$TMUX_SESSION"."$TMUX_PANE_ID" "$char"
+    done
+    tmux send-keys -t "$TMUX_SESSION"."$TMUX_PANE_ID" ENTER
+}
+
+function video_start()
+{
+    local cast="asciinema rec $FILECAST"
+    local _cls="clear"
+
+    execmd "$cast"
+    execmd "$_cls"
 }
 
 function video_produce()
@@ -41,11 +61,20 @@ function video_produce()
     done < "$FILESCRIPT"
 }
 
+function video_end()
+{
+    tmux send-keys -t "$TMUX_SESSION"."$TMUX_PANE_ID" C-d
+}
+
 function video_record()
 {
     return 0;
 }
 
-#check_dependencies
-#switch_session
-#video_produce
+
+
+check_dependencies
+switch_session
+video_start
+video_produce
+video_end
