@@ -98,6 +98,7 @@ int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
         args.prj = argv[i];
 
         if ((status = tman_task_list(ctx, &args, NULL)) != LIBTMAN_OK) {
+            args.prj = args.prj ? args.prj : "NOCURR";
             elog(status, errfmt, args.prj, tman_strerror());
             continue;
         }

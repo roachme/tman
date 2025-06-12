@@ -59,7 +59,7 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
         return help_usage("prj-add");
 
     if (optind == argc)
-        return elog(1, "task prj required");
+        return elog(1, "project name required");
 
     tman_pwd_unset();
     for (i = optind; i < argc; ++i) {
