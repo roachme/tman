@@ -24,6 +24,27 @@ static void resolve_env_var_home(char *dst, const char *src)
     }
 }
 
+static int myconfig_set_default_base(struct config *myconfig)
+{
+    char pathname[PATH_MAX + 1] = { 0 };
+
+    if (myconfig->base.task == NULL) {
+        resolve_env_var_home(pathname, "$HOME/tmantask");
+        myconfig->base.task = strdup(pathname);
+    }
+    if (myconfig->base.pgn == NULL) {
+        resolve_env_var_home(pathname, "$HOME/.local/lib/tman/pgn");
+        myconfig->base.pgn = strdup(pathname);
+    }
+    return 0;
+}
+
+static int myconfig_set_default_config(struct config *myconfig)
+{
+    myconfig_set_default_base(myconfig);
+    return 0;
+}
+
 static struct tman_hook *make_hook()
 {
     struct tman_hook *hook;
@@ -97,33 +118,21 @@ static int myconfig_get_base(config_t * cfg, struct config *myconfig)
     const char *task, *pgn;
     char pathname[PATH_MAX + 1];
     config_setting_t *setting;
-    char default_task[] = "$HOME/tmantask";
-    char default_pgn[] = "$HOME/.local/lib/tman/pgn";
 
     task = pgn = NULL;
-    if ((setting = config_lookup(cfg, "base")) == NULL)
-        return 0;
-
-    if (config_setting_lookup_string(setting, "task", &task)) {
-        pathname[0] = '\0';     /* unset pathname value */
-        resolve_env_var_home(pathname, task);
-        myconfig->base.task = strdup(pathname);
-    } else {
-        pathname[0] = '\0';     /* unset pathname value */
-        resolve_env_var_home(pathname, default_task);
-        myconfig->base.task = strdup(pathname);
+    if ((setting = config_lookup(cfg, "base")) != NULL) {
+        if (config_setting_lookup_string(setting, "task", &task)) {
+            pathname[0] = '\0'; /* unset pathname value */
+            resolve_env_var_home(pathname, task);
+            myconfig->base.task = strdup(pathname);
+        }
+        if (config_setting_lookup_string(setting, "pgn", &pgn)) {
+            pathname[0] = '\0'; /* unset pathname value */
+            resolve_env_var_home(pathname, pgn);
+            myconfig->base.pgn = strdup(pathname);
+        }
     }
-
-    if (config_setting_lookup_string(setting, "pgn", &pgn)) {
-        pathname[0] = '\0';     /* unset pathname value */
-        resolve_env_var_home(pathname, pgn);
-        myconfig->base.pgn = strdup(pathname);
-    } else {
-        pathname[0] = '\0';     /* unset pathname value */
-        resolve_env_var_home(pathname, default_pgn);
-        myconfig->base.pgn = strdup(pathname);
-    }
-    return 0;
+    return myconfig_set_default_base(myconfig);
 }
 
 static int myconfig_get_options(config_t * cfg, struct config *myconfig)
@@ -187,7 +196,7 @@ int tmancfg_parse(struct config *myconfig)
         if (ISFILE(cfgfile))
             return parseconf(myconfig, cfgfile);
     }
-    return 1;
+    return myconfig_set_default_config(myconfig);
 }
 
 void myconfig_destroy(struct config *myconfig)
