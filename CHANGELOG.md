@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `cli/config`: Add default values for config
+
 ### Fixed
 
 - `lib/unit`: Fix memory heap corruption
