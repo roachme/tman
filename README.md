@@ -1,5 +1,13 @@
-## Tman
-##### Terminal task manager
+<div align="center">
+   <!--<img align="center" width="128px" src="crates/gitbutler-tauri/icons/128x128@2x.png" /> -->
+	<h1 align="center"><b>Tman</b></h1>
+	<p align="center">
+        Terminal project and task  manager
+    <br />
+  </p>
+</div>
+
+<br/>
 
 
 ![command example](docs/tman.gif)

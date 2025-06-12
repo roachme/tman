@@ -4,6 +4,10 @@
 
 - `cli/config`: Add default values for config
 
+### Changed
+
+- `README`: Update README.md file
+
 ### Fixed
 
 - `lib/unit`: Fix memory heap corruption
