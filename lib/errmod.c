@@ -34,7 +34,13 @@ const char *errcodes[__LIBTMAN_STATUS_LAST] = {
     [LIBTMAN_PRJ_DEL_PREV] = "could not unmark previous project",
     [LIBTMAN_PRJ_MISSING] = "project name missing",
 
-    [LIBTMAN_BRD_NOCURR] = "no current board",
+    [LIBTMAN_BRD_ILLEG] = "illegal task ID",
+    [LIBTMAN_BRD_TOOLONG] = "task ID is too long, limit is " xstr(IDSIZ),
+    [LIBTMAN_BRD_NOSUCH] = "no such task ID",
+    [LIBTMAN_BRD_NOCURR] = "no current task ID",
+    [LIBTMAN_BRD_NOPREV] = "no previous task ID",
+    [LIBTMAN_BRD_EXISTS] = "task ID already exists",
+    [LIBTMAN_BRD_SWAP] = "could not swap task IDs",
 
     [LIBTMAN_ID_ILLEG] = "illegal task ID",
     [LIBTMAN_ID_TOOLONG] = "task ID is too long, limit is " xstr(IDSIZ),

@@ -125,6 +125,12 @@ struct unit *tman_unit_add(struct unit *head, char *key, char *val);
 void *tman_unit_free(struct tman_context *ctx, struct tman_arg *args,
                      struct tman_option *options);
 
+/* Project board functions.  */
+int tman_brd_add(struct tman_context *ctx, struct tman_arg *args,
+                 struct tman_option *options);
+int tman_brd_del(struct tman_context *ctx, struct tman_arg *args,
+                 struct tman_option *options);
+
 /* Task project functions.  */
 int tman_prj_add(struct tman_context *ctx, struct tman_arg *args,
                  struct tman_option *options);
@@ -140,7 +146,6 @@ int tman_prj_show(struct tman_context *ctx, struct tman_arg *args,
                   struct tman_option *options);
 int tman_prj_sync(struct tman_context *ctx, struct tman_arg *args,
                   struct tman_option *options);
-char *tman_prj_getcurr(struct tman_context *ctx);
 
 /* Task plugin functions.  */
 int tman_ispgn(char *pgndir, const char *pgname);

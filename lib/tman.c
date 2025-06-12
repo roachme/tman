@@ -12,6 +12,7 @@
 #include "tree.h"
 #include "task.h"
 #include "unit.h"
+#include "board.h"
 #include "common.h"
 #include "osdep.h"
 #include "errmod.h"
@@ -69,7 +70,14 @@ int tman_check_arg_id(struct tman_arg *args)
 
 int tman_check_arg_brd(struct tman_arg *args)
 {
-    /* TODO: add board name checks.  */
+    if (args->brd == NULL && (args->brd = board_curr(args->brd)) == NULL)
+        return emod_set(LIBTMAN_BRD_NOCURR);
+    else if (task_is_valid_name(args->id) == FALSE)
+        return emod_set(LIBTMAN_BRD_ILLEG);
+    else if (task_is_valid_length(args->id) == FALSE)
+        return emod_set(LIBTMAN_BRD_TOOLONG);
+    else if (task_exist(args->prj, args->id) == FALSE)
+        return emod_set(LIBTMAN_BRD_NOSUCH);
     return LIBTMAN_OK;
 }
 
@@ -351,6 +359,17 @@ int tman_task_sync(struct tman_context *ctx, struct tman_arg *args,
         return emod_set(LIBTMAN_PRJ_SWITCH);
     else if (task_move(args->prj, args->id, COLCURR))
         return emod_set(LIBTMAN_ID_SWAP);
+    return LIBTMAN_OK;
+}
+
+int tman_brd_add(struct tman_context *ctx, struct tman_arg *args,
+                 struct tman_option *options)
+{
+    int status;
+
+    if ((status = tman_check_arg_brd(args)) && status != LIBTMAN_PRJ_NOSUCH)
+        return status;
+
     return LIBTMAN_OK;
 }
 
