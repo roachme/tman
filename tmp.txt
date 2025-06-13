@@ -1,0 +1,7 @@
+getenv-function
+filereadable-function
+fnamemodify-function
+mkdir-function
+has-function
+stdpath-function
+executable-function
