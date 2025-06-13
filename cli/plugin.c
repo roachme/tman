@@ -16,7 +16,6 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
 {
     int i;
     char *pgn;
-    char *pgncmd;
     char *option;
     struct tman_arg args;
     char pgnopts[BUFSIZ + 1] = { 0 };
@@ -24,11 +23,10 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
     int status;
 
     i = 1;                      /* skip program name, i.e. tman.  */
-    pgn = pgncmd = option = NULL;
+    pgn = option = NULL;
     args.brd = args.id = args.prj = NULL;
 
     pgn = argv[i++];
-    pgncmd = argc > i && argv[i][0] != '-' ? argv[i++] : "";
 
     tman_pwd_unset();
 
@@ -82,7 +80,7 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
     strcat(pgnexec, tmancfg->base.task);
 
     strcat(pgnexec, " ");
-    strcat(pgnexec, pgncmd);
+    strcat(pgnexec, pgnopts);
 
     if (args.prj != NULL) {
         strcat(pgnexec, " -p ");
@@ -96,13 +94,10 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
         strcat(pgnexec, " -i ");
         strcat(pgnexec, args.id);
     }
-    strcat(pgnexec, " ");
-    strcat(pgnexec, pgnopts);
 
     /*
        printf("pgnopts: %s\n", pgnopts);
        printf("argc: %d, i: %d\n", argc, i);
-       printf("pgncmd: %s\n", pgncmd);
        printf("pgnexec: %s\n", pgnexec);
      */
 
