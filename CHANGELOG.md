@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/config`: Add default values for config
+- `cli/plugin`: Add support to pass plugin common options
 
 ### Changed
 
