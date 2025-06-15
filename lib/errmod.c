@@ -11,6 +11,7 @@ const char *errcodes[__LIBTMAN_STATUS_LAST] = {
     [LIBTMAN_ECORE] = "error happened in core",
     [LIBTMAN_ESYSVAR] = "could not fill system variables",
     [LIBTMAN_EINIT] = "not inited",
+    [LIBTMAN_EFINIT] = "could not init",
     [LIBTMAN_EMKDIR] = "could not make directory",
     [LIBTMAN_ECONF] = "error to parse config",
     [LIBTMAN_EHOOK] = "failed to execute hook",

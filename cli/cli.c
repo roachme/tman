@@ -191,7 +191,7 @@ int main(int argc, char **argv)
         if (strcmp(cmd, builtins[idx].name) == 0) {
             cmdfound = TRUE;
             if ((status = tman_setup(builtins[idx].setuplvl)) != LIBTMAN_OK) {
-                elog(status, "%s", tman_strerror());
+                elog(status, "setup failed: %s", tman_strerror());
                 goto out;
             }
             status = builtins[idx].func(argc - i, argv + i, ctx);
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
         && (status = tman_ispgn(tmancfg->base.pgn, cmd)) == TRUE) {
         cmdfound = TRUE;
         if ((status = tman_setup(LIBTMAN_SETUPCHECK)) != LIBTMAN_OK) {
-            elog(status, "%s", tman_strerror());
+            elog(status, "setup failed: %s", tman_strerror());
             goto out;
         }
         status = tman_cli_plugin(argc, argv, ctx);
