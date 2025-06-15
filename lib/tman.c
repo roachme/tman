@@ -16,8 +16,6 @@
 #include "osdep.h"
 #include "errmod.h"
 
-#define PWDFILE     "/tmp/tmanpwd"
-
 // TODO: Make NOT global.
 struct tmanstruct tmanfs;
 
@@ -135,31 +133,6 @@ int tman_setup(int setuplvl)
         // and here?
     }
     return status;
-}
-
-int tman_pwd(void)
-{
-    char *prj, *id;
-    FILE *fp;
-
-    if ((prj = project_getcurr()) == NULL)
-        return emod_set(LIBTMAN_PRJ_NOCURR);
-    if ((id = task_curr(prj)) == NULL)
-        id = "";
-
-    if ((fp = fopen(PWDFILE, "w")) == NULL)
-        return 1;
-    fprintf(fp, "%s/%s/%s\n", tmanfs.base, prj, id);
-    return fclose(fp);
-}
-
-int tman_pwd_unset(void)
-{
-    FILE *fp;
-
-    if ((fp = fopen(PWDFILE, "w")) == NULL)
-        return 1;
-    return fclose(fp);
 }
 
 int tman_task_add(struct tman_context *ctx, struct tman_arg *args,

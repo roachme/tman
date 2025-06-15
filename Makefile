@@ -31,7 +31,7 @@ init:
 	#ln -s ../build/gtest artifacts/gtest ||:
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) -DVERSION=\"$(VERSION)\"
+	$(CC) -c -o $@ $< $(CFLAGS) -DVERSION=\"$(VERSION)\" -DPWDFILE=\"$(PWDFILE)\"
 
 $(PROGRAM): $(OBJS)
 	$(CC) -o $@ $^ $(LFLAGS)
