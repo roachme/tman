@@ -1,11 +1,14 @@
 PROGRAM=_tmancli
 VERSION=$(shell cat VERSION.txt)
 README=README.md
+SHELLSCRIPT=tman.sh
+SHELLNAME=bash
 CC=gcc
 SRCS=$(wildcard lib/*.c cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
-CFLAGS=-I lib -I cli -Wall
-LFLAGS=-lconfig
+CFLAGS=-I lib -I cli -Wall -g
+LFLAGS=-lconfig -g
+PWDFILE=/tmp/tmanpwd
 
 # TODO: add debug mode
 # TODO: add user and developer builds
@@ -34,6 +37,7 @@ $(PROGRAM): $(OBJS)
 	$(CC) -o $@ $^ $(LFLAGS)
 
 generate: $(PROGRAM)
+	$(shell m4 -DSHELLNAME=$(SHELLNAME) -DPWDFILE=$(PWDFILE) ./scripts/genshell > $(SHELLSCRIPT))
 	$(shell m4 ./scripts/genreadme > $(README))
 
 clean:
