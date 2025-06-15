@@ -116,21 +116,21 @@ struct tman_context *tman_init(struct tman_base *base)
 
 int tman_setup(int setuplvl)
 {
-    int status = LIBTMAN_OK;
+    int status;
 
-    if (setuplvl == LIBTMAN_SETUPSOFT)
-        return LIBTMAN_OK;
-    else if (setuplvl == LIBTMAN_SETUPHARD) {
-        if ((status = tman_mkfs()) != LIBTMAN_OK) {
-            status = emod_set(LIBTMAN_EINIT);
-        }
-    } else if (setuplvl == LIBTMAN_SETUPCHECK) {
+    if (setuplvl == LIBTMAN_SETUPSOFT)  /* no filesystem check.  */
+        status = LIBTMAN_OK;
+    else if (setuplvl == LIBTMAN_SETUPCHECK) {  /* check filesystem.  */
+        status = LIBTMAN_OK;
+        // NOTE: delete finit, use .tman db dir
         if (ISFILE(tmanfs.finit) != TRUE) {
             status = emod_set(LIBTMAN_EINIT);
         } else if (project_init(tmanfs.fstate) != 0)
-            return emod_set(LIBTMAN_EINIT_PRJMOD);
-        // roach: is it a good idea to init module column in general
-        // and here?
+            status = emod_set(LIBTMAN_EINIT_PRJMOD);
+        // NOTE: is it a good idea to init module project in general and here?
+    } else {                    /* LIBTMAN_SETUPHARD: create filesystem.  */
+        if ((status = tman_mkfs()) != LIBTMAN_OK)
+            status = emod_set(LIBTMAN_EFINIT);
     }
     return status;
 }

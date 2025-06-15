@@ -9,6 +9,7 @@ enum tman_err_enum {
     LIBTMAN_ECORE,              /* ?? Error in core execution (under consideration to include) */
     LIBTMAN_ESYSVAR,
     LIBTMAN_EINIT,
+    LIBTMAN_EFINIT,
     LIBTMAN_EMKDIR,
     LIBTMAN_ECONF,
     LIBTMAN_EHOOK,              /* Failed to execute hook */
