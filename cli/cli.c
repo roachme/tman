@@ -8,6 +8,8 @@
 
 #define NONEBOOL        -1      /* Not yet set boolean value */
 
+struct config *tmancfg;
+
 /*
  * Tman util options:
     -c      Use colors
@@ -20,6 +22,31 @@ static int show_version()
 {
     printf("%s: %s\n", PROGRAM, VERSION);
     return 0;
+}
+
+int tman_pwd(void)
+{
+    FILE *fp;
+    struct tman_arg args;
+
+    if ((args.prj = project_getcurr()) == NULL)
+        return emod_set(LIBTMAN_PRJ_NOCURR);
+    if ((args.id = task_curr(args.prj)) == NULL)
+        args.id = "";
+
+    if ((fp = fopen(PWDFILE, "w")) == NULL)
+        return 1;
+    fprintf(fp, "%s/%s/%s\n", tmancfg->base.task, args.prj, args.id);
+    return fclose(fp);
+}
+
+int tman_pwd_unset(void)
+{
+    FILE *fp;
+
+    if ((fp = fopen(PWDFILE, "w")) == NULL)
+        return 1;
+    return fclose(fp);
 }
 
 int elog(int status, const char *fmt, ...)
@@ -63,8 +90,6 @@ static const builtin_t builtins[] = {
     {.name = "show",.func = &tman_cli_show,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "sync",.func = &tman_cli_sync,.setuplvl = LIBTMAN_SETUPCHECK},
 };
-
-struct config *tmancfg;
 
 int main(int argc, char **argv)
 {
