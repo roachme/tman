@@ -10,6 +10,7 @@
 
 - `README`: Update README.md file
 - `pgn`: Update SHA commit to pgn
+- `cli`: Move PWD logic to cli part
 
 ### Fixed
 

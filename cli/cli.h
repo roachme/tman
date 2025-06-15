@@ -32,6 +32,8 @@ typedef struct builtin {
     int (*func)(int argc, char **argv, struct tman_context * ctx);
 } builtin_t;
 
+int tman_pwd(void);
+int tman_pwd_unset(void);
 int elog(int status, const char *fmt, ...);
 int dlog(int level, const char *fmt, ...);
 
