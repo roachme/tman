@@ -77,6 +77,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
     if (showhelp == TRUE)
         return help_usage("show");
 
+    tman_pwd_unset();
     i = optind;
     do {
         args.id = argv[i];
