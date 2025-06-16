@@ -5,6 +5,7 @@
 - `cli/config`: Add default values for config
 - `cli/plugin`: Add support to pass plugin common options
 - `scripts/genshell`: Add generator to generate tman.sh file
+- `cli/cfg`: Add show subcommand to cfg
 
 ### Changed
 
