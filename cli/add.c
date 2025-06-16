@@ -69,6 +69,7 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
         return 1;
     }
 
+    tman_pwd_unset();
     i = optind;
     do {
         args.id = args.id == NULL ? argv[i] : args.id;

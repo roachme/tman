@@ -15,6 +15,7 @@
 ### Fixed
 
 - `lib/unit`: Fix memory heap corruption
+- `cli`: Fix directory switch for commands
 
 
 ## [0.0.17] - (2025-06-11)
