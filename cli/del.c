@@ -36,14 +36,6 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
 
     if (showhelp == TRUE)
         return help_usage("del");
-    else if (showprompt) {
-        /* Hotfix: if you add to stdout, than it'll be catched in my shell.  */
-        fprintf(stderr, "Are you sure to delete task(s)? [y/N] ");
-        choice = getchar();
-        if (choice != 'y' && choice != 'Y') {
-            return 0;
-        }
-    }
     // TODO: if not current task gets deleted, then no need to
     // change user's current directory.
     tman_pwd_unset();
@@ -63,6 +55,13 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
+        }
+
+        if (showprompt) {
+            printf("Are you sure to delete task '%s'? [y/N] ", args.id);
+            choice = getchar();
+            if (choice != 'y' && choice != 'Y')
+                continue;
         }
 
         if (tmancfg->usehooks == TRUE &&
