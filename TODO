@@ -9,6 +9,8 @@ Bugs:
   3. Command `tman move` cant move 2 task to destination. It simply renames it.
 + 4. Command `tman set -d 'description'` causes malloc fail, when set longer
      description than before.
+  5. NULL-termination should follow `strncpy(dst, src, len)`. In case `src`
+     is equal to `len` it'll end without '\0'. Checked it with valgrind.
 
 Ideas:
   1. Replace cat & ls hooks with reading from file. Gonna highly optimize
