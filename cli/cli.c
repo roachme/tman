@@ -93,14 +93,14 @@ static const builtin_t builtins[] = {
 
 int main(int argc, char **argv)
 {
-    int usecolors, usedebug, usehooks;
+    int usecolor, usedebug, usehooks;
     char *cmd = NULL, *option, *togfmt;
     struct tman_base base = {.task = NULL,.pgn = NULL };
     int i, status, cmdfound;
     struct tman_context *ctx;
 
     cmd = option = NULL;
-    usecolors = usedebug = usehooks = NONEBOOL;
+    usecolor = usedebug = usehooks = NONEBOOL;
     togfmt = "option `%s' accepts either 'on' or 'off'";
 
     /* Parse util itself options.  */
@@ -113,9 +113,9 @@ int main(int argc, char **argv)
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
             if (strcmp(argv[i + 1], "on") == 0)
-                usecolors = TRUE;
+                usecolor = TRUE;
             else if (strcmp(argv[i + 1], "off") == 0)
-                usecolors = FALSE;
+                usecolor = FALSE;
             else
                 return elog(1, togfmt, option);
             ++i;                /* Skip option.  */
@@ -180,7 +180,7 @@ int main(int argc, char **argv)
     }
 
     tmancfg->usehooks = usehooks != NONEBOOL ? usehooks : tmancfg->usehooks;
-    tmancfg->usecolors = usecolors != NONEBOOL ? usecolors : tmancfg->usecolors;
+    tmancfg->usecolor = usecolor != NONEBOOL ? usecolor : tmancfg->usecolor;
     tmancfg->usedebug = usedebug != NONEBOOL ? usedebug : tmancfg->usedebug;
 
     if ((ctx = tman_init(&tmancfg->base)) == NULL) {

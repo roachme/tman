@@ -138,7 +138,7 @@ static int myconfig_get_base(config_t * cfg, struct config *myconfig)
 static int myconfig_get_options(config_t * cfg, struct config *myconfig)
 {
     config_setting_t *setting;
-    myconfig->usecolors = FALSE;
+    myconfig->usecolor = FALSE;
     myconfig->usedebug = FALSE;
     myconfig->usehooks = FALSE;
 
@@ -146,7 +146,7 @@ static int myconfig_get_options(config_t * cfg, struct config *myconfig)
         return 0;
 
     config_setting_lookup_bool(setting, "hook", &myconfig->usehooks);
-    config_setting_lookup_bool(setting, "color", &myconfig->usecolors);
+    config_setting_lookup_bool(setting, "color", &myconfig->usecolor);
     config_setting_lookup_bool(setting, "debug", &myconfig->usedebug);
     return 0;
 }
