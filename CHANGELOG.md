@@ -17,6 +17,7 @@
 
 - `lib/unit`: Fix memory heap corruption
 - `cli`: Fix directory switch for commands
+- `lib/task`: Fix memleak when task ID is equal to limit
 
 
 ## [0.0.17] - (2025-06-11)

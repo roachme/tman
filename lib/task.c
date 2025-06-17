@@ -216,13 +216,7 @@ int task_exist(char *prj, char *id)
 */
 int task_add(char *prj, char *id)
 {
-    char taskid[IDSIZ + 1];
-
-    strncpy(taskid, id, IDSIZ);
-    if (col_set(prj, taskid, COLBLOG)) {
-        return 1;
-    }
-    return 0;
+    return col_set(prj, id, COLBLOG);
 }
 
 /**
@@ -234,17 +228,14 @@ int task_add(char *prj, char *id)
 */
 int task_del(char *prj, char *id)
 {
-    char taskid[IDSIZ + 1];
-
     if (load(prj))
         return 1;
 
-    strncpy(taskid, id, IDSIZ);
-    if (strncmp(taskid, curr, IDSIZ) == 0)
+    if (strncmp(id, curr, IDSIZ) == 0)
         return delcurr(prj, COLBLOG);
-    else if (strncmp(taskid, prev, IDSIZ) == 0)
+    else if (strncmp(id, prev, IDSIZ) == 0)
         return delprev(prj);
-    return col_del(prj, taskid);
+    return col_del(prj, id);
 }
 
 int task_iscurr(char *prj, char *id)
@@ -277,18 +268,15 @@ int task_isprev(char *prj, char *id)
 */
 int task_move(char *prj, char *id, char *col)
 {
-    char taskid[IDSIZ + 1];
-
     if (load(prj))
         return 1;
 
-    strncpy(taskid, id, IDSIZ);
-    if (strncmp(curr, taskid, IDSIZ) == 0) {
+    if (strncmp(curr, id, IDSIZ) == 0) {
         return movecurr(prj, curr, col);
-    } else if (strncmp(prev, taskid, IDSIZ) == 0) {
+    } else if (strncmp(prev, id, IDSIZ) == 0) {
         return moveprev(prj, prev, col);
     }
-    return movetask(prj, taskid, col);
+    return movetask(prj, id, col);
 }
 
 /**
