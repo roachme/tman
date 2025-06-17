@@ -16,7 +16,7 @@
 #define CONF_MAXPGNINS  256
 
 struct config {
-    int usecolors;              /* use colors */
+    int usecolor;               /* use colors */
     int usedebug;               /* output debug info */
     int usehooks;               /* execute hooks from config, by default set */
     struct tman_base base;

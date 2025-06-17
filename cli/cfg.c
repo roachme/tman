@@ -16,7 +16,7 @@ static int _cfg_show(int argc, char **argv, struct tman_context *ctx)
     printf("base.pgn: %s\n", tmancfg->base.pgn);
     puts("");
     printf("options.usehook: %s\n", tmancfg->usehooks ? "True" : "False");
-    printf("options.usecolor: %s\n", tmancfg->usecolors ? "True" : "False");
+    printf("options.usecolor: %s\n", tmancfg->usecolor ? "True" : "False");
     printf("options.usedebug: %s\n", tmancfg->usedebug ? "True" : "False");
     puts("");
     printf("hooks:show\n");
