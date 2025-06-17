@@ -153,6 +153,7 @@ int main(int argc, char **argv)
     }
 
     if ((cmd = argv[i]) == NULL) {
+        tman_pwd_unset();
         help_lookup(NULL);
         return 1;
     }
