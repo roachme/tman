@@ -6,7 +6,7 @@ SHELLNAME=bash
 CC=gcc
 SRCS=$(wildcard lib/*.c cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
-CFLAGS=-I lib -I cli -Wall -g
+CFLAGS=-I lib -I cli -Wall -g3  -fbounds-check
 LFLAGS=-lconfig -g
 PWDFILE=/tmp/tmanpwd
 
