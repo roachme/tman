@@ -249,6 +249,7 @@ int tman_task_list(struct tman_context *ctx, struct tman_arg *args,
             tree_alloc(ent->d_name, col_prio(column.col),
                        unit_get(units, "desc"), "");
         ctx->ids = tree_add(ctx->ids, node);
+        unit_free(units);
     }
     closedir(ids);
     return LIBTMAN_OK;
@@ -436,6 +437,7 @@ int tman_prj_list(struct tman_context *ctx, struct tman_option *options)
         node =
             tree_alloc(ent->d_name, colprio, unit_get(units, "desc"), pgnout);
         ctx->prjs = tree_add(ctx->prjs, node);
+        unit_free(units);
     }
 
     closedir(edir);
