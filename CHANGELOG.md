@@ -4,6 +4,10 @@
 
 - `cli/pgm`: Add support for plugin description
 
+### Deleted
+
+- `cli`: Delete command `flow` from list
+
 
 ## [0.0.18] - (2025-06-17)
 

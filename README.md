@@ -124,7 +124,6 @@ Basic:
   sync   - Switch to or synchronize task.
 
 Misc:
-  flow   - Show and set project workflow (under development).
   col    - Move task to column.
   move   - Move (rename) tasks.
   set    - Set task unit values.

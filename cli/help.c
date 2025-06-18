@@ -146,22 +146,6 @@ struct help helptab[] = {
     Exit status:\n\
     Under development\n"},
     {
-     .tag = TAGMISC,
-     .name = "flow",
-     .synop = "Usage: " PROGRAM " flow [OPTION]... FLOW\n",
-     .desc_short = "Show and set project workflow (under development).\n",
-     .desc_long = "\n\
-    Options:\n\
-      -h      show this help and exit\n\
-      -p PRJ  project name\n\
-    \n\
-    Arguments:\n\
-      PATTERN      Pattern specifying a description topic\n\
-      PRJ          project name (default current)\n\
-    \n\
-    Exit status:\n\
-    Under development\n"},
-    {
      .tag = TAGBASIC,
      .name = "list",
      .synop = "Usage: " PROGRAM " list [OPTION]... [PRJ]...\n",
