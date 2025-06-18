@@ -4,13 +4,31 @@
 
 #include "cli.h"
 
-int _pgm_chk(int argc, char **argv, struct tman_context *ctx)
+static char *get_plugin_description(const char *fname)
+{
+    FILE *fp;
+    char *ptr;
+    static char desc[100];
+
+    if ((fp = fopen(fname, "r")) == NULL)
+        return strcpy(desc, "some plugin description");
+
+    if (fgets(desc, 100, fp)) {
+        if ((ptr = strstr(desc, "\n"))) {
+            *ptr = '\0';
+        }
+    }
+    fclose(fp);
+    return desc;
+}
+
+static int _pgm_chk(int argc, char **argv, struct tman_context *ctx)
 {
     printf("check plugins\n");
     return LIBTMAN_OK;
 }
 
-int _pgm_list(int argc, char **argv, struct tman_context *ctx)
+static int _pgm_list(int argc, char **argv, struct tman_context *ctx)
 {
     DIR *dir;
     struct dirent *pgn;
@@ -22,9 +40,12 @@ int _pgm_list(int argc, char **argv, struct tman_context *ctx)
 
     printf("%s\n", pgmheader);
     while ((pgn = readdir(dir)) != NULL) {
+        char fname[PATH_MAX + 1];
+
         if (pgn->d_name[0] == '.' || pgn->d_type != DT_DIR)
             continue;
-        printf(pgmfmt, pgn->d_name, "inst", "some plugin description");
+        sprintf(fname, "%s/%s/description", tmanfs.pgnins, pgn->d_name);
+        printf(pgmfmt, pgn->d_name, "inst", get_plugin_description(fname));
     }
     closedir(dir);
     return LIBTMAN_OK;
