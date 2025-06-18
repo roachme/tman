@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Added
+
+- `cli/pgm`: Add support for plugin description
+
+
 ## [0.0.18] - (2025-06-17)
 
 ### Added
