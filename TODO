@@ -20,6 +20,7 @@ Ideas:
 + 4. Add support to pass system config values via option to util.
 + 5. Add option to show task columns in command `tman col`.
   6. Add plugin `note` to take notes. Synopsis: tman note [OPTION]... COMMAND
+  7. Add plugin workflow to move task from columns to column
 
 Prio: high
 + 1. Write config file parser and define config itself.
