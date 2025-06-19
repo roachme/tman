@@ -33,7 +33,7 @@ struct help helptab[] = {
      .desc_long = "\n\
     Options:\n\
       -C TOG  enbale colors (default: disabled)\n\
-      -D TOG  enbale debug mode (under development)\n\
+      -D TOG  enbale debug mode (default: disabled)\n\
       -h      show this help and exit\n\
       -F DIR  path to the config file (under development)\n\
       -H TOG  enbale hooks (default: disabled)\n\

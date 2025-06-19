@@ -34,6 +34,7 @@ int tman_pwd(void)
     if ((args.id = task_curr(args.prj)) == NULL)
         args.id = "";
 
+    dlog(1, "tman_pwd: prj = '%s', id = '%s'", args.prj, args.id);
     if ((fp = fopen(PWDFILE, "w")) == NULL)
         return 1;
     fprintf(fp, "%s/%s/%s\n", tmancfg->base.task, args.prj, args.id);
@@ -63,6 +64,9 @@ int elog(int status, const char *fmt, ...)
 int dlog(int level, const char *fmt, ...)
 {
     // TODO: add a debug log level
+    if (tmancfg->usedebug == FALSE)
+        return 0;
+
     va_list arg;
     va_start(arg, fmt);
     printf(PROGRAM ": ");
@@ -128,7 +132,6 @@ int main(int argc, char **argv)
             else
                 return elog(1, togfmt, option);
             ++i;                /* Skip option.  */
-            return elog(1, "this option is under development");
         } else if (strcmp(argv[i], "-h") == 0)
             return help_lookup(NULL);
         else if (strcmp(argv[i], "-P") == 0) {

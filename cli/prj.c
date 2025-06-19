@@ -122,6 +122,8 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
         }
     } while (++i < argc);
 
+    dlog(1, "prj_del: status = %d", status);
+
     // TODO: update current directory if current prj got deleted.
     return status == LIBTMAN_OK ? tman_pwd() : status;
 }

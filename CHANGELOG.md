@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/pgm`: Add support for plugin description
+- `cli`: Add debug option
 
 ### Fixed
 
