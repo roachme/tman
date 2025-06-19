@@ -4,6 +4,10 @@
 
 - `cli/pgm`: Add support for plugin description
 
+### Fixed
+
+- `cli/prj`: Fix status code when project is deleted
+
 ### Deleted
 
 - `cli`: Delete command `flow` from list

@@ -77,12 +77,12 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     char c;
     struct tman_arg args;
     const char *errfmt = "cannot switch: %s";
-    int i, choice, quiet, showpath, showhelp, showprompt, status;
+    int i, choice, quiet, showhelp, showprompt, status;
     struct tman_option opt;
 
     showprompt = TRUE;
     args.prj = args.id = NULL;
-    choice = quiet = showhelp = showpath = FALSE;
+    choice = quiet = showhelp = FALSE;
     while ((c = getopt(argc, argv, ":hnq")) != -1) {
         switch (c) {
         case 'h':
@@ -123,7 +123,7 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     } while (++i < argc);
 
     // TODO: update current directory if current prj got deleted.
-    return status == LIBTMAN_OK && showpath == TRUE ? tman_pwd() : 1;
+    return status == LIBTMAN_OK ? tman_pwd() : status;
 }
 
 static int _prj_list(int argc, char **argv, struct tman_context *ctx)
