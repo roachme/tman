@@ -69,7 +69,7 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
                 elog(1, errfmt, argv[i], tman_strerror());
         }
     }
-    return status == LIBTMAN_OK ? tman_pwd() : 1;
+    return status == LIBTMAN_OK ? tman_pwd_set(&args) : 1;
 }
 
 static int _prj_del(int argc, char **argv, struct tman_context *ctx)
@@ -123,7 +123,7 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     } while (++i < argc);
 
     // TODO: update current directory if current prj got deleted.
-    return status == LIBTMAN_OK && showpath == TRUE ? tman_pwd() : 1;
+    return status == LIBTMAN_OK && showpath == TRUE ? tman_pwd_set(&args) : 1;
 }
 
 static int _prj_list(int argc, char **argv, struct tman_context *ctx)
@@ -141,11 +141,14 @@ static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
 {
     int status;
     struct tman_option opt;
+    struct tman_arg args;
 
     tman_pwd_unset();
+    args.id = args.brd = args.prj = NULL;
+
     if ((status = tman_prj_prev(ctx, &opt)) != LIBTMAN_OK)
         return elog(status, "cannot switch: %s", tman_strerror());
-    return tman_pwd();
+    return tman_pwd_set(&args);
 }
 
 static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
@@ -186,7 +189,9 @@ static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
         if (quiet == FALSE)
             elog(status, "could not rename project: %s", tman_strerror());
     }
-    return tman_pwd();
+    /* TODO: Update PWD when needed.  */
+    //return tman_pwd_set(&args);
+    return LIBTMAN_OK;
 }
 
 static int _prj_set(int argc, char **argv, struct tman_context *ctx)
@@ -337,7 +342,8 @@ static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
         }
     } while (++i < argc);
 
-    return opt.prj_switch && status == LIBTMAN_OK ? tman_pwd() : status;
+    return opt.prj_switch
+        && status == LIBTMAN_OK ? tman_pwd_set(&args) : status;
 }
 
 static const builtin_t prjcmds[] = {

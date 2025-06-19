@@ -24,19 +24,18 @@ static int show_version()
     return 0;
 }
 
-int tman_pwd(void)
+int tman_pwd_set(struct tman_arg *args)
 {
     FILE *fp;
-    struct tman_arg args;
 
-    if ((args.prj = project_getcurr()) == NULL)
+    if (args->prj == NULL && (args->prj = project_getcurr()) == NULL)
         return emod_set(LIBTMAN_PRJ_NOCURR);
-    if ((args.id = task_curr(args.prj)) == NULL)
-        args.id = "";
+    if (args->id == NULL && (args->id = task_curr(args->prj)) == NULL)
+        args->id = "";
 
     if ((fp = fopen(PWDFILE, "w")) == NULL)
         return 1;
-    fprintf(fp, "%s/%s/%s\n", tmancfg->base.task, args.prj, args.id);
+    fprintf(fp, "%s/%s/%s\n", tmancfg->base.task, args->prj, args->id);
     return fclose(fp);
 }
 

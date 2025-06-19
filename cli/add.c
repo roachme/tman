@@ -88,5 +88,6 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
         }
         args.id = NULL;         /* unset task ID, not to break loop.  */
     } while (++i < argc);
-    return opt.id_switch && status == LIBTMAN_OK ? tman_pwd() : status;
+
+    return opt.id_switch && status == LIBTMAN_OK ? tman_pwd_set(&args) : status;
 }

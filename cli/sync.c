@@ -58,5 +58,5 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
         }
     } while (++i < argc);
 
-    return opt.id_switch && status == LIBTMAN_OK ? tman_pwd() : status;
+    return opt.id_switch && status == LIBTMAN_OK ? tman_pwd_set(&args) : status;
 }
