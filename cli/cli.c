@@ -29,8 +29,10 @@ int tman_pwd(void)
     FILE *fp;
     struct tman_arg args;
 
-    if ((args.prj = project_getcurr()) == NULL)
-        return emod_set(LIBTMAN_PRJ_NOCURR);
+    if ((args.prj = project_getcurr()) == NULL) {
+        dlog(1, "tman_pwd: no current project");
+        return LIBTMAN_OK;
+    }
     if ((args.id = task_curr(args.prj)) == NULL)
         args.id = "";
 
