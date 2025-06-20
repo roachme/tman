@@ -5,6 +5,7 @@
 - `cli/plugin`: Add option `-P`
 - `cli/pgm`: Add command to install plugin
 - `scripts/release`: Add script for release
+- `tests/usage`: Add usage tests against regression
 
 ### Deleted
 
