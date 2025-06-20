@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "cli.h"
+#include "config.h"
 
 static char *get_plugin_description(const char *fname)
 {
@@ -35,7 +36,7 @@ static int _pgm_list(int argc, char **argv, struct tman_context *ctx)
     const char *pgmfmt = "%s\t%s\t%s\n";
     const char *pgmheader = "Name\tStatus\tDescription";
 
-    if ((dir = opendir(tmanfs.pgnins)) == NULL)
+    if ((dir = opendir(tmancfg->base.pgn)) == NULL)
         return elog(1, "could not open plugin directory");
 
     printf("%s\n", pgmheader);
@@ -44,7 +45,7 @@ static int _pgm_list(int argc, char **argv, struct tman_context *ctx)
 
         if (pgn->d_name[0] == '.' || pgn->d_type != DT_DIR)
             continue;
-        sprintf(fname, "%s/%s/description", tmanfs.pgnins, pgn->d_name);
+        sprintf(fname, "%s/%s/description", tmancfg->base.pgn, pgn->d_name);
         printf(pgmfmt, pgn->d_name, "inst", get_plugin_description(fname));
     }
     closedir(dir);

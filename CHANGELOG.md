@@ -13,6 +13,7 @@
 ### Fixed
 
 - `cli/prj`: Fix status code when project is deleted
+- `cli/pgm`: Remove lib dependency
 
 ### Deleted
 
