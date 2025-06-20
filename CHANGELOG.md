@@ -5,6 +5,7 @@
 - `cli/pgm`: Add support for plugin description
 - `cli`: Add debug option
 - `tman`: Add Git LFS tracking for large files
+- `tests/usage`: Add usage tests against regression
 
 ### Changed
 
