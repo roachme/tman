@@ -4,6 +4,8 @@ gmon.out
 prof.txt
 tman_prof
 *.o
+*.a
+*.so
 .tman/
 repos/
 trash/

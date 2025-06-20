@@ -1,12 +1,13 @@
+MAKE=make
 PROGRAM=_tmancli
 VERSION=$(shell cat VERSION.txt)
 README=README.md
 SHELLSCRIPT=tman.sh
 SHELLNAME=bash
 CC=gcc
-SRCS=$(wildcard lib/*.c cli/*.c)
+SRCS=$(wildcard cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
-CFLAGS=-I lib -I cli -Wall -g3  -fbounds-check
+CFLAGS=-I lib/src -I cli -Wall -g3  -fbounds-check
 LFLAGS=-lconfig -g
 PWDFILE=/tmp/tmanpwd
 
@@ -34,7 +35,8 @@ init:
 	$(CC) -c -o $@ $< $(CFLAGS) -DVERSION=\"$(VERSION)\" -DPWDFILE=\"$(PWDFILE)\"
 
 $(PROGRAM): $(OBJS)
-	$(CC) -o $@ $^ $(LFLAGS)
+	$(MAKE) -C lib lib_static
+	$(CC) -o $@ $^ $(LFLAGS) lib/libtman.a
 
 generate: $(PROGRAM)
 	$(shell m4 -DSHELLNAME=$(SHELLNAME) -DPWDFILE=$(PWDFILE) ./scripts/genshell > $(SHELLSCRIPT))
@@ -43,6 +45,7 @@ generate: $(PROGRAM)
 clean:
 	rm -rf artifacts build
 	rm -rf $(PROGRAM) $(OBJS)
+	$(MAKE) -C lib lib_clean
 
 check:
 	cppcheck --std=c89 --enable=all --language=c $(SRCS)
