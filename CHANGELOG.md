@@ -6,6 +6,10 @@
 - `cli`: Add debug option
 - `tman`: Add Git LFS tracking for large files
 
+### Changed
+
+- `lib`: Move library part to submodule
+
 ### Fixed
 
 - `cli/prj`: Fix status code when project is deleted

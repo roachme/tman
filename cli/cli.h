@@ -5,7 +5,7 @@
 
 #include "help.h"
 #include "color.h"
-#include "../lib/tman.h"
+#include "../lib/src/libtman.h"
 
 #define PROGRAM     "tman"
 
