@@ -98,8 +98,8 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
     /*
        printf("pgnopts: %s\n", pgnopts);
        printf("argc: %d, i: %d\n", argc, i);
-       printf("pgnexec: %s\n", pgnexec);
      */
 
+    dlog(1, "pgnexec: %s", pgnexec);
     return system(pgnexec);
 }
