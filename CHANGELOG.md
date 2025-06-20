@@ -14,6 +14,7 @@
 
 - `cli/prj`: Fix status code when project is deleted
 - `cli/pgm`: Remove lib dependency
+- `CICD`: Fix broken pipeline
 
 ### Deleted
 
