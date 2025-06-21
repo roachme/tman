@@ -78,6 +78,8 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
 
     strcat(pgnexec, " -T ");
     strcat(pgnexec, tmancfg->base.task);
+    strcat(pgnexec, " -P ");
+    strcat(pgnexec, tmancfg->base.pgn);
 
     strcat(pgnexec, " ");
     strcat(pgnexec, pgnopts);

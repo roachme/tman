@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `cli/plugin`: Add option `-P`
+
 ### Deleted
 
 - `pgn`: Move plugins to separate project
