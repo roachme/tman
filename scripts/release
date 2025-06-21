@@ -1,0 +1,53 @@
+#!/bin/env bash
+
+# TODO: use `gh release` to upload release to github
+# gh release create v0.0.18 --title "Version v0.0.18" --notes-file CHANGELOG.md artifacts/build/release/tman-linux-x86_64.tar
+
+PROGNAME="tman"
+OSNAME="$(uname -s)"
+HWNAME="$(uname -m)"
+BASEDIR="artifacts/build/release"
+DIRNAME="${BASEDIR}/${PROGNAME}-${OSNAME,,}-${HWNAME}"
+RELEASE_NOTE="$BASEDIR/release_notes.md"
+CHANGELOG="CHANGELOG.md"
+
+function usage()
+{
+    return 0;
+}
+
+function get_latelst_version()
+{
+    awk '/^## \[[0-9]+\.[0-9]+\.[0-9]+]/ {print $2; exit}' CHANGELOG.md | tr -d '[]'
+}
+
+function make_version_changelog()
+{
+    local latest_version="$(get_latelst_version)"
+
+    awk -v version="$latest_version" '
+    BEGIN { found = 0 }
+    /^## \[/ {
+        if (found) exit
+        if ($0 ~ "## \\[" version "\\]") found = 1
+    }
+    found
+    ' "${1:-CHANGELOG.md}"
+}
+
+echo "DIRNAME: $DIRNAME"
+echo "RELEASE_NOTE: $RELEASE_NOTE"
+
+make
+
+mkdir -p "$DIRNAME"
+make_version_changelog > "$RELEASE_NOTE"
+
+cp _tmancli "$DIRNAME"
+cp tman.sh "$DIRNAME"
+cp README.md "$DIRNAME"
+tar cf "$DIRNAME.tar" "$DIRNAME"
+
+# TODO: Upload it to github once script is ready
+# gh release create v0.0.19 --title "Version v0.0.19" --notes-file "$RELEASE_NOTE" artifacts/build/release/tman-linux-x86_64.tar
+rm -rf "$DIRNAME"
