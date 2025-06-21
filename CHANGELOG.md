@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/plugin`: Add option `-P`
+- `pgm`: Add installation script
 
 ### Deleted
 
