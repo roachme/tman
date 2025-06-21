@@ -21,6 +21,9 @@ Ideas:
 + 5. Add option to show task columns in command `tman col`.
   6. Add plugin `note` to take notes. Synopsis: tman note [OPTION]... COMMAND
   7. Add plugin workflow to move task from columns to column
+  8. Add libtman NOT as submodule but dependency
+  9. Use command `gh` to generate releases
+ 10. Unify project/board/task's unit and column modules.
 
 Prio: high
 + 1. Write config file parser and define config itself.
@@ -38,6 +41,7 @@ Prio: high
  13. Add tman option -F for config path
  14. `struct unit` is duplicated in tman.h and unit.h
 +15. Move `tman find` to plugin.
+ 16. Move hooks to cli part.
 
 
 Prio: mid
