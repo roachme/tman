@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Deleted
+
+- `pgn`: Move plugins to separate project
+
+
 ## [0.0.19] - (2025-06-20)
 
 ### Added
