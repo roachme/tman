@@ -8,7 +8,7 @@ CC=gcc
 SRCS=$(wildcard cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
 CFLAGS=-I lib/src -I cli -Wall -g3  -fbounds-check
-LFLAGS=-lconfig -g
+LFLAGS=-lconfig -lgit2 -g
 PWDFILE=/tmp/tmanpwd
 
 # TODO: add debug mode

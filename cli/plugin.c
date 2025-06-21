@@ -47,15 +47,6 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
                 return elog(1, "option `%s' requires an argument", option);
             args.prj = argv[++i];
         } else {
-            // NOTE: Lua cannot handle non-optional arguments first.
-            //       Should i fix it or let it go?
-            /*
-               if (argv[i][0] != '-' && ((i + 1) < argc && argv[i + 1][0] == '-')) {
-               elog(1, "ERROR: non-optional argument goes first: %s", argv[i]);
-               fprintf(stderr, "ERROR: non-optional argument goes first: '%s' - '%s'\n", argv[i], argv[i + 1]);
-               return 1;
-               }
-             */
             strcat(pgnopts, option);
             strcat(pgnopts, " ");
         }
@@ -96,11 +87,6 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
         strcat(pgnexec, " -i ");
         strcat(pgnexec, args.id);
     }
-
-    /*
-       printf("pgnopts: %s\n", pgnopts);
-       printf("argc: %d, i: %d\n", argc, i);
-     */
 
     dlog(1, "pgnexec: %s", pgnexec);
     return system(pgnexec);

@@ -15,12 +15,18 @@
 #define CONF_MAXBASE    256
 #define CONF_MAXPGNINS  256
 
+struct pgncfg {
+    char name[100];
+    struct pgncfg *next;
+};
+
 struct config {
     int usecolor;               /* use colors */
     int usedebug;               /* output debug info */
     int usehooks;               /* execute hooks from config, by default set */
     struct tman_base base;
     struct tman_hook *hooks;
+    struct pgncfg *pgncfg;
 };
 
 struct config *myconfig_create(void);

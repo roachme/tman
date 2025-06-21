@@ -10,6 +10,6 @@ jobs:
       with:
         submodules: 'recursive'
     - name: Install dependencies
-      run: sudo apt install -y indent cppcheck libconfig-dev
+      run: sudo apt install -y indent cppcheck libconfig-dev libgit2-dev
     - name: make
       run: make

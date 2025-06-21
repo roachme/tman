@@ -55,6 +55,43 @@ static struct tman_hook *make_hook()
     return hook;
 }
 
+static struct pgncfg *make_plugin()
+{
+    struct pgncfg *pgn;
+
+    if ((pgn = malloc(sizeof(struct pgncfg))) == NULL)
+        return NULL;
+    memset(pgn, 0, sizeof(struct pgncfg));
+    return pgn;
+}
+
+static int myconfig_get_plugins(config_t * cfg, struct config *myconfig)
+{
+    config_setting_t *setting;
+    int status = 0;
+
+    if ((setting = config_lookup(cfg, "plugins")) != NULL) {
+        unsigned int count = config_setting_length(setting);
+        for (unsigned int i = 0; i < count; ++i) {
+            const char *name;
+            config_setting_t *plugin_conf = config_setting_get_elem(setting, i);
+            struct pgncfg *pgncfg;
+
+            if ((pgncfg = make_plugin()) != NULL) {
+                if (!config_setting_lookup_string(plugin_conf, "name", &name)) {
+                    elog(1, "FAILED: to parse plugins");
+                    status = 1;
+                    continue;
+                }
+                strcpy(pgncfg->name, name);
+                pgncfg->next = myconfig->pgncfg;
+                myconfig->pgncfg = pgncfg;
+            }
+        }
+    }
+    return status;
+}
+
 static int myconfig_get_hooks(config_t * cfg, struct config *myconfig)
 {
     config_setting_t *setting;
@@ -154,6 +191,7 @@ static int myconfig_get_options(config_t * cfg, struct config *myconfig)
 static int parseconf(struct config *myconfig, const char *fname)
 {
     config_t cfg;
+    int status = 0;
 
     config_init(&cfg);
     if (!config_read_file(&cfg, fname)) {
@@ -162,14 +200,16 @@ static int parseconf(struct config *myconfig, const char *fname)
     }
 
     if (myconfig_get_base(&cfg, myconfig))
-        elog(1, "myconfig_get_base: FAILED\n");
+        status = elog(1, "myconfig_get_base: FAILED\n");
     else if (myconfig_get_options(&cfg, myconfig))
-        elog(1, "myconfig_get_options: FAILED\n");
+        status = elog(1, "myconfig_get_options: FAILED\n");
     else if (myconfig_get_hooks(&cfg, myconfig))
-        elog(1, "myconfig_get_hooks: FAILED\n");
+        status = elog(1, "myconfig_get_hooks: FAILED\n");
+    else if (myconfig_get_plugins(&cfg, myconfig))
+        status = elog(1, "myconfig_get_plugins: FAILED\n");
 
     config_destroy(&cfg);
-    return 0;
+    return status;
 }
 
 struct config *myconfig_create(void)
