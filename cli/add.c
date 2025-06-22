@@ -15,7 +15,7 @@ static int generate_id(struct tman_arg *args)
     for (unsigned int i = 1; i < IDLIMIT; ++i) {
         sprintf(genid, "%0" xstr(IDSIZ) "u", i);
         args->id = genid;
-        if (tman_check_arg_id(args))
+        if (tman_check_arg_id_exist(args) == FALSE)
             return 0;
     }
     return 1;
