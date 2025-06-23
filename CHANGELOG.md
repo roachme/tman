@@ -17,6 +17,7 @@
 - `cli/config`: Fix memleak for plugins in config
 - `cli/add`: Fix task ID generation
 - `cli/cli`: Fix PWD in case of invalid command
+- `cli/add`: Fix task ID iteration in case of error
 
 ### Deleted
 

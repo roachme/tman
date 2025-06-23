@@ -77,6 +77,7 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
         if ((status = tman_task_add(ctx, &args, &opt)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
+            args.id = NULL;     /* unset task ID, not to break loop.  */
             continue;
         } else if (tmancfg->usehooks == TRUE
                    && (status =
@@ -84,8 +85,10 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
                                         "add")) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(LIBTMAN_EHOOK, errfmt, args.id, tman_strerror());
+            args.id = NULL;     /* unset task ID, not to break loop.  */
             continue;
         }
+        /* TODO: find a better trick.  */
         args.id = NULL;         /* unset task ID, not to break loop.  */
     } while (++i < argc);
     return opt.id_switch && status == LIBTMAN_OK ? tman_pwd() : status;
