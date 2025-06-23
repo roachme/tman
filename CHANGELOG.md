@@ -7,6 +7,17 @@
 - `scripts/release`: Add script for release
 - `tests/usage`: Add usage tests against regression
 
+### Changed
+
+- `scripts`: Update README.md generator
+- `lib`: Bump to version 0.0.20
+
+### Fixed
+
+- `cli/config`: Fix memleak for plugins in config
+- `cli/add`: Fix task ID generation
+- `cli/cli`: Fix PWD in case of invalid command
+
 ### Deleted
 
 - `pgn`: Move plugins to separate project

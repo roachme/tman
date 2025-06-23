@@ -156,8 +156,9 @@ int main(int argc, char **argv)
             return elog(1, "invalid option `%s'", argv[i]);
     }
 
+    tman_pwd_unset();
+
     if ((cmd = argv[i]) == NULL) {
-        tman_pwd_unset();
         help_lookup(NULL);
         return 1;
     }
