@@ -11,6 +11,7 @@
 
 - `scripts`: Update README.md generator
 - `lib`: Bump to version 0.0.20
+- `scripts/genreadme`: Update README.md
 
 ### Fixed
 

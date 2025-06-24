@@ -1,3 +1,4 @@
+define(MACRO_TMANAME, tman)dnl
 define(MACRO_USAGE, `esyscmd(./_tmancli)')dnl
 define(MACRO_CODE, changequote([,])[changequote([,])```changequote(`,')]changequote(`,'))dnl
 define(MACRO_INLINE_CODE, changequote([,])[changequote([,])`changequote(`,')]changequote(`,'))dnl
@@ -65,6 +66,18 @@ MACRO_CODE
 MACRO_CODE
 MACRO_USAGE
 MACRO_CODE
+
+
+## ⇁  Plugins
+
+There is a MACRO_INLINE_CODE pgm MACRO_INLINE_CODE plugin manager to install plugins.
+
+Here's some plugin to check out \
+MACRO_INLINE_CODE pgm MACRO_INLINE_CODE - [Tman plugin manager](https://github.com/roachme/tman-pgm.git) \
+MACRO_INLINE_CODE gun MACRO_INLINE_CODE - [Manage bunch of git repos](https://github.com/roachme/tman-gun.git) \
+MACRO_INLINE_CODE gmux MACRO_INLINE_CODE - [Manage bunch of git repos (under development)](https://github.com/roachme/tman-gmux.git) \
+MACRO_INLINE_CODE find MACRO_INLINE_CODE - [Find stuff in tasks](https://github.com/roachme/tman-find.git)
+
 
 ## ⇁  Basic workflow
 1. To initalize util type in MACRO_INLINE_CODE tman init MACRO_INLINE_CODE

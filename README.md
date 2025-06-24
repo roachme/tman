@@ -135,6 +135,18 @@ Object:
 
 ```
 
+
+## ⇁  Plugins
+
+There is a ` pgm ` plugin manager to install plugins.
+
+Here's some plugin to check out \
+` pgm ` - [Tman plugin manager](https://github.com/roachme/tman-pgm.git) \
+` gun ` - [Manage bunch of git repos](https://github.com/roachme/tman-gun.git) \
+` gmux ` - [Manage bunch of git repos (under development)](https://github.com/roachme/tman-gmux.git) \
+` find ` - [Find stuff in tasks](https://github.com/roachme/tman-find.git)
+
+
 ## ⇁  Basic workflow
 1. To initalize util type in ` tman init `
 2. Now you're ready to create a project: ` tman prj add test `
