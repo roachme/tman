@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <string.h>
 
 #include "cli.h"
 #include "config.h"
@@ -19,6 +21,25 @@ static int generate_id(struct tman_arg *args)
             return 0;
     }
     return 1;
+}
+
+static int generate_units(struct tman_context *ctx, char *prj, char *id)
+{
+    char buff[BUFSIZ + 1];
+    struct unit *units = NULL;
+    time_t rawtime = time(NULL);
+    const char timefmt[] = "%Y%m%d";
+    struct tm *timeinfo = localtime(&rawtime);
+    char desc[100] = "autogenerate desciption for ";
+
+    strcat(desc, id);
+    strftime(buff, BUFSIZ, timefmt, timeinfo);
+    units = unit_add(units, "prio", "mid");
+    units = unit_add(units, "type", "task");
+    units = unit_add(units, "date", buff);
+    units = unit_add(units, "desc", desc);
+    ctx->unitbin = units;
+    return 0;
 }
 
 int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
@@ -72,9 +93,14 @@ int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
     tman_pwd_unset();
     i = optind;
     do {
+        // TODO: maybe there's no need cuz i use task ID generator
         args.id = args.id == NULL ? argv[i] : args.id;
 
-        if ((status = tman_task_add(ctx, &args, &opt)) != LIBTMAN_OK) {
+        if (generate_units(ctx, args.prj, args.id)) {
+            if (quiet == FALSE)
+                elog(1, errfmt, args.id, "unit generation failed");
+            continue;
+        } else if ((status = tman_task_add(ctx, &args, &opt)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             args.id = NULL;     /* unset task ID, not to break loop.  */

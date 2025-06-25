@@ -4,6 +4,17 @@
 
 #include "cli.h"
 
+static int generate_units(struct tman_context *ctx, char *prj)
+{
+    struct unit *units = NULL;
+    char desc[100] = "autogenerate desciption for project ";
+
+    strcat(desc, prj);
+    units = unit_add(units, "desc", desc);
+    ctx->unitbin = units;
+    return 0;
+}
+
 static int valid_desc(const char *val)
 {
     if (!isalnum(*val++))
@@ -64,9 +75,15 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
     tman_pwd_unset();
     for (i = optind; i < argc; ++i) {
         args.prj = argv[i];
-        if ((status = tman_prj_add(ctx, &args, &opt)) != LIBTMAN_OK) {
+
+        if (generate_units(ctx, args.prj)) {
+            if (quiet == FALSE)
+                elog(1, errfmt, args.prj, "unit generation failed");
+            continue;
+        } else if ((status = tman_prj_add(ctx, &args, &opt)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(1, errfmt, argv[i], tman_strerror());
+            continue;
         }
     }
     return status == LIBTMAN_OK ? tman_pwd() : 1;

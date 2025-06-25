@@ -6,6 +6,8 @@
 - `cli/pgm`: Add command to install plugin
 - `scripts/release`: Add script for release
 - `tests/usage`: Add usage tests against regression
+- `cli/add`: Add support to generate task units
+- `cli/prj`: Add support to generate project units
 
 ### Changed
 
