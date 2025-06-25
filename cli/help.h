@@ -14,6 +14,5 @@ int help_lookup(const char *cmd);
 
 int help_bincmd(const char *cmd);
 int help_prjcmd(const char *cmd);
-int help_pgmcmd(const char *cmd);
 
 #endif

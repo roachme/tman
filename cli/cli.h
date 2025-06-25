@@ -48,7 +48,6 @@ int tman_cli_help(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_init(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_list(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_move(int argc, char **argv, struct tman_context *ctx);
-int tman_cli_pgm(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_prev(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_set(int argc, char **argv, struct tman_context *ctx);
 int tman_cli_show(int argc, char **argv, struct tman_context *ctx);

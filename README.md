@@ -130,7 +130,6 @@ Misc:
 
 Object:
   brd    - Manage and show boards (under development).
-  pgm    - Manage and show plugins.
   prj    - Manage and show projects.
 
 ```

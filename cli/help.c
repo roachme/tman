@@ -352,17 +352,6 @@ struct help helptab[] = {
     The return status is return status of subcommand.\n"},
     {
      .tag = TAGOBJ,
-     .name = "pgm",
-     .synop = "Usage: " PROGRAM " pgm PLUGIN [OPTION]...\n",
-     .desc_short = "Manage and show plugins.\n",
-     .desc_long = "\n\
-    Arguments:\n\
-      PLUGIN  plugin name\n\
-    \n\
-    Exit status:\n\
-    The return status is return status of plugin.\n"},
-    {
-     .tag = TAGOBJ,
      .name = "prj",
      .synop = "Usage: " PROGRAM " prj SUBCMD [OPTION] NAME\n",
      .desc_short = "Manage and show projects.\n",

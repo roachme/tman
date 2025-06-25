@@ -27,6 +27,7 @@
 ### Deleted
 
 - `pgn`: Move plugins to separate project
+- `cli`: Move plugin manager `pgm` to plugin part
 
 
 ## [0.0.19] - (2025-06-20)
