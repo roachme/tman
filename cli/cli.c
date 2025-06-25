@@ -18,6 +18,19 @@ struct config *tmancfg;
     -p      Plugin dir (where plugins stored)
 */
 
+static int ispgn(char *pgndir, const char *pgname)
+{
+    char path[PATHSIZ + 1];
+    FILE *fp;
+
+    sprintf(path, "%s/%s/%s", pgndir, pgname, pgname);
+
+    if ((fp = fopen(path, "r")) == NULL)
+        return FALSE;
+    fclose(fp);
+    return TRUE;
+}
+
 static int show_version()
 {
     printf("%s: %s\n", PROGRAM, VERSION);
@@ -203,8 +216,7 @@ int main(int argc, char **argv)
             status = builtins[idx].func(argc - i, argv + i, ctx);
             goto out;
         }
-    if (cmdfound == FALSE
-        && (status = tman_ispgn(tmancfg->base.pgn, cmd)) == TRUE) {
+    if (cmdfound == FALSE && (status = ispgn(tmancfg->base.pgn, cmd)) == TRUE) {
         cmdfound = TRUE;
         if ((status = tman_setup(LIBTMAN_SETUPCHECK)) != LIBTMAN_OK) {
             elog(status, "setup failed: %s", tman_strerror());
