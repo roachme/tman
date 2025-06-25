@@ -8,6 +8,7 @@
 - `tests/usage`: Add usage tests against regression
 - `cli/add`: Add support to generate task units
 - `cli/prj`: Add support to generate project units
+- `cli/col`: Add column name to `struct tman_context`
 
 ### Changed
 

@@ -31,7 +31,6 @@ static int show_columns(char *prj)
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
 {
-    char *col;
     struct tman_arg args;
     int i, c, status, showhelp, showlist;
     struct tman_option opt;
@@ -62,7 +61,7 @@ int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
         return help_usage("col");
     else if (showlist == 1) {
         return show_columns("");
-    } else if ((col = argv[optind++]) == NULL)
+    } else if ((ctx->colname = argv[optind++]) == NULL)
         return elog(1, "gotta specify column to move a task to");
 
     // TODO: does not change CWD if curr task was moved.
@@ -70,8 +69,8 @@ int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
     i = optind;
     do {
         args.id = argv[i];
-        if ((status = tman_task_col(ctx, &args, col, &opt)) != LIBTMAN_OK)
-            elog(status, errfmt, col, tman_strerror());
+        if ((status = tman_task_col(ctx, &args, &opt)) != LIBTMAN_OK)
+            elog(status, errfmt, ctx->colname, tman_strerror());
     } while (++i < argc);
 
     return status;
