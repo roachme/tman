@@ -221,7 +221,7 @@ int main(int argc, char **argv)
             elog(status, "setup failed: %s", tman_strerror());
             goto out;
         }
-        status = tman_cli_plugin(argc, argv, ctx);
+        status = tman_cli_plugin(argc - i, argv + i, ctx);
     }
     if (cmdfound == FALSE) {
         status = 1;

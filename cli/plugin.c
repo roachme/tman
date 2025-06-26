@@ -22,7 +22,7 @@ int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
     char pgnexec[BUFSIZ + 1] = { 0 };
     int status;
 
-    i = 1;                      /* skip program name, i.e. tman.  */
+    i = 0;
     pgn = option = NULL;
     args.brd = args.id = args.prj = NULL;
 
