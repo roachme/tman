@@ -11,8 +11,8 @@ Project:
     3. Invalid toggle in state file
 */
 
-int tman_cli_chk(int argc, char *argv)
+int tman_cli_fsck(int argc, char *argv)
 {
-    printf("tman_cli_chk: check tman health\n");
+    printf("tman_cli_fsck: check tman health\n");
     return 1;
 }

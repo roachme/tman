@@ -111,7 +111,7 @@ Usage: tman [SYSOPT]... COMMAND|PLUGIN [OPTION]... [ARGS]...
 
 System:
   cfg    - Manage system configuration file.
-  chk    - Check and repair a system.
+  fsck   - Check and repair a system.
   help   - Show help message for command.
   init   - Init directory structure.
 

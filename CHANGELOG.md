@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Changed
+
+- `cli/fsck`: Rename builtin command name
+
+
 ## [0.0.21] - (2025-06-29)
 
 ### Added
