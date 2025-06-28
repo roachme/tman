@@ -65,9 +65,7 @@ int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
         }
 
         if (tmancfg->usehooks == TRUE &&
-            (status =
-             tman_hook_action(ctx, tmancfg->hooks, &args,
-                              "del")) != LIBTMAN_OK) {
+            (status = tman_hook_action(&args, "del")) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;

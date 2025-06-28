@@ -10,14 +10,6 @@
 
 struct config *tmancfg;
 
-/*
- * Tman util options:
-    -c      Use colors
-    -h      Use hooks
-    -i      Base dir (where DB is stored)
-    -p      Plugin dir (where plugins stored)
-*/
-
 static int ispgn(char *pgndir, const char *pgname)
 {
     char path[PATHSIZ + 1];

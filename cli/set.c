@@ -121,11 +121,9 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
             elog(status, errfmt, args.id, tman_strerror());
             return status;
         } else if (tmancfg->usehooks == TRUE
-                   && (status =
-                       tman_hook_action(ctx, tmancfg->hooks, &args,
-                                        "set")) != LIBTMAN_OK) {
+                   && (status = tman_hook_action(&args, "set")) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(LIBTMAN_EHOOK, errfmt, args.id, tman_strerror());
+                elog(1, errfmt, args.id, tman_strerror());
             continue;
         }
     } while (++i < argc);

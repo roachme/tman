@@ -50,8 +50,7 @@ int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
             continue;
         } else if (tmancfg->usehooks == TRUE
                    && (status =
-                       tman_hook_action(ctx, tmancfg->hooks, &args,
-                                        "sync")) != LIBTMAN_OK) {
+                       tman_hook_action(&args, "sync")) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;

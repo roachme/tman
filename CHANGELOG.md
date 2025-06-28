@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `cli`: Move hooks from libtman
+
 ### Fixed
 
 - `src`: Fix access to private structures

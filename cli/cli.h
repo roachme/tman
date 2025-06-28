@@ -4,6 +4,7 @@
 #define CMDSIZ          5
 
 #include "help.h"
+#include "hook.h"
 #include "color.h"
 #include "../lib/src/libtman.h"
 

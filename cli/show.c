@@ -88,8 +88,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
         } else if (tmancfg->usehooks == TRUE
-                   && tman_hook_show(ctx, tmancfg->hooks, &args,
-                                     "show") == NULL) {
+                   && tman_hook_show(ctx, &args, "show") != LIBTMAN_OK) {
             // TODO: what to do if no show hooks get executed?
             // Disabled check for rn, cuz it fails if no show hooks exist.
             //if (quiet == FALSE)
@@ -106,8 +105,7 @@ int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
             pretty_show(ctx, key);
         }
 
-        ctx->unitbin = tman_unit_free(ctx, &args, NULL);
-        ctx->unitpgn = tman_hook_show_free(ctx, &args);
+        tman_unit_free(ctx, &args, NULL);
     } while (++i < argc);
 
     return status;
