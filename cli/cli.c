@@ -85,6 +85,7 @@ int dlog(int level, const char *fmt, ...)
 
 static const builtin_t builtins[] = {
     {.name = "add",.func = &tman_cli_add,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "brd",.func = &tman_cli_brd,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "cfg",.func = &tman_cli_cfg,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "col",.func = &tman_cli_col,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "del",.func = &tman_cli_del,.setuplvl = LIBTMAN_SETUPCHECK},

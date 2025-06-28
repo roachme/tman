@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `cli/board`: Add a skeleton
+
 ### Changed
 
 - `cli/fsck`: Rename builtin command name
