@@ -45,7 +45,7 @@ make
 ```
 
 ## ⇁  Installation
-1. Once you compiled successfully, put executable ` _tmancli ` into one of directories defined in env variable ` PATH ` . I put it in ` ~/.locil/bin ` .
+1. Once you compiled successfully, put executable ` _tmancli ` into one of directories defined in env variable ` PATH ` . I put it in ` ~/.local/bin ` .
 2. Copy the content of tman.sh into your shell rc file. It's ` ~/.bashrc ` , ` .zshrc ` , etc.
 
 ``` bash
@@ -141,9 +141,21 @@ There is a ` pgm ` plugin manager to install plugins.
 
 Here's some plugin to check out \
 ` pgm ` - [Tman plugin manager](https://github.com/roachme/tman-pgm.git) \
-` gun ` - [Manage bunch of git repos](https://github.com/roachme/tman-gun.git) \
-` gmux ` - [Manage bunch of git repos (under development)](https://github.com/roachme/tman-gmux.git) \
+` gmux ` - [Manage bunch of git repos](https://github.com/roachme/tman-gmux.git) \
 ` find ` - [Find stuff in tasks](https://github.com/roachme/tman-find.git)
+
+
+## ⇁  Install plugin manager
+
+To install plugin manager run the code below
+```
+export PGNDIR="$HOME/.local/lib/tman/pgn"
+git clone https://github.com/roachme/tman-pgm.git "$PGNDIR/pgm"
+```
+Note: \
+1. Make sure repo dirname has NO prefix ` tman- `. The same goes about any plugin to install \
+2. ` "$PGNDIR" ` is the path set in ` tman.cfg `.
+   Make sure ` PGNDIR ` is the same as ` base.pgn ` in ` tman.cfg ` shown above.
 
 
 ## ⇁  Basic workflow

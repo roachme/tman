@@ -4,6 +4,10 @@
 
 - `cli`: Move hooks from libtman
 
+### Changed
+
+- `README`: Update README.md
+
 ### Fixed
 
 - `src`: Fix access to private structures

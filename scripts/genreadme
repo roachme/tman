@@ -49,7 +49,7 @@ make
 MACRO_CODE
 
 ## ⇁  Installation
-1. Once you compiled successfully, put executable MACRO_INLINE_CODE _tmancli MACRO_INLINE_CODE into one of directories defined in env variable MACRO_INLINE_CODE PATH MACRO_INLINE_CODE . I put it in MACRO_INLINE_CODE ~/.locil/bin MACRO_INLINE_CODE .
+1. Once you compiled successfully, put executable MACRO_INLINE_CODE _tmancli MACRO_INLINE_CODE into one of directories defined in env variable MACRO_INLINE_CODE PATH MACRO_INLINE_CODE . I put it in MACRO_INLINE_CODE ~/.local/bin MACRO_INLINE_CODE .
 2. Copy the content of tman.sh into your shell rc file. It's MACRO_INLINE_CODE ~/.bashrc MACRO_INLINE_CODE , MACRO_INLINE_CODE .zshrc MACRO_INLINE_CODE , etc.
 
 MACRO_CODE bash
@@ -74,9 +74,21 @@ There is a MACRO_INLINE_CODE pgm MACRO_INLINE_CODE plugin manager to install plu
 
 Here's some plugin to check out \
 MACRO_INLINE_CODE pgm MACRO_INLINE_CODE - [Tman plugin manager](https://github.com/roachme/tman-pgm.git) \
-MACRO_INLINE_CODE gun MACRO_INLINE_CODE - [Manage bunch of git repos](https://github.com/roachme/tman-gun.git) \
-MACRO_INLINE_CODE gmux MACRO_INLINE_CODE - [Manage bunch of git repos (under development)](https://github.com/roachme/tman-gmux.git) \
+MACRO_INLINE_CODE gmux MACRO_INLINE_CODE - [Manage bunch of git repos](https://github.com/roachme/tman-gmux.git) \
 MACRO_INLINE_CODE find MACRO_INLINE_CODE - [Find stuff in tasks](https://github.com/roachme/tman-find.git)
+
+
+## ⇁  Install plugin manager
+
+To install plugin manager run the code below
+MACRO_CODE
+export PGNDIR="$HOME/.local/lib/tman/pgn"
+git clone https://github.com/roachme/tman-pgm.git "$PGNDIR/pgm"
+MACRO_CODE
+Note: \
+1. Make sure repo dirname has NO prefix MACRO_INLINE_CODE tman- MACRO_INLINE_CODE. The same goes about any plugin to install \
+2. MACRO_INLINE_CODE "$PGNDIR" MACRO_INLINE_CODE is the path set in MACRO_INLINE_CODE tman.cfg MACRO_INLINE_CODE.
+   Make sure MACRO_INLINE_CODE PGNDIR MACRO_INLINE_CODE is the same as MACRO_INLINE_CODE base.pgn MACRO_INLINE_CODE in MACRO_INLINE_CODE tman.cfg MACRO_INLINE_CODE shown above.
 
 
 ## ⇁  Basic workflow
