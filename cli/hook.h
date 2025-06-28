@@ -18,8 +18,8 @@ struct tman_hook {
     struct tman_hook *next;
 };
 
-int tman_hook_action(struct tman_arg *args, char *cmd);
-int tman_hook_show(struct tman_context *ctx, struct tman_arg *args, char *cmd);
+int tman_hook_action(tman_arg_t * args, char *cmd);
+int tman_hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd);
 /* TODO: under development.  */
 char *tman_hookls(struct tman_hook *hooks, char *pgnout, char *prj, char *id);
 

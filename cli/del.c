@@ -2,11 +2,11 @@
 #include "config.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_del(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 {
-    struct tman_arg args;
+    tman_arg_t args;
     char c, *errfmt;
-    struct tman_option opt = { };
+    tman_opt_t opt = { };
     int i, choice, quiet, showhelp, showprompt, status;
 
     showprompt = TRUE;

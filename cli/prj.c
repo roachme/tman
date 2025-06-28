@@ -4,7 +4,7 @@
 
 #include "cli.h"
 
-static int generate_units(struct tman_context *ctx, char *prj)
+static int generate_units(tman_ctx_t * ctx, char *prj)
 {
     struct tman_unit *units = NULL;
     char desc[100] = "autogenerate desciption for project ";
@@ -36,13 +36,13 @@ static int tree_print_rec(struct tree *p)
 }
 
 // TODO: Find a good error message in case option fails.  */
-static int _prj_add(int argc, char **argv, struct tman_context *ctx)
+static int _prj_add(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
-    struct tman_arg args;
+    tman_arg_t args;
     const char *errfmt = "cannot add project '%s': %s";
     int i, quiet, showhelp, status;
-    struct tman_option opt = {
+    tman_opt_t opt = {
         .prj_switch = TRUE,
     };
 
@@ -89,13 +89,13 @@ static int _prj_add(int argc, char **argv, struct tman_context *ctx)
     return status == LIBTMAN_OK ? tman_pwd() : 1;
 }
 
-static int _prj_del(int argc, char **argv, struct tman_context *ctx)
+static int _prj_del(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
-    struct tman_arg args;
+    tman_arg_t args;
     const char *errfmt = "cannot switch: %s";
     int i, choice, quiet, showhelp, showprompt, status;
-    struct tman_option opt;
+    tman_opt_t opt;
 
     showprompt = TRUE;
     args.prj = args.id = NULL;
@@ -145,7 +145,7 @@ static int _prj_del(int argc, char **argv, struct tman_context *ctx)
     return status == LIBTMAN_OK ? tman_pwd() : status;
 }
 
-static int _prj_list(int argc, char **argv, struct tman_context *ctx)
+static int _prj_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     int status;
 
@@ -156,10 +156,10 @@ static int _prj_list(int argc, char **argv, struct tman_context *ctx)
     return tree_print_rec(ctx->prjs);
 }
 
-static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
+static int _prj_prev(int argc, char **argv, tman_ctx_t * ctx)
 {
     int status;
-    struct tman_option opt;
+    tman_opt_t opt;
 
     tman_pwd_unset();
     if ((status = tman_prj_prev(ctx, &opt)) != LIBTMAN_OK)
@@ -167,10 +167,10 @@ static int _prj_prev(int argc, char **argv, struct tman_context *ctx)
     return tman_pwd();
 }
 
-static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
+static int _prj_rename(int argc, char **argv, tman_ctx_t * ctx)
 {
     int c, quiet, showhelp, status;
-    struct tman_arg src, dst;
+    tman_arg_t src, dst;
 
     quiet = showhelp = FALSE;
     src.id = src.brd = src.prj = NULL;
@@ -208,9 +208,9 @@ static int _prj_rename(int argc, char **argv, struct tman_context *ctx)
     return tman_pwd();
 }
 
-static int _prj_set(int argc, char **argv, struct tman_context *ctx)
+static int _prj_set(int argc, char **argv, tman_ctx_t * ctx)
 {
-    struct tman_arg args;
+    tman_arg_t args;
     int atleast_one_key_set;
     int c, i, quiet, showhelp;
     const char *errfmt = "could not set project unit value '%s': %s";
@@ -255,8 +255,7 @@ static int _prj_set(int argc, char **argv, struct tman_context *ctx)
         int status;
         args.prj = argv[i];
 
-        if ((status =
-             tman_prj_set(ctx, &args, ctx->unitbin, NULL)) != LIBTMAN_OK) {
+        if ((status = tman_prj_set(ctx, &args, NULL)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }
@@ -267,9 +266,9 @@ static int _prj_set(int argc, char **argv, struct tman_context *ctx)
 }
 
 // roach: maybe it'll be useful
-static int _prj_show(int argc, char **argv, struct tman_context *ctx)
+static int _prj_show(int argc, char **argv, tman_ctx_t * ctx)
 {
-    struct tman_arg args;
+    tman_arg_t args;
     int c, i, quiet, showhelp, status;
     struct tman_unit *unitbin, *unitpgn;
     const char *errfmt = "cannot show project units '%s': %s";
@@ -314,12 +313,12 @@ static int _prj_show(int argc, char **argv, struct tman_context *ctx)
     return status;
 }
 
-static int _prj_sync(int argc, char **argv, struct tman_context *ctx)
+static int _prj_sync(int argc, char **argv, tman_ctx_t * ctx)
 {
-    struct tman_arg args;
+    tman_arg_t args;
     int c, i, quiet, showhelp, status;
     const char *errfmt = "cannot switch to '%s': %s";
-    struct tman_option opt = {
+    tman_opt_t opt = {
         .prj_switch = TRUE,
     };
 
@@ -370,7 +369,7 @@ static const builtin_t prjcmds[] = {
     {.name = "sync",.func = &_prj_sync},
 };
 
-int tman_cli_prj(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_prj(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

@@ -51,13 +51,13 @@ static int valid_desc(const char *val)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     int i, quiet, status;
-    struct tman_arg args;
+    tman_arg_t args;
     int atleast_one_key_set;
-    struct tman_option opt;
+    tman_opt_t opt;
     const char *errfmt = "cannot set task units '%s': %s";
 
     quiet = FALSE;
@@ -115,8 +115,7 @@ int tman_cli_set(int argc, char **argv, struct tman_context *ctx)
     i = optind;
     do {
         args.id = argv[i];
-        if ((status =
-             tman_task_set(ctx, &args, ctx->unitbin, &opt)) != LIBTMAN_OK) {
+        if ((status = tman_task_set(ctx, &args, &opt)) != LIBTMAN_OK) {
             args.id = args.id ? args.id : "NOCURR";
             elog(status, errfmt, args.id, tman_strerror());
             return status;

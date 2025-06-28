@@ -1,12 +1,12 @@
 #include "cli.h"
 #include "config.h"
 
-int tman_cli_prev(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c, *errfmt;
-    struct tman_arg args;
+    tman_arg_t args;
     int quiet, showhelp, status;
-    struct tman_option opt;
+    tman_opt_t opt;
 
     quiet = showhelp = FALSE;
     args.id = args.prj = NULL;

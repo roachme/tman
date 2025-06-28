@@ -1,6 +1,6 @@
 #include "cli.h"
 
-int tman_cli_init(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_init(int argc, char **argv, tman_ctx_t * ctx)
 {
     int status;
 

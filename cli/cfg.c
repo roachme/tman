@@ -8,7 +8,7 @@
 
 // TODO: it ain't true config value cuz might be overwritten by CLI options
 // TODO: Add support to specify config keys
-static int _cfg_show(int argc, char **argv, struct tman_context *ctx)
+static int _cfg_show(int argc, char **argv, tman_ctx_t * ctx)
 {
     struct tman_hook *hook;
 
@@ -35,7 +35,7 @@ static const builtin_t cfgcmds[] = {
     {.name = "show",.func = &_cfg_show},
 };
 
-int tman_cli_cfg(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_cfg(int argc, char **argv, tman_ctx_t * ctx)
 {
     int c;
     char *command;

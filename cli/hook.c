@@ -5,7 +5,7 @@
 #include "config.h"
 #include "../lib/src/libtman.h"
 
-int tman_hook_action(struct tman_arg *args, char *cmd)
+int tman_hook_action(tman_arg_t * args, char *cmd)
 {
     char *pgncmd;
     struct tman_hook *hooks = tmancfg->hooks;
@@ -20,7 +20,7 @@ int tman_hook_action(struct tman_arg *args, char *cmd)
     return LIBTMAN_OK;
 }
 
-int tman_hook_show(struct tman_context *ctx, struct tman_arg *args, char *cmd)
+int tman_hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
 {
     FILE *pipe;
     char key[KEYSIZ + 1];

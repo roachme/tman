@@ -12,12 +12,12 @@
     3. Separate plugin options from plugin command options.
     4. Or maybe it's better to let the plugin to handle plugin options and the rest.
 */
-int tman_cli_plugin(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
 {
     int i;
     char *pgn;
     char *option;
-    struct tman_arg args;
+    tman_arg_t args;
     char pgnopts[BUFSIZ + 1] = { 0 };
     char pgnexec[BUFSIZ + 1] = { 0 };
     int status;

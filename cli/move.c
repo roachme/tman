@@ -1,16 +1,16 @@
 #include "cli.h"
 #include "help.h"
 
-int tman_cli_move(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_move(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     int i, showhelp, status;
-    struct tman_arg src = {
+    tman_arg_t src = {
         .id = NULL,
         .brd = NULL,
         .prj = NULL,
     };
-    struct tman_arg dst = {
+    tman_arg_t dst = {
         .id = NULL,
         .brd = NULL,
         .prj = NULL,

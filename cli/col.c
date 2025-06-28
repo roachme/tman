@@ -29,11 +29,11 @@ static int show_columns(char *prj)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_col(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_col(int argc, char **argv, tman_ctx_t * ctx)
 {
-    struct tman_arg args;
+    tman_arg_t args;
     int i, c, status, showhelp, showlist;
-    struct tman_option opt;
+    tman_opt_t opt;
     const char *errfmt = "cannot move to column '%s': %s";
 
     args.prj = args.id = NULL;

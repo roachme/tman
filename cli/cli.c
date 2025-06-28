@@ -32,7 +32,7 @@ static int show_version()
 int tman_pwd(void)
 {
     FILE *fp;
-    struct tman_arg args;
+    tman_arg_t args;
 
     if ((args.prj = project_getcurr()) == NULL) {
         dlog(1, "tman_pwd: no current project");
@@ -104,9 +104,9 @@ int main(int argc, char **argv)
 {
     int usecolor, usedebug, usehooks;
     char *cmd = NULL, *option, *togfmt;
-    struct tman_base base = {.task = NULL,.pgn = NULL };
+    tman_base_t base = {.task = NULL,.pgn = NULL };
     int i, status, cmdfound;
-    struct tman_context *ctx;
+    tman_ctx_t *ctx;
 
     cmd = option = NULL;
     usecolor = usedebug = usehooks = NONEBOOL;

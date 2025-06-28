@@ -513,7 +513,7 @@ int help_lookup(const char *cmd)
     return LIBTMAN_OK;
 }
 
-int tman_cli_help(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     int i, status;

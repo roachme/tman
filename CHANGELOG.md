@@ -7,6 +7,7 @@
 ### Changed
 
 - `README`: Update README.md
+- `cli`: Update libtman SHA commit
 
 ### Fixed
 

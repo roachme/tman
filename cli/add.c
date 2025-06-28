@@ -12,7 +12,7 @@
 
 static char genid[IDSIZ + 1];
 
-static int generate_id(struct tman_arg *args)
+static int generate_id(tman_arg_t * args)
 {
     for (unsigned int i = 1; i < IDLIMIT; ++i) {
         sprintf(genid, "%0" xstr(IDSIZ) "u", i);
@@ -23,7 +23,7 @@ static int generate_id(struct tman_arg *args)
     return 1;
 }
 
-static int generate_units(struct tman_context *ctx, char *prj, char *id)
+static int generate_units(tman_ctx_t * ctx, char *prj, char *id)
 {
     char buff[BUFSIZ + 1];
     struct tman_unit *units = NULL;
@@ -42,12 +42,12 @@ static int generate_units(struct tman_context *ctx, char *prj, char *id)
     return 0;
 }
 
-int tman_cli_add(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *errfmt;
-    struct tman_arg args;
+    tman_arg_t args;
     int quiet, showhelp, status, i, c;
-    struct tman_option opt = {
+    tman_opt_t opt = {
         .id_switch = TRUE,
         .id_generate = FALSE,
         .prj_switch = FALSE,

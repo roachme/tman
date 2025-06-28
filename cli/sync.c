@@ -2,12 +2,12 @@
 #include "config.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_sync(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c, *errfmt;
-    struct tman_arg args;
+    tman_arg_t args;
     int i, quiet, showhelp, status;
-    struct tman_option opt = {
+    tman_opt_t opt = {
         .id_switch = TRUE,
     };
 

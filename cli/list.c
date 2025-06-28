@@ -40,10 +40,10 @@ static int recursive_tree_print(struct tree *p, struct config *myconfig)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_list(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
-    struct tman_arg args;
+    tman_arg_t args;
     int i, showhelp, showprjname, status;
 
     showhelp = showprjname = FALSE;

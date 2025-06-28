@@ -5,7 +5,7 @@
 
 static const char *errfmt = "cannot show units '%s': %s";
 
-static int show_key(struct tman_context *ctx, char *key)
+static int show_key(tman_ctx_t * ctx, char *key)
 {
     struct tman_unit *unitbin, *unitpgn;
 
@@ -29,7 +29,7 @@ static int show_key(struct tman_context *ctx, char *key)
     return 1;
 }
 
-static int pretty_show(struct tman_context *ctx, char *key)
+static int pretty_show(tman_ctx_t * ctx, char *key)
 {
     struct tman_unit *unitbin, *unitpgn;
 
@@ -44,12 +44,12 @@ static int pretty_show(struct tman_context *ctx, char *key)
     return LIBTMAN_OK;
 }
 
-int tman_cli_show(int argc, char **argv, struct tman_context *ctx)
+int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     char *key;
     int i, quiet, showhelp, status;
-    struct tman_arg args;
+    tman_arg_t args;
 
     quiet = showhelp = FALSE;
     key = args.prj = args.id = args.brd = NULL;

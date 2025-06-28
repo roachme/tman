@@ -19,7 +19,7 @@ struct config {
     int usecolor;               /* use colors */
     int usedebug;               /* output debug info */
     int usehooks;               /* execute hooks from config, by default set */
-    struct tman_base base;
+    tman_base_t base;
     struct tman_hook *hooks;
 };
 
