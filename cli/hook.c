@@ -5,6 +5,16 @@
 #include "config.h"
 #include "../lib/src/libtman.h"
 
+static char pathname[PATHSIZ + 1];
+
+static char *genpath_pgn(char *prj, char *id, char *name, char *cmd)
+{
+    const char *fmt = "%s/%s/%s -p %s -i %s -T %s -P %s %s";
+    sprintf(pathname, fmt, tmanfs.pgnins, name, name, prj, id, tmanfs.base,
+            tmanfs.pgnins, cmd);
+    return pathname;
+}
+
 int tman_hook_action(tman_arg_t * args, char *cmd)
 {
     char *pgncmd;

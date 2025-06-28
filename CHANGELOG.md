@@ -3,6 +3,7 @@
 ### Added
 
 - `cli`: Move hooks from libtman
+- `cli/hook`: Add plugin command generation
 
 ### Changed
 
