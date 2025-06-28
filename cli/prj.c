@@ -6,11 +6,11 @@
 
 static int generate_units(struct tman_context *ctx, char *prj)
 {
-    struct unit *units = NULL;
+    struct tman_unit *units = NULL;
     char desc[100] = "autogenerate desciption for project ";
 
     strcat(desc, prj);
-    units = unit_add(units, "desc", desc);
+    units = tman_unit_add(units, "desc", desc);
     ctx->unitbin = units;
     return 0;
 }
@@ -271,7 +271,7 @@ static int _prj_show(int argc, char **argv, struct tman_context *ctx)
 {
     struct tman_arg args;
     int c, i, quiet, showhelp, status;
-    struct unit *unitbin, *unitpgn;
+    struct tman_unit *unitbin, *unitpgn;
     const char *errfmt = "cannot show project units '%s': %s";
 
     unitbin = unitpgn = NULL;

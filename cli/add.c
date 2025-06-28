@@ -26,7 +26,7 @@ static int generate_id(struct tman_arg *args)
 static int generate_units(struct tman_context *ctx, char *prj, char *id)
 {
     char buff[BUFSIZ + 1];
-    struct unit *units = NULL;
+    struct tman_unit *units = NULL;
     time_t rawtime = time(NULL);
     const char timefmt[] = "%Y%m%d";
     struct tm *timeinfo = localtime(&rawtime);
@@ -34,10 +34,10 @@ static int generate_units(struct tman_context *ctx, char *prj, char *id)
 
     strcat(desc, id);
     strftime(buff, BUFSIZ, timefmt, timeinfo);
-    units = unit_add(units, "prio", "mid");
-    units = unit_add(units, "type", "task");
-    units = unit_add(units, "date", buff);
-    units = unit_add(units, "desc", desc);
+    units = tman_unit_add(units, "prio", "mid");
+    units = tman_unit_add(units, "type", "task");
+    units = tman_unit_add(units, "date", buff);
+    units = tman_unit_add(units, "desc", desc);
     ctx->unitbin = units;
     return 0;
 }

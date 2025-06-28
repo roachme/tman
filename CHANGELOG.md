@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Fixed
+
+- `src`: Fix access to private structures
+
+
 ## [0.0.20] - (2025-06-26)
 
 ### Added

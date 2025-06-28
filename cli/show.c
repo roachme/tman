@@ -7,7 +7,7 @@ static const char *errfmt = "cannot show units '%s': %s";
 
 static int show_key(struct tman_context *ctx, char *key)
 {
-    struct unit *unitbin, *unitpgn;
+    struct tman_unit *unitbin, *unitpgn;
 
     if (strcmp(key, "id") == 0) {
         printf("%s\n", ctx->id);
@@ -31,7 +31,7 @@ static int show_key(struct tman_context *ctx, char *key)
 
 static int pretty_show(struct tman_context *ctx, char *key)
 {
-    struct unit *unitbin, *unitpgn;
+    struct tman_unit *unitbin, *unitpgn;
 
     printf("%-7s : %s\n", "id", ctx->id);
 
