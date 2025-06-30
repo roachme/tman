@@ -8,6 +8,10 @@
 
 - `cli/fsck`: Rename builtin command name
 
+### Deleted
+
+- `cli/add`: Delete unused option for ID generation
+
 
 ## [0.0.21] - (2025-06-29)
 

@@ -49,7 +49,6 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
     int quiet, showhelp, status, i, c;
     tman_opt_t opt = {
         .id_switch = TRUE,
-        .id_generate = FALSE,
         .prj_switch = FALSE,
     };
 
