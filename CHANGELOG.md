@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/board`: Add a skeleton
+- `cli`: Add skeleton for board functions
 
 ### Changed
 
