@@ -19,7 +19,7 @@ Ideas:
   3. Add support for plugin to use libtman/tman commands.
 + 4. Add support to pass system config values via option to util.
 + 5. Add option to show task columns in command `tman col`.
-  6. Add plugin `note` to take notes. Synopsis: tman note [OPTION]... COMMAND
++ 6. Add plugin `note` to take notes. Synopsis: tman note [OPTION]... COMMAND
   7. Add plugin workflow to move task from columns to column
   8. Add libtman NOT as submodule but dependency
   9. Use command `gh` to generate releases
@@ -36,12 +36,12 @@ Prio: high
 + 8. tman_check_prj() does not fail if prj == NULL, tho it should.
 + 9. Add support to config file to parse $HOME in path. It'll be convient for a user.
  10. Add debug prints to commands. Pro'ly as option -v.
- 11. Maybe it's better to move `tman link` to plugin?
++11. Maybe it's better to move `tman link` to plugin?
  12. Refactor plugin's option and argument parser
  13. Add tman option -F for config path
- 14. `struct unit` is duplicated in tman.h and unit.h
++14. `struct unit` is duplicated in tman.h and unit.h
 +15. Move `tman find` to plugin.
- 16. Move hooks to cli part.
++16. Move hooks to cli part.
 
 
 Prio: mid
