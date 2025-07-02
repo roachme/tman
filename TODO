@@ -54,6 +54,8 @@ Prio: mid
 + 7. In command `add`: if no ID provided then generate task ID.
 + 8. Why use tman_get_args() if tman_check_arg_id() get default values anyway?
   9. Delete option `-A' from command `tman list`. Cuz i can use option `-a'
+ 10. Module unit has unit_set() and unit_add(). Delete unit_add() cuz unit_set()
+     will check if key exists and change it its value or adds new key-value in the end.
 
 Prio: low
   1. Add command autocomplitions
