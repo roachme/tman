@@ -5,12 +5,12 @@
 
 static const char *errfmt = "cannot show units '%s': %s";
 
-static int show_key(tman_ctx_t * ctx, char *key)
+static int show_key(tman_ctx_t * ctx, tman_arg_t * args, char *key)
 {
     struct tman_unit *unitbin, *unitpgn;
 
     if (strcmp(key, "id") == 0) {
-        printf("%s\n", ctx->id);
+        printf("%s\n", args->id);
         return LIBTMAN_OK;
     }
 
@@ -29,11 +29,11 @@ static int show_key(tman_ctx_t * ctx, char *key)
     return 1;
 }
 
-static int pretty_show(tman_ctx_t * ctx, char *key)
+static int pretty_show(tman_ctx_t * ctx, tman_arg_t * args, char *key)
 {
     struct tman_unit *unitbin, *unitpgn;
 
-    printf("%-7s : %s\n", "id", ctx->id);
+    printf("%-7s : %s\n", "id", args->id);
 
     for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
         printf("%-7s : %s\n", unitbin->key, unitbin->val);
@@ -97,12 +97,12 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
         }
 
         if (key != NULL) {
-            if (show_key(ctx, key) != LIBTMAN_OK && quiet == FALSE) {
+            if (show_key(ctx, &args, key) != LIBTMAN_OK && quiet == FALSE) {
                 if (quiet == FALSE)
                     elog(1, errfmt, args.id, "key not found");
             }
         } else {
-            pretty_show(ctx, key);
+            pretty_show(ctx, &args, key);
         }
 
         tman_unit_free(ctx, &args, NULL);

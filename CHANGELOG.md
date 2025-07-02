@@ -12,6 +12,7 @@
 ### Deleted
 
 - `cli/add`: Delete unused option for ID generation
+- `src/libtman`: Delete id member from `tman_ctx_t`
 
 
 ## [0.0.21] - (2025-06-29)
