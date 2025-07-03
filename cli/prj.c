@@ -47,9 +47,12 @@ static int _prj_add(int argc, char **argv, tman_ctx_t * ctx)
     };
 
     showhelp = quiet = FALSE;
-    args.prj = args.id = NULL;
-    while ((c = getopt(argc, argv, ":hnq")) != -1) {
+    args.prj = args.brd = args.id = NULL;
+    while ((c = getopt(argc, argv, ":b:hnq")) != -1) {
         switch (c) {
+        case 'b':
+            args.brd = optarg;
+            break;
         case 'h':
             showhelp = TRUE;
             break;
@@ -85,7 +88,11 @@ static int _prj_add(int argc, char **argv, tman_ctx_t * ctx)
                 elog(1, errfmt, argv[i], tman_strerror());
             continue;
         }
+        // TODO: create default board if option to use boards is set in config
+
+        tman_unit_free(ctx, &args, &opt);
     }
+    status = LIBTMAN_OK;
     return status == LIBTMAN_OK ? tman_pwd() : 1;
 }
 

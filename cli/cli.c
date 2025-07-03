@@ -34,17 +34,22 @@ int tman_pwd(void)
     FILE *fp;
     tman_arg_t args;
 
-    if ((args.prj = project_getcurr()) == NULL) {
+    args.prj = args.brd = args.id = NULL;
+
+    if (tman_check_arg_prj(&args) != LIBTMAN_OK) {
         dlog(1, "tman_pwd: no current project");
         return LIBTMAN_OK;
-    }
-    if ((args.id = task_curr(args.prj)) == NULL)
+    } else if (tman_check_arg_brd(&args) != LIBTMAN_OK)
+        args.brd = "";
+    else if (tman_check_arg_id(&args) == LIBTMAN_OK)
         args.id = "";
 
-    dlog(1, "tman_pwd: prj = '%s', id = '%s'", args.prj, args.id);
+    dlog(1, "tman_pwd: prj: '%s', brd: '%s', id: '%s'", args.prj, args.brd,
+         args.id);
     if ((fp = fopen(PWDFILE, "w")) == NULL)
         return 1;
-    fprintf(fp, "%s/%s/%s\n", tmancfg->base.task, args.prj, args.id);
+    fprintf(fp, "%s/%s/%s/%s\n", tmancfg->base.task, args.prj, args.brd,
+            args.id);
     return fclose(fp);
 }
 

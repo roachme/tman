@@ -55,8 +55,11 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
     quiet = showhelp = FALSE;
     args.id = args.brd = args.prj = NULL;
     errfmt = "cannot create task '%s': %s";
-    while ((c = getopt(argc, argv, ":p:hnq")) != -1) {
+    while ((c = getopt(argc, argv, ":b:p:hnq")) != -1) {
         switch (c) {
+        case 'b':
+            args.brd = optarg;
+            break;
         case 'p':
             args.prj = optarg;
             break;

@@ -7,7 +7,7 @@ SHELLNAME=bash
 CC=gcc
 SRCS=$(wildcard cli/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
-CFLAGS=-I lib/src -I cli -Wall -g3  -fbounds-check
+CFLAGS=-I lib/src -I cli -Wall -g3
 LFLAGS=-lconfig -g
 PWDFILE=/tmp/tmanpwd
 

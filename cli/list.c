@@ -48,13 +48,16 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
 
     showhelp = showprjname = FALSE;
     args.id = args.brd = args.prj = NULL;
-    while ((c = getopt(argc, argv, ":Aac:hsvH")) != -1) {
+    while ((c = getopt(argc, argv, ":Aab:c:hsvH")) != -1) {
         switch (c) {
         case 'A':
             list_filter.allall = TRUE;
             break;
         case 'a':
             list_filter.almostall = TRUE;
+            break;
+        case 'b':
+            args.brd = optarg;
             break;
         case 'c':
             list_filter.column = optarg;

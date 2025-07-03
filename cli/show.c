@@ -53,8 +53,11 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
 
     quiet = showhelp = FALSE;
     key = args.prj = args.id = args.brd = NULL;
-    while ((c = getopt(argc, argv, ":p:hk:q")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hk:p:q")) != -1) {
         switch (c) {
+        case 'b':
+            args.brd = optarg;
+            break;
         case 'h':
             showhelp = TRUE;
             break;
