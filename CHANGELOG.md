@@ -9,6 +9,10 @@
 
 - `cli/fsck`: Rename builtin command name
 
+### Fixed
+
+- `cli`: Simplify hook logic
+
 ### Deleted
 
 - `cli/add`: Delete unused option for ID generation

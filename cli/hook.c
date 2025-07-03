@@ -15,10 +15,14 @@ static char *genpath_pgn(char *prj, char *id, char *name, char *cmd)
     return pathname;
 }
 
-int tman_hook_action(tman_arg_t * args, char *cmd)
+int hook_action(tman_arg_t * args, char *cmd)
 {
     char *pgncmd;
     struct tman_hook *hooks = tmancfg->hooks;
+
+    /* Execute hooks only if they are enabled.  */
+    if (tmancfg->usehooks == FALSE)
+        return 0;
 
     for (; hooks; hooks = hooks->next) {
         if (strcmp(cmd, hooks->cmd) == 0) {
@@ -27,16 +31,20 @@ int tman_hook_action(tman_arg_t * args, char *cmd)
             system(pgncmd);
         }
     }
-    return LIBTMAN_OK;
+    return 0;
 }
 
-int tman_hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
+int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
 {
     FILE *pipe;
     char key[KEYSIZ + 1];
     char val[VALSIZ + 1];
     char line[BUFSIZ + 1] = { 0 };
     struct tman_hook *hooks = tmancfg->hooks;
+
+    /* Execute hooks only if they are enabled.  */
+    if (tmancfg->usehooks == FALSE)
+        return 0;
 
     for (; hooks; hooks = hooks->next) {
         if (strcmp(hooks->cmd, cmd) != 0)
@@ -54,14 +62,18 @@ int tman_hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
         }
         pclose(pipe);
     }
-    return LIBTMAN_OK;
+    return 0;
 }
 
-char *tman_hookls(struct tman_hook *hooks, char *pgnout, char *prj, char *id)
+char *hook_list(struct tman_hook *hooks, char *pgnout, char *prj, char *id)
 {
     FILE *pipe;
     char *prefix = "  ";
     char line[BUFSIZ + 1] = { 0 };
+
+    /* Execute hooks only if they are enabled.  */
+    if (tmancfg->usehooks == TRUE)
+        return 0;
 
     for (; hooks; hooks = hooks->next) {
         if (strcmp(hooks->cmd, "list") != 0)

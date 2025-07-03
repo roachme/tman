@@ -48,11 +48,9 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
             if (quiet == FALSE)
                 elog(status, errfmt, args.id, tman_strerror());
             continue;
-        } else if (tmancfg->usehooks == TRUE
-                   && (status =
-                       tman_hook_action(&args, "sync")) != LIBTMAN_OK) {
+        } else if (hook_action(&args, "sync")) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
+                elog(status, errfmt, args.id, "failed to execute hooks");
             continue;
         }
     } while (++i < argc);

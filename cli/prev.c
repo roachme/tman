@@ -34,14 +34,11 @@ int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx)
         if (quiet == FALSE)
             elog(status, errfmt, tman_strerror());
         return status;
-    } else if (tmancfg->usehooks == TRUE && (status =
-                                             tman_hook_action(&args,
-                                                              "prev")) !=
-               LIBTMAN_OK) {
+    } else if (hook_action(&args, "prev")) {
         if (quiet == FALSE)
-            elog(status, errfmt, tman_strerror());
-        return status;
+            elog(1, errfmt, args.id, "failed to execute hooks");
+        return 1;
     }
 
-    return status == LIBTMAN_OK ? tman_pwd() : status;
+    return tman_pwd();
 }

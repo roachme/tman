@@ -117,12 +117,12 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
         args.id = argv[i];
         if ((status = tman_task_set(ctx, &args, &opt)) != LIBTMAN_OK) {
             args.id = args.id ? args.id : "NOCURR";
-            elog(status, errfmt, args.id, tman_strerror());
-            return status;
-        } else if (tmancfg->usehooks == TRUE
-                   && (status = tman_hook_action(&args, "set")) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.id, tman_strerror());
+                elog(status, errfmt, args.id, tman_strerror());
+            continue;
+        } else if (hook_action(&args, "set")) {
+            if (quiet == FALSE)
+                elog(1, errfmt, args.id, "failed to execute hooks");
             continue;
         }
     } while (++i < argc);

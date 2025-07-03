@@ -64,10 +64,9 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
                 continue;
         }
 
-        if (tmancfg->usehooks == TRUE &&
-            (status = tman_hook_action(&args, "del")) != LIBTMAN_OK) {
+        if (hook_action(&args, "del")) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
+                elog(1, errfmt, args.id, "failed to execute hooks");
             continue;
         }
         if ((status = tman_task_del(ctx, &args, &opt)) != LIBTMAN_OK) {

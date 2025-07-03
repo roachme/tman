@@ -104,10 +104,9 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
                 elog(status, errfmt, args.id, tman_strerror());
             args.id = NULL;     /* unset task ID, not to break loop.  */
             continue;
-        } else if (tmancfg->usehooks == TRUE
-                   && (status = tman_hook_action(&args, "add")) != LIBTMAN_OK) {
+        } else if (hook_action(&args, "add")) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.id, tman_strerror());
+                elog(1, errfmt, args.id, "failed to execute hooks");
             args.id = NULL;     /* unset task ID, not to break loop.  */
             continue;
         }
