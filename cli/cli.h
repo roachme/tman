@@ -3,6 +3,9 @@
 
 #define CMDSIZ          5
 
+#include <stdio.h>
+#include <getopt.h>
+
 #include "help.h"
 #include "hook.h"
 #include "color.h"
@@ -18,13 +21,16 @@
 
 /* TODO: add the same function for board list.  */
 #define LIST_BRD_UNITS(p) {\
+    color_print_char("%c ", (p)->mark, BGRN); \
+    color_print_str("%-" xstr(IDSIZ) "s ", (p)->id, BBLU); \
+    color_print_str("%s\n", (p)->desc, BWHT); \
 }\
 
 /* TODO: add a plugin output too */
-#define LIST_TASK_UNITS(p) {\
-    color_print_char("%c ", (p)->mark, BGRN); \
-    color_print_str("%-" xstr(IDSIZ) "s ", (p)->id, BMAG); \
-    color_print_str("%s\n", (p)->desc, BWHT); \
+#define LIST_TASK_UNITS(mark, id, desc) {\
+    color_print_char("%c ", (mark), BGRN); \
+    color_print_str("%-" xstr(IDSIZ) "s ", (id), BMAG); \
+    color_print_str("%s\n", (desc), BWHT); \
 }\
 
 typedef struct builtin {
@@ -34,6 +40,9 @@ typedef struct builtin {
 } builtin_t;
 
 int tman_pwd(void);
+int tman_pwd_task(void);
+int tman_pwd_board(void);
+int tman_pwd_project(void);
 int tman_pwd_unset(void);
 int elog(int status, const char *fmt, ...);
 int dlog(int level, const char *fmt, ...);
@@ -42,8 +51,8 @@ int dlog(int level, const char *fmt, ...);
 int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_brd(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_cfg(int argc, char **argv, tman_ctx_t * ctx);
-int tman_cli_col(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx);
+int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_fsck(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_prj(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx);

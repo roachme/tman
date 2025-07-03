@@ -105,32 +105,29 @@ projects = {
 
 ## ⇁  Tman builtin commands
 ```
-Usage: tman [SYSOPT]... COMMAND|PLUGIN [OPTION]... [ARGS]...
-  Run tman help tman to get info about options
-  These are common Tman commands used in various situations:
+Usage: tman [OPTION]... COMMAND|PLUGIN
+    Run tman help tman to get more info.
 
-System:
-  cfg    - Manage system configuration file.
-  fsck   - Check and repair a system.
-  help   - Show help message for command.
-  init   - Init directory structure.
+    System:
+      cfg    - Manage system configuration file.
+      fsck   - Check and repair a system (under development).
+      help   - Show help message for command.
+      init   - Init directory structure.
 
-Basic:
-  add    - Add a new task to project.
-  del    - Delete task from project.
-  list   - List project tasks.
-  prev   - Switch to previous task in current project.
-  show   - Show task info.
-  sync   - Switch to or synchronize task.
+    Basic:
+      add    - Add a new task to project.
+      del    - Delete task from project.
+      list   - List project tasks.
+      move   - Move (rename) tasks.
+      prev   - Switch to previous task.
+      set    - Set task unit values.
+      show   - Show task info.
+      sync   - Switch to or synchronize task.
 
-Misc:
-  col    - Move task to column.
-  move   - Move (rename) tasks.
-  set    - Set task unit values.
-
-Object:
-  brd    - Manage and show boards (under development).
-  prj    - Manage and show projects.
+    Object:
+      brd    - Manage and show boards.
+      flow   - Manage and show workflow (under development).
+      prj    - Manage and show projects.
 
 ```
 

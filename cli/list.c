@@ -1,40 +1,154 @@
-#include <unistd.h>
+#include <string.h>
 
 #include "cli.h"
-#include "config.h"
 
-static const char *errfmt = "cannot list project tasks '%s': %s";
+static const char *errfmt = "cannot list tasks '%s': %s";
 
+#define COLUMN_CURR_MARK        '*'
+#define COLUMN_PREV_MARK        '^'
+#define COLUMN_BLOG_MARK        '+'
+#define COLUMN_DONE_MARK        '-'
+
+struct column {
+    char mark;
+    char tag[10];
+    char desc[80];
+} my_columns[] = {
+    {.tag = "uknw",.mark = '?',.desc = "unknown tag"},
+    {.tag = "curr",.mark = '*',.desc = "unknown tag"},
+    {.tag = "prev",.mark = '^',.desc = "unknown tag"},
+    {.tag = "blog",.mark = '+',.desc = "unknown tag"},
+    {.tag = "done",.mark = '-',.desc = "unknown tag"},
+    {.tag = "revw",.mark = '>',.desc = "review column"},
+    {.tag = "test",.mark = '$',.desc = "test column"},
+    {.tag = "lock",.mark = '!',.desc = "locked column"},
+};
+
+/*
+
+Default output:
+    1. Toggles
+    2. Custom tasks
+
+-a:
+    1. default values
+    2. backlog tasks
+
+-c: only specified column
+
+-t: for toggles only
+
+-A: the whole pack
+    1. default values
+    2. backlog tasks
+    3. finished tasks
+
+-D: for finished tasks only
+
+-T: for TODO/backlog tasks only
+
+*/
 struct list_filter {
-    int allall;
+    int all;
     int almostall;
-    int specialonly;
-    char *column;
+    int blog;                   // -T
+    char *column;               // -c
+    int done;                   // -D
+    int toggle;                 // -t
 };
 
-static struct list_filter list_filter = {
-    .allall = FALSE,
+static struct list_filter filter = {
+    .all = FALSE,
     .almostall = TRUE,
-    .specialonly = FALSE,
     .column = NULL,
+    .blog = FALSE,
+    .done = FALSE,
+    .toggle = FALSE,
 };
 
-static int recursive_tree_print(struct tree *p, struct config *myconfig)
+static char col_get_mark(char *name)
 {
-    if (p != NULL) {
-        char mark = p->mark;
-        recursive_tree_print(p->left, myconfig);
+    for (int i = 0; i < ARRAY_SIZE(my_columns); ++i)
+        if (strcmp(name, my_columns[i].tag) == 0)
+            return my_columns[i].mark;
+    return my_columns[0].mark;
+}
 
-        /* Apply filters */
-        if (list_filter.specialonly == TRUE && (mark == '*' || mark == '^')) {
-            LIST_TASK_UNITS(p);
-        } else if (list_filter.almostall == TRUE && (mark != '-')) {
-            LIST_TASK_UNITS(p);
-        } else if (list_filter.allall == TRUE) {
-            LIST_TASK_UNITS(p);
+// TODO: remove parameter 'quiet', return status, and let the caller to
+// print error message if needed
+static char *get_unit_desc(tman_ctx_t * ctx, tman_arg_t * args, int quiet)
+{
+    int status;
+    char *desc;
+
+    desc = NULL;
+    if ((status = tman_task_show(ctx, args, NULL))) {
+        if (quiet == FALSE)
+            elog(1, "'%s': %s one", args->task, tman_strerror());
+    } else if ((desc = tman_unit_get(ctx->unitbin, "desc")) == NULL) {
+        if (quiet == FALSE)
+            elog(1, "'%s': %s", args->task, "description not found");
+    }
+    return desc;
+}
+
+static void show_column(tman_ctx_t * ctx, tman_arg_t * args, struct mylist *obj,
+                        int *quiet)
+{
+    char mark;
+    char *desc;
+
+    if (obj != NULL) {
+        mark = col_get_mark(obj->colname);
+        args->task = obj->id;
+
+        if ((desc = get_unit_desc(ctx, args, *quiet)) == NULL)
+            return;
+        LIST_TASK_UNITS(mark, obj->id, desc);
+        tman_unit_free(ctx, args, NULL);
+    }
+}
+
+static void show_columns(tman_ctx_t * ctx, tman_arg_t * args,
+                         struct mylist *list, int *quiet)
+{
+    struct mylist *obj;
+
+    for (obj = list; obj != NULL; obj = obj->next)
+        show_column(ctx, args, obj, quiet);
+}
+
+static int check_column_name(char *column, int quiet)
+{
+    int column_found = FALSE;
+
+    if (strcmp(column, "curr") == 0) {
+        if (quiet == FALSE)
+            elog(1, "'%s': is builtin column", column);
+        return 1;
+    } else if (strcmp(column, "prev") == 0) {
+        if (quiet == FALSE)
+            elog(1, "'%s': is builtin column", column);
+        return 1;
+    } else if (strcmp(column, "blog") == 0) {
+        if (quiet == FALSE)
+            elog(1, "'%s': is builtin column", column);
+        return 1;
+    } else if (strcmp(column, "done") == 0) {
+        if (quiet == FALSE)
+            elog(1, "'%s': is builtin column", column);
+        return 1;
+    }
+    for (int k = 0; k < ARRAY_SIZE(my_columns); ++k) {
+        if (strcmp(my_columns[k].tag, column) == 0) {
+            column_found = TRUE;
+            break;
         }
-
-        recursive_tree_print(p->right, myconfig);
+    }
+    if (column_found == FALSE) {
+        if (quiet == FALSE)
+            elog(1, "'%s': no such column name", column);
+        return 1;
     }
     return 0;
 }
@@ -44,31 +158,45 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     tman_arg_t args;
-    int i, showhelp, showprjname, status;
+    struct mylist *obj;
+    int i, quiet, showhelp, show_headers, status;
 
-    showhelp = showprjname = FALSE;
-    args.id = args.brd = args.prj = NULL;
-    while ((c = getopt(argc, argv, ":Aac:hsvH")) != -1) {
+    /* TODO: get rid of option `-a'.  */
+    quiet = showhelp = show_headers = FALSE;
+    args.prj = args.brd = args.task = NULL;
+    while ((c = getopt(argc, argv, ":ab:c:hqvADHST")) != -1) {
         switch (c) {
-        case 'A':
-            list_filter.allall = TRUE;
-            break;
         case 'a':
-            list_filter.almostall = TRUE;
+            filter.almostall = TRUE;
+            break;
+        case 'b':
+            args.brd = optarg;
             break;
         case 'c':
-            list_filter.column = optarg;
+            filter.column = optarg;
             break;
         case 'h':
             showhelp = TRUE;
             break;
-        case 's':
-            list_filter.specialonly = TRUE;
+        case 'q':
+            quiet = TRUE;
             break;
         case 'v':
             return elog(1, "option `-v' under development");
+        case 'A':
+            filter.all = TRUE;
+            break;
+        case 'D':
+            filter.done = TRUE;
+            break;
         case 'H':
-            showprjname = TRUE;
+            show_headers = TRUE;
+            break;
+        case 'S':
+            filter.toggle = TRUE;
+            break;
+        case 'T':
+            filter.blog = TRUE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -77,38 +205,97 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
         }
     }
 
-    if (list_filter.specialonly == TRUE)
-        list_filter.almostall = FALSE;
-    if (list_filter.allall == TRUE)
-        list_filter.almostall = FALSE;
-    if (list_filter.column != NULL) {
-        list_filter.almostall = FALSE;
+    if (filter.all && filter.toggle)
+        return elog(1, "options `-A' and `-S' cant be used together");
+    else if (filter.all && filter.done)
+        return elog(1, "options `-A' and `-D' cant be used together");
+    else if (filter.all && filter.blog)
+        return elog(1, "options `-A' and `-T' cant be used together");
+    else if (filter.all && filter.column)
+        return elog(1, "options `-A' and `-c' cant be used together");
 
-        // hotfix
-        elog(1, "option `-c' not implemented yet");
-        return 1;
+    if (filter.blog) {
+        filter.all = FALSE;
+        filter.almostall = FALSE;
+    } else if (filter.toggle) {
+        filter.all = FALSE;
+        filter.almostall = FALSE;
+    } else if (filter.column) {
+        filter.all = FALSE;
+        filter.almostall = FALSE;
+    } else if (filter.done) {
+        filter.all = FALSE;
+        filter.almostall = FALSE;
     }
-    // TODO: check that option don't conflict with each other.
+
     if (showhelp == 1)
         return help_usage("list");
 
-    tman_pwd_unset();
     i = optind;
     do {
         args.prj = argv[i];
 
         if ((status = tman_task_list(ctx, &args, NULL)) != LIBTMAN_OK) {
             args.prj = args.prj ? args.prj : "NOCURR";
-            elog(status, errfmt, args.prj, tman_strerror());
+            if (quiet == FALSE)
+                elog(status, errfmt, args.prj, tman_strerror());
             continue;
         }
 
-        if (showprjname == TRUE)
+        if (show_headers == TRUE)
             printf("Project: %s\n", args.prj);
-        // TODO: add hooks
-        recursive_tree_print(ctx->ids, tmancfg);
-    } while (++i < argc);
 
-    chdir("/home/roach");
+        // TODO: add hooks
+        // TODO: optimize object traverse (traverse multiple times)
+        // TODO: optimize data structure load (it uses too much malloc)
+
+        if (filter.column != NULL) {
+            if (check_column_name(filter.column, quiet))
+                continue;
+            for (obj = ctx->ids->custom; obj != NULL; obj = obj->next) {
+                if (strcmp(filter.column, obj->colname) != 0)
+                    continue;
+                show_column(ctx, &args, obj, &quiet);
+            }
+        }
+
+        if (filter.all || filter.almostall || filter.toggle) {
+            show_columns(ctx, &args, ctx->ids->curr, &quiet);
+            show_columns(ctx, &args, ctx->ids->prev, &quiet);
+        }
+        if (filter.all || filter.blog) {
+            show_columns(ctx, &args, ctx->ids->blog, &quiet);
+        }
+        if (filter.all || filter.almostall) {
+            for (int i = 0; i < ARRAY_SIZE(my_columns); ++i) {
+                for (obj = ctx->ids->custom; obj != NULL; obj = obj->next) {
+                    if (strcmp(my_columns[i].tag, obj->colname) != 0)
+                        continue;
+                    obj->shown = TRUE;
+                    show_column(ctx, &args, obj, &quiet);
+                }
+            }
+            for (obj = ctx->ids->custom; obj != NULL; obj = obj->next) {
+                if (quiet == FALSE && obj->shown != TRUE) {
+                    char *task = obj->id;
+                    char *colname = obj->colname;
+                    elog(1, "'%s': invalid column name '%s'", task, colname);
+                }
+            }
+        }
+        if (filter.all || filter.done) {
+            show_columns(ctx, &args, ctx->ids->done, &quiet);
+        }
+
+        if (quiet == FALSE) {
+            for (obj = ctx->ids->inval; obj != NULL; obj = obj->next) {
+                if (quiet == FALSE && obj->shown != TRUE) {
+                    status = obj->status;
+                    const char *fmt = "'%s': %s";
+                    elog(status, fmt, obj->id, tman_strerror_get(status));
+                }
+            }
+        }
+    } while (++i < argc);
     return status;
 }

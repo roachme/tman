@@ -1,26 +1,27 @@
 #include "cli.h"
-#include "config.h"
 
-// TODO: Find a good error message in case option fails.  */
 int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c, *errfmt;
     tman_arg_t args;
     int i, quiet, showhelp, status;
     tman_opt_t opt = {
-        .id_switch = TRUE,
+        .task_switch = TRUE,
     };
 
     quiet = showhelp = FALSE;
-    args.id = args.prj = NULL;
+    args.prj = args.brd = args.task = NULL;
     errfmt = "cannot sync '%s': %s";
-    while ((c = getopt(argc, argv, ":hnp:q")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hnp:q")) != -1) {
         switch (c) {
+        case 'b':
+            args.brd = optarg;
+            break;
         case 'h':
             showhelp = TRUE;
             break;
         case 'n':
-            opt.id_switch = FALSE;
+            opt.task_switch = FALSE;
             break;
         case 'p':
             args.prj = optarg;
@@ -39,21 +40,20 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
         return help_usage("sync");
 
     i = optind;
-    tman_pwd_unset();
     do {
-        args.id = argv[i];
+        args.task = argv[i];
 
         if ((status = tman_task_sync(ctx, &args, &opt)) != LIBTMAN_OK) {
-            args.id = args.id ? args.id : "NOCURR";
+            args.task = args.task ? args.task : "NOCURR";
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
+                elog(status, errfmt, args.task, tman_strerror());
             continue;
         } else if (hook_action(&args, "sync")) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, "failed to execute hooks");
+                elog(status, errfmt, args.task, "failed to execute hooks");
             continue;
         }
     } while (++i < argc);
 
-    return opt.id_switch && status == LIBTMAN_OK ? tman_pwd() : status;
+    return opt.task_switch && status == LIBTMAN_OK ? tman_pwd() : status;
 }

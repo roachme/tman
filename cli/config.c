@@ -1,4 +1,4 @@
-#include <linux/limits.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -116,11 +116,11 @@ static int myconfig_get_hooks(config_t * cfg, struct config *myconfig)
 static int myconfig_get_base(config_t * cfg, struct config *myconfig)
 {
     const char *task, *pgn;
-    char pathname[PATH_MAX + 1];
     config_setting_t *setting;
 
     task = pgn = NULL;
     if ((setting = config_lookup(cfg, "base")) != NULL) {
+        char pathname[PATH_MAX + 1];
         if (config_setting_lookup_string(setting, "task", &task)) {
             pathname[0] = '\0'; /* unset pathname value */
             resolve_env_var_home(pathname, task);

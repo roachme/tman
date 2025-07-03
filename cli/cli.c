@@ -34,17 +34,58 @@ int tman_pwd(void)
     FILE *fp;
     tman_arg_t args;
 
-    if ((args.prj = project_getcurr()) == NULL) {
-        dlog(1, "tman_pwd: no current project");
-        return LIBTMAN_OK;
-    }
-    if ((args.id = task_curr(args.prj)) == NULL)
-        args.id = "";
+    args.prj = args.brd = args.task = NULL;
 
-    dlog(1, "tman_pwd: prj = '%s', id = '%s'", args.prj, args.id);
+    if (tman_check_arg_prj(&args) != LIBTMAN_OK)
+        return emod_set(LIBTMAN_PRJ_NOCURR);
+    if (tman_check_arg_brd(&args) != LIBTMAN_OK)
+        args.brd = "";
+    if (tman_check_arg_task(&args) != LIBTMAN_OK)
+        args.task = "";
+
+    dlog(1, "tman_pwd: prj: '%s', brd: '%s', id: '%s'", args.prj, args.brd,
+         args.task);
     if ((fp = fopen(PWDFILE, "w")) == NULL)
         return 1;
-    fprintf(fp, "%s/%s/%s\n", tmancfg->base.task, args.prj, args.id);
+    fprintf(fp, "%s/%s/%s/%s\n", tmancfg->base.task, args.prj, args.brd,
+            args.task);
+
+    return fclose(fp);
+}
+
+int tman_pwd_project(void)
+{
+    FILE *fp;
+    tman_arg_t args;
+
+    args.prj = args.brd = args.task = NULL;
+
+    if (tman_check_arg_prj(&args) != LIBTMAN_OK)
+        return emod_set(LIBTMAN_PRJ_NOCURR);
+
+    dlog(1, "tman_pwd_prj: prj: '%s'", args.prj);
+    if ((fp = fopen(PWDFILE, "w")) == NULL)
+        return 1;
+    fprintf(fp, "%s/%s\n", tmancfg->base.task, args.prj);
+    return fclose(fp);
+}
+
+int tman_pwd_board(void)
+{
+    FILE *fp;
+    tman_arg_t args;
+
+    args.prj = args.brd = args.task = NULL;
+
+    if (tman_check_arg_prj(&args) != LIBTMAN_OK)
+        return emod_set(LIBTMAN_PRJ_NOCURR);
+    if (tman_check_arg_brd(&args) != LIBTMAN_OK)
+        return emod_set(LIBTMAN_BRD_NOCURR);
+
+    dlog(1, "tman_pwd_board: prj: '%s', brd: '%s'", args.prj, args.brd);
+    if ((fp = fopen(PWDFILE, "w")) == NULL)
+        return 1;
+    fprintf(fp, "%s/%s/%s\n", tmancfg->base.task, args.prj, args.brd);
     return fclose(fp);
 }
 
@@ -87,8 +128,8 @@ static const builtin_t builtins[] = {
     {.name = "add",.func = &tman_cli_add,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "brd",.func = &tman_cli_brd,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "cfg",.func = &tman_cli_cfg,.setuplvl = LIBTMAN_SETUPCHECK},
-    {.name = "col",.func = &tman_cli_col,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "del",.func = &tman_cli_del,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "flow",.func = &tman_cli_flow,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "fsck",.func = &tman_cli_fsck,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "help",.func = &tman_cli_help,.setuplvl = LIBTMAN_SETUPSOFT},
     {.name = "init",.func = &tman_cli_init,.setuplvl = LIBTMAN_SETUPHARD},

@@ -10,16 +10,17 @@ static int show_columns(char *prj)
         char tag[10];
         char desc[80];
     } columns[] = {
-        {.tag = "uknw",.mark = '?',.desc = "unknown tag"},
         {.tag = "curr",.mark = '*',.desc = "current task"},
         {.tag = "prev",.mark = '^',.desc = "previous task"},
         {.tag = "blog",.mark = '+',.desc = "backlog column"},
 
 // user define columns (gotta read 'em from config file
-        {.tag = "revw",.mark = '>',.desc = "review column"},
-        {.tag = "test",.mark = '$',.desc = "test column"},
-        {.tag = "lock",.mark = '!',.desc = "locked column"},
-        {.tag = "done",.mark = '-',.desc = "done column"},
+        /*
+           {.tag = "revw",.mark = '>',.desc = "review column"},
+           {.tag = "test",.mark = '$',.desc = "test column"},
+           {.tag = "lock",.mark = '!',.desc = "locked column"},
+           {.tag = "done",.mark = '-',.desc = "done column"},
+         */
     };
 
     for (int i = 0; i < sizeof(columns) / sizeof(columns[0]); ++i)
@@ -29,18 +30,23 @@ static int show_columns(char *prj)
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_col(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx)
 {
+    return elog(1, "this command is under development");
+
     tman_arg_t args;
     int i, c, status, showhelp, showlist;
     tman_opt_t opt;
     const char *errfmt = "cannot move to column '%s': %s";
 
-    args.prj = args.id = NULL;
+    args.prj = args.brd = args.task = NULL;
     showhelp = showlist = FALSE;
     // TODO: add an option to specify project
-    while ((c = getopt(argc, argv, ":hlp:")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hlp:")) != -1) {
         switch (c) {
+        case 'b':
+            args.brd = optarg;
+            break;
         case 'h':
             showhelp = TRUE;
             break;
@@ -58,7 +64,7 @@ int tman_cli_col(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     if (showhelp == 1)
-        return help_usage("col");
+        return help_usage("flow");
     else if (showlist == 1) {
         return show_columns("");
     } else if ((ctx->colname = argv[optind++]) == NULL)
@@ -68,8 +74,8 @@ int tman_cli_col(int argc, char **argv, tman_ctx_t * ctx)
     // The problem in CLI command `col'.
     i = optind;
     do {
-        args.id = argv[i];
-        if ((status = tman_task_col(ctx, &args, &opt)) != LIBTMAN_OK)
+        args.task = argv[i];
+        if ((status = tman_task_flow(ctx, &args, &opt)) != LIBTMAN_OK)
             elog(status, errfmt, ctx->colname, tman_strerror());
     } while (++i < argc);
 

@@ -61,11 +61,14 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
     const char *errfmt = "cannot set task units '%s': %s";
 
     quiet = FALSE;
-    args.id = args.prj = NULL;
+    args.task = args.prj = NULL;
     atleast_one_key_set = FALSE;
-    while ((c = getopt(argc, argv, ":d:p:qt:P:")) != -1) {
+    while ((c = getopt(argc, argv, ":b:d:p:qt:P:")) != -1) {
         // TODO: add a protection for duplicates, use map data structure
         switch (c) {
+        case 'b':
+            args.brd = optarg;
+            break;
         case 'p':
             args.prj = optarg;
             break;
@@ -114,19 +117,19 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
 
     i = optind;
     do {
-        args.id = argv[i];
+        args.task = argv[i];
         if ((status = tman_task_set(ctx, &args, &opt)) != LIBTMAN_OK) {
-            args.id = args.id ? args.id : "NOCURR";
+            args.task = args.task ? args.task : "NOCURR";
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
+                elog(status, errfmt, args.task, tman_strerror());
             continue;
         } else if (hook_action(&args, "set")) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.id, "failed to execute hooks");
+                elog(1, errfmt, args.task, "failed to execute hooks");
             continue;
         }
     } while (++i < argc);
 
-    ctx->unitbin = tman_unit_free(ctx, &args, NULL);
+    tman_unit_free(ctx, &args, NULL);
     return status;
 }

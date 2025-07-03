@@ -1,5 +1,4 @@
 #include "cli.h"
-#include "config.h"
 
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
@@ -11,10 +10,13 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 
     showprompt = TRUE;
     quiet = showhelp = FALSE;
-    args.id = args.prj = NULL;
+    args.prj = args.brd = args.task = NULL;
     errfmt = "cannot delete task '%s': %s";
-    while ((c = getopt(argc, argv, ":hnp:q")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hnp:q")) != -1) {
         switch (c) {
+        case 'b':
+            args.brd = optarg;
+            break;
         case 'h':
             showhelp = TRUE;
             break;
@@ -38,10 +40,9 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
         return help_usage("del");
     // TODO: if not current task gets deleted, then no need to
     // change user's current directory.
-    tman_pwd_unset();
     i = optind;
     do {
-        args.id = argv[i];
+        args.task = argv[i];
 
         /* Get and check input values explicitly because it's one of the rare
          * cases when hooks get exectude before the main action.  */
@@ -50,15 +51,20 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
             if (quiet == FALSE)
                 elog(status, errfmt, args.prj, tman_strerror());
             continue;
-        } else if ((status = tman_check_arg_id(&args))) {
-            args.id = args.id ? args.id : "NOCURR";
+        } else if ((status = tman_check_arg_brd(&args))) {
+            args.brd = args.brd ? args.brd : "NOCURR";
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
+                elog(status, errfmt, args.brd, tman_strerror());
+            continue;
+        } else if ((status = tman_check_arg_task(&args))) {
+            args.task = args.task ? args.task : "NOCURR";
+            if (quiet == FALSE)
+                elog(status, errfmt, args.task, tman_strerror());
             continue;
         }
 
         if (showprompt) {
-            printf("Are you sure to delete task '%s'? [y/N] ", args.id);
+            printf("Are you sure to delete task '%s'? [y/N] ", args.task);
             choice = getchar();
             if (choice != 'y' && choice != 'Y')
                 continue;
@@ -66,12 +72,12 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 
         if (hook_action(&args, "del")) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.id, "failed to execute hooks");
+                elog(1, errfmt, args.task, "failed to execute hooks");
             continue;
         }
         if ((status = tman_task_del(ctx, &args, &opt)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
+                elog(status, errfmt, args.task, tman_strerror());
             continue;
         }
     } while (++i < argc);

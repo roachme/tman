@@ -1,16 +1,13 @@
 #include <string.h>
 
 #include "cli.h"
-#include "config.h"
-
-static const char *errfmt = "cannot show units '%s': %s";
 
 static int show_key(tman_ctx_t * ctx, tman_arg_t * args, char *key)
 {
     struct tman_unit *unitbin, *unitpgn;
 
     if (strcmp(key, "id") == 0) {
-        printf("%s\n", args->id);
+        printf("%s\n", args->task);
         return LIBTMAN_OK;
     }
 
@@ -33,7 +30,7 @@ static int pretty_show(tman_ctx_t * ctx, tman_arg_t * args, char *key)
 {
     struct tman_unit *unitbin, *unitpgn;
 
-    printf("%-7s : %s\n", "id", args->id);
+    printf("%-7s : %s\n", "id", args->task);
 
     for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
         printf("%-7s : %s\n", unitbin->key, unitbin->val);
@@ -48,13 +45,18 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     char *key;
-    int i, quiet, showhelp, status;
     tman_arg_t args;
+    int i, quiet, showhelp, status;
+    const char *errfmt = "cannot show units '%s': %s";
 
+    key = NULL;
     quiet = showhelp = FALSE;
-    key = args.prj = args.id = args.brd = NULL;
-    while ((c = getopt(argc, argv, ":p:hk:q")) != -1) {
+    args.prj = args.brd = args.task = NULL;
+    while ((c = getopt(argc, argv, ":b:hk:p:q")) != -1) {
         switch (c) {
+        case 'b':
+            args.brd = optarg;
+            break;
         case 'h':
             showhelp = TRUE;
             break;
@@ -77,26 +79,25 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("show");
 
-    tman_pwd_unset();
     i = optind;
     do {
-        args.id = argv[i];
+        args.task = argv[i];
 
         if ((status = tman_task_show(ctx, &args, NULL)) != LIBTMAN_OK) {
-            args.id = args.id ? args.id : "NOCURR";
+            args.task = args.task ? args.task : "NOCURR";
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, tman_strerror());
+                elog(status, errfmt, args.task, tman_strerror());
             continue;
         } else if (hook_show(ctx, &args, "show")) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.id, "failed to execute hooks");
+                elog(status, errfmt, args.task, "failed to execute hooks");
             continue;
         }
 
         if (key != NULL) {
             if (show_key(ctx, &args, key) != LIBTMAN_OK && quiet == FALSE) {
                 if (quiet == FALSE)
-                    elog(1, errfmt, args.id, "key not found");
+                    elog(1, errfmt, args.task, "key not found");
             }
         } else {
             pretty_show(ctx, &args, key);

@@ -24,6 +24,8 @@ Ideas:
   8. Add libtman NOT as submodule but dependency
   9. Use command `gh` to generate releases
  10. Unify project/board/task's unit and column modules.
+ 11. Add config option to enable/disable board support in project.
+ 12. Add commands export/import to move tasks in and out of boards.
 
 Prio: high
 + 1. Write config file parser and define config itself.

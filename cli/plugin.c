@@ -24,11 +24,9 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
 
     i = 0;
     pgn = option = NULL;
-    args.brd = args.id = args.prj = NULL;
+    args.brd = args.task = args.prj = NULL;
 
     pgn = argv[i++];
-
-    tman_pwd_unset();
 
     /* Parse plugin command options.  */
     for (; i < argc; ++i) {
@@ -41,7 +39,7 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
         } else if (strcmp(option, "-i") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
-            args.id = argv[++i];
+            args.task = argv[++i];
         } else if (strcmp(option, "-p") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
@@ -58,7 +56,8 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
     else if ((status = tman_check_arg_brd(&args))
              && status != LIBTMAN_BRD_NOCURR)
         return elog(1, "invalid board: %s", tman_strerror());
-    else if ((status = tman_check_arg_id(&args)) && status != LIBTMAN_ID_NOCURR)
+    else if ((status = tman_check_arg_task(&args))
+             && status != LIBTMAN_ID_NOCURR)
         return elog(1, "invalid task ID: %s", tman_strerror());
 
     strcat(pgnexec, tmancfg->base.pgn);
@@ -83,9 +82,9 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
         strcat(pgnexec, " -b ");
         strcat(pgnexec, args.brd);
     }
-    if (args.id != NULL) {
+    if (args.task != NULL) {
         strcat(pgnexec, " -i ");
-        strcat(pgnexec, args.id);
+        strcat(pgnexec, args.task);
     }
 
     dlog(1, "pgnexec: %s", pgnexec);

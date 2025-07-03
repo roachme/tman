@@ -8,6 +8,7 @@
 ### Changed
 
 - `cli/fsck`: Rename builtin command name
+- `tman`: Unify column module
 
 ### Fixed
 

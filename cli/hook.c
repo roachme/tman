@@ -7,11 +7,12 @@
 
 static char pathname[PATHSIZ + 1];
 
-static char *genpath_pgn(char *prj, char *id, char *name, char *cmd)
+static char *genpath_pgn(char *prj, char *brd, char *task, char *name,
+                         char *cmd)
 {
-    const char *fmt = "%s/%s/%s -T %s -P %s %s -i %s -p %s";
+    const char *fmt = "%s/%s/%s -T %s -P %s %s -i %s -p %s -b %s";
     sprintf(pathname, fmt, tmancfg->base.pgn, name, name, tmancfg->base.task,
-            tmancfg->base.pgn, cmd, id, prj);
+            tmancfg->base.pgn, cmd, task, prj, brd);
     return pathname;
 }
 
@@ -27,7 +28,8 @@ int hook_action(tman_arg_t * args, char *cmd)
     for (; hooks; hooks = hooks->next) {
         if (strcmp(cmd, hooks->cmd) == 0) {
             pgncmd =
-                genpath_pgn(args->prj, args->id, hooks->pgname, hooks->pgncmd);
+                genpath_pgn(args->prj, args->brd, args->task, hooks->pgname,
+                            hooks->pgncmd);
             system(pgncmd);
         }
     }
@@ -52,8 +54,8 @@ int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
 
         if ((pipe =
              popen(genpath_pgn
-                   (args->prj, args->id, hooks->pgname, hooks->pgncmd),
-                   "r")) == NULL) {
+                   (args->prj, args->brd, args->task, hooks->pgname,
+                    hooks->pgncmd), "r")) == NULL) {
             continue;
         }
         while (fgets(line, BUFSIZ, pipe)) {
@@ -65,13 +67,14 @@ int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
     return 0;
 }
 
-char *hook_list(struct tman_hook *hooks, char *pgnout, char *prj, char *id)
+/*
+char *hook_list(struct tman_hook *hooks, char *pgnout, char *prj, char *task)
 {
     FILE *pipe;
     char *prefix = "  ";
     char line[BUFSIZ + 1] = { 0 };
 
-    /* Execute hooks only if they are enabled.  */
+    // Execute hooks only if they are enabled.
     if (tmancfg->usehooks == TRUE)
         return 0;
 
@@ -80,7 +83,7 @@ char *hook_list(struct tman_hook *hooks, char *pgnout, char *prj, char *id)
             continue;
 
         if ((pipe =
-             popen(genpath_pgn(prj, id, hooks->pgname, hooks->pgncmd),
+             popen(genpath_pgn(prj, task, hooks->pgname, hooks->pgncmd),
                    "r")) == NULL) {
             return NULL;
         }
@@ -101,3 +104,4 @@ char *hook_list(struct tman_hook *hooks, char *pgnout, char *prj, char *id)
     //return LIBTMAN_OK;
     return pgnout;
 }
+*/
