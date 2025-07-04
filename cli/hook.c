@@ -9,9 +9,9 @@ static char pathname[PATHSIZ + 1];
 
 static char *genpath_pgn(char *prj, char *id, char *name, char *cmd)
 {
-    const char *fmt = "%s/%s/%s -p %s -i %s -T %s -P %s %s";
-    sprintf(pathname, fmt, tmanfs.pgnins, name, name, prj, id, tmanfs.base,
-            tmanfs.pgnins, cmd);
+    const char *fmt = "%s/%s/%s -T %s -P %s %s -i %s -p %s";
+    sprintf(pathname, fmt, tmanfs.pgnins, name, name, tmanfs.base,
+            tmanfs.pgnins, cmd, id, prj);
     return pathname;
 }
 
