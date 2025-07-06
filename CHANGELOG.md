@@ -12,6 +12,7 @@
 ### Fixed
 
 - `cli`: Simplify hook logic
+- `cli/hook`: Delete access to private structure in library
 
 ### Deleted
 
