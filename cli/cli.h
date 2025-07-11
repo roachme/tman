@@ -27,10 +27,10 @@
 }\
 
 /* TODO: add a plugin output too */
-#define LIST_TASK_UNITS(mark, id, desc) {\
-    color_print_char("%c ", (mark), BGRN); \
-    color_print_str("%-" xstr(IDSIZ) "s ", (id), BMAG); \
-    color_print_str("%s\n", (desc), BWHT); \
+#define LIST_TASK_UNITS(_mark, _id, _desc) {\
+    color_print_char("%c ", (_mark), BGRN); \
+    color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
+    color_print_str("%s\n", (_desc), BWHT); \
 }\
 
 typedef struct builtin {
