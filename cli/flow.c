@@ -40,14 +40,14 @@ static int show_columns(char *prj)
 int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
-    int i, c, status, showhelp, showlist;
+    int i, c, quiet, status, showhelp, showlist;
     tman_opt_t opt;
     const char *errfmt = "cannot move to column '%s' to '%s': %s";
 
     args.prj = args.brd = args.task = NULL;
-    showhelp = showlist = FALSE;
+    quiet = showhelp = showlist = FALSE;
     // TODO: add an option to specify project
-    while ((c = getopt(argc, argv, ":b:hlp:")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hlp:q")) != -1) {
         switch (c) {
         case 'b':
             args.brd = optarg;
@@ -60,6 +60,9 @@ int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx)
             break;
         case 'p':
             args.prj = optarg;
+            break;
+        case 'q':
+            quiet = TRUE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -81,7 +84,11 @@ int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx)
     do {
         args.task = argv[i];
         if ((status = tman_task_flow(ctx, &args, &opt)) != LIBTMAN_OK)
-            elog(status, errfmt, args.task, ctx->colname, tman_strerror());
+            if (quiet == FALSE) {
+                char *task = args.task;
+                char *colname = ctx->colname;
+                elog(status, errfmt, task, colname, tman_strerror());
+            }
     } while (++i < argc);
 
     return status;

@@ -494,6 +494,7 @@ struct help helptab[] = {
       -l      list columns\n\
       -h      show this help and exit\n\
       -p PRJ  project name\n\
+      -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
       ID      task ID (default current)\n\
