@@ -164,10 +164,10 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
     /* TODO: get rid of option `-a'.  */
     quiet = showhelp = show_headers = FALSE;
     args.prj = args.brd = args.task = NULL;
-    while ((c = getopt(argc, argv, ":ab:c:hqvADHST")) != -1) {
+    while ((c = getopt(argc, argv, ":ab:c:hqvDHST")) != -1) {
         switch (c) {
         case 'a':
-            filter.almostall = TRUE;
+            filter.all = TRUE;
             break;
         case 'b':
             args.brd = optarg;
@@ -183,9 +183,6 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
             break;
         case 'v':
             return elog(1, "option `-v' under development");
-        case 'A':
-            filter.all = TRUE;
-            break;
         case 'D':
             filter.done = TRUE;
             break;

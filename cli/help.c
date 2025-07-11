@@ -28,7 +28,7 @@ struct help helptab[] = {
      .tag = SYSTEM,
      .name = "tman",
      .synop = "Usage: " PROGRAM " [OPTION]... COMMAND|PLUGIN\n",
-     .desc_short = "Terminal task (project) manager.\n",
+     .desc_short = "Terminal project and task manager.\n",
      .desc_long = "\n\
     Options:\n\
       -C TOG  enbale colors (default: disabled)\n\
@@ -157,17 +157,16 @@ struct help helptab[] = {
      .desc_short = "List project tasks.\n",
      .desc_long = "\n\
     Options:\n\
-      -A      list all tasks\n\
-      -a      list almost all tasks (expect for done)\n\
+      -a      list all tasks expect for done\n\
       -b BRD  board name\n\
       -c COL  specify what column to list task from\n\
       -h      show this help and exit\n\
       -q      do not write anything to standard error output\n\
-      -v      under development: show more info\n\
-      -D      show done tasks\n\
+      -v      under development: show more verbose output\n\
+      -D      show ONLY done tasks\n\
       -H      show headers\n\
-      -S      list only toggles, i.e. current and previous tasks\n\
-      -T      show backlog/todo tasks\n\
+      -S      show ONLY toggle switches (current and previous)\n\
+      -T      show ONLY todo tasks\n\
     \n\
     Arguments:\n\
       BRD     board name (default current)\n\
