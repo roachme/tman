@@ -24,7 +24,7 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
 
     i = 0;
     pgn = option = NULL;
-    args.brd = args.task = args.prj = NULL;
+    args.prj = args.brd = args.task = NULL;
 
     pgn = argv[i++];
 

@@ -61,7 +61,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
     const char *errfmt = "cannot set task units '%s': %s";
 
     quiet = FALSE;
-    args.task = args.prj = NULL;
+    args.prj = args.brd = args.task = NULL;
     atleast_one_key_set = FALSE;
     while ((c = getopt(argc, argv, ":b:d:p:qt:P:")) != -1) {
         // TODO: add a protection for duplicates, use map data structure
