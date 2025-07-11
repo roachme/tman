@@ -2,6 +2,13 @@
 
 #include "cli.h"
 
+/*
+TODO: add commands like
+    next     - move to next column in workflow
+    prev     - move to previous column in workflow
+    show     - show columns
+*/
+
 static int show_columns(char *prj)
 {
     // TODO: add support for project columns
@@ -32,12 +39,10 @@ static int show_columns(char *prj)
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx)
 {
-    return elog(1, "this command is under development");
-
     tman_arg_t args;
     int i, c, status, showhelp, showlist;
     tman_opt_t opt;
-    const char *errfmt = "cannot move to column '%s': %s";
+    const char *errfmt = "cannot move to column '%s' to '%s': %s";
 
     args.prj = args.brd = args.task = NULL;
     showhelp = showlist = FALSE;
@@ -76,7 +81,7 @@ int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx)
     do {
         args.task = argv[i];
         if ((status = tman_task_flow(ctx, &args, &opt)) != LIBTMAN_OK)
-            elog(status, errfmt, ctx->colname, tman_strerror());
+            elog(status, errfmt, args.task, ctx->colname, tman_strerror());
     } while (++i < argc);
 
     return status;
