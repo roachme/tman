@@ -106,7 +106,7 @@ projects = {
 ## ⇁  Tman builtin commands
 ```
 Usage: tman [OPTION]... COMMAND|PLUGIN
-    Run tman help tman to get more info.
+    Run 'tman help tman' to get more info.
 
     System:
       cfg    - Manage system configuration file.
@@ -126,7 +126,7 @@ Usage: tman [OPTION]... COMMAND|PLUGIN
 
     Object:
       brd    - Manage and show boards.
-      flow   - Manage and show workflow (under development).
+      flow   - Manage and show workflow.
       prj    - Manage and show projects.
 
 ```

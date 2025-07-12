@@ -486,7 +486,7 @@ struct help helptab[] = {
      .tag = TAGOBJ,
      .name = "flow",
      .synop = "Usage: " PROGRAM " flow [OPTION]... COLUMN [ID]...\n",
-     .desc_short = "Manage and show workflow (under development).\n",
+     .desc_short = "Manage and show workflow.\n",
      .desc_long = "\n\
     UNDER DEVELOPMENT\n\
     \n\
@@ -670,7 +670,7 @@ static void show_cmd_section(const char *title, const char *tag)
 int help_list_commands(void)
 {
     printf("Usage: " PROGRAM " [OPTION]... COMMAND|PLUGIN\n"
-           PADDING "Run `" PROGRAM " help " PROGRAM "' to get more info.\n");
+           PADDING "Run '" PROGRAM " help " PROGRAM "' to get more info.\n");
 
     show_cmd_section("System", TAGSYSTEM);
     show_cmd_section("Basic", TAGBASIC);
