@@ -26,6 +26,7 @@ Ideas:
  10. Unify project/board/task's unit and column modules.
  11. Add config option to enable/disable board support in project.
  12. Add commands export/import to move tasks in and out of boards.
+ 13. Add short list of exit statuses, other than libtman provides.
 
 Prio: high
 + 1. Write config file parser and define config itself.
@@ -56,7 +57,7 @@ Prio: mid
 + 7. In command `add`: if no ID provided then generate task ID.
 + 8. Why use tman_get_args() if tman_check_arg_id() get default values anyway?
   9. Delete option `-A' from command `tman list`. Cuz i can use option `-a'
- 10. Module unit has unit_set() and unit_add(). Delete unit_add() cuz unit_set()
++10. Module unit has unit_set() and unit_add(). Delete unit_add() cuz unit_set()
      will check if key exists and change it its value or adds new key-value in the end.
 
 Prio: low
