@@ -126,10 +126,8 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
         } else if (hook_action(&args, "set")) {
             if (quiet == FALSE)
                 elog(1, errfmt, args.task, "failed to execute hooks");
-            continue;
         }
+        tman_unit_free(ctx, &args, NULL);
     } while (++i < argc);
-
-    tman_unit_free(ctx, &args, NULL);
     return status;
 }

@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Fixed
+
+- `cli/set`: Fix memory leak
+
+
 ## [0.0.22] - (2025-07-12)
 
 ### Added
