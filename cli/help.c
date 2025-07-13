@@ -482,26 +482,91 @@ struct help helptab[] = {
     \n\
     Exit status:\n\
     Under development\n"},
+
     {
      .tag = TAGOBJ,
      .name = "flow",
-     .synop = "Usage: " PROGRAM " flow [OPTION]... COLUMN [ID]...\n",
+     .synop = "Usage: " PROGRAM " flow SUBCMD [OPTION]... [ID]\n",
      .desc_short = "Manage and show workflow.\n",
      .desc_long = "\n\
-    UNDER DEVELOPMENT\n\
-    \n\
-    Options:\n\
-      -l      list columns\n\
-      -h      show this help and exit\n\
-      -p PRJ  project name\n\
-      -q      do not write anything to standard error output\n\
-    \n\
     Arguments:\n\
-      ID      task ID (default current)\n\
-      PRJ     project name (default current)\n\
+      SUBCMD  flow subcommand\n\
+    \n\
+    SUBCMD list:\n\
+      list     List columns \n\
+      move     Move task to column\n\
+      next     Move task to next column in workflow (under development)\n\
+      prev     Move task to previous column in workflow (under development)\n\
+    \n\
+    Note:\n\
+      Use '" PROGRAM " help flow-SUBCMD' to get help on subcommands. \n\
+      For example: " PROGRAM " help flow-list\n\
     \n\
     Exit status:\n\
     Under development\n"},
+    {
+     .tag = TAGOBJCMD,
+     .name = "flow-list",
+     .synop = "Usage: " PROGRAM " flow list [OPTION]\n",
+     .desc_short = "List columns.\n",
+     .desc_long = "\n\
+    Options:\n\
+      -b BRD  board name (under development)\n\
+      -h      show this help and exit\n\
+      -p PRJ  project name (under development)\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Arguments:\n\
+      BRD     board name (default is current)\n\
+      PRJ     project name (default is current)\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"},
+    {
+     .tag = TAGOBJCMD,
+     .name = "flow-move",
+     .synop = "Usage: " PROGRAM " flow move [OPTION] [ID]...\n",
+     .desc_short = "Move task to column.\n",
+     .desc_long = "\n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Note:\n\
+      Default column to move to is 'todo'.\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"},
+    {
+     .tag = TAGOBJCMD,
+     .name = "flow-next",
+     .synop = "Usage: " PROGRAM " flow next [OPTION]\n",
+     .desc_short = "Move task to next column in workflow.\n",
+     .desc_long = "\n\
+    \n\
+    UNDER DEVELOPMENT\n\
+    \n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"},
+    {
+     .tag = TAGOBJCMD,
+     .name = "flow-prev",
+     .synop = "Usage: " PROGRAM " flow prev [OPTION]\n",
+     .desc_short = "Move task to previous column in workflow.\n",
+     .desc_long = "\n\
+    \n\
+    UNDER DEVELOPMENT\n\
+    \n\
+    Options:\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"},
 
     {
      .tag = TAGOBJ,
@@ -683,7 +748,6 @@ int help_usage(const char *cmd)
     for (int i = 0; i < ARRAY_SIZE(helptab); ++i) {
         if (strcmp(helptab[i].name, cmd) == 0) {
             printf("%s", helptab[i].synop);
-            printf("%s", helptab[i].desc_short);
             printf("Try '" PROGRAM " help %s' for more info.\n", cmd);
             return 1;
         }

@@ -1,8 +1,13 @@
 ## [Unreleased]
 
+### Added
+
+- `cli/flow`: Add workflow subcommands
+
 ### Fixed
 
 - `cli/set`: Fix memory leak
+- `cli/help`: Update help message in case of error
 
 ### Deleted
 

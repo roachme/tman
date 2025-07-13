@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "cli.h"
+#include "column.h"
 
 static const char *errfmt = "cannot list tasks '%s': %s";
 
@@ -8,21 +9,6 @@ static const char *errfmt = "cannot list tasks '%s': %s";
 #define COLUMN_PREV_MARK        '^'
 #define COLUMN_BLOG_MARK        '+'
 #define COLUMN_DONE_MARK        '-'
-
-struct column {
-    char mark;
-    char tag[10];
-    char desc[80];
-} my_columns[] = {
-    {.tag = "uknw",.mark = '?',.desc = "unknown tag"},
-    {.tag = "curr",.mark = '*',.desc = "unknown tag"},
-    {.tag = "prev",.mark = '^',.desc = "unknown tag"},
-    {.tag = "blog",.mark = '+',.desc = "unknown tag"},
-    {.tag = "done",.mark = '-',.desc = "unknown tag"},
-    {.tag = "revw",.mark = '>',.desc = "review column"},
-    {.tag = "test",.mark = '$',.desc = "test column"},
-    {.tag = "lock",.mark = '!',.desc = "locked column"},
-};
 
 /*
 
@@ -68,10 +54,10 @@ static struct list_filter filter = {
 
 static char col_get_mark(char *name)
 {
-    for (int i = 0; i < ARRAY_SIZE(my_columns); ++i)
-        if (strcmp(name, my_columns[i].tag) == 0)
-            return my_columns[i].mark;
-    return my_columns[0].mark;
+    for (int i = 0; i < g_colname_size; ++i)
+        if (strcmp(name, g_colname[i].tag) == 0)
+            return g_colname[i].mark;
+    return g_colname[0].mark;
 }
 
 // TODO: remove parameter 'quiet', return status, and let the caller to
@@ -139,8 +125,8 @@ static int check_column_name(char *column, int quiet)
             elog(1, "'%s': is builtin column", column);
         return 1;
     }
-    for (int k = 0; k < ARRAY_SIZE(my_columns); ++k) {
-        if (strcmp(my_columns[k].tag, column) == 0) {
+    for (int k = 0; k < g_colname_size; ++k) {
+        if (strcmp(g_colname[k].tag, column) == 0) {
             column_found = TRUE;
             break;
         }
@@ -201,7 +187,6 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
             return elog(1, "invalid option `-%c'", optopt);
         }
     }
-
     if (filter.all && filter.toggle)
         return elog(1, "options `-A' and `-S' cant be used together");
     else if (filter.all && filter.done)
@@ -264,9 +249,9 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
             show_columns(ctx, &args, ctx->ids->blog, &quiet);
         }
         if (filter.all || filter.almostall) {
-            for (int i = 0; i < ARRAY_SIZE(my_columns); ++i) {
+            for (int i = 0; i < g_colname_size; ++i) {
                 for (obj = ctx->ids->custom; obj != NULL; obj = obj->next) {
-                    if (strcmp(my_columns[i].tag, obj->colname) != 0)
+                    if (strcmp(g_colname[i].tag, obj->colname) != 0)
                         continue;
                     obj->shown = TRUE;
                     show_column(ctx, &args, obj, &quiet);
