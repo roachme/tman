@@ -11,6 +11,7 @@ Bugs:
      description than before.
   5. NULL-termination should follow `strncpy(dst, src, len)`. In case `src`
      is equal to `len` it'll end without '\0'. Checked it with valgrind.
+  6. Command `tman move` does not work after adding new feature to support boards.
 
 Ideas:
   1. Replace cat & ls hooks with reading from file. Gonna highly optimize
