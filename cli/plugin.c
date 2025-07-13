@@ -50,14 +50,15 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
         }
     }
 
-    /* Check system options.  */
-    if ((status = tman_check_arg_prj(&args)) && status != LIBTMAN_PRJ_NOCURR)
+    /* Add default inputs if any. Do NOT check anything. Plugins should do.  */
+    if ((status = tman_check_arg_prj(&args))
+        && status != LIBTMAN_PRJ_NOCURR && status != LIBTMAN_PRJ_NOSUCH)
         return elog(status, "invalid project: %s", tman_strerror());
     else if ((status = tman_check_arg_brd(&args))
-             && status != LIBTMAN_BRD_NOCURR)
+             && status != LIBTMAN_BRD_NOCURR && status != LIBTMAN_BRD_NOSUCH)
         return elog(1, "invalid board: %s", tman_strerror());
     else if ((status = tman_check_arg_task(&args))
-             && status != LIBTMAN_ID_NOCURR)
+             && status != LIBTMAN_ID_NOCURR && status != LIBTMAN_ID_NOSUCH)
         return elog(1, "invalid task ID: %s", tman_strerror());
 
     strcat(pgnexec, tmancfg->base.pgn);

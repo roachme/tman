@@ -4,6 +4,10 @@
 
 - `cli/set`: Fix memory leak
 
+### Deleted
+
+- `cli/plugin`: Remove check for input arguments
+
 
 ## [0.0.22] - (2025-07-12)
 
