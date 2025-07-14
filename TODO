@@ -28,6 +28,8 @@ Ideas:
  11. Add config option to enable/disable board support in project.
  12. Add commands export/import to move tasks in and out of boards.
  13. Add short list of exit statuses, other than libtman provides.
+ 14. Add support for command 'tman sync -n', to add task to curr column, but not change to task directory
+ 15. Make ID generatation bigger than the last ID. Might run outta IDs, but just think about it.
 
 Prio: high
 + 1. Write config file parser and define config itself.
