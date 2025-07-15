@@ -306,7 +306,7 @@ static int _brd_show(int argc, char **argv, tman_ctx_t * ctx)
     i = optind;
     do {
         args.brd = argv[i];
-        if ((status = tman_brd_show(ctx, &args, NULL)) != LIBTMAN_OK) {
+        if ((status = tman_brd_get(ctx, &args, NULL)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
             continue;

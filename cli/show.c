@@ -83,7 +83,7 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
     do {
         args.task = argv[i];
 
-        if ((status = tman_task_show(ctx, &args, NULL)) != LIBTMAN_OK) {
+        if ((status = tman_task_get(ctx, &args, NULL)) != LIBTMAN_OK) {
             args.task = args.task ? args.task : "NOCURR";
             if (quiet == FALSE)
                 elog(status, errfmt, args.task, tman_strerror());

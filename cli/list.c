@@ -68,10 +68,10 @@ static char *get_unit_desc(tman_ctx_t * ctx, tman_arg_t * args, int quiet)
     char *desc;
 
     desc = NULL;
-    if ((status = tman_task_show(ctx, args, NULL))) {
+    if ((status = tman_task_get(ctx, args, NULL))) {
         if (quiet == FALSE)
             elog(1, "'%s': %s one", args->task, tman_strerror());
-    } else if ((desc = tman_unit_get(ctx->unitbin, "desc")) == NULL) {
+    } else if ((desc = tman_unit_get_key(ctx->unitbin, "desc")) == NULL) {
         if (quiet == FALSE)
             elog(1, "'%s': %s", args->task, "description not found");
     }
