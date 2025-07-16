@@ -110,7 +110,6 @@ Usage: tman [OPTION]... COMMAND|PLUGIN
 
     System:
       cfg    - Manage system configuration file.
-      fsck   - Check and repair a system (under development).
       help   - Show help message for command.
       init   - Init directory structure.
 

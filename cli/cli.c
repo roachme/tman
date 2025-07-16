@@ -130,7 +130,6 @@ static const builtin_t builtins[] = {
     {.name = "cfg",.func = &tman_cli_cfg,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "del",.func = &tman_cli_del,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "flow",.func = &tman_cli_flow,.setuplvl = LIBTMAN_SETUPCHECK},
-    {.name = "fsck",.func = &tman_cli_fsck,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "help",.func = &tman_cli_help,.setuplvl = LIBTMAN_SETUPSOFT},
     {.name = "init",.func = &tman_cli_init,.setuplvl = LIBTMAN_SETUPHARD},
     {.name = "list",.func = &tman_cli_list,.setuplvl = LIBTMAN_SETUPCHECK},

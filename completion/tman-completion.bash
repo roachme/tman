@@ -3,7 +3,6 @@ function _comp_tman()
     local cur
     declare -A CMD_DESC=(
         ["cfg"]="Manage system configuration file"
-        ["fsck"]="Check and repair a system"
         ["help"]="Show help message for command"
         ["init"]="Init directory structure"
 

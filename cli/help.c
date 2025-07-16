@@ -73,19 +73,6 @@ struct help helptab[] = {
     Under development\n"},
     {
      .tag = TAGSYSTEM,
-     .name = "fsck",
-     .synop = "Usage: " PROGRAM " fsck\n",
-     .desc_short = "Check and repair a system (under development).\n",
-     .desc_long = "\n\
-    UNDER DEVELOPMENT\n\
-    \n\
-    Options:\n\
-      -s      under development: soft fix (without losing any user data)\n\
-    \n\
-    Exit status:\n\
-    Under development\n"},
-    {
-     .tag = TAGSYSTEM,
      .name = "help",
      .synop = "Usage: " PROGRAM " help [OPTION] [CMD]\n",
      .desc_short = "Show help message for command.\n",
