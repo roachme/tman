@@ -106,9 +106,10 @@ struct help helptab[] = {
     Options:\n\
       -b BRD  board name\n\
       -h      show this help and exit\n\
-      -n      don't switch to newly created task\n\
+      -n      do not switch to task\n\
       -p PRJ  project name\n\
       -q      do not write anything to standard error output\n\
+      -N      neither switch to task nor to task directory\n\
     \n\
     Arguments:\n\
       BRD     board name (default is current)\n\

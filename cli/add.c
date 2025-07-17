@@ -44,17 +44,18 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *errfmt;
     tman_arg_t args;
-    int quiet, showhelp, status, i, c;
+    int quiet, showhelp, status, switch_dir, i, c;
     tman_opt_t opt = {
         .prj_switch = TRUE,
         .brd_switch = TRUE,
         .task_switch = TRUE,
     };
 
+    switch_dir = TRUE;
     quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     errfmt = "cannot create task '%s': %s";
-    while ((c = getopt(argc, argv, ":b:p:hnq")) != -1) {
+    while ((c = getopt(argc, argv, ":b:p:hnqN")) != -1) {
         switch (c) {
         case 'b':
             args.brd = optarg;
@@ -70,6 +71,9 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
             break;
         case 'q':
             quiet = TRUE;
+            break;
+        case 'N':
+            switch_dir = FALSE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -98,6 +102,7 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
         return 1;
     }
 
+    char *last_task = NULL;
     i = optind;
     do {
         // TODO: maybe there's no need cuz i use task ID generator
@@ -121,8 +126,10 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
         tman_unit_free(ctx, &args, &opt);
 
         /* TODO: find a better trick.  */
+        last_task = args.task;
         args.task = NULL;       /* unset task ID, not to break loop.  */
     } while (++i < argc);
-    return opt.task_switch
-        && status == LIBTMAN_OK ? tman_pwd_task(&args) : status;
+
+    args.task = last_task;
+    return switch_dir && status == LIBTMAN_OK ? tman_pwd_task(&args) : status;
 }
