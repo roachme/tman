@@ -258,6 +258,7 @@ struct help helptab[] = {
       -n      do not switch to task\n\
       -p PRJ  project name\n\
       -q      do not write anything to standard error output\n\
+      -N      neither switch to task nor to task directory\n\
     \n\
     Arguments:\n\
       BRD     board name (default current)\n\

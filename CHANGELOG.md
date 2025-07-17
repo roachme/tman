@@ -3,6 +3,7 @@
 ### Added
 
 - `cli/flow`: Add workflow subcommands
+- `cli/sync`: Add option not to switch to directory
 
 ### Fixed
 

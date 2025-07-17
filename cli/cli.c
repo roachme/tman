@@ -29,26 +29,23 @@ static int show_version()
     return 0;
 }
 
-int tman_pwd(void)
+int tman_pwd_task(tman_arg_t * args)
 {
     FILE *fp;
-    tman_arg_t args;
 
-    args.prj = args.brd = args.task = NULL;
-
-    if (tman_check_arg_prj(&args) != LIBTMAN_OK)
+    if (tman_check_arg_prj(args) != LIBTMAN_OK)
         return emod_set(LIBTMAN_PRJ_NOCURR);
-    if (tman_check_arg_brd(&args) != LIBTMAN_OK)
-        args.brd = "";
-    if (tman_check_arg_task(&args) != LIBTMAN_OK)
-        args.task = "";
+    if (tman_check_arg_brd(args) != LIBTMAN_OK)
+        args->brd = "";
+    if (tman_check_arg_task(args) != LIBTMAN_OK)
+        args->task = "";
 
-    dlog(1, "tman_pwd: prj: '%s', brd: '%s', id: '%s'", args.prj, args.brd,
-         args.task);
+    dlog(1, "tman_pwd: prj: '%s', brd: '%s', id: '%s'", args->prj, args->brd,
+         args->task);
     if ((fp = fopen(PWDFILE, "w")) == NULL)
         return 1;
-    fprintf(fp, "%s/%s/%s/%s\n", tmancfg->base.task, args.prj, args.brd,
-            args.task);
+    fprintf(fp, "%s/%s/%s/%s\n", tmancfg->base.task, args->prj, args->brd,
+            args->task);
 
     return fclose(fp);
 }

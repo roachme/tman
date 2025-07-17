@@ -39,8 +39,7 @@ typedef struct builtin {
     int (*func)(int argc, char **argv, tman_ctx_t * ctx);
 } builtin_t;
 
-int tman_pwd(void);
-int tman_pwd_task(void);
+int tman_pwd_task(tman_arg_t * args);
 int tman_pwd_board(void);
 int tman_pwd_project(void);
 int tman_pwd_unset(void);

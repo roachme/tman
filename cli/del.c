@@ -85,5 +85,5 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
     // FIXME: when delete task ID from non-current prj,
     // it switches to current task in current prj.
     // BUT should not change user's CWD at all.
-    return status == LIBTMAN_OK ? tman_pwd() : status;
+    return status == LIBTMAN_OK ? tman_pwd_task(&args) : status;
 }

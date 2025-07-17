@@ -43,5 +43,5 @@ int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx)
             elog(1, errfmt, args.task, "failed to execute hooks");
         return 1;
     }
-    return tman_pwd();
+    return tman_pwd_task(&args);
 }

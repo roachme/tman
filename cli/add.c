@@ -123,5 +123,6 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
         /* TODO: find a better trick.  */
         args.task = NULL;       /* unset task ID, not to break loop.  */
     } while (++i < argc);
-    return opt.task_switch && status == LIBTMAN_OK ? tman_pwd() : status;
+    return opt.task_switch
+        && status == LIBTMAN_OK ? tman_pwd_task(&args) : status;
 }

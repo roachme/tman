@@ -4,15 +4,16 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c, *errfmt;
     tman_arg_t args;
-    int i, quiet, showhelp, status;
+    int i, quiet, showhelp, status, switch_dir;
     tman_opt_t opt = {
         .task_switch = TRUE,
     };
 
+    switch_dir = TRUE;
     quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     errfmt = "cannot sync '%s': %s";
-    while ((c = getopt(argc, argv, ":b:hnp:q")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hnp:qN")) != -1) {
         switch (c) {
         case 'b':
             args.brd = optarg;
@@ -28,6 +29,10 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
             break;
         case 'q':
             quiet = TRUE;
+            break;
+        case 'N':
+            switch_dir = FALSE;
+            opt.task_switch = FALSE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -55,5 +60,5 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
         }
     } while (++i < argc);
 
-    return opt.task_switch && status == LIBTMAN_OK ? tman_pwd() : status;
+    return switch_dir && status == LIBTMAN_OK ? tman_pwd_task(&args) : status;
 }
