@@ -14,7 +14,7 @@ PWDFILE=/tmp/tmanpwd
 # TODO: add debug mode
 # TODO: add user and developer builds
 
-all: release
+all: $(PROGRAM)
 .PHONY: clean debug generate release
 
 init:

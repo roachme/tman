@@ -6,6 +6,10 @@
 - `cli/sync`: Add option not to switch to directory
 - `cli/add`: Add option not to switch to directory
 
+### Changed
+
+- `Makefile`: Change default target to user build
+
 ### Fixed
 
 - `cli/set`: Fix memory leak
@@ -14,9 +18,6 @@
 ### Deleted
 
 - `cli/plugin`: Remove check for input arguments
-
-### Deleted
-
 - `cli/fsck`: Delete command `fsck` from builtin commands
 
 
