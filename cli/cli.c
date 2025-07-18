@@ -10,6 +10,15 @@
 
 struct config *tmancfg;
 
+static int valid_toggle(char *tog)
+{
+    if (strcmp(tog, "on") == 0)
+        return TRUE;
+    else if (strcmp(tog, "off") == 0)
+        return FALSE;
+    return -1;
+}
+
 static int ispgn(char *pgndir, const char *pgname)
 {
     char path[PATHSIZ + 1];
@@ -143,61 +152,49 @@ int main(int argc, char **argv)
     int usecolor, usedebug, usehooks;
     char *cmd = NULL, *option, *togfmt;
     tman_base_t base = {.task = NULL,.pgn = NULL };
-    int i, status, cmdfound;
+    int c, i, status, cmdfound;
     tman_ctx_t *ctx;
 
     cmd = option = NULL;
     usecolor = usedebug = usehooks = NONEBOOL;
-    togfmt = "option `%s' accepts either 'on' or 'off'";
+    togfmt = "option `-%c' accepts either 'on' or 'off'";
 
     /* Parse util itself options.  */
-    for (i = 1; i < argc && argv[i][0] == '-'; ++i) {
-        if ((option = argv[i]) && strcmp(option, "-T") == 0) {
-            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
-                return elog(1, "option `%s' requires an argument", option);
-            base.task = argv[++i];
-        } else if ((option = argv[i]) && strcmp(option, "-C") == 0) {
-            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
-                return elog(1, "option `%s' requires an argument", option);
-            if (strcmp(argv[i + 1], "on") == 0)
-                usecolor = TRUE;
-            else if (strcmp(argv[i + 1], "off") == 0)
-                usecolor = FALSE;
-            else
-                return elog(1, togfmt, option);
-            ++i;                /* Skip option.  */
-        } else if ((option = argv[i]) && strcmp(option, "-D") == 0) {
-            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
-                return elog(1, "option `%s' requires an argument", option);
-            if (strcmp(argv[i + 1], "on") == 0)
-                usedebug = TRUE;
-            else if (strcmp(argv[i + 1], "off") == 0)
-                usedebug = FALSE;
-            else
-                return elog(1, togfmt, option);
-            ++i;                /* Skip option.  */
-        } else if (strcmp(argv[i], "-h") == 0)
+    while ((c = getopt(argc, argv, "+hC:D:F:H:P:T:V")) != -1) {
+        switch (c) {
+        case 'h':
             return help_lookup(NULL);
-        else if (strcmp(argv[i], "-P") == 0) {
-            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
-                return elog(1, "option `%s' requires an argument", argv[i]);
-            base.pgn = argv[++i];
-        } else if ((option = argv[i]) && strcmp(argv[i], "-H") == 0) {
-            if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
-                return elog(1, "option `%s' requires an argument", argv[i]);
-            if (strcmp(argv[i + 1], "on") == 0)
-                usehooks = TRUE;
-            else if (strcmp(argv[i + 1], "off") == 0)
-                usehooks = FALSE;
-            else
-                return elog(1, togfmt, option);
-            ++i;                /* Skip option.  */
-        } else if (strcmp(argv[i], "-V") == 0)
+        case 'C':
+            if ((usecolor = valid_toggle(optarg)) == -1)
+                return elog(1, togfmt, c);
+            break;
+        case 'D':
+            if ((usedebug = valid_toggle(optarg)) == -1)
+                return elog(1, togfmt, c);
+            break;
+        case 'F':
+            return elog(1, "option `-%c' under development", c);
+        case 'H':
+            if ((usehooks = valid_toggle(optarg)) == -1)
+                return elog(1, togfmt, c);
+            break;
+        case 'P':
+            base.pgn = optarg;
+            break;
+        case 'T':
+            base.task = optarg;
+            break;
+        case 'V':
             return show_version();
-        else
-            return elog(1, "invalid option `%s'", argv[i]);
+        case ':':
+            return elog(1, "option `-%c' requires an argument", optopt);
+        default:
+            return elog(1, "invalid option `-%c'", optopt);
+        }
     }
 
+    i = optind;
+    optind = 0;                 /* Unset option index cuz subcommands use getopt too.  */
     tman_pwd_unset();
 
     if ((cmd = argv[i]) == NULL) {

@@ -9,6 +9,7 @@
 ### Changed
 
 - `Makefile`: Change default target to user build
+- `cli/cli`: cli/cli: Use getopt to parse options
 
 ### Fixed
 
