@@ -155,6 +155,8 @@ int main(int argc, char **argv)
     int c, i, status, cmdfound;
     tman_ctx_t *ctx;
 
+    ctx = NULL;
+    cmdfound = FALSE;
     cmd = option = NULL;
     usecolor = usedebug = usehooks = NONEBOOL;
     togfmt = "option `-%c' accepts either 'on' or 'off'";
@@ -202,17 +204,11 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if ((tmancfg = myconfig_create()) == NULL) {
-        fprintf(stderr, "myconfig_create: FAIL\n");
-    }
+    if ((tmancfg = myconfig_create()) == NULL)
+        return elog(1, "could not allocate memory for config");
 
-    if (tmancfg_parse(tmancfg)) {
-        fprintf(stderr, "could parse config file\n");
-        return 1;
-    }
-
-    ctx = NULL;
-    cmdfound = FALSE;
+    if (tmancfg_parse(tmancfg))
+        return elog(1, "could parse config file");
 
     if (base.task != NULL) {
         free(tmancfg->base.task);
@@ -227,10 +223,8 @@ int main(int argc, char **argv)
     tmancfg->usecolor = usecolor != NONEBOOL ? usecolor : tmancfg->usecolor;
     tmancfg->usedebug = usedebug != NONEBOOL ? usedebug : tmancfg->usedebug;
 
-    if ((ctx = tman_init(&tmancfg->base)) == NULL) {
-        elog(1, "could not init util: %s", tman_strerror());
-        return 1;
-    }
+    if ((ctx = tman_init(&tmancfg->base)) == NULL)
+        return elog(1, "could not init util: %s", tman_strerror());
 
     for (int idx = 0; idx < ARRAY_SIZE(builtins); ++idx)
         if (strcmp(cmd, builtins[idx].name) == 0) {
