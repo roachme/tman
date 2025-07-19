@@ -780,6 +780,7 @@ int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx)
     char c;
     int i, status;
 
+    status = LIBTMAN_OK;
     while ((c = getopt(argc, argv, ":ds")) != -1) {
         switch (c) {
         case 'd':

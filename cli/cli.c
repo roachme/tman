@@ -246,7 +246,7 @@ int main(int argc, char **argv)
     }
     if (cmdfound == FALSE) {
         status = 1;
-        elog(1, "%s: no such command or plugin", cmd);
+        elog(1, "'%s': no such command or plugin", cmd);
     }
 
  out:
