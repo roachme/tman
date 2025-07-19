@@ -21,7 +21,7 @@ static int generate_units(tman_ctx_t * ctx, char *brd)
 
     strcat(desc, brd);
     units = tman_unit_add(units, "desc", desc);
-    ctx->unitbrd = units;
+    ctx->units = units;
     return 0;
 }
 
@@ -47,7 +47,7 @@ static int recursive_tree_print_error(struct tree *p)
 }
 
 // TODO: add support to generate board name
-static int _brd_add(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_add(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     tman_arg_t args;
@@ -97,16 +97,16 @@ static int _brd_add(int argc, char **argv, tman_ctx_t * ctx)
         } else if ((status = tman_brd_add(ctx, &args, &opt)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(1, errfmt, argv[i], tman_strerror());
-            tman_unit_free(ctx, &args, NULL);
+            ctx->units = tman_unit_free(ctx->units);
             continue;
         }
         // TODO: add hooks
-        tman_unit_free(ctx, &args, NULL);
+        ctx->units = tman_unit_free(ctx->units);
     }
     return status == LIBTMAN_OK ? tman_pwd_board() : 1;
 }
 
-static int _brd_del(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_del(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     tman_arg_t args;
@@ -160,17 +160,17 @@ static int _brd_del(int argc, char **argv, tman_ctx_t * ctx)
     return status == LIBTMAN_OK ? tman_pwd_board() : status;
 }
 
-static int _brd_export(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_export(int argc, char **argv, tman_ctx_t * ctx)
 {
     return elog(1, "%s: under development", __FUNCTION__);
 }
 
-static int _brd_import(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_import(int argc, char **argv, tman_ctx_t * ctx)
 {
     return elog(1, "%s: under development", __FUNCTION__);
 }
 
-static int _brd_list(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int c, i, quiet, status;
@@ -205,7 +205,7 @@ static int _brd_list(int argc, char **argv, tman_ctx_t * ctx)
     return status;
 }
 
-static int _brd_prev(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_prev(int argc, char **argv, tman_ctx_t * ctx)
 {
     int status;
     tman_opt_t opt;
@@ -215,12 +215,12 @@ static int _brd_prev(int argc, char **argv, tman_ctx_t * ctx)
     return tman_pwd_board();
 }
 
-static int _brd_move(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_move(int argc, char **argv, tman_ctx_t * ctx)
 {
     return elog(1, "%s: under development", __FUNCTION__);
 }
 
-static int _brd_set(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_set(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int atleast_one_key_set;
@@ -239,7 +239,7 @@ static int _brd_set(int argc, char **argv, tman_ctx_t * ctx)
                 return 1;
             }
             atleast_one_key_set = TRUE;
-            ctx->unitbin = tman_unit_add(ctx->unitbin, "desc", optarg);
+            ctx->units = tman_unit_add(ctx->units, "desc", optarg);
             break;
         case 'h':
             showhelp = TRUE;
@@ -273,18 +273,18 @@ static int _brd_set(int argc, char **argv, tman_ctx_t * ctx)
         }
     } while (++i < argc);
 
-    tman_unit_free(ctx, &args, NULL);
+    ctx->units = tman_unit_free(ctx->units);
     return 0;
 }
 
-static int _brd_show(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_show(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int c, i, quiet, showhelp, status;
-    struct tman_unit *unitbin, *unitpgn;
+    struct tman_unit *units, *unitpgn;
     const char *errfmt = "cannot show project units '%s': %s";
 
-    unitbin = unitpgn = NULL;
+    units = unitpgn = NULL;
     quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     while ((c = getopt(argc, argv, ":hq")) != -1) {
@@ -315,8 +315,8 @@ static int _brd_show(int argc, char **argv, tman_ctx_t * ctx)
         }
 
         printf("%-7s : %s\n", "brd", args.brd);
-        for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
-            printf("%-7s : %s\n", unitbin->key, unitbin->val);
+        for (units = ctx->units; units; units = units->next)
+            printf("%-7s : %s\n", units->key, units->val);
 
         // TODO: add plugin output
     } while (++i < argc);
@@ -324,7 +324,7 @@ static int _brd_show(int argc, char **argv, tman_ctx_t * ctx)
     return status;
 }
 
-static int _brd_sync(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_sync(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int c, i, quiet, showhelp, status;
@@ -372,16 +372,16 @@ static int _brd_sync(int argc, char **argv, tman_ctx_t * ctx)
 }
 
 static const builtin_t brdcmds[] = {
-    {.name = "add",.func = &_brd_add},
-    {.name = "del",.func = &_brd_del},
-    {.name = "export",.func = &_brd_export},    /* export tasks into board */
-    {.name = "import",.func = &_brd_import},    /* import tasks from board */
-    {.name = "list",.func = &_brd_list},
-    {.name = "prev",.func = &_brd_prev},
-    {.name = "move",.func = &_brd_move},
-    {.name = "set",.func = &_brd_set},
-    {.name = "show",.func = &_brd_show},
-    {.name = "sync",.func = &_brd_sync},
+    {.name = "add",.func = &_board_add},
+    {.name = "del",.func = &_board_del},
+    {.name = "export",.func = &_board_export},  /* export tasks into board */
+    {.name = "import",.func = &_board_import},  /* import tasks from board */
+    {.name = "list",.func = &_board_list},
+    {.name = "prev",.func = &_board_prev},
+    {.name = "move",.func = &_board_move},
+    {.name = "set",.func = &_board_set},
+    {.name = "show",.func = &_board_show},
+    {.name = "sync",.func = &_board_sync},
 };
 
 int tman_cli_brd(int argc, char **argv, tman_ctx_t * ctx)

@@ -5,14 +5,13 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     char c, *errfmt;
-    tman_opt_t opt = { };
-    int i, choice, quiet, showhelp, showprompt, status;
+    tman_opt_t opts = {.task_switch = TRUE };
+    int i, choice, quiet, showhelp, autoconfirm, status;
 
-    showprompt = TRUE;
-    quiet = showhelp = FALSE;
+    autoconfirm = quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     errfmt = "cannot delete task '%s': %s";
-    while ((c = getopt(argc, argv, ":b:hnp:q")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hp:qy")) != -1) {
         switch (c) {
         case 'b':
             args.brd = optarg;
@@ -20,14 +19,14 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
         case 'h':
             showhelp = TRUE;
             break;
-        case 'n':
-            showprompt = FALSE;
-            break;
         case 'p':
             args.prj = optarg;
             break;
         case 'q':
             quiet = TRUE;
+            break;
+        case 'y':
+            autoconfirm = TRUE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -38,7 +37,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 
     if (showhelp == TRUE)
         return help_usage("del");
-    // TODO: if not current task gets deleted, then no need to
+    // TODO: if non-current task gets deleted, then no need to
     // change user's current directory.
     i = optind;
     do {
@@ -63,7 +62,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
             continue;
         }
 
-        if (showprompt) {
+        if (autoconfirm == FALSE) {
             printf("Are you sure to delete task '%s'? [y/N] ", args.task);
             choice = getchar();
             if (choice != 'y' && choice != 'Y')
@@ -75,7 +74,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
                 elog(1, errfmt, args.task, "failed to execute hooks");
             continue;
         }
-        if ((status = tman_task_del(ctx, &args, &opt)) != LIBTMAN_OK) {
+        if ((status = tman_task_del(ctx, &args, &opts)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.task, tman_strerror());
             continue;

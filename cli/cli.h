@@ -12,6 +12,11 @@
 
 #define PROGRAM     "tman"
 
+#define xstr(s)     str(s)
+#define str(s)      #s
+#define IDLIMIT     9999999
+#define IDFMT       "%0" xstr(IDSIZ) "u"
+
 #define LIST_PRJ_UNITS(p) {\
     color_print_char("%c ", (p)->mark, BGRN); \
     color_print_str("%-" xstr(IDSIZ) "s ", (p)->id, BBLU); \
@@ -27,7 +32,7 @@
 
 /* TODO: add a plugin output too */
 #define LIST_TASK_UNITS(_mark, _id, _desc) {\
-    color_print_char("%c ", (_mark), BGRN); \
+    color_print_str("%s ", (_mark), BGRN); \
     color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
     color_print_str("%s\n", (_desc), BWHT); \
 }\
@@ -52,13 +57,11 @@ int dlog(int level, const char *fmt, ...);
 int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_brd(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx);
-int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx);
-int tman_cli_prj(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_init(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_move(int argc, char **argv, tman_ctx_t * ctx);
-int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx);
+int tman_cli_prt(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx);

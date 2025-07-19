@@ -4,18 +4,15 @@
 
 #include "cli.h"
 
-#define xstr(s)     str(s)
-#define str(s)      #s
-#define IDLIMIT     9999999
-
+/* Note: should be static cuz args->task point to it.  */
 static char gentask[IDSIZ + 1];
 
 static int generate_task(tman_arg_t * args)
 {
-    for (unsigned int i = 1; i < IDLIMIT; ++i) {
-        sprintf(gentask, "%0" xstr(IDSIZ) "u", i);
-        args->task = gentask;
-        if (tman_check_arg_task_exist(args) == FALSE)
+    args->task = gentask;
+    for (register unsigned int i = 1; i < IDLIMIT; ++i) {
+        sprintf(gentask, IDFMT, i);
+        if (tman_check_arg_task_exist(args) != LIBTMAN_OK)
             return 0;
     }
     return 1;
@@ -36,7 +33,7 @@ static int generate_units(tman_ctx_t * ctx, char *prj, char *task)
     units = tman_unit_add(units, "type", "task");
     units = tman_unit_add(units, "date", buff);
     units = tman_unit_add(units, "desc", desc);
-    ctx->unitbin = units;
+    ctx->units = units;
     return 0;
 }
 
@@ -45,17 +42,13 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
     char *errfmt;
     tman_arg_t args;
     int quiet, showhelp, status, switch_dir, i, c;
-    tman_opt_t opt = {
-        .prj_switch = TRUE,
-        .brd_switch = TRUE,
-        .task_switch = TRUE,
-    };
+    tman_opt_t opts = {.task_switch = TRUE };
 
     switch_dir = TRUE;
     quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     errfmt = "cannot create task '%s': %s";
-    while ((c = getopt(argc, argv, ":b:p:hnqN")) != -1) {
+    while ((c = getopt(argc, argv, ":b:np:hqN")) != -1) {
         switch (c) {
         case 'b':
             args.brd = optarg;
@@ -67,13 +60,14 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
             showhelp = TRUE;
             break;
         case 'n':
-            opt.task_switch = FALSE;
+            opts.task_switch = FALSE;
             break;
         case 'q':
             quiet = TRUE;
             break;
         case 'N':
             switch_dir = FALSE;
+            opts.task_switch = FALSE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -84,25 +78,12 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
 
     if (showhelp == TRUE)
         return help_usage("add");
-
-    /* TODO: Simplify this shit.  */
-    if ((status = tman_check_arg_prj(&args))) {
-        args.prj = args.prj ? args.prj : "NOCURR";
+    else if (optind == argc && generate_task(&args)) {
         if (quiet == FALSE)
-            elog(status, errfmt, args.prj, tman_strerror());
-        return status;
-    } else if ((status = tman_check_arg_brd(&args))) {
-        args.brd = args.brd ? args.brd : "NOCURR";
-        if (quiet == FALSE)
-            elog(status, errfmt, args.brd, tman_strerror());
-        return status;
-    } else if (optind == argc && generate_task(&args)) {
-        if (quiet == FALSE)
-            elog(1, "task ID generation failed");
+            elog(1, "could not generate task ID: limit is %d", IDLIMIT);
         return 1;
     }
 
-    char *last_task = NULL;
     i = optind;
     do {
         // TODO: maybe there's no need cuz i use task ID generator
@@ -112,24 +93,19 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
             if (quiet == FALSE)
                 elog(1, errfmt, args.task, "unit generation failed");
             continue;
-        } else if ((status = tman_task_add(ctx, &args, &opt)) != LIBTMAN_OK) {
+        } else if ((status = tman_task_add(ctx, &args, &opts)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.task, tman_strerror());
-            goto memfree;
         } else if (hook_action(&args, "add")) {
             if (quiet == FALSE)
                 elog(1, errfmt, args.task, "failed to execute hooks");
-            goto memfree;
         }
 
- memfree:
-        tman_unit_free(ctx, &args, &opt);
+        ctx->units = tman_unit_free(ctx->units);
 
         /* TODO: find a better trick.  */
-        last_task = args.task;
         args.task = NULL;       /* unset task ID, not to break loop.  */
     } while (++i < argc);
 
-    args.task = last_task;
     return switch_dir && status == LIBTMAN_OK ? tman_pwd_task(&args) : status;
 }

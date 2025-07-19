@@ -19,7 +19,7 @@ struct tman_hook {
 };
 
 int hook_action(tman_arg_t * args, char *cmd);
-int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd);
+int hook_show(tman_unit_t ** units, tman_arg_t * args, char *cmd);
 /* TODO: under development.  */
 char *hook_list(struct tman_hook *hooks, char *pgnout, char *prj, char *id);
 

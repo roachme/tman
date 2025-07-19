@@ -133,13 +133,11 @@ static const builtin_t builtins[] = {
     {.name = "add",.func = &tman_cli_add,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "brd",.func = &tman_cli_brd,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "del",.func = &tman_cli_del,.setuplvl = LIBTMAN_SETUPCHECK},
-    {.name = "flow",.func = &tman_cli_flow,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "help",.func = &tman_cli_help,.setuplvl = LIBTMAN_SETUPSOFT},
     {.name = "init",.func = &tman_cli_init,.setuplvl = LIBTMAN_SETUPHARD},
     {.name = "list",.func = &tman_cli_list,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "move",.func = &tman_cli_move,.setuplvl = LIBTMAN_SETUPCHECK},
-    {.name = "prev",.func = &tman_cli_prev,.setuplvl = LIBTMAN_SETUPCHECK},
-    {.name = "prj",.func = &tman_cli_prj,.setuplvl = LIBTMAN_SETUPCHECK},
+    {.name = "prt",.func = &tman_cli_prt,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "set",.func = &tman_cli_set,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "show",.func = &tman_cli_show,.setuplvl = LIBTMAN_SETUPCHECK},
     {.name = "sync",.func = &tman_cli_sync,.setuplvl = LIBTMAN_SETUPCHECK},
@@ -147,16 +145,16 @@ static const builtin_t builtins[] = {
 
 int main(int argc, char **argv)
 {
-    int usecolor, usedebug, usehooks;
-    char *cmd = NULL, *option, *togfmt;
-    tman_base_t base = {.task = NULL,.pgn = NULL };
-    int c, i, status, cmdfound;
     tman_ctx_t *ctx;
+    tman_base_t base;
+    int c, i, status, cmdfound;
+    char *cmd, *option, *togfmt;
+    int usecolor, usedebug, usehooks;
 
     ctx = NULL;
     cmdfound = FALSE;
-    cmd = option = NULL;
     usecolor = usedebug = usehooks = NONEBOOL;
+    base.task = base.pgn = cmd = option = NULL;
     togfmt = "option `-%c' accepts either 'on' or 'off'";
 
     /* Parse util itself options.  */

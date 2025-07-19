@@ -56,7 +56,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
     int i, quiet, status;
     tman_arg_t args;
     int atleast_one_key_set;
-    tman_opt_t opt;
+    tman_opt_t opts = {.task_switch = TRUE };
     const char *errfmt = "cannot set task units '%s': %s";
 
     quiet = FALSE;
@@ -81,7 +81,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
                 return 1;
             }
             atleast_one_key_set = TRUE;
-            ctx->unitbin = tman_unit_add(ctx->unitbin, "type", optarg);
+            ctx->units = tman_unit_add(ctx->units, "type", optarg);
             break;
         case 'd':
             if (valid_desc(optarg) == FALSE) {
@@ -90,7 +90,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
                 return 1;
             }
             atleast_one_key_set = TRUE;
-            ctx->unitbin = tman_unit_add(ctx->unitbin, "desc", optarg);
+            ctx->units = tman_unit_add(ctx->units, "desc", optarg);
             break;
         case 'P':
             if (valid_prio(optarg) == FALSE) {
@@ -99,7 +99,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
                 return 1;
             }
             atleast_one_key_set = TRUE;
-            ctx->unitbin = tman_unit_add(ctx->unitbin, "prio", optarg);
+            ctx->units = tman_unit_add(ctx->units, "prio", optarg);
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -117,7 +117,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
     i = optind;
     do {
         args.task = argv[i];
-        if ((status = tman_task_set(ctx, &args, &opt)) != LIBTMAN_OK) {
+        if ((status = tman_task_set(ctx, &args, &opts)) != LIBTMAN_OK) {
             args.task = args.task ? args.task : "NOCURR";
             if (quiet == FALSE)
                 elog(status, errfmt, args.task, tman_strerror());
@@ -126,7 +126,7 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
             if (quiet == FALSE)
                 elog(1, errfmt, args.task, "failed to execute hooks");
         }
-        tman_unit_free(ctx, &args, NULL);
+        ctx->units = tman_unit_free(ctx->units);
     } while (++i < argc);
     return status;
 }

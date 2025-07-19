@@ -11,7 +11,7 @@ static int generate_units(tman_ctx_t * ctx, char *prj)
 
     strcat(desc, prj);
     units = tman_unit_add(units, "desc", desc);
-    ctx->unitbin = units;
+    ctx->units = units;
     return 0;
 }
 
@@ -47,7 +47,7 @@ static int tree_print_rec(struct tree *p)
 }
 
 // TODO: Find a good error message in case option fails.  */
-static int _prj_add(int argc, char **argv, tman_ctx_t * ctx)
+static int _project_add(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     tman_arg_t args;
@@ -108,13 +108,13 @@ static int _prj_add(int argc, char **argv, tman_ctx_t * ctx)
         }
         // TODO: add support to add default board when project gets created
         // TODO: create default board if option to use boards is set in config
-        tman_unit_free(ctx, &args, &opt);
+        ctx->units = tman_unit_free(ctx->units);
     }
 
     return opt.prj_switch && status == LIBTMAN_OK ? tman_pwd_project() : status;
 }
 
-static int _prj_del(int argc, char **argv, tman_ctx_t * ctx)
+static int _project_del(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     tman_arg_t args;
@@ -172,10 +172,9 @@ static int _prj_del(int argc, char **argv, tman_ctx_t * ctx)
     return status == LIBTMAN_OK ? tman_pwd_project() : status;
 }
 
-static int _prj_list(int argc, char **argv, tman_ctx_t * ctx)
+static int _project_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     int c, quiet, status;
-    const char *errfmt = "cannot list project(s) '%s': %s";
 
     quiet = FALSE;
     while ((c = getopt(argc, argv, ":q")) != -1) {
@@ -191,8 +190,10 @@ static int _prj_list(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     if ((status = tman_prj_list(ctx, NULL)) != LIBTMAN_OK) {
-        if (quiet == FALSE)
+        if (quiet == FALSE) {
+            const char *errfmt = "cannot list project(s) '%s': %s";
             elog(status, errfmt, "PRJ", tman_strerror());
+        }
     }
     tree_print_rec(ctx->prjs);
     if (quiet == FALSE)
@@ -200,7 +201,7 @@ static int _prj_list(int argc, char **argv, tman_ctx_t * ctx)
     return status;
 }
 
-static int _prj_prev(int argc, char **argv, tman_ctx_t * ctx)
+static int _project_prev(int argc, char **argv, tman_ctx_t * ctx)
 {
     int status;
     tman_opt_t opt;
@@ -210,7 +211,7 @@ static int _prj_prev(int argc, char **argv, tman_ctx_t * ctx)
     return tman_pwd_project();
 }
 
-static int _prj_rename(int argc, char **argv, tman_ctx_t * ctx)
+static int _project_rename(int argc, char **argv, tman_ctx_t * ctx)
 {
     int c, quiet, showhelp, status;
     tman_arg_t src, dst;
@@ -249,7 +250,7 @@ static int _prj_rename(int argc, char **argv, tman_ctx_t * ctx)
     return tman_pwd_project();
 }
 
-static int _prj_set(int argc, char **argv, tman_ctx_t * ctx)
+static int _project_set(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int atleast_one_key_set;
@@ -271,7 +272,7 @@ static int _prj_set(int argc, char **argv, tman_ctx_t * ctx)
                 return 1;
             }
             atleast_one_key_set = TRUE;
-            ctx->unitbin = tman_unit_add(ctx->unitbin, "desc", optarg);
+            ctx->units = tman_unit_add(ctx->units, "desc", optarg);
             break;
         case 'h':
             showhelp = TRUE;
@@ -305,12 +306,12 @@ static int _prj_set(int argc, char **argv, tman_ctx_t * ctx)
         }
     } while (++i < argc);
 
-    tman_unit_free(ctx, &args, NULL);
+    ctx->units = tman_unit_free(ctx->units);
     return 0;
 }
 
 // roach: maybe it'll be useful
-static int _prj_show(int argc, char **argv, tman_ctx_t * ctx)
+static int _project_show(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int c, i, quiet, showhelp, status;
@@ -351,7 +352,7 @@ static int _prj_show(int argc, char **argv, tman_ctx_t * ctx)
         }
 
         printf("%-7s : %s\n", "prj", args.prj);
-        for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
+        for (unitbin = ctx->units; unitbin; unitbin = unitbin->next)
             printf("%-7s : %s\n", unitbin->key, unitbin->val);
 
         // TODO: add plugin output
@@ -360,7 +361,7 @@ static int _prj_show(int argc, char **argv, tman_ctx_t * ctx)
     return status;
 }
 
-static int _prj_sync(int argc, char **argv, tman_ctx_t * ctx)
+static int _project_sync(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int c, i, quiet, showhelp, status;
@@ -408,17 +409,17 @@ static int _prj_sync(int argc, char **argv, tman_ctx_t * ctx)
 }
 
 static const builtin_t prjcmds[] = {
-    {.name = "add",.func = &_prj_add},
-    {.name = "del",.func = &_prj_del},
-    {.name = "list",.func = &_prj_list},
-    {.name = "prev",.func = &_prj_prev},
-    {.name = "rename",.func = &_prj_rename},
-    {.name = "set",.func = &_prj_set},
-    {.name = "show",.func = &_prj_show},
-    {.name = "sync",.func = &_prj_sync},
+    {.name = "add",.func = &_project_add},
+    {.name = "del",.func = &_project_del},
+    {.name = "list",.func = &_project_list},
+    {.name = "prev",.func = &_project_prev},
+    {.name = "rename",.func = &_project_rename},
+    {.name = "set",.func = &_project_set},
+    {.name = "show",.func = &_project_show},
+    {.name = "sync",.func = &_project_sync},
 };
 
-int tman_cli_prj(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_prt(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

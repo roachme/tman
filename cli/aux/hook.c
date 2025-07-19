@@ -36,7 +36,7 @@ int hook_action(tman_arg_t * args, char *cmd)
     return 0;
 }
 
-int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
+int hook_show(tman_unit_t ** units, tman_arg_t * args, char *cmd)
 {
     FILE *pipe;
     char key[KEYSIZ + 1];
@@ -60,7 +60,7 @@ int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
         }
         while (fgets(line, BUFSIZ, pipe)) {
             sscanf(line, "%s : %[^\n]s", key, val);
-            ctx->unitpgn = tman_unit_add(ctx->unitpgn, key, val);
+            *units = tman_unit_add(*units, key, val);
         }
         pclose(pipe);
     }

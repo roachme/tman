@@ -81,25 +81,12 @@ options = {
 /* list of hooks for all projects */
 hooks = {
     show = (
-        { bincmd = "show"; pgname = "gun"; pgncmd = "show" },
-        { bincmd = "show"; pgname = "time"; pgncmd = "show" }
+        { bincmd = "show"; pgname = "gmux"; pgncmd = "show" },
     );
     action = (
-        { bincmd = "add"; pgname = "gun"; pgncmd = "sync" },
-        { bincmd = "add"; pgname = "struct"; pgncmd = "make" },
-        { bincmd = "del"; pgname = "gun"; pgncmd = "del" },
-        { bincmd = "sync"; pgname = "gun"; pgncmd = "sync" },
-        { bincmd = "prev"; pgname = "gun"; pgncmd = "sync" },
-        { bincmd = "set"; pgname = "gun"; pgncmd = "sync" }
+        { bincmd = "add"; pgname = "gmux"; pgncmd = "sync" },
     );
     list = ();
-};
-
-projects = {
-    /* settings for my test project */
-    test = {
-        columns = {};
-    };
 };
 ```
 
@@ -109,23 +96,21 @@ Usage: tman [OPTION]... COMMAND|PLUGIN
     Run 'tman help tman' to get more info.
 
     System:
-      help   - Show help message for command.
-      init   - Init directory structure.
+      help  - Show help for commands.
+      init  - Init directory structure.
 
     Basic:
-      add    - Add a new task to project.
-      del    - Delete task from project.
-      list   - List project tasks.
-      move   - Move (rename) tasks.
-      prev   - Switch to previous task.
-      set    - Set task unit values.
-      show   - Show task info.
-      sync   - Switch to or synchronize task.
+      add   - Add a new task to project.
+      del   - Delete task from project.
+      list  - List project tasks.
+      move  - Move (rename) tasks.
+      set   - Set task unit values.
+      show  - Show task unit values.
+      sync  - Switch or synchronize task.
 
     Object:
-      brd    - Manage and show boards.
-      flow   - Manage and show workflow.
-      prj    - Manage and show projects.
+      brd   - Manage and show boards.
+      prt   - Manage and show projects.
 
 ```
 
