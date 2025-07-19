@@ -7,40 +7,31 @@
 
 static char pathname[PATHSIZ + 1];
 
-static char *genpath_pgn(char *prj, char *brd, char *task, char *name,
-                         char *cmd)
+static char *path_pgn(tman_arg_t * args, char *name, char *cmd)
 {
-    const char *fmt = "%s/%s/%s -T %s -P %s %s -i %s -p %s -b %s";
-    sprintf(pathname, fmt, tmancfg->base.pgn, name, name, tmancfg->base.task,
-            tmancfg->base.pgn, cmd, task, prj, brd);
+    const char *fmt = "%s/%s/%s -T %s -P %s %s -p %s -b %s -i %s";
+    sprintf(pathname, fmt, tmancfg->pgndir, name, name, tmancfg->base.task,
+            tmancfg->pgndir, cmd, args->prj, args->brd, args->task);
     return pathname;
 }
 
 int hook_action(tman_arg_t * args, char *cmd)
 {
-    char *pgncmd;
     struct tman_hook *hooks = tmancfg->hooks;
 
     /* Execute hooks only if they are enabled.  */
     if (tmancfg->usehooks == FALSE)
         return 0;
 
-    for (; hooks; hooks = hooks->next) {
-        if (strcmp(cmd, hooks->cmd) == 0) {
-            pgncmd =
-                genpath_pgn(args->prj, args->brd, args->task, hooks->pgname,
-                            hooks->pgncmd);
-            system(pgncmd);
-        }
-    }
+    for (; hooks; hooks = hooks->next)
+        if (strcmp(cmd, hooks->cmd) == 0)
+            system(path_pgn(args, hooks->pgname, hooks->pgncmd));
     return 0;
 }
 
-int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
+int hook_show(tman_unit_t ** units, tman_arg_t * args, char *cmd)
 {
     FILE *pipe;
-    char key[KEYSIZ + 1];
-    char val[VALSIZ + 1];
     char line[BUFSIZ + 1] = { 0 };
     struct tman_hook *hooks = tmancfg->hooks;
 
@@ -52,16 +43,12 @@ int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd)
         if (strcmp(hooks->cmd, cmd) != 0)
             continue;
 
-        if ((pipe =
-             popen(genpath_pgn
-                   (args->prj, args->brd, args->task, hooks->pgname,
-                    hooks->pgncmd), "r")) == NULL) {
+        if (!(pipe = popen(path_pgn(args, hooks->pgname, hooks->pgncmd), "r"))) {
+            // TODO: add quiet option and show error message
             continue;
         }
-        while (fgets(line, BUFSIZ, pipe)) {
-            sscanf(line, "%s : %[^\n]s", key, val);
-            ctx->unitpgn = tman_unit_add(ctx->unitpgn, key, val);
-        }
+        while (fgets(line, BUFSIZ, pipe))
+            *units = tman_unit_parse(*units, line);
         pclose(pipe);
     }
     return 0;

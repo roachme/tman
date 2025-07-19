@@ -1,0 +1,53 @@
+Usage: tman [OPTION]... COMMAND|PLUGIN
+    Run 'tman help tman' to get more info.
+
+    System:
+      cfg    - Manage system configuration file. (maybe can be moved to plugin)
+      + help   - Show help message for command.
+      + init   - Init directory structure.
+
+    Basic:
+      + add    - Add a new task to project.
+      + del    - Delete task from project.
+      + list   - List project tasks.
+      + move   - Move (rename) tasks.
+      prev   - Switch to previous task. (maybe can be moved to plugin `flow prev`)
+      + set    - Set task unit values.
+      + show   - Show task info.
+      sync   - Switch to or synchronize task. (maybe can be moved to plugin `flow sync`)
+
+    Object:
+      + brd    - Manage and show boards.
+      + prj    - Manage and show projects.
+
+
+Requirements for task manager:
+    1. There should be 4 builtin columns (like ninja-turtles:)
+        a. todo
+        b. curr
+        c. prev
+        .. custom columns
+        .. custom columns
+        .. custom columns
+        d. done
+    2. There should be builtin commands to move task to any of them (except for custom tho)
+
+Qs:
+    1. Should feature `prev` be builtin or moved to plugin `flow`?
+
+As:
+    1. Commands `prev` and `sync` are gonna be builtin commands. Cuz lots of other
+       commands about bound to current task.
+
+
+Usage: tman switch [OPTION]... [ID]...
+   Move task to one of the builtin columns.
+
+   Options:
+     -b BRD  board name
+     -c      column to move task to
+     -h      show this help and exit
+     -n      do not switch to task (only for column 'current')
+     -p PRJ  project name
+     -q      do not write anything to standard error output
+     -N      neither switch to task nor to task directory (only for column 'current')

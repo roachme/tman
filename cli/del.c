@@ -1,18 +1,18 @@
 #include "cli.h"
+#include "aux/toggle.h"
+#include "aux/config.h"
 
 // TODO: Find a good error message in case option fails.  */
 int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     char c, *errfmt;
-    tman_opt_t opt = { };
-    int i, choice, quiet, showhelp, showprompt, status;
+    int i, choice, quiet, showhelp, autoconfirm, status;
 
-    showprompt = TRUE;
-    quiet = showhelp = FALSE;
+    autoconfirm = quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     errfmt = "cannot delete task '%s': %s";
-    while ((c = getopt(argc, argv, ":b:hnp:q")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hp:qy")) != -1) {
         switch (c) {
         case 'b':
             args.brd = optarg;
@@ -20,14 +20,14 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
         case 'h':
             showhelp = TRUE;
             break;
-        case 'n':
-            showprompt = FALSE;
-            break;
         case 'p':
             args.prj = optarg;
             break;
         case 'q':
             quiet = TRUE;
+            break;
+        case 'y':
+            autoconfirm = TRUE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -38,7 +38,14 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 
     if (showhelp == TRUE)
         return help_usage("del");
-    // TODO: if not current task gets deleted, then no need to
+
+    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+        return status;
+    }
+    if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+        return status;
+    }
+    // TODO: if non-current task gets deleted, then no need to
     // change user's current directory.
     i = optind;
     do {
@@ -46,27 +53,11 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 
         /* Get and check input values explicitly because it's one of the rare
          * cases when hooks get exectude before the main action.  */
-        if ((status = tman_check_arg_prj(&args))) {
-            args.prj = args.prj ? args.prj : "NOCURR";
-            if (quiet == FALSE)
-                elog(status, errfmt, args.prj, tman_strerror());
+        if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
             continue;
-        } else if ((status = tman_check_arg_brd(&args))) {
-            args.brd = args.brd ? args.brd : "NOCURR";
-            if (quiet == FALSE)
-                elog(status, errfmt, args.brd, tman_strerror());
-            continue;
-        } else if ((status = tman_check_arg_task(&args))) {
-            args.task = args.task ? args.task : "NOCURR";
-            if (quiet == FALSE)
-                elog(status, errfmt, args.task, tman_strerror());
-            continue;
-        }
-
-        if (showprompt) {
+        } else if (autoconfirm == FALSE) {
             printf("Are you sure to delete task '%s'? [y/N] ", args.task);
-            choice = getchar();
-            if (choice != 'y' && choice != 'Y')
+            if ((choice = getchar()) != 'y' && choice != 'Y')
                 continue;
         }
 
@@ -74,8 +65,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
             if (quiet == FALSE)
                 elog(1, errfmt, args.task, "failed to execute hooks");
             continue;
-        }
-        if ((status = tman_task_del(ctx, &args, &opt)) != LIBTMAN_OK) {
+        } else if ((status = tman_task_del(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.task, tman_strerror());
             continue;

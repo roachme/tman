@@ -4,6 +4,7 @@
 
 #include "../cli.h"
 #include "config.h"
+#include "toggle.h"
 
 /* TODO:
     Structure: tman PGN -i -b -p COMMAND [OPTION]... [APRS]
@@ -52,17 +53,17 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     /* Add default inputs if any. Do NOT check anything. Plugins should do.  */
-    if ((status = tman_check_arg_prj(&args))
-        && status != LIBTMAN_PRJ_NOCURR && status != LIBTMAN_PRJ_NOSUCH)
-        return elog(status, "invalid project: %s", tman_strerror());
-    else if ((status = tman_check_arg_brd(&args))
-             && status != LIBTMAN_BRD_NOCURR && status != LIBTMAN_BRD_NOSUCH)
-        return elog(1, "invalid board: %s", tman_strerror());
-    else if ((status = tman_check_arg_task(&args))
-             && status != LIBTMAN_ID_NOCURR && status != LIBTMAN_ID_NOSUCH)
-        return elog(1, "invalid task ID: %s", tman_strerror());
+    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+        return status;
+    }
+    if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+        return status;
+    }
+    if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
+        return status;
+    }
 
-    strcat(pgnexec, tmancfg->base.pgn);
+    strcat(pgnexec, tmancfg->pgndir);
     strcat(pgnexec, "/");
     strcat(pgnexec, pgn);
     strcat(pgnexec, "/");
@@ -71,7 +72,7 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
     strcat(pgnexec, " -T ");
     strcat(pgnexec, tmancfg->base.task);
     strcat(pgnexec, " -P ");
-    strcat(pgnexec, tmancfg->base.pgn);
+    strcat(pgnexec, tmancfg->pgndir);
 
     strcat(pgnexec, " ");
     strcat(pgnexec, pgnopts);

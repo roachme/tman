@@ -8,7 +8,7 @@
 #include "config.h"
 #include "../cli.h"
 
-// TODO: gotta define default columns: curr, prev, blog, done
+// TODO: gotta define default columns: curr, prev, blog
 // TODO: gotta add config checker so a program doesn't fail.
 
 static void resolve_env_var_home(char *dst, const char *src)
@@ -32,9 +32,9 @@ static int myconfig_set_default_base(struct config *myconfig)
         resolve_env_var_home(pathname, "$HOME/tmantask");
         myconfig->base.task = strdup(pathname);
     }
-    if (myconfig->base.pgn == NULL) {
+    if (myconfig->pgndir == NULL) {
         resolve_env_var_home(pathname, "$HOME/.local/lib/tman/pgn");
-        myconfig->base.pgn = strdup(pathname);
+        myconfig->pgndir = strdup(pathname);
     }
     return 0;
 }
@@ -129,7 +129,7 @@ static int myconfig_get_base(config_t * cfg, struct config *myconfig)
         if (config_setting_lookup_string(setting, "pgn", &pgn)) {
             pathname[0] = '\0'; /* unset pathname value */
             resolve_env_var_home(pathname, pgn);
-            myconfig->base.pgn = strdup(pathname);
+            myconfig->pgndir = strdup(pathname);
         }
     }
     return myconfig_set_default_base(myconfig);
@@ -209,6 +209,6 @@ void myconfig_destroy(struct config *myconfig)
         free(tmp);
     }
     free(myconfig->base.task);
-    free(myconfig->base.pgn);
+    free(myconfig->pgndir);
     free(myconfig);
 }

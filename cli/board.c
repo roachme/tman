@@ -3,6 +3,8 @@
 #include <dirent.h>
 
 #include "cli.h"
+#include "aux/toggle.h"
+#include "aux/config.h"
 
 static int valid_desc(const char *val)
 {
@@ -21,41 +23,17 @@ static int generate_units(tman_ctx_t * ctx, char *brd)
 
     strcat(desc, brd);
     units = tman_unit_add(units, "desc", desc);
-    ctx->unitbrd = units;
-    return 0;
-}
-
-static int tree_print_rec(struct tree *p)
-{
-    if (p != NULL) {
-        tree_print_rec(p->left);
-        LIST_BRD_UNITS(p);
-        tree_print_rec(p->right);
-    }
-    return 0;
-}
-
-static int recursive_tree_print_error(struct tree *p)
-{
-    if (p != NULL) {
-        const char *fmt = "'%-" xstr(BRDSIZ) "s': " "%s";
-        recursive_tree_print_error(p->left);
-        elog(1, fmt, p->id, tman_strerror_get(p->status));
-        recursive_tree_print_error(p->right);
-    }
+    ctx->units = units;
     return 0;
 }
 
 // TODO: add support to generate board name
-static int _brd_add(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_add(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     tman_arg_t args;
     const char *errfmt = "cannot add board '%s': %s";
     int i, quiet, showhelp, status;
-    tman_opt_t opt = {
-        .brd_switch = TRUE,
-    };
 
     status = LIBTMAN_OK;
     showhelp = quiet = FALSE;
@@ -66,7 +44,7 @@ static int _brd_add(int argc, char **argv, tman_ctx_t * ctx)
             showhelp = TRUE;
             break;
         case 'n':
-            opt.brd_switch = FALSE;
+            //opt.brd_switch = FALSE;
             break;
         case 'p':
             args.prj = optarg;
@@ -86,33 +64,47 @@ static int _brd_add(int argc, char **argv, tman_ctx_t * ctx)
 
     if (optind == argc)
         return elog(1, "board name required");
+    else if ((ctx->column = generate_column("todo")) == NULL) {
+        if (quiet == FALSE)
+            elog(1, "could not generate column");
+        return 1;
+    }
+
+    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+        return status;
+    }
 
     for (i = optind; i < argc; ++i) {
         args.brd = argv[i];
 
+        elog(1, "cli_brd:start prj '%s'", args.prj);
         if (generate_units(ctx, args.brd)) {
             if (quiet == FALSE)
                 elog(1, errfmt, args.prj, "unit generation failed");
             continue;
-        } else if ((status = tman_brd_add(ctx, &args, &opt)) != LIBTMAN_OK) {
+        }
+        if ((status = tman_brd_add(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(1, errfmt, argv[i], tman_strerror());
-            tman_unit_free(ctx, &args, NULL);
+            ctx->units = tman_unit_free(ctx->units);
             continue;
         }
         // TODO: add hooks
-        tman_unit_free(ctx, &args, NULL);
+        ctx->units = tman_unit_free(ctx->units);
+        elog(1, "cli_brd:done prj '%s'", args.prj);
     }
-    return status == LIBTMAN_OK ? tman_pwd_board() : 1;
+
+    ctx->column = tman_unit_free(ctx->column);
+    //return status == LIBTMAN_OK ? tman_pwd_board() : 1;
+    return 0;
 }
 
-static int _brd_del(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_del(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     tman_arg_t args;
     const char *errfmt = "cannot delete: %s";
     int i, choice, quiet, showhelp, showprompt, status;
-    tman_opt_t opt;
 
     showprompt = TRUE;
     status = LIBTMAN_OK;
@@ -150,7 +142,7 @@ static int _brd_del(int argc, char **argv, tman_ctx_t * ctx)
                 continue;
         }
 
-        if ((status = tman_brd_del(ctx, &args, &opt)) != LIBTMAN_OK) {
+        if ((status = tman_brd_del(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }
@@ -160,17 +152,17 @@ static int _brd_del(int argc, char **argv, tman_ctx_t * ctx)
     return status == LIBTMAN_OK ? tman_pwd_board() : status;
 }
 
-static int _brd_export(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_export(int argc, char **argv, tman_ctx_t * ctx)
 {
     return elog(1, "%s: under development", __FUNCTION__);
 }
 
-static int _brd_import(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_import(int argc, char **argv, tman_ctx_t * ctx)
 {
     return elog(1, "%s: under development", __FUNCTION__);
 }
 
-static int _brd_list(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int c, i, quiet, status;
@@ -192,35 +184,27 @@ static int _brd_list(int argc, char **argv, tman_ctx_t * ctx)
     i = optind;
     do {
         args.prj = argv[i];
-        if ((status = tman_brd_list(ctx, &args, NULL)) != LIBTMAN_OK) {
+        if ((status = tman_brd_list(ctx, &args)) != LIBTMAN_OK) {
             args.prj = args.prj ? args.prj : "NOCURR";
             if (quiet == FALSE)
                 elog(status, errfmt, args.prj, tman_strerror());
             continue;
         }
-        tree_print_rec(ctx->brds);
-        if (quiet == FALSE)
-            recursive_tree_print_error(ctx->invbrds);
     } while (++i < argc);
     return status;
 }
 
-static int _brd_prev(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_prev(int argc, char **argv, tman_ctx_t * ctx)
 {
-    int status;
-    tman_opt_t opt;
-
-    if ((status = tman_brd_prev(ctx, &opt)) != LIBTMAN_OK)
-        return elog(status, "cannot switch board: %s", tman_strerror());
-    return tman_pwd_board();
+    return elog(1, "under development");
 }
 
-static int _brd_move(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_move(int argc, char **argv, tman_ctx_t * ctx)
 {
     return elog(1, "%s: under development", __FUNCTION__);
 }
 
-static int _brd_set(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_set(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int atleast_one_key_set;
@@ -239,7 +223,7 @@ static int _brd_set(int argc, char **argv, tman_ctx_t * ctx)
                 return 1;
             }
             atleast_one_key_set = TRUE;
-            ctx->unitbin = tman_unit_add(ctx->unitbin, "desc", optarg);
+            ctx->units = tman_unit_add(ctx->units, "desc", optarg);
             break;
         case 'h':
             showhelp = TRUE;
@@ -267,24 +251,24 @@ static int _brd_set(int argc, char **argv, tman_ctx_t * ctx)
         int status;
         args.brd = argv[i];
 
-        if ((status = tman_brd_set(ctx, &args, NULL)) != LIBTMAN_OK) {
+        if ((status = tman_brd_set(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }
     } while (++i < argc);
 
-    tman_unit_free(ctx, &args, NULL);
+    ctx->units = tman_unit_free(ctx->units);
     return 0;
 }
 
-static int _brd_show(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_show(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int c, i, quiet, showhelp, status;
-    struct tman_unit *unitbin, *unitpgn;
+    struct tman_unit *units, *unitpgn;
     const char *errfmt = "cannot show project units '%s': %s";
 
-    unitbin = unitpgn = NULL;
+    units = unitpgn = NULL;
     quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     while ((c = getopt(argc, argv, ":hq")) != -1) {
@@ -308,15 +292,15 @@ static int _brd_show(int argc, char **argv, tman_ctx_t * ctx)
     i = optind;
     do {
         args.brd = argv[i];
-        if ((status = tman_brd_get(ctx, &args, NULL)) != LIBTMAN_OK) {
+        if ((status = tman_brd_get(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
             continue;
         }
 
         printf("%-7s : %s\n", "brd", args.brd);
-        for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
-            printf("%-7s : %s\n", unitbin->key, unitbin->val);
+        for (units = ctx->units; units; units = units->next)
+            printf("%-7s : %s\n", units->key, units->val);
 
         // TODO: add plugin output
     } while (++i < argc);
@@ -324,14 +308,11 @@ static int _brd_show(int argc, char **argv, tman_ctx_t * ctx)
     return status;
 }
 
-static int _brd_sync(int argc, char **argv, tman_ctx_t * ctx)
+static int _board_sync(int argc, char **argv, tman_ctx_t * ctx)
 {
     tman_arg_t args;
     int c, i, quiet, showhelp, status;
     const char *errfmt = "cannot switch to '%s': %s";
-    tman_opt_t opt = {
-        .brd_switch = TRUE,
-    };
 
     quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
@@ -341,7 +322,7 @@ static int _brd_sync(int argc, char **argv, tman_ctx_t * ctx)
             showhelp = TRUE;
             break;
         case 'n':
-            opt.brd_switch = FALSE;
+            //opt.brd_switch = FALSE;
             break;
         case 'p':
             args.prj = optarg;
@@ -362,29 +343,30 @@ static int _brd_sync(int argc, char **argv, tman_ctx_t * ctx)
     i = optind;
     do {
         args.brd = argv[i];
-        if ((status = tman_brd_sync(ctx, &args, &opt)) != LIBTMAN_OK) {
+        if ((status = tman_brd_sync(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, argv[i], tman_strerror());
         }
     } while (++i < argc);
 
-    return opt.brd_switch && status == LIBTMAN_OK ? tman_pwd_board() : status;
+    //return opt.brd_switch && status == LIBTMAN_OK ? tman_pwd_board() : status;
+    return status == LIBTMAN_OK ? tman_pwd_board() : status;
 }
 
 static const builtin_t brdcmds[] = {
-    {.name = "add",.func = &_brd_add},
-    {.name = "del",.func = &_brd_del},
-    {.name = "export",.func = &_brd_export},    /* export tasks into board */
-    {.name = "import",.func = &_brd_import},    /* import tasks from board */
-    {.name = "list",.func = &_brd_list},
-    {.name = "prev",.func = &_brd_prev},
-    {.name = "move",.func = &_brd_move},
-    {.name = "set",.func = &_brd_set},
-    {.name = "show",.func = &_brd_show},
-    {.name = "sync",.func = &_brd_sync},
+    {.name = "add",.func = &_board_add},
+    {.name = "del",.func = &_board_del},
+    {.name = "export",.func = &_board_export},  /* export tasks into board */
+    {.name = "import",.func = &_board_import},  /* import tasks from board */
+    {.name = "list",.func = &_board_list},
+    {.name = "prev",.func = &_board_prev},
+    {.name = "move",.func = &_board_move},
+    {.name = "set",.func = &_board_set},
+    {.name = "show",.func = &_board_show},
+    {.name = "sync",.func = &_board_sync},
 };
 
-int tman_cli_brd(int argc, char **argv, tman_ctx_t * ctx)
+int tman_cli_board(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *cmd;
 

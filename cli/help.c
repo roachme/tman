@@ -61,7 +61,7 @@ struct help helptab[] = {
      .tag = TAGSYSTEM,
      .name = "help",
      .synop = "Usage: " PROGRAM " help [OPTION] [CMD]\n",
-     .desc_short = "Show help message for command.\n",
+     .desc_short = "Show help for commands.\n",
      .desc_long = "\n\
     If no CMD passed, list all commands with short description.\n\
     \n\
@@ -113,9 +113,9 @@ struct help helptab[] = {
     Options:\n\
       -b BRD  board name\n\
       -h      show this help and exit\n\
-      -n      delete task without confirmation\n\
       -p PRJ  project name\n\
       -q      do not write anything to standard error output\n\
+      -y      delete task without confirmation\n\
     \n\
     Arguments:\n\
       BRD     board name (default is current)\n\
@@ -131,16 +131,13 @@ struct help helptab[] = {
      .desc_short = "List project tasks.\n",
      .desc_long = "\n\
     Options:\n\
-      -a      list all tasks expect for done\n\
+      -a      list all tasks\n\
       -b BRD  board name\n\
-      -c COL  specify what column to list task from\n\
       -h      show this help and exit\n\
       -q      do not write anything to standard error output\n\
       -v      under development: show more verbose output\n\
-      -D      show ONLY done tasks\n\
+      -t      show ONLY toggle switches (current and previous)\n\
       -H      show headers\n\
-      -S      show ONLY toggle switches (current and previous)\n\
-      -T      show ONLY todo tasks\n\
     \n\
     Arguments:\n\
       BRD     board name (default current)\n\
@@ -216,7 +213,7 @@ struct help helptab[] = {
      .tag = TAGBASIC,
      .name = "show",
      .synop = "Usage: " PROGRAM " show [OPTION]... [ID]...\n",
-     .desc_short = "Show task info.\n",
+     .desc_short = "Show task unit values.\n",
      .desc_long = "\n\
     Options:\n\
       -b BRD  board name\n\
@@ -235,21 +232,42 @@ struct help helptab[] = {
     Under development\n"},
     {
      .tag = TAGBASIC,
+     .name = "switch",
+     .synop = "Usage: " PROGRAM " switch [OPTION]... [ID]...\n",
+     .desc_short = "Switch task to column.\n",
+     .desc_long = "\n\
+    Options:\n\
+      -b BRD  board name\n\
+      -c COL  column move task to\n\
+      -h      show this help and exit\n\
+      -n      do not update toggles\n\
+      -p PRJ  project name\n\
+      -q      do not write anything to standard error output\n\
+      -N      neither update toggles nor switch to task directory\n\
+    \n\
+    Arguments:\n\
+      BRD     board name (default current)\n\
+      COL     column name\n\
+      ID      task ID (default current)\n\
+      PRJ     project name (default current)\n\
+    \n\
+    Exit status:\n\
+    Under development\n"},
+    {
+     .tag = TAGBASIC,
      .name = "sync",
-     .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...\n",
-     .desc_short = "Switch to or synchronize task.\n",
+     .synop = "Usage: " PROGRAM " sync [OPTION]...\n",
+     .desc_short = "Synchronize with current task.\n",
      .desc_long = "\n\
     Options:\n\
       -b BRD  board name\n\
       -h      show this help and exit\n\
-      -n      do not switch to task\n\
       -p PRJ  project name\n\
       -q      do not write anything to standard error output\n\
-      -N      neither switch to task nor to task directory\n\
     \n\
     Arguments:\n\
       BRD     board name (default current)\n\
-      ID      task ID (default current)\n\
+      COL     column name\n\
       PRJ     project name (default current)\n\
     \n\
     Exit status:\n\
@@ -257,8 +275,8 @@ struct help helptab[] = {
 
     {
      .tag = TAGOBJ,
-     .name = "brd",
-     .synop = "Usage: " PROGRAM " brd SUBCMD [OPTION] NAME\n",
+     .name = "board",
+     .synop = "Usage: " PROGRAM " board SUBCMD [OPTION] NAME\n",
      .desc_short = "Manage and show boards.\n",
      .desc_long = "\n\
     Arguments:\n\
@@ -277,15 +295,15 @@ struct help helptab[] = {
       sync    Switch to or synchronize (with) board\n\
     \n\
     Note:\n\
-      Use '" PROGRAM " help brd-SUBCMD' to get help on subcommands. \n\
-      For example: " PROGRAM " help brd-add\n\
+      Use '" PROGRAM " help board-SUBCMD' to get help on subcommands. \n\
+      For example: " PROGRAM " help board-add\n\
     \n\
     Exit status:\n\
     The return status is return status of subcommand.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-add",
-     .synop = "Usage: " PROGRAM " brd add [OPTION] [NAME]...\n",
+     .name = "board-add",
+     .synop = "Usage: " PROGRAM " board add [OPTION] [NAME]...\n",
      .desc_short = "Add new board.\n",
      .desc_long = "\n\
     Options:\n\
@@ -301,8 +319,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-del",
-     .synop = "Usage: " PROGRAM " brd del [OPTION] [NAME]...\n",
+     .name = "board-del",
+     .synop = "Usage: " PROGRAM " board del [OPTION] [NAME]...\n",
      .desc_short = "Delete board(s) from project.\n",
      .desc_long = "\n\
     Options:\n\
@@ -318,8 +336,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-export",
-     .synop = "Usage: " PROGRAM " brd export [OPTION] [NAME]...\n",
+     .name = "board-export",
+     .synop = "Usage: " PROGRAM " board export [OPTION] [NAME]...\n",
      .desc_short = "Export tasks from board (into project)\n",
      .desc_long = "\n\
     THIS FEATURE IS UNDER DEVELOPMENT\n\
@@ -337,8 +355,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-import",
-     .synop = "Usage: " PROGRAM " brd import [OPTION] [NAME]...\n",
+     .name = "board-import",
+     .synop = "Usage: " PROGRAM " board import [OPTION] [NAME]...\n",
      .desc_short = "Import tasks into board (inside project)\n",
      .desc_long = "\n\
     THIS FEATURE IS UNDER DEVELOPMENT\n\
@@ -356,8 +374,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-list",
-     .synop = "Usage: " PROGRAM " brd list [OPTION]... [PRJ] \n",
+     .name = "board-list",
+     .synop = "Usage: " PROGRAM " board list [OPTION]... [PRJ] \n",
      .desc_short = "List boards\n",
      .desc_long = "\n\
     Options:\n\
@@ -371,8 +389,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-move",
-     .synop = "Usage: " PROGRAM " brd move [OPTION] [SRC|DST]\n",
+     .name = "board-move",
+     .synop = "Usage: " PROGRAM " board move [OPTION] [SRC|DST]\n",
      .desc_short = "Move or renome board.\n",
      .desc_long = "\n\
     Options:\n\
@@ -384,8 +402,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-prev",
-     .synop = "Usage: " PROGRAM " brd prev [OPTION]...\n",
+     .name = "board-prev",
+     .synop = "Usage: " PROGRAM " board prev [OPTION]...\n",
      .desc_short = "Switch to previous board in current project.\n",
      .desc_long = "\n\
     Options:\n\
@@ -401,8 +419,8 @@ struct help helptab[] = {
     Under development\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-set",
-     .synop = "Usage: " PROGRAM " brd set OPTION... [BRD]...\n",
+     .name = "board-set",
+     .synop = "Usage: " PROGRAM " board set OPTION... [BRD]...\n",
      .desc_short = "Set task unit values.\n",
      .desc_long = "\n\
     Options:\n\
@@ -419,8 +437,8 @@ struct help helptab[] = {
     Under development\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-show",
-     .synop = "Usage: " PROGRAM " brd show [OPTION]... [BRD]...\n",
+     .name = "board-show",
+     .synop = "Usage: " PROGRAM " board show [OPTION]... [BRD]...\n",
      .desc_short = "Set task unit values.\n",
      .desc_long = "\n\
     Options:\n\
@@ -440,8 +458,8 @@ struct help helptab[] = {
     Under development\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "brd-sync",
-     .synop = "Usage: " PROGRAM " brd sync [OPTION]... [BRD]...\n",
+     .name = "board-sync",
+     .synop = "Usage: " PROGRAM " board sync [OPTION]... [BRD]...\n",
      .desc_short = "Switch to or synchronize task.\n",
      .desc_long = "\n\
     Options:\n\
@@ -460,93 +478,8 @@ struct help helptab[] = {
 
     {
      .tag = TAGOBJ,
-     .name = "flow",
-     .synop = "Usage: " PROGRAM " flow SUBCMD [OPTION]... [ID]\n",
-     .desc_short = "Manage and show workflow.\n",
-     .desc_long = "\n\
-    Arguments:\n\
-      SUBCMD  flow subcommand\n\
-    \n\
-    SUBCMD list:\n\
-      list     List columns \n\
-      move     Move task to column\n\
-      next     Move task to next column in workflow (under development)\n\
-      prev     Move task to previous column in workflow (under development)\n\
-    \n\
-    Note:\n\
-      Use '" PROGRAM " help flow-SUBCMD' to get help on subcommands. \n\
-      For example: " PROGRAM " help flow-list\n\
-    \n\
-    Exit status:\n\
-    Under development\n"},
-    {
-     .tag = TAGOBJCMD,
-     .name = "flow-list",
-     .synop = "Usage: " PROGRAM " flow list [OPTION]\n",
-     .desc_short = "List columns.\n",
-     .desc_long = "\n\
-    Options:\n\
-      -b BRD  board name (under development)\n\
-      -h      show this help and exit\n\
-      -p PRJ  project name (under development)\n\
-      -q      do not write anything to standard error output\n\
-    \n\
-    Arguments:\n\
-      BRD     board name (default is current)\n\
-      PRJ     project name (default is current)\n\
-    \n\
-    Exit status:\n\
-    Under development.\n"},
-    {
-     .tag = TAGOBJCMD,
-     .name = "flow-move",
-     .synop = "Usage: " PROGRAM " flow move [OPTION] [ID]...\n",
-     .desc_short = "Move task to column.\n",
-     .desc_long = "\n\
-    Options:\n\
-      -h      show this help and exit\n\
-      -q      do not write anything to standard error output\n\
-    \n\
-    Note:\n\
-      Default column to move to is 'todo'.\n\
-    \n\
-    Exit status:\n\
-    Under development.\n"},
-    {
-     .tag = TAGOBJCMD,
-     .name = "flow-next",
-     .synop = "Usage: " PROGRAM " flow next [OPTION]\n",
-     .desc_short = "Move task to next column in workflow.\n",
-     .desc_long = "\n\
-    \n\
-    UNDER DEVELOPMENT\n\
-    \n\
-    Options:\n\
-      -h      show this help and exit\n\
-      -q      do not write anything to standard error output\n\
-    \n\
-    Exit status:\n\
-    Under development.\n"},
-    {
-     .tag = TAGOBJCMD,
-     .name = "flow-prev",
-     .synop = "Usage: " PROGRAM " flow prev [OPTION]\n",
-     .desc_short = "Move task to previous column in workflow.\n",
-     .desc_long = "\n\
-    \n\
-    UNDER DEVELOPMENT\n\
-    \n\
-    Options:\n\
-      -h      show this help and exit\n\
-      -q      do not write anything to standard error output\n\
-    \n\
-    Exit status:\n\
-    Under development.\n"},
-
-    {
-     .tag = TAGOBJ,
-     .name = "prj",
-     .synop = "Usage: " PROGRAM " prj SUBCMD [OPTION] NAME\n",
+     .name = "project",
+     .synop = "Usage: " PROGRAM " project SUBCMD [OPTION] NAME\n",
      .desc_short = "Manage and show projects.\n",
      .desc_long = "\n\
     Arguments:\n\
@@ -563,19 +496,19 @@ struct help helptab[] = {
       sync    Switch to or synchronize (with) project\n\
     \n\
     Note:\n\
-      Use '" PROGRAM " help prj-SUBCMD' to get help on subcommands. \n\
-      For example: " PROGRAM " help prj-add\n\
+      Use '" PROGRAM " help project-SUBCMD' to get help on subcommands. \n\
+      For example: " PROGRAM " help project-add\n\
     \n\
     Exit status:\n\
     The return status is return status of subcommand.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "prj-add",
-     .synop = "Usage: " PROGRAM " prj add [OPTION] NAME...\n",
+     .name = "project-add",
+     .synop = "Usage: " PROGRAM " project add [OPTION] NAME...\n",
      .desc_short = "Add new project(s).\n",
      .desc_long = "\n\
     Options:\n\
-      -b      board name (default is 'brd-000')\n\
+      -b      board name (default is 'board-000')\n\
       -h      show this help and exit\n\
       -n      do not switch to newly created project\n\
       -q      do not write anything to standard error output\n\
@@ -588,8 +521,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "prj-del",
-     .synop = "Usage: " PROGRAM " prj del [OPTION] NAME...\n",
+     .name = "project-del",
+     .synop = "Usage: " PROGRAM " project del [OPTION] NAME...\n",
      .desc_short = "Delete project(s).\n",
      .desc_long = "\n\
     Options:\n\
@@ -604,8 +537,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "prj-list",
-     .synop = "Usage: " PROGRAM " prj list [OPTION]\n",
+     .name = "project-list",
+     .synop = "Usage: " PROGRAM " project list [OPTION]\n",
      .desc_short = "List project(s).\n",
      .desc_long = "\n\
     \n\
@@ -618,8 +551,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "prj-prev",
-     .synop = "Usage: " PROGRAM " prj prev\n",
+     .name = "project-prev",
+     .synop = "Usage: " PROGRAM " project prev\n",
      .desc_short = "Switch to previous project.\n",
      .desc_long = "\n\
     Arguments:\n\
@@ -629,8 +562,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "prj-rename",
-     .synop = "Usage: " PROGRAM " prj rename [OPTION]... SRC DST\n",
+     .name = "project-rename",
+     .synop = "Usage: " PROGRAM " project rename [OPTION]... SRC DST\n",
      .desc_short = "Rename project.\n",
      .desc_long = "\n\
     Options:\n\
@@ -645,8 +578,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "prj-set",
-     .synop = "Usage: " PROGRAM " prj set [OPTION] [NAME]...\n",
+     .name = "project-set",
+     .synop = "Usage: " PROGRAM " project set [OPTION] [NAME]...\n",
      .desc_short = "Set project unit values.\n",
      .desc_long = "\n\
     Arguments:\n\
@@ -661,8 +594,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "prj-show",
-     .synop = "Usage: " PROGRAM " prj show [OPTION] [NAME]...\n",
+     .name = "project-show",
+     .synop = "Usage: " PROGRAM " project show [OPTION] [NAME]...\n",
      .desc_short = "Show project(s) info.\n",
      .desc_long = "\n\
     \n\
@@ -677,8 +610,8 @@ struct help helptab[] = {
     Under development.\n"},
     {
      .tag = TAGOBJCMD,
-     .name = "prj-sync",
-     .synop = "Usage: " PROGRAM " prj sync [OPTION] NAME...\n",
+     .name = "project-sync",
+     .synop = "Usage: " PROGRAM " project sync [OPTION] NAME...\n",
      .desc_short = "Switch to or synchronize (with) project(s).\n",
      .desc_long = "\n\
     Options:\n\
@@ -702,20 +635,20 @@ static void show_cmd_section(const char *title, const char *tag)
         if (strcmp(helptab[i].tag, tag) == 0) {
             name = helptab[i].name;
             desc = helptab[i].desc_short;
-            printf(PADDING "  %-6s - %s", name, desc);
+            printf(PADDING "  %-" xstr(CMDSIZ) "s - %s", name, desc);
         }
     }
 }
 
 int help_list_commands(void)
 {
-    printf("Usage: " PROGRAM " [OPTION]... COMMAND|PLUGIN\n"
-           PADDING "Run '" PROGRAM " help " PROGRAM "' to get more info.\n");
+    printf("Usage: " PROGRAM " [OPTION]... COMMAND|PLUGIN\n");
+    printf(PADDING "Run '" PROGRAM " help " PROGRAM "' to get more info.\n");
 
     show_cmd_section("System", TAGSYSTEM);
     show_cmd_section("Basic", TAGBASIC);
     show_cmd_section("Object", TAGOBJ);
-    return LIBTMAN_OK;
+    return 0;
 }
 
 int help_usage(const char *cmd)
@@ -734,13 +667,10 @@ int help_lookup(const char *cmd)
 {
     int i, found;
 
-    if (cmd == NULL)
-        return help_list_commands();
-
-    found = 0;
+    found = FALSE;
     for (i = 0; i < ARRAY_SIZE(helptab); ++i) {
         if (strcmp(helptab[i].name, cmd) == 0) {
-            found = 1;
+            found = TRUE;
             if (helpctx.synop) {
                 printf("%s", helptab[i].synop);
                 continue;
@@ -756,9 +686,7 @@ int help_lookup(const char *cmd)
             break;
         }
     }
-    if (!found)
-        return emod_set(LIBTMAN_CMD_BIN);
-    return LIBTMAN_OK;
+    return found == TRUE ? 0 : 1;
 }
 
 int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx)
@@ -789,9 +717,8 @@ int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx)
     if (optind == argc)
         return help_list_commands();
 
-    for (i = optind; i < argc; ++i) {
-        if ((status = help_lookup(argv[i])) != LIBTMAN_OK)
-            elog(status, "%s: %s", argv[i], tman_strerror());
-    }
+    for (i = optind; i < argc; ++i)
+        if ((status = help_lookup(argv[i])))
+            elog(1, "'%s': no such builtin command", argv[i]);
     return status;
 }

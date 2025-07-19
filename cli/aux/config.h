@@ -20,6 +20,7 @@ struct config {
     int usedebug;               /* output debug info */
     int usehooks;               /* execute hooks from config, by default set */
     tman_base_t base;
+    char *pgndir;
     struct tman_hook *hooks;
 };
 

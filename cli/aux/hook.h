@@ -3,10 +3,6 @@
 
 #include "../../lib/src/libtman.h"
 
-// TODO: It's duplicate copied from unit.h in lib part. Get rid of it
-#define KEYSIZ 20
-#define VALSIZ 80
-
 // FIXME: get rid of magic numbers. Might cause buffer overflow
 struct tman_hook {
     char cmd[10];
@@ -19,7 +15,7 @@ struct tman_hook {
 };
 
 int hook_action(tman_arg_t * args, char *cmd);
-int hook_show(tman_ctx_t * ctx, tman_arg_t * args, char *cmd);
+int hook_show(tman_unit_t ** units, tman_arg_t * args, char *cmd);
 /* TODO: under development.  */
 char *hook_list(struct tman_hook *hooks, char *pgnout, char *prj, char *id);
 

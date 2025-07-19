@@ -1,44 +1,62 @@
 #include <string.h>
 
 #include "cli.h"
+#include "aux/toggle.h"
+#include "aux/config.h"
 
-static int show_key(tman_ctx_t * ctx, tman_arg_t * args, char *key)
+// TODO: add support to show multiple key values
+
+static const char *errfmt = "cannot show units '%s': %s";
+
+static int valid_unitkeys(tman_unit_t * units)
 {
-    struct tman_unit *unitbin, *unitpgn;
+    for (int i = 0; units && i < nunitkey; units = units->next) {
+        if (strcmp(units->key, unitkeys[i]) != 0)
+            return 1;
+        ++i;
+    }
+    return 0;
+}
+
+static int show_key(char *task, tman_unit_t * unitbin, tman_unit_t * unitpgn,
+                    char *key)
+{
+    struct tman_unit *units;
 
     if (strcmp(key, "id") == 0) {
-        printf("%s\n", args->task);
-        return LIBTMAN_OK;
+        printf("%s\n", task);
+        return 0;
     }
 
-    for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
-        if (strcmp(key, unitbin->key) == 0) {
-            printf("%s\n", unitbin->val);
-            return LIBTMAN_OK;
+    for (units = unitbin; units; units = units->next)
+        if (strcmp(key, units->key) == 0) {
+            printf("%s\n", units->val);
+            return 0;
         }
 
-    for (unitpgn = ctx->unitpgn; unitpgn; unitpgn = unitpgn->next)
+    for (; unitpgn; unitpgn = unitpgn->next)
         if (strcmp(key, unitpgn->key) == 0) {
             printf("%s\n", unitpgn->val);
-            return LIBTMAN_OK;
+            return 0;
         }
 
     return 1;
 }
 
-static int pretty_show(tman_ctx_t * ctx, tman_arg_t * args, char *key)
+static int show_keys(char *task, tman_unit_t * unitbin, tman_unit_t * unitpgn)
 {
-    struct tman_unit *unitbin, *unitpgn;
+    struct tman_unit *units;
+    const char *fmt = "%-" xstr(PADDING_UNIT) "s : %s\n";
 
-    printf("%-7s : %s\n", "id", args->task);
+    printf(fmt, "id", task);
 
-    for (unitbin = ctx->unitbin; unitbin; unitbin = unitbin->next)
-        printf("%-7s : %s\n", unitbin->key, unitbin->val);
+    for (units = unitbin; units; units = units->next)
+        printf(fmt, units->key, units->val);
 
-    for (unitpgn = ctx->unitpgn; unitpgn; unitpgn = unitpgn->next)
-        printf("%-7s : %s\n", unitpgn->key, unitpgn->val);
+    for (; unitpgn; unitpgn = unitpgn->next)
+        printf(fmt, unitpgn->key, unitpgn->val);
 
-    return LIBTMAN_OK;
+    return 0;
 }
 
 int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
@@ -46,10 +64,11 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
     char c;
     char *key;
     tman_arg_t args;
+    tman_unit_t *unitpgn;
     int i, quiet, showhelp, status;
-    const char *errfmt = "cannot show units '%s': %s";
 
     key = NULL;
+    unitpgn = NULL;
     quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     while ((c = getopt(argc, argv, ":b:hk:p:q")) != -1) {
@@ -79,32 +98,49 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("show");
 
+    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, "NOCURR", "no current project");
+        return status;
+    } else if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, "NOCURR", "no current board");
+        return status;
+    }
+
     i = optind;
     do {
         args.task = argv[i];
 
-        if ((status = tman_task_get(ctx, &args, NULL)) != LIBTMAN_OK) {
-            args.task = args.task ? args.task : "NOCURR";
+        if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
+            if (quiet == FALSE)
+                elog(status, errfmt, "NOCURR", "no current task");
+            return status;
+        } else if ((status = tman_task_get(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.task, tman_strerror());
             continue;
-        } else if (hook_show(ctx, &args, "show")) {
+        } else if (valid_unitkeys(ctx->units)) {
+            if (quiet == FALSE)
+                elog(status, errfmt, args.task, "invalid unit keys");
+            continue;
+        } else if (hook_show(&unitpgn, &args, "show")) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.task, "failed to execute hooks");
             continue;
         }
 
         if (key != NULL) {
-            if (show_key(ctx, &args, key) != LIBTMAN_OK && quiet == FALSE) {
-                if (quiet == FALSE)
-                    elog(1, errfmt, args.task, "key not found");
-            }
-        } else {
-            pretty_show(ctx, &args, key);
-        }
+            if ((status = show_key(args.task, ctx->units, unitpgn, key))
+                && quiet == FALSE)
+                elog(1, "cannot show key '%s': no such key", key);
+        } else
+            show_keys(args.task, ctx->units, unitpgn);
 
-        tman_unit_free(ctx, &args, NULL);
-    } while (++i < argc);
+        unitpgn = tman_unit_free(unitpgn);
+        ctx->units = tman_unit_free(ctx->units);
+    }
+    while (++i < argc);
 
     return status;
 }

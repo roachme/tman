@@ -1,3 +1,11 @@
+Milestones:
+  1. Need to refactor task column switch. There're many questions: should I
+     add builtin columns, can it be moved to plugin, etc.
+  2. Command to list task needs brainstorming as well.
+  3. How to implement workflow engine. Yeah, there is such thing.
+  4. How to add support for multi-users. Will it break existing code
+
+
 Priorities:
   high - bugfix, hotfix and feature tasks.
   mid  - constant stuff like make it faster, smaller, etc.
@@ -30,8 +38,12 @@ Ideas:
  13. Add short list of exit statuses, other than libtman provides.
  14. Add support for command 'tman sync -n', to add task to curr column, but not change to task directory
  15. Make ID generatation bigger than the last ID. Might run outta IDs, but just think about it.
+ 16. Add support for mark into `tman list`. For builtin and custom columns
  17. Add task directory option for command `tman init [DIR]`. If nothing's passed use value from config file.
      If nothing found in there then use current directory
+ 18. Add errstr along with errno. It'l be used to specify invalid input argument or something
+ 19. Rename module 'unit' to linked list in lib part.
+ 20. Add support to unit module not to change file content if new data is the same as old ones.
 
 Prio: high
 + 1. Write config file parser and define config itself.
