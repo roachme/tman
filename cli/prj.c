@@ -58,6 +58,7 @@ static int _prj_add(int argc, char **argv, tman_ctx_t * ctx)
         .brd_switch = TRUE,
     };
 
+    status = LIBTMAN_OK;
     showhelp = quiet = FALSE;
     args.prj = args.brd = args.task = NULL;
     while ((c = getopt(argc, argv, ":b:hnqB")) != -1) {

@@ -57,6 +57,7 @@ static int _brd_add(int argc, char **argv, tman_ctx_t * ctx)
         .brd_switch = TRUE,
     };
 
+    status = LIBTMAN_OK;
     showhelp = quiet = FALSE;
     args.prj = args.brd = args.task = NULL;
     while ((c = getopt(argc, argv, ":hnp:q")) != -1) {
@@ -114,6 +115,7 @@ static int _brd_del(int argc, char **argv, tman_ctx_t * ctx)
     tman_opt_t opt;
 
     showprompt = TRUE;
+    status = LIBTMAN_OK;
     choice = quiet = showhelp = FALSE;
     args.prj = args.brd = args.task = NULL;
     while ((c = getopt(argc, argv, ":hnq")) != -1) {
