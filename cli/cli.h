@@ -28,7 +28,7 @@
 
 /* TODO: add a plugin output too */
 #define LIST_TASK_UNITS(_mark, _id, _desc) {\
-    color_print_char("%c ", (_mark), BGRN); \
+    color_print_str("%s ", (_mark), BGRN); \
     color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
     color_print_str("%s\n", (_desc), BWHT); \
 }\
@@ -51,7 +51,6 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_brd(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_cfg(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx);
-int tman_cli_flow(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_prj(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_init(int argc, char **argv, tman_ctx_t * ctx);

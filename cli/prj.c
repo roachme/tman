@@ -174,7 +174,6 @@ static int _prj_del(int argc, char **argv, tman_ctx_t * ctx)
 static int _prj_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     int c, quiet, status;
-    const char *errfmt = "cannot list project(s) '%s': %s";
 
     quiet = FALSE;
     while ((c = getopt(argc, argv, ":q")) != -1) {
@@ -190,8 +189,10 @@ static int _prj_list(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     if ((status = tman_prj_list(ctx, NULL)) != LIBTMAN_OK) {
-        if (quiet == FALSE)
+        if (quiet == FALSE) {
+            const char *errfmt = "cannot list project(s) '%s': %s";
             elog(status, errfmt, "PRJ", tman_strerror());
+        }
     }
     tree_print_rec(ctx->prjs);
     if (quiet == FALSE)

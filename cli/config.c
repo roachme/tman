@@ -8,7 +8,7 @@
 #include "config.h"
 #include "cli.h"
 
-// TODO: gotta define default columns: curr, prev, blog, done
+// TODO: gotta define default columns: curr, prev, blog
 // TODO: gotta add config checker so a program doesn't fail.
 
 static void resolve_env_var_home(char *dst, const char *src)

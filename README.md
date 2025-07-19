@@ -125,7 +125,6 @@ Usage: tman [OPTION]... COMMAND|PLUGIN
 
     Object:
       brd    - Manage and show boards.
-      flow   - Manage and show workflow.
       prj    - Manage and show projects.
 
 ```
