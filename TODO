@@ -30,6 +30,8 @@ Ideas:
  13. Add short list of exit statuses, other than libtman provides.
  14. Add support for command 'tman sync -n', to add task to curr column, but not change to task directory
  15. Make ID generatation bigger than the last ID. Might run outta IDs, but just think about it.
+ 17. Add task directory option for command `tman init [DIR]`. If nothing's passed use value from config file.
+     If nothing found in there then use current directory
 
 Prio: high
 + 1. Write config file parser and define config itself.
