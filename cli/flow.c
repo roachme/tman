@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "cli.h"
-#include "column.h"
+#include "aux/column.h"
 
 static int _flow_list(int argc, char **argv, tman_ctx_t * ctx)
 {

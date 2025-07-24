@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <libconfig.h>
 
-#include "../lib/src/osdep.h"
+#include "../../lib/src/osdep.h"
 #include "config.h"
-#include "cli.h"
+#include "../cli.h"
 
 // TODO: gotta define default columns: curr, prev, blog, done
 // TODO: gotta add config checker so a program doesn't fail.

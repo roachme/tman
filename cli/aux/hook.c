@@ -3,7 +3,7 @@
 
 #include "hook.h"
 #include "config.h"
-#include "../lib/src/libtman.h"
+#include "../../lib/src/libtman.h"
 
 static char pathname[PATHSIZ + 1];
 

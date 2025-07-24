@@ -6,9 +6,8 @@
 #include <stdio.h>
 #include <getopt.h>
 
-#include "help.h"
-#include "hook.h"
-#include "color.h"
+#include "aux/hook.h"
+#include "aux/color.h"
 #include "../lib/src/libtman.h"
 
 #define PROGRAM     "tman"
@@ -38,6 +37,9 @@ typedef struct builtin {
     int setuplvl;
     int (*func)(int argc, char **argv, tman_ctx_t * ctx);
 } builtin_t;
+
+int help_usage(const char *cmd);
+int help_lookup(const char *cmd);
 
 int tman_pwd_task(tman_arg_t * args);
 int tman_pwd_board(void);

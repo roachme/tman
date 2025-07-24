@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "cli.h"
-#include "config.h"
+#include "aux/config.h"
 
 // TODO: it ain't true config value cuz might be overwritten by CLI options
 // TODO: Add support to specify config keys

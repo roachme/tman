@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "help.h"
 #include "cli.h"
 
 #define PADDING     "    "
@@ -10,6 +9,14 @@
 #define TAGOBJCMD   "bin-object-cmd"
 #define TAGSYSTEM   "bin-system"
 #define TAGBASIC    "bin-basic"
+
+struct help {
+    const char *tag;
+    const char *name;
+    const char *synop;
+    const char *desc_short;
+    const char *desc_long;
+};
 
 struct helpctx {
     int synop;

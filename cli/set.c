@@ -1,9 +1,8 @@
-#include "cli.h"
-#include "cli.h"
-#include "help.h"
-#include "config.h"
-#include <string.h>
 #include <ctype.h>
+#include <string.h>
+
+#include "cli.h"
+#include "cli.h"
 
 // "prio",  /* task priority */
 // "type",  /* task type: bugfix, hotfix, feature */

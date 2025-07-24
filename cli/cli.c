@@ -3,8 +3,7 @@
 #include <stdlib.h>
 
 #include "cli.h"
-#include "config.h"
-#include "help.h"
+#include "aux/config.h"
 
 #define NONEBOOL        -1      /* Not yet set boolean value */
 

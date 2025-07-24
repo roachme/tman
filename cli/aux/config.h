@@ -3,8 +3,8 @@
 
 #include <libconfig.h>
 
-#include "../lib/src/common.h"
-#include "../lib/src/libtman.h"
+#include "../../lib/src/common.h"
+#include "../../lib/src/libtman.h"
 
 #define NUMCONFIG       2
 #define CONFIGSIZ       256

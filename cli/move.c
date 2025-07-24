@@ -1,5 +1,4 @@
 #include "cli.h"
-#include "help.h"
 
 int tman_cli_move(int argc, char **argv, tman_ctx_t * ctx)
 {

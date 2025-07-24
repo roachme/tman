@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "cli.h"
 #include "column.h"
+#include "common.h"
 
 // TODO: delete it all once support for user defined columns added.
 

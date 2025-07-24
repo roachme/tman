@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "cli.h"
-#include "column.h"
+#include "aux/column.h"
 
 static const char *errfmt = "cannot list tasks '%s': %s";
 

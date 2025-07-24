@@ -1,7 +1,7 @@
 #ifndef TMAN_HOOK_H
 #define TMAN_HOOK_H
 
-#include "../lib/src/libtman.h"
+#include "../../lib/src/libtman.h"
 
 // TODO: It's duplicate copied from unit.h in lib part. Get rid of it
 #define KEYSIZ 20
