@@ -21,6 +21,7 @@
 
 - `cli/plugin`: Remove check for input arguments
 - `cli/fsck`: Delete command `fsck` from builtin commands
+- `cli/cfg`: Delete command `cfg` from builtin commands
 
 
 ## [0.0.22] - (2025-07-12)

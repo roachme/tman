@@ -59,27 +59,6 @@ struct help helptab[] = {
     Return status of builtin command or plugin\n"},
     {
      .tag = TAGSYSTEM,
-     .name = "cfg",
-     .synop = "Usage: " PROGRAM " cfg [OPTION]... [COMMAND]\n",
-     .desc_short = "Manage system configuration file.\n",
-     .desc_long = "\n\
-    Options:\n\
-      -h      show this help and exit\n\
-      -q      do not write anything to standard error output\n\
-    \n\
-    Arguments:\n\
-      SUBCMD  project subcommand\n\
-    \n\
-    SUBCMD list:\n\
-      set     Set config value (under developmnt)\n\
-      show    Show config values\n\
-    \n\
-    WARNING: when setting new values, all comments in config file will be lost\n\
-    \n\
-    Exit status:\n\
-    Under development\n"},
-    {
-     .tag = TAGSYSTEM,
      .name = "help",
      .synop = "Usage: " PROGRAM " help [OPTION] [CMD]\n",
      .desc_short = "Show help message for command.\n",

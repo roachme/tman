@@ -109,7 +109,6 @@ Usage: tman [OPTION]... COMMAND|PLUGIN
     Run 'tman help tman' to get more info.
 
     System:
-      cfg    - Manage system configuration file.
       help   - Show help message for command.
       init   - Init directory structure.
 
