@@ -9,18 +9,18 @@ int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx)
     int quiet, showhelp, status;
 
     quiet = showhelp = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     errfmt = "cannot switch to previous task '%s': %s";
     while ((c = getopt(argc, argv, ":b:hp:q")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'h':
             showhelp = TRUE;
             break;
         case 'p':
-            args.prj = optarg;
+            args.project = optarg;
             break;
         case 'q':
             quiet = TRUE;
@@ -35,11 +35,11 @@ int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("prev");
 
-    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
-    } else if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+    } else if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current board");
         return status;
@@ -59,7 +59,7 @@ int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx)
         return 1;
     } else if (hook_action(&args, "sync")) {
         if (quiet == FALSE)
-            elog(1, errfmt, args.task, "failed to execute hooks");
+            elog(1, errfmt, args.taskid, "failed to execute hooks");
         return status;
     }
     return status == LIBTMAN_OK ? tman_pwd_task(&args) : status;

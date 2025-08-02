@@ -44,6 +44,7 @@ void color_print_str(const char *fmt, char *str, char *color)
         pr_sgr_end(CRESET);
 }
 
+/*
 void color_print_char(const char *fmt, char c, char *color)
 {
     if (isatty(STDOUT_FILENO) && tmancfg->usecolor == TRUE)
@@ -52,3 +53,4 @@ void color_print_char(const char *fmt, char c, char *color)
     if (isatty(STDOUT_FILENO) && tmancfg->usecolor == TRUE)
         pr_sgr_end(CRESET);
 }
+*/

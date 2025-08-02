@@ -11,7 +11,7 @@ static char *path_pgn(tman_arg_t * args, char *name, char *cmd)
 {
     const char *fmt = "%s/%s/%s -T %s -P %s %s -p %s -b %s -i %s";
     sprintf(pathname, fmt, tmancfg->pgndir, name, name, tmancfg->base.task,
-            tmancfg->pgndir, cmd, args->prj, args->brd, args->task);
+            tmancfg->pgndir, cmd, args->project, args->board, args->taskid);
     return pathname;
 }
 

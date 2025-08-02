@@ -13,7 +13,7 @@ static char gentask[IDSIZ + 1];
 
 static int generate_task(tman_arg_t * args)
 {
-    args->task = gentask;
+    args->taskid = gentask;
     for (register unsigned int i = 1; i < IDLIMIT; ++i) {
         sprintf(gentask, IDFMT, i);
         if (tman_check_arg_task_exist(args) != LIBTMAN_OK)
@@ -45,21 +45,21 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
 {
     char *errfmt;
     tman_arg_t args;
-    char *last_task;
+    char *last_taskid;
     int quiet, showhelp, status, switch_dir, switch_task, i, c;
 
-    last_task = NULL;
+    last_taskid = NULL;
     quiet = showhelp = FALSE;
     switch_dir = switch_task = TRUE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     errfmt = "cannot create task '%s': %s";
     while ((c = getopt(argc, argv, ":b:np:hqN")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'p':
-            args.prj = optarg;
+            args.project = optarg;
             break;
         case 'h':
             showhelp = TRUE;
@@ -84,11 +84,11 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("add");
 
-    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
-    } else if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+    } else if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current board");
         return status;
@@ -105,28 +105,28 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
     i = optind;
     do {
         // TODO: maybe there's no need cuz i use task ID generator
-        args.task = args.task == NULL ? argv[i] : args.task;
+        args.taskid = args.taskid == NULL ? argv[i] : args.taskid;
 
-        if (generate_units(ctx, args.prj, args.task)) {
+        if (generate_units(ctx, args.project, args.taskid)) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.task, "unit generation failed");
+                elog(1, errfmt, args.taskid, "unit generation failed");
             continue;
         } else if ((status = tman_task_add(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.task, tman_strerror());
+                elog(status, errfmt, args.taskid, tman_strerror(status));
         } else if (hook_action(&args, "add")) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.task, "failed to execute hooks");
+                elog(1, errfmt, args.taskid, "failed to execute hooks");
         }
 
         ctx->units = tman_unit_free(ctx->units);
 
         /* TODO: find a better trick.  */
-        last_task = args.task;
-        args.task = NULL;       /* unset task ID, not to break loop.  */
+        last_taskid = args.taskid;
+        args.taskid = NULL;     /* unset task ID, not to break loop.  */
     } while (++i < argc);
 
-    args.task = last_task;
+    args.taskid = last_taskid;
 
     if ((switch_task && status == LIBTMAN_OK)
         && toggle_task_set_curr(tmancfg->base.task, &args)) {

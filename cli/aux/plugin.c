@@ -26,7 +26,7 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
 
     i = 0;
     pgn = option = NULL;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
 
     pgn = argv[i++];
 
@@ -37,15 +37,15 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
         if (strcmp(option, "-b") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
-            args.brd = argv[++i];
+            args.board = argv[++i];
         } else if (strcmp(option, "-i") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
-            args.task = argv[++i];
+            args.taskid = argv[++i];
         } else if (strcmp(option, "-p") == 0) {
             if (argv[i + 1] == NULL || argv[i + 1][0] == '-')
                 return elog(1, "option `%s' requires an argument", option);
-            args.prj = argv[++i];
+            args.project = argv[++i];
         } else {
             strcat(pgnopts, option);
             strcat(pgnopts, " ");
@@ -53,10 +53,10 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     /* Add default inputs if any. Do NOT check anything. Plugins should do.  */
-    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
         return status;
     }
-    if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
         return status;
     }
     if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
@@ -77,17 +77,17 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
     strcat(pgnexec, " ");
     strcat(pgnexec, pgnopts);
 
-    if (args.prj != NULL) {
+    if (args.project != NULL) {
         strcat(pgnexec, " -p ");
-        strcat(pgnexec, args.prj);
+        strcat(pgnexec, args.project);
     }
-    if (args.brd != NULL) {
+    if (args.board != NULL) {
         strcat(pgnexec, " -b ");
-        strcat(pgnexec, args.brd);
+        strcat(pgnexec, args.board);
     }
-    if (args.task != NULL) {
+    if (args.taskid != NULL) {
         strcat(pgnexec, " -i ");
-        strcat(pgnexec, args.task);
+        strcat(pgnexec, args.taskid);
     }
 
     dlog(1, "pgnexec: %s", pgnexec);

@@ -103,15 +103,15 @@ Usage: tman [OPTION]... COMMAND|PLUGIN
       add        - Add a new task to project.
       del        - Delete task from project.
       list       - List project tasks.
-      move       - Move (rename) tasks.
+      move       - Move (rename) tasks (under development).
       prev       - Switch to previous task.
       set        - Set task unit values.
       show       - Show task unit values.
-      switch     - Switch task to column.
-      sync       - Synchronize with current task.
+      sync       - Synchronize (with) task.
 
     Object:
       board      - Manage and show boards.
+      column     - Manage and show columns.
       project    - Manage and show projects.
 
 ```

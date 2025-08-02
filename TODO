@@ -44,6 +44,7 @@ Ideas:
  18. Add errstr along with errno. It'l be used to specify invalid input argument or something
  19. Rename module 'unit' to linked list in lib part.
  20. Add support to unit module not to change file content if new data is the same as old ones.
+ 21. Prevent column update when new column name is the same as old. Same about units
 
 Prio: high
 + 1. Write config file parser and define config itself.

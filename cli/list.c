@@ -52,10 +52,10 @@ static char *get_unit_desc(tman_ctx_t * ctx, tman_arg_t * args, int quiet)
     desc = NULL;
     if ((status = tman_task_get(ctx, args))) {
         if (quiet == FALSE)
-            elog(status, "'%s': %s one", args->task, tman_strerror());
+            elog(status, "'%s': %s one", args->taskid, tman_strerror(status));
     } else if ((desc = tman_unit_key(ctx->units, "desc")) == NULL) {
         if (quiet == FALSE)
-            elog(1, "'%s': %s", args->task, "description not found");
+            elog(1, "'%s': %s", args->taskid, "description not found");
     }
     return desc;
 }
@@ -68,10 +68,10 @@ static char *get_column_name(tman_ctx_t * ctx, tman_arg_t * args, int quiet)
     colname = NULL;
     if ((status = tman_task_column_get(ctx, args))) {
         if (quiet == FALSE)
-            elog(status, "'%s': %s one", args->task, tman_strerror());
+            elog(status, "'%s': %s one", args->taskid, tman_strerror(status));
     } else if ((colname = tman_unit_key(ctx->column, "name")) == NULL) {
         if (quiet == FALSE)
-            elog(1, "'%s': %s", args->task, "description not found");
+            elog(1, "'%s': %s", args->taskid, "description not found");
     }
     return colname;
 }
@@ -82,7 +82,7 @@ static void show_column(tman_ctx_t * ctx, tman_arg_t * args, tman_list_t * obj,
     if (obj != NULL) {
         char *desc;
         char *colname;
-        args->task = obj->name;
+        args->taskid = obj->name;
 
         if ((desc = get_unit_desc(ctx, args, quiet)) == NULL)
             return;
@@ -94,40 +94,31 @@ static void show_column(tman_ctx_t * ctx, tman_arg_t * args, tman_list_t * obj,
     }
 }
 
-static void show_toggles(tman_ctx_t * ctx, tman_arg_t * args)
+static int show_toggles(tman_ctx_t * ctx, tman_arg_t * args)
 {
     int status;
     tman_list_t obj;
 
-    args->task = NULL;
+    args->taskid = NULL;
     if ((status = toggle_task_get_curr(tmancfg->base.task, args)) == 0) {
         obj.next = NULL;
         obj.status = LIBTMAN_OK;
-        obj.name = args->task;
+        obj.name = args->taskid;
         show_column(ctx, args, &obj, FALSE);
     }
 
-    args->task = NULL;
+    args->taskid = NULL;
     if ((status = toggle_task_get_prev(tmancfg->base.task, args)) == 0) {
         obj.next = NULL;
         obj.status = LIBTMAN_OK;
-        obj.name = args->task;
+        obj.name = args->taskid;
         show_column(ctx, args, &obj, FALSE);
     }
+    return status;
 }
 
 static void show_columns(tman_ctx_t * ctx, tman_arg_t * args,
                          tman_list_t * list, int quiet)
-{
-    tman_list_t *obj;
-
-    for (obj = list; obj != NULL; obj = obj->next) {
-        show_column(ctx, args, obj, quiet);
-    }
-}
-
-static void show_target_column(tman_ctx_t * ctx, tman_arg_t * args,
-                               tman_list_t * list, char *colname, int quiet)
 {
     tman_list_t *obj;
 
@@ -141,15 +132,14 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
 {
     char c;
     tman_arg_t args;
-    struct mylist *obj;
     int i, quiet, show_headers, status;
 
     quiet = show_headers = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:c:hqvtH")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'c':
             filter.column = optarg;
@@ -179,34 +169,34 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
 
     i = optind;
     do {
-        args.prj = argv[i];
+        args.project = argv[i];
 
-        if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+        if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
             if (quiet == FALSE)
                 elog(status, errfmt, "NOCURR", "no current project");
             continue;
         } else if ((status = tman_check_arg_prj(&args))) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.prj, tman_strerror());
+                elog(status, errfmt, args.project, tman_strerror(status));
             continue;
-        } else if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+        } else if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
             if (quiet == FALSE)
                 elog(status, errfmt, "NOCURR", "no current board");
             continue;
         } else if ((status = tman_check_arg_brd(&args))) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.brd, tman_strerror());
+                elog(status, errfmt, args.board, tman_strerror(status));
             continue;
         }
 
         if ((status = tman_task_list(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.prj, tman_strerror());
+                elog(status, errfmt, args.project, tman_strerror(status));
             continue;
         }
 
         if (show_headers == TRUE)
-            printf("Project: %s\n", args.prj);
+            printf("Project: %s\n", args.project);
 
         // TODO: add hooks
         // TODO: optimize object traverse (traverse multiple times)
@@ -225,7 +215,7 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
         ctx->list = tman_list_free(ctx->list);
 
         // HOTFIX: cuz I've no clue how to sync board feature into projects.
-        args.brd = NULL;
+        args.board = NULL;
     } while (++i < argc);
     return status;
 }

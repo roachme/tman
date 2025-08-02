@@ -35,11 +35,11 @@ static int _project_add(int argc, char **argv, tman_ctx_t * ctx)
 
     status = LIBTMAN_OK;
     showhelp = quiet = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hnqB")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'h':
             showhelp = TRUE;
@@ -60,7 +60,7 @@ static int _project_add(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     if (showhelp)
-        return help_usage("prj-add");
+        return help_usage("project-add");
 
     if (optind == argc)
         return elog(1, "project name required");
@@ -71,19 +71,19 @@ static int _project_add(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     /* Set default board name to create.  */
-    if (args.brd == NULL)
-        args.brd = "brd-000";
+    if (args.board == NULL)
+        args.board = "brd-000";
 
     for (i = optind; i < argc; ++i) {
-        args.prj = argv[i];
+        args.project = argv[i];
 
-        if (generate_units(ctx, args.prj)) {
+        if (generate_units(ctx, args.project)) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.prj, "unit generation failed");
+                elog(1, errfmt, args.project, "unit generation failed");
             continue;
-        } else if ((status = tman_prj_add(ctx, &args)) != LIBTMAN_OK) {
+        } else if ((status = tman_project_add(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(1, errfmt, argv[i], tman_strerror());
+                elog(1, errfmt, argv[i], tman_strerror(status));
             continue;
         }
         // TODO: add support to add default board when project gets created
@@ -106,11 +106,11 @@ static int _project_del(int argc, char **argv, tman_ctx_t * ctx)
 
     showprompt = TRUE;
     choice = quiet = showhelp = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hnq")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'h':
             showhelp = TRUE;
@@ -129,7 +129,7 @@ static int _project_del(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     if (showhelp)
-        return help_usage("prj-del");
+        return help_usage("project-del");
 
     if (showprompt) {
         printf("Are you sure to delete projects(s)? [y/N] ");
@@ -141,10 +141,10 @@ static int _project_del(int argc, char **argv, tman_ctx_t * ctx)
 
     i = optind;
     do {
-        args.prj = argv[i];
-        if ((status = tman_prj_del(ctx, &args)) != LIBTMAN_OK) {
+        args.project = argv[i];
+        if ((status = tman_project_del(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_strerror());
+                elog(status, errfmt, argv[i], tman_strerror(status));
         }
     } while (++i < argc);
 
@@ -171,10 +171,10 @@ static int _project_list(int argc, char **argv, tman_ctx_t * ctx)
         }
     }
 
-    if ((status = tman_prj_list(ctx)) != LIBTMAN_OK) {
+    if ((status = tman_project_list(ctx)) != LIBTMAN_OK) {
         if (quiet == FALSE) {
             const char *errfmt = "cannot list project(s) '%s': %s";
-            elog(status, errfmt, "PRJ", tman_strerror());
+            elog(status, errfmt, "PRJ", tman_strerror(status));
         }
     }
     return status;
@@ -191,8 +191,8 @@ static int _project_rename(int argc, char **argv, tman_ctx_t * ctx)
     tman_arg_t src, dst;
 
     quiet = showhelp = FALSE;
-    src.prj = src.brd = src.task = NULL;
-    dst.prj = dst.brd = dst.task = NULL;
+    src.project = src.board = src.taskid = NULL;
+    dst.project = dst.board = dst.taskid = NULL;
     while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
         case 'h':
@@ -212,14 +212,14 @@ static int _project_rename(int argc, char **argv, tman_ctx_t * ctx)
     if (argc - optind != 2)
         return elog(1, "source or destination project name missing");
 
-    src.prj = argv[optind];
-    dst.prj = argv[optind + 1];
+    src.project = argv[optind];
+    dst.project = argv[optind + 1];
 
     /* TODO: trigger hooks if any */
 
-    if ((status = tman_prj_rename(NULL, &src, &dst))) {
+    if ((status = tman_project_rename(NULL, &src, &dst))) {
         if (quiet == FALSE)
-            elog(status, "could not rename project: %s", tman_strerror());
+            elog(status, "could not rename project: %s", tman_strerror(status));
     }
     return tman_pwd_project();
 }
@@ -233,11 +233,11 @@ static int _project_set(int argc, char **argv, tman_ctx_t * ctx)
 
     quiet = showhelp = FALSE;
     atleast_one_key_set = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:d:hq")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'd':
             if (valid_desc(optarg) == FALSE) {
@@ -262,21 +262,21 @@ static int _project_set(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     if (showhelp)
-        return help_usage("prj-set");
+        return help_usage("project-set");
     if (atleast_one_key_set == FALSE) {
         elog(1, "gotta supply one of the options");
-        help_usage("prj-set");
+        help_usage("project-set");
         return 1;
     }
 
     i = optind;
     do {
         int status;
-        args.prj = argv[i];
+        args.project = argv[i];
 
-        if ((status = tman_prj_set(ctx, &args)) != LIBTMAN_OK) {
+        if ((status = tman_project_set(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_strerror());
+                elog(status, errfmt, argv[i], tman_strerror(status));
         }
     } while (++i < argc);
 
@@ -294,11 +294,11 @@ static int _project_show(int argc, char **argv, tman_ctx_t * ctx)
 
     unitbin = unitpgn = NULL;
     quiet = showhelp = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hq")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'h':
             showhelp = TRUE;
@@ -314,18 +314,18 @@ static int _project_show(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     if (showhelp)
-        return help_usage("prj-show");
+        return help_usage("project-show");
 
     i = optind;
     do {
-        args.prj = argv[i];
-        if ((status = tman_prj_get(ctx, &args)) != LIBTMAN_OK) {
+        args.project = argv[i];
+        if ((status = tman_project_get(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_strerror());
+                elog(status, errfmt, argv[i], tman_strerror(status));
             continue;
         }
 
-        printf("%-7s : %s\n", "prj", args.prj);
+        printf("%-7s : %s\n", "project", args.project);
         for (unitbin = ctx->units; unitbin; unitbin = unitbin->next)
             printf("%-7s : %s\n", unitbin->key, unitbin->val);
 
@@ -342,11 +342,11 @@ static int _project_sync(int argc, char **argv, tman_ctx_t * ctx)
     const char *errfmt = "cannot switch to '%s': %s";
 
     quiet = showhelp = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hnq")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'h':
             showhelp = TRUE;
@@ -365,14 +365,14 @@ static int _project_sync(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     if (showhelp)
-        return help_usage("prj-sync");
+        return help_usage("project-sync");
 
     i = optind;
     do {
-        args.prj = argv[i];
-        if ((status = tman_prj_sync(ctx, &args)) != LIBTMAN_OK) {
+        args.project = argv[i];
+        if ((status = tman_project_column_set(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, argv[i], tman_strerror());
+                elog(status, errfmt, argv[i], tman_strerror(status));
         }
     } while (++i < argc);
 
@@ -396,8 +396,8 @@ int tman_cli_project(int argc, char **argv, tman_ctx_t * ctx)
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 
     for (int i = 0; i < ARRAY_SIZE(prjcmds); ++i)
-        if (strncmp(cmd, prjcmds[i].name, CMDSIZ) == 0)
+        if (strcmp(cmd, prjcmds[i].name) == 0)
             return prjcmds[i].func(argc - 1, argv + 1, ctx);
 
-    return elog(1, "'%s': no such prj command", cmd);
+    return elog(1, "'%s': no such project command", cmd);
 }

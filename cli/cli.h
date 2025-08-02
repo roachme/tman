@@ -51,16 +51,16 @@
     color_print_str("%s\n", (_desc), BWHT); \
 }\
 
-enum tman_setuplvl {
-    LIBTMAN_PAGER,
-    LIBTMAN_SETUP_SOFT,
-    LIBTMAN_SETUP_HARD,
+enum tman_setup_level {
+    TMAN_PAGER,
+    TMAN_SETUP_SOFT,
+    TMAN_SETUP_HARD,
 };
 
 typedef struct builtin {
-    char name[CMDSIZ + 1];
-    int setuplvl;
+    const char *name;
     int (*func)(int argc, char **argv, tman_ctx_t * ctx);
+    unsigned int option;
 } builtin_t;
 
 typedef struct column {
@@ -91,9 +91,13 @@ int tman_pwd_unset(void);
 int elog(int status, const char *fmt, ...);
 int dlog(int level, const char *fmt, ...);
 
+// NOTE: maybe use 'prefix' like in git?
+// int cmd_add(int argc, const char **argv, const char *prefix, struct repository *repo);
+
 // TODO: make argv const
 int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_board(int argc, char **argv, tman_ctx_t * ctx);
+int tman_cli_column(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_init(int argc, char **argv, tman_ctx_t * ctx);
@@ -104,7 +108,6 @@ int tman_cli_prev(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_project(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx);
-int tman_cli_switch(int argc, char **argv, tman_ctx_t * ctx);
 int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx);
 
 #endif

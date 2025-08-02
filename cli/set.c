@@ -60,16 +60,16 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
     const char *errfmt = "cannot set task units '%s': %s";
 
     quiet = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     atleast_one_key_set = FALSE;
     while ((c = getopt(argc, argv, ":b:d:p:qt:P:")) != -1) {
         // TODO: add a protection for duplicates, use map data structure
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'p':
-            args.prj = optarg;
+            args.project = optarg;
             break;
         case 'q':
             quiet = TRUE;
@@ -114,27 +114,27 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
         return 1;
     }
 
-    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
         return status;
     }
-    if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
         return status;
     }
 
     i = optind;
     do {
-        args.task = argv[i];
+        args.taskid = argv[i];
 
         if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
             continue;
         } else if ((status = tman_task_set(ctx, &args)) != LIBTMAN_OK) {
-            args.task = args.task ? args.task : "NOCURR";
+            args.taskid = args.taskid ? args.taskid : "NOCURR";
             if (quiet == FALSE)
-                elog(status, errfmt, args.task, tman_strerror());
+                elog(status, errfmt, args.taskid, tman_strerror(status));
             continue;
         } else if (hook_action(&args, "set")) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.task, "failed to execute hooks");
+                elog(1, errfmt, args.taskid, "failed to execute hooks");
         }
         ctx->units = tman_unit_free(ctx->units);
     } while (++i < argc);

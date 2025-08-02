@@ -70,11 +70,11 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
     key = NULL;
     unitpgn = NULL;
     quiet = showhelp = FALSE;
-    args.prj = args.brd = args.task = NULL;
+    args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hk:p:q")) != -1) {
         switch (c) {
         case 'b':
-            args.brd = optarg;
+            args.board = optarg;
             break;
         case 'h':
             showhelp = TRUE;
@@ -83,7 +83,7 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
             key = optarg;
             break;
         case 'p':
-            args.prj = optarg;
+            args.project = optarg;
             break;
         case 'q':
             quiet = TRUE;
@@ -98,11 +98,11 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("show");
 
-    if ((status = toggle_prj_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
-    } else if ((status = toggle_brd_get_curr(tmancfg->base.task, &args))) {
+    } else if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current board");
         return status;
@@ -110,7 +110,7 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
 
     i = optind;
     do {
-        args.task = argv[i];
+        args.taskid = argv[i];
 
         if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
             if (quiet == FALSE)
@@ -118,24 +118,24 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
             return status;
         } else if ((status = tman_task_get(ctx, &args)) != LIBTMAN_OK) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.task, tman_strerror());
+                elog(status, errfmt, args.taskid, tman_strerror(status));
             continue;
         } else if (valid_unitkeys(ctx->units)) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.task, "invalid unit keys");
+                elog(status, errfmt, args.taskid, "invalid unit keys");
             continue;
         } else if (hook_show(&unitpgn, &args, "show")) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.task, "failed to execute hooks");
+                elog(status, errfmt, args.taskid, "failed to execute hooks");
             continue;
         }
 
         if (key != NULL) {
-            if ((status = show_key(args.task, ctx->units, unitpgn, key))
+            if ((status = show_key(args.taskid, ctx->units, unitpgn, key))
                 && quiet == FALSE)
                 elog(1, "cannot show key '%s': no such key", key);
         } else
-            show_keys(args.task, ctx->units, unitpgn);
+            show_keys(args.taskid, ctx->units, unitpgn);
 
         unitpgn = tman_unit_free(unitpgn);
         ctx->units = tman_unit_free(ctx->units);

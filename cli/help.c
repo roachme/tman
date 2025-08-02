@@ -90,10 +90,10 @@ struct help helptab[] = {
      .desc_short = "Add a new task to project.\n",
      .desc_long = "\n\
     Options:\n\
-      -b BRD  board name\n\
+      -b BRD  board name (default is current)\n\
       -h      show this help and exit\n\
       -n      do not switch to task\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
       -N      neither switch to task nor to task directory\n\
     \n\
@@ -111,15 +111,15 @@ struct help helptab[] = {
      .desc_short = "Delete task from project.\n",
      .desc_long = "\n\
     Options:\n\
-      -b BRD  board name\n\
+      -b BRD  board name (default is current)\n\
       -h      show this help and exit\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
       -y      delete task without confirmation\n\
     \n\
     Arguments:\n\
       BRD     board name (default is current)\n\
-      ID      task ID (default current)\n\
+      ID      task ID (default is current)\n\
       PRJ     project name (default is current)\n\
     \n\
     Exit status:\n\
@@ -132,7 +132,7 @@ struct help helptab[] = {
      .desc_long = "\n\
     Options:\n\
       -a      list all tasks\n\
-      -b BRD  board name\n\
+      -b BRD  board name (default is current)\n\
       -h      show this help and exit\n\
       -q      do not write anything to standard error output\n\
       -v      under development: show more verbose output\n\
@@ -140,9 +140,9 @@ struct help helptab[] = {
       -H      show headers\n\
     \n\
     Arguments:\n\
-      BRD     board name (default current)\n\
+      BRD     board name (default is current)\n\
       COL     column name\n\
-      PRJ     project name (default current)\n\
+      PRJ     project name (default is current)\n\
     \n\
     Exit status:\n\
     Under development\n"},
@@ -150,7 +150,7 @@ struct help helptab[] = {
      .tag = TAGBASIC,
      .name = "move",
      .synop = "Usage: " PROGRAM " move [OPTION]... [SRC DST | SRC...]\n",
-     .desc_short = "Move (rename) tasks.\n",
+     .desc_short = "Move (rename) tasks (under development).\n",
      .desc_long = "\n\
     Options:\n\
       -d PRJ  destination project\n\
@@ -172,9 +172,9 @@ struct help helptab[] = {
      .desc_short = "Switch to previous task.\n",
      .desc_long = "\n\
     Options:\n\
-      -b BRD  board name\n\
+      -b BRD  board name (default is current)\n\
       -h      show this help and exit\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
@@ -190,17 +190,17 @@ struct help helptab[] = {
      .desc_short = "Set task unit values.\n",
      .desc_long = "\n\
     Options:\n\
-      -b BRD  board name\n\
+      -b BRD  board name (default is current)\n\
       -d      task description\n\
       -h      show this help and exit\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
       -t      task type\n\
       -P      task priority\n\
     \n\
     Arguments:\n\
       BRD     board name (default is current)\n\
-      ID      task ID (default current)\n\
+      ID      task ID (default is current)\n\
       PRJ     project name (default is current)\n\
     \n\
     Values:\n\
@@ -216,15 +216,15 @@ struct help helptab[] = {
      .desc_short = "Show task unit values.\n",
      .desc_long = "\n\
     Options:\n\
-      -b BRD  board name\n\
+      -b BRD  board name (default is current)\n\
       -h      show this help and exit\n\
       -k KEY  key to show (builtin or plugin)\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
       BRD     board name (default is current)\n\
-      ID      task ID (default current)\n\
+      ID      task ID (default is current)\n\
       KEY     unit key to show\n\
       PRJ     project name (default is current)\n\
     \n\
@@ -232,42 +232,21 @@ struct help helptab[] = {
     Under development\n"},
     {
      .tag = TAGBASIC,
-     .name = "switch",
-     .synop = "Usage: " PROGRAM " switch [OPTION]... [ID]...\n",
-     .desc_short = "Switch task to column.\n",
+     .name = "sync",
+     .synop = "Usage: " PROGRAM " sync [OPTION]... [ID]...\n",
+     .desc_short = "Synchronize (with) task.\n",
      .desc_long = "\n\
     Options:\n\
-      -b BRD  board name\n\
-      -c COL  column move task to\n\
-      -h      show this help and exit\n\
+      -b BRD  board name (default is current)\n\
       -n      do not update toggles\n\
-      -p PRJ  project name\n\
+      -h      show this help and exit\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
       -N      neither update toggles nor switch to task directory\n\
     \n\
     Arguments:\n\
       BRD     board name (default current)\n\
-      COL     column name\n\
-      ID      task ID (default current)\n\
-      PRJ     project name (default current)\n\
-    \n\
-    Exit status:\n\
-    Under development\n"},
-    {
-     .tag = TAGBASIC,
-     .name = "sync",
-     .synop = "Usage: " PROGRAM " sync [OPTION]...\n",
-     .desc_short = "Synchronize with current task.\n",
-     .desc_long = "\n\
-    Options:\n\
-      -b BRD  board name\n\
-      -h      show this help and exit\n\
-      -p PRJ  project name\n\
-      -q      do not write anything to standard error output\n\
-    \n\
-    Arguments:\n\
-      BRD     board name (default current)\n\
-      COL     column name\n\
+      ID      task ID (default is current)\n\
       PRJ     project name (default current)\n\
     \n\
     Exit status:\n\
@@ -309,7 +288,7 @@ struct help helptab[] = {
     Options:\n\
       -h      show this help and exit\n\
       -n      do not switch to newly created project\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
@@ -326,7 +305,7 @@ struct help helptab[] = {
     Options:\n\
       -h      show this help and exit\n\
       -n      delete task without confirmation\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
@@ -345,7 +324,7 @@ struct help helptab[] = {
     Options:\n\
       -h      show this help and exit\n\
       -n      do not switch to newly created project\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
@@ -364,7 +343,7 @@ struct help helptab[] = {
     Options:\n\
       -h      show this help and exit\n\
       -n      do not switch to newly created project\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
@@ -395,7 +374,7 @@ struct help helptab[] = {
      .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Exit status:\n\
@@ -408,7 +387,7 @@ struct help helptab[] = {
      .desc_long = "\n\
     Options:\n\
       -h      show this help and exit\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
@@ -426,7 +405,7 @@ struct help helptab[] = {
     Options:\n\
       -d      task description\n\
       -h      show this help and exit\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
@@ -442,15 +421,15 @@ struct help helptab[] = {
      .desc_short = "Set task unit values.\n",
      .desc_long = "\n\
     Options:\n\
-      -b BRD  board name\n\
+      -b BRD  board name (default is current)\n\
       -h      show this help and exit\n\
       -k KEY  key to show (builtin or plugin)\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
       BRD     board name (default is current)\n\
-      ID      task ID (default current)\n\
+      ID      task ID (default is current)\n\
       KEY     unit key to show\n\
       PRJ     project name (default is current)\n\
     \n\
@@ -465,16 +444,67 @@ struct help helptab[] = {
     Options:\n\
       -h      show this help and exit\n\
       -n      do not switch to task\n\
-      -p PRJ  project name\n\
+      -p PRJ  project name (default is current)\n\
       -q      do not write anything to standard error output\n\
     \n\
     Arguments:\n\
-      BRD     board name (default current)\n\
-      ID      task ID (default current)\n\
-      PRJ     project name (default current)\n\
+      BRD     board name (default is current)\n\
+      ID      task ID (default is current)\n\
+      PRJ     project name (default is current)\n\
     \n\
     Exit status:\n\
     Under development\n"},
+
+    {
+     .tag = TAGOBJ,
+     .name = "column",
+     .synop = "Usage: " PROGRAM " column SUBCMD [OPTION] ARGS\n",
+     .desc_short = "Manage and show columns.\n",
+     .desc_long = "\n\
+    Arguments:\n\
+      SUBCMD  column subcommand\n\
+    \n\
+    SUBCMD list:\n\
+      list    List columns\n\
+      move    Move task to column\n\
+    \n\
+    Note:\n\
+      Use '" PROGRAM " help column-SUBCMD' to get help on subcommands. \n\
+      For example: " PROGRAM " help column-list\n\
+    \n\
+    Exit status:\n\
+    The return status is return status of subcommand.\n"},
+    {
+     .tag = TAGOBJCMD,
+     .name = "column-list",
+     .synop = "Usage: " PROGRAM " column list [OPTION]\n",
+     .desc_short = "List columns.\n",
+     .desc_long = "\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"},
+    {
+     .tag = TAGOBJCMD,
+     .name = "column-move",
+     .synop = "Usage: " PROGRAM " column move [OPTION] [ID]...\n",
+     .desc_short = "Move task to column.\n",
+     .desc_long = "\n\
+    \n\
+    Options:\n\
+      -b BRD  board name (default is current)\n\
+      -c COL  column to move task to\n\
+      -h      show this help and exit\n\
+      -q      do not write anything to standard error output\n\
+      -p PRJ  project name (default is current)\n\
+    \n\
+    Arguments:\n\
+      BRD     board name (default is current)\n\
+      COL     column name\n\
+      ID      task ID, if none passed then generated by util\n\
+      PRJ     project name (default is current)\n\
+    \n\
+    Exit status:\n\
+    Under development.\n"},
 
     {
      .tag = TAGOBJ,
@@ -515,7 +545,7 @@ struct help helptab[] = {
       -B      do not create default board\n\
     \n\
     Arguments:\n\
-      NAME    project name\n\
+      NAME    project name (default is current)\n\
     \n\
     Exit status:\n\
     Under development.\n"},
@@ -556,7 +586,7 @@ struct help helptab[] = {
      .desc_short = "Switch to previous project.\n",
      .desc_long = "\n\
     Arguments:\n\
-      NAME    project name\n\
+      NAME    project name (default is current)\n\
     \n\
     Exit status:\n\
     Under development.\n"},
@@ -583,7 +613,7 @@ struct help helptab[] = {
      .desc_short = "Set project unit values.\n",
      .desc_long = "\n\
     Arguments:\n\
-      NAME    project name\n\
+      NAME    project name (default is current)\n\
     \n\
     Options:\n\
       -d      project description\n\

@@ -3,7 +3,6 @@
 
 #include <libconfig.h>
 
-#include "../../lib/src/common.h"
 #include "../../lib/src/libtman.h"
 
 #define NUMCONFIG       2
