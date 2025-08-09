@@ -53,26 +53,26 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     /* Add default inputs if any. Do NOT check anything. Plugins should do.  */
-    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_project_get_curr(tmancfg.base.task, &args))) {
         return status;
     }
-    if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_board_get_curr(tmancfg.base.task, &args))) {
         return status;
     }
-    if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_task_get_curr(tmancfg.base.task, &args))) {
         return status;
     }
 
-    strcat(pgnexec, tmancfg->pgndir);
+    strcat(pgnexec, tmancfg.base.pgn);
     strcat(pgnexec, "/");
     strcat(pgnexec, pgn);
     strcat(pgnexec, "/");
     strcat(pgnexec, pgn);
 
     strcat(pgnexec, " -T ");
-    strcat(pgnexec, tmancfg->base.task);
+    strcat(pgnexec, tmancfg.base.task);
     strcat(pgnexec, " -P ");
-    strcat(pgnexec, tmancfg->pgndir);
+    strcat(pgnexec, tmancfg.base.pgn);
 
     strcat(pgnexec, " ");
     strcat(pgnexec, pgnopts);

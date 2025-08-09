@@ -114,20 +114,18 @@ int tman_cli_set(int argc, char **argv, tman_ctx_t * ctx)
         return 1;
     }
 
-    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
+    if ((status = check_arg_project(&args, errfmt, quiet)))
         return status;
-    }
-    if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
+    else if ((status = check_arg_board(&args, errfmt, quiet)))
         return status;
-    }
 
     i = optind;
     do {
         args.taskid = argv[i];
 
-        if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
+        if ((status = check_arg_task(&args, errfmt, quiet)))
             continue;
-        } else if ((status = tman_task_set(ctx, &args)) != LIBTMAN_OK) {
+        else if ((status = tman_task_set(tmancfg.base.task, &args, ctx))) {
             args.taskid = args.taskid ? args.taskid : "NOCURR";
             if (quiet == FALSE)
                 elog(status, errfmt, args.taskid, tman_strerror(status));

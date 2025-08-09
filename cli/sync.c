@@ -44,29 +44,18 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("sync");
 
-    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
-        if (quiet == FALSE)
-            elog(status, errfmt, "NOCURR", "no current project");
+    if ((status = check_arg_project(&args, errfmt, quiet)))
         return status;
-    } else if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
-        if (quiet == FALSE)
-            elog(status, errfmt, "NOCURR", "no current board");
+    else if ((status = check_arg_board(&args, errfmt, quiet)))
         return status;
-    }
 
     i = optind;
     do {
         args.taskid = argv[i];
 
-        if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
-            if (quiet == FALSE)
-                elog(status, errfmt, "NOCURR", "no current task");
+        if ((status = check_arg_task(&args, errfmt, quiet)))
             continue;
-        } else if ((status = tman_check_arg_task(&args))) {
-            if (quiet == FALSE)
-                elog(status, errfmt, args.taskid, tman_strerror(status));
-            continue;
-        } else if (hook_action(&args, "sync")) {
+        else if (hook_action(&args, "sync")) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.taskid, "failed to execute hooks");
             continue;
@@ -74,7 +63,7 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
     } while (++i < argc);
 
     if (status == LIBTMAN_OK && switch_toggle == TRUE) {
-        if (toggle_task_set_curr(tmancfg->base.task, &args) && quiet == FALSE)
+        if (toggle_task_set_curr(tmancfg.base.task, &args) && quiet == FALSE)
             status = elog(1, "could not update toggles");
     }
 

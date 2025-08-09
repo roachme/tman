@@ -6,8 +6,6 @@
 #include "aux/config.h"
 #include "aux/toggle.h"
 
-// TODO: load current project/board
-
 /* Note: should be static cuz args->task point to it.  */
 static char gentask[IDSIZ + 1];
 
@@ -16,7 +14,7 @@ static int generate_task(tman_arg_t * args)
     args->taskid = gentask;
     for (register unsigned int i = 1; i < IDLIMIT; ++i) {
         sprintf(gentask, IDFMT, i);
-        if (tman_check_arg_task_exist(args) != LIBTMAN_OK)
+        if (tman_task_exist(tmancfg.base.task, args) != LIBTMAN_OK)
             return 0;
     }
     return 1;
@@ -84,15 +82,11 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("add");
 
-    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
-        if (quiet == FALSE)
-            elog(status, errfmt, "NOCURR", "no current project");
+    if ((status = check_arg_project(&args, errfmt, quiet)))
         return status;
-    } else if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
-        if (quiet == FALSE)
-            elog(status, errfmt, "NOCURR", "no current board");
+    else if ((status = check_arg_board(&args, errfmt, quiet)))
         return status;
-    } else if (optind == argc && generate_task(&args)) {
+    else if (optind == argc && generate_task(&args)) {
         if (quiet == FALSE)
             elog(1, "could not generate task ID: limit is %d", IDLIMIT);
         return 1;
@@ -107,11 +101,28 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
         // TODO: maybe there's no need cuz i use task ID generator
         args.taskid = args.taskid == NULL ? argv[i] : args.taskid;
 
-        if (generate_units(ctx, args.project, args.taskid)) {
+        if ((status = tman_task_valid(tmancfg.base.task, &args))) {
+            if (quiet == FALSE)
+                elog(status, errfmt, args.taskid, tman_strerror(status));
+            args.taskid = NULL; /* unset task ID, not to break loop.  */
+            continue;
+        } else if (is_valid_length(args.taskid, IDSIZ) == FALSE) {
+            if (quiet == FALSE)
+                elog(status, errfmt, args.taskid, "task ID is too long");
+            return status;
+        } else if (!(status = tman_task_exist(tmancfg.base.task, &args))) {
+            if (quiet == FALSE)
+                elog(1, errfmt, args.taskid, tman_strerror(status));
+            args.taskid = NULL; /* unset task ID, not to break loop.  */
+            continue;
+        } else if (generate_units(ctx, args.project, args.taskid)) {
             if (quiet == FALSE)
                 elog(1, errfmt, args.taskid, "unit generation failed");
+            args.taskid = NULL; /* unset task ID, not to break loop.  */
             continue;
-        } else if ((status = tman_task_add(ctx, &args)) != LIBTMAN_OK) {
+        }
+
+        if ((status = tman_task_add(tmancfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.taskid, tman_strerror(status));
         } else if (hook_action(&args, "add")) {
@@ -129,7 +140,7 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
     args.taskid = last_taskid;
 
     if ((switch_task && status == LIBTMAN_OK)
-        && toggle_task_set_curr(tmancfg->base.task, &args)) {
+        && toggle_task_set_curr(tmancfg.base.task, &args)) {
         if (quiet == FALSE)
             elog(status, "could not update toggles");
         return 1;

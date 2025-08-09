@@ -98,25 +98,18 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("show");
 
-    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
-        if (quiet == FALSE)
-            elog(status, errfmt, "NOCURR", "no current project");
+    if ((status = check_arg_project(&args, errfmt, quiet)))
         return status;
-    } else if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
-        if (quiet == FALSE)
-            elog(status, errfmt, "NOCURR", "no current board");
+    else if ((status = check_arg_board(&args, errfmt, quiet)))
         return status;
-    }
 
     i = optind;
     do {
         args.taskid = argv[i];
 
-        if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
-            if (quiet == FALSE)
-                elog(status, errfmt, "NOCURR", "no current task");
-            return status;
-        } else if ((status = tman_task_get(ctx, &args)) != LIBTMAN_OK) {
+        if ((status = check_arg_task(&args, errfmt, quiet)))
+            continue;
+        else if ((status = tman_task_get(tmancfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.taskid, tman_strerror(status));
             continue;
@@ -141,6 +134,5 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
         ctx->units = tman_unit_free(ctx->units);
     }
     while (++i < argc);
-
     return status;
 }
