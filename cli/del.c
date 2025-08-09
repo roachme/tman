@@ -39,12 +39,11 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("del");
 
-    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
+    if ((status = check_arg_project(&args, errfmt, quiet)))
         return status;
-    }
-    if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
+    else if ((status = check_arg_board(&args, errfmt, quiet)))
         return status;
-    }
+
     // TODO: if non-current task gets deleted, then no need to
     // change user's current directory.
     i = optind;
@@ -53,7 +52,7 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
 
         /* Get and check input values explicitly because it's one of the rare
          * cases when hooks get exectude before the main action.  */
-        if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
+        if ((status = check_arg_task(&args, errfmt, quiet))) {
             continue;
         } else if (autoconfirm == FALSE) {
             printf("Are you sure to delete task '%s'? [y/N] ", args.taskid);
@@ -65,15 +64,15 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
             if (quiet == FALSE)
                 elog(1, errfmt, args.taskid, "failed to execute hooks");
             continue;
-        } else if ((status = tman_task_del(ctx, &args)) != LIBTMAN_OK) {
+        } else if ((status = tman_task_del(tmancfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.taskid, tman_strerror(status));
             continue;
         }
     } while (++i < argc);
 
-    // FIXME: when delete task ID from non-current prj,
-    // it switches to current task in current prj.
+    // FIXME: when delete task ID from non-current project,
+    // it switches to current task in current project.
     // BUT should not change user's CWD at all.
     return status == LIBTMAN_OK ? tman_pwd_task(&args) : status;
 }

@@ -45,7 +45,7 @@ make
 ```
 
 ## ⇁  Installation
-1. Once you compiled successfully, put executable ` _tmancli ` into one of directories defined in env variable ` PATH ` . I put it in ` ~/.local/bin ` .
+1. Once you compiled successfully, put executable ` tmancli ` into one of directories defined in env variable ` PATH ` . I put it in ` ~/.local/bin ` .
 2. Copy the content of tman.sh into your shell rc file. It's ` ~/.bashrc ` , ` .zshrc ` , etc.
 
 ``` bash
@@ -142,7 +142,7 @@ Note: \
 
 ## ⇁  Basic workflow
 1. To initalize util type in ` tman init `
-2. Now you're ready to create a project: ` tman prj add test `
+2. Now you're ready to create a project: ` tman project add test `
 3. Once task project is created you can fill it with tasks: ` tman add test1 `
 4. List all your task in current project: ` tman list `
 5. Show the content of task: ` tman show test1 `

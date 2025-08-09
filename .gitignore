@@ -1,5 +1,6 @@
 artifacts
 _tmancli
+tmancli
 gmon.out
 prof.txt
 tman_prof

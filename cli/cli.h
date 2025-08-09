@@ -1,8 +1,6 @@
 #ifndef LIBTMAN_CLI_H
 #define LIBTMAN_CLI_H
 
-#define CMDSIZ          10
-
 #include <stdio.h>
 #include <getopt.h>
 
@@ -20,6 +18,8 @@
 #define IDSIZ           10
 #define BRDSIZ          10
 #define PRJSIZ          10
+#define CMDSIZ          10
+#define COLSIZ          7
 
 #define FIRST_COLUMN     0
 #define LAST_COLUMN      100
@@ -31,25 +31,28 @@
 #define IDFMT       "%0" xstr(IDSIZ) "u"
 #define PADDING_UNIT     6
 
-#define LIST_PRJ_UNITS(p) {\
-    color_print_char("%c ", (p)->mark, BGRN); \
-    color_print_str("%-" xstr(IDSIZ) "s ", (p)->id, BBLU); \
-    color_print_str("%s\n", (p)->desc, BWHT); \
+/* TODO: add a plugin output too */
+#define LIST_PROJECT_UNITS(_mark, _id, _desc) {\
+    color_print_str("%-" xstr(COLSIZ) "s ", (_mark), BGRN); \
+    color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
+    color_print_str("%s\n", (_desc), BWHT); \
 }\
 
-/* TODO: add the same function for board list.  */
-#define LIST_BRD_UNITS(p) {\
-    color_print_char("%c ", (p)->mark, BGRN); \
-    color_print_str("%-" xstr(IDSIZ) "s ", (p)->id, BBLU); \
-    color_print_str("%s\n", (p)->desc, BWHT); \
+/* TODO: add a plugin output too */
+#define LIST_BOARD_UNITS(_mark, _id, _desc) {\
+    color_print_str("%-" xstr(COLSIZ) "s ", (_mark), BGRN); \
+    color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
+    color_print_str("%s\n", (_desc), BWHT); \
 }\
 
 /* TODO: add a plugin output too */
 #define LIST_TASK_UNITS(_mark, _id, _desc) {\
-    color_print_str("%s ", (_mark), BGRN); \
+    color_print_str("%-" xstr(COLSIZ) "s ", (_mark), BGRN); \
     color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
     color_print_str("%s\n", (_desc), BWHT); \
 }\
+
+#define CTX_INIT { .column = NULL, .units = NULL, .list = NULL }
 
 enum tman_setup_level {
     TMAN_PAGER,
@@ -75,7 +78,10 @@ extern unsigned int nunitkey;
 extern column_t builtin_columns[];
 extern unsigned int nbuiltin_column;
 
-int check_arg_prj(tman_arg_t * args);
+int is_valid_length(const char *obj, int len);
+int check_arg_project(tman_arg_t * args, const char *errfmt, int quiet);
+int check_arg_board(tman_arg_t * args, const char *errfmt, int quiet);
+int check_arg_task(tman_arg_t * args, const char *errfmt, int quiet);
 
 BOOL column_exist(const char *colname);
 tman_unit_t *generate_column(char *colname);
@@ -84,10 +90,10 @@ int help_list_commands(void);
 int help_usage(const char *cmd);
 int help_lookup(const char *cmd);
 
-int tman_pwd_task(tman_arg_t * args);
-int tman_pwd_board(void);
-int tman_pwd_project(void);
 int tman_pwd_unset(void);
+int tman_pwd_task(tman_arg_t * args);
+int tman_pwd_board(tman_arg_t * args);
+int tman_pwd_project(tman_arg_t * args);
 int elog(int status, const char *fmt, ...);
 int dlog(int level, const char *fmt, ...);
 

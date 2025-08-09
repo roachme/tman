@@ -51,11 +51,11 @@ static int _column_move(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("column-move");
 
-    if ((status = toggle_project_get_curr(tmancfg->base.task, &args))) {
+    if ((status = toggle_project_get_curr(tmancfg.base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
-    } else if ((status = toggle_board_get_curr(tmancfg->base.task, &args))) {
+    } else if ((status = toggle_board_get_curr(tmancfg.base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current board");
         return status;
@@ -73,11 +73,13 @@ static int _column_move(int argc, char **argv, tman_ctx_t * ctx)
     do {
         args.taskid = argv[i];
 
-        if ((status = toggle_task_get_curr(tmancfg->base.task, &args))) {
+        if ((status = toggle_task_get_curr(tmancfg.base.task, &args))) {
             if (quiet == FALSE)
                 elog(status, errfmt, "NOCURR", "no current task");
             return status;
-        } else if (colname && (status = tman_task_column_set(ctx, &args))) {
+        } else if (colname
+                   && (status =
+                       tman_task_column_set(tmancfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.taskid, tman_strerror(status));
             continue;
@@ -90,9 +92,15 @@ static int _column_move(int argc, char **argv, tman_ctx_t * ctx)
     return status;
 }
 
+static int _column_rename(int argc, char **argv, tman_ctx_t * ctx)
+{
+    return elog(1, "under development: rename column in file .tman/column");
+}
+
 static const builtin_t column_commands[] = {
     {.name = "list",.func = &_column_list},
     {.name = "move",.func = &_column_move},
+    {.name = "rename",.func = &_column_rename},
 };
 
 int tman_cli_column(int argc, char **argv, tman_ctx_t * ctx)

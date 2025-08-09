@@ -1,14 +1,13 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "cli.h"
 #include "aux/config.h"
 #include "aux/toggle.h"
 
-#define NONEBOOL        -1      /* Not yet set boolean value */
-
-struct config *tmancfg;
+struct config tmancfg;
 char *unitkeys[] = { "prio", "type", "date", "desc", };
 
 unsigned int nunitkey = sizeof(unitkeys) / sizeof(unitkeys[0]);
@@ -23,6 +22,22 @@ column_t builtin_columns[] = {
 unsigned int nbuiltin_column =
     sizeof(builtin_columns) / sizeof(builtin_columns[0]);
 
+static builtin_t builtins[] = {
+    {.name = "add",.func = &tman_cli_add,.option = TMAN_SETUP_HARD},
+    {.name = "board",.func = &tman_cli_board,.option = TMAN_SETUP_HARD},
+    {.name = "column",.func = &tman_cli_column,.option = TMAN_SETUP_HARD},
+    {.name = "del",.func = &tman_cli_del,.option = TMAN_SETUP_HARD},
+    {.name = "help",.func = &tman_cli_help,.option = TMAN_SETUP_SOFT},
+    {.name = "init",.func = &tman_cli_init,.option = TMAN_SETUP_SOFT},
+    {.name = "list",.func = &tman_cli_list,.option = TMAN_SETUP_HARD},
+    {.name = "move",.func = &tman_cli_move,.option = TMAN_SETUP_HARD},
+    {.name = "prev",.func = &tman_cli_prev,.option = TMAN_SETUP_HARD},
+    {.name = "project",.func = &tman_cli_project,.option = TMAN_SETUP_HARD},
+    {.name = "set",.func = &tman_cli_set,.option = TMAN_SETUP_HARD},
+    {.name = "show",.func = &tman_cli_show,.option = TMAN_SETUP_HARD},
+    {.name = "sync",.func = &tman_cli_sync,.option = TMAN_SETUP_HARD},
+};
+
 static int tman_setup(int setuplvl)
 {
     int status = LIBTMAN_OK;
@@ -30,36 +45,57 @@ static int tman_setup(int setuplvl)
     if (setuplvl == TMAN_SETUP_SOFT)    /* no filesystem check.  */
         ;
     else if (setuplvl == TMAN_SETUP_HARD) {     /* check filesystem.  */
-        status = tman_check_db();
+        status = tman_check_db(tmancfg.base.task);
     }
     return status;
 }
 
-static int run_builtin(int argc, char **argv, tman_ctx_t * ctx, builtin_t * cmd)
+static builtin_t *is_builtin(char *cmd)
+{
+    for (int idx = 0; idx < ARRAY_SIZE(builtins); ++idx)
+        if (strcmp(cmd, builtins[idx].name) == 0)
+            return &builtins[idx];
+    return NULL;
+}
+
+static int is_plugin(char *pgndir, const char *pgname)
+{
+    FILE *fp;
+    char path[PATH_MAX + 1];
+
+    sprintf(path, "%s/%s/%s", pgndir, pgname, pgname);
+
+    if ((fp = fopen(path, "r")) == NULL)
+        return FALSE;
+    fclose(fp);
+    return TRUE;
+}
+
+static int run_builtin(int argc, char **argv, builtin_t * cmd)
 {
     int status;
+    tman_ctx_t ctx = CTX_INIT;
 
     if ((status = tman_setup(cmd->option)) != LIBTMAN_OK)
         elog(status, "setup failed: %s", tman_strerror(status));
     else
-        status = cmd->func(argc, argv, ctx);
+        status = cmd->func(argc, argv, &ctx);
 
-    tman_deinit(ctx);
-    myconfig_destroy(tmancfg);
+    tman_config_destroy(&tmancfg);
     return status;
 }
 
-static int run_plugin(int argc, char **argv, tman_ctx_t * ctx)
+static int run_plugin(int argc, char **argv)
 {
     int status;
+    tman_ctx_t ctx = CTX_INIT;
 
     if ((status = tman_setup(TMAN_SETUP_HARD)) != LIBTMAN_OK)
         elog(status, "setup failed: %s", tman_strerror(status));
     else
-        status = tman_cli_plugin(argc, argv, ctx);
+        status = tman_cli_plugin(argc, argv, &ctx);
 
-    tman_deinit(ctx);
-    myconfig_destroy(tmancfg);
+    tman_config_destroy(&tmancfg);
     return status;
 }
 
@@ -72,37 +108,93 @@ static int valid_toggle(char *tog)
     return -1;
 }
 
-static int ispgn(char *pgndir, const char *pgname)
-{
-    char path[PATHSIZ + 1];
-    FILE *fp;
-
-    sprintf(path, "%s/%s/%s", pgndir, pgname, pgname);
-
-    if ((fp = fopen(path, "r")) == NULL)
-        return FALSE;
-    fclose(fp);
-    return TRUE;
-}
-
 static int show_version()
 {
     printf("%s: %s\n", PROGRAM, VERSION);
     return 0;
 }
 
-/*
-int check_arg_prj(tman_arg_t * args)
+int is_valid_length(const char *obj, int len)
+{
+    if (strlen(obj) <= len)
+        return TRUE;
+    return FALSE;
+}
+
+int check_arg_project(tman_arg_t * args, const char *errfmt, int quiet)
 {
     int status;
 
-    if ((status = toggle_project_get_curr(tmancfg->base.task, args))) {
+    if ((status = toggle_project_get_curr(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, "NOCURR", "no current project");
         return status;
-    } else if ((status = tman_check_arg_prj(args)))
+    } else if ((status = tman_project_valid(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, args->project, tman_strerror(status));
         return status;
+    } else if (is_valid_length(args->project, PRJSIZ) == FALSE) {
+        status = 1;
+        if (quiet == FALSE)
+            elog(status, errfmt, args->project, "project name is too long");
+        return status;
+    } else if ((status = tman_project_exist(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, args->project, tman_strerror(status));
+        return status;
+    }
     return 0;
 }
-*/
+
+int check_arg_board(tman_arg_t * args, const char *errfmt, int quiet)
+{
+    int status;
+
+    if ((status = toggle_board_get_curr(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, "NOCURR", "no current board");
+        return status;
+    } else if ((status = tman_board_valid(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, args->board, tman_strerror(status));
+        return status;
+    } else if (is_valid_length(args->board, BRDSIZ) == FALSE) {
+        status = 1;
+        if (quiet == FALSE)
+            elog(status, errfmt, args->board, "board name is too long");
+        return status;
+    } else if ((status = tman_board_exist(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, args->board, tman_strerror(status));
+        return status;
+    }
+    return 0;
+}
+
+int check_arg_task(tman_arg_t * args, const char *errfmt, int quiet)
+{
+    int status;
+
+    if ((status = toggle_task_get_curr(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, "NOCURR", "no current task");
+        return status;
+    } else if ((status = tman_task_valid(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, args->taskid, tman_strerror(status));
+        return status;
+    } else if (is_valid_length(args->taskid, IDSIZ) == FALSE) {
+        status = 1;
+        if (quiet == FALSE)
+            elog(status, errfmt, args->taskid, "task ID is too long");
+        return status;
+    } else if ((status = tman_task_exist(tmancfg.base.task, args))) {
+        if (quiet == FALSE)
+            elog(status, errfmt, args->taskid, tman_strerror(status));
+        return status;
+    }
+    return 0;
+}
 
 int get_column_index(char *colname)
 {
@@ -131,45 +223,56 @@ tman_unit_t *generate_column(char *colname)
         return NULL;
 
     column = NULL;
-    column = tman_unit_add(column, "mark", builtin_columns[index].mark);
     column = tman_unit_add(column, "name", builtin_columns[index].name);
-    column = tman_unit_add(column, "prio", xstr(index));
     return column;
+}
+
+int tman_pwd_project(tman_arg_t * args)
+{
+    FILE *fp;
+    char *taskdir = tmancfg.base.task;
+
+    if ((fp = fopen(PWDFILE, "w"))) {
+        const char *fmt = "%s/%s\n";
+        const char *debug_fmt = "PWD project: '%s'";
+
+        dlog(1, debug_fmt, args->project);
+        fprintf(fp, fmt, taskdir, args->project);
+        return fclose(fp);
+    }
+    return 1;
+
+}
+
+int tman_pwd_board(tman_arg_t * args)
+{
+    FILE *fp;
+    char *taskdir = tmancfg.base.task;
+
+    if ((fp = fopen(PWDFILE, "w"))) {
+        const char *fmt = "%s/%s/%s\n";
+        const char *debug_fmt = "PWD project: '%s', board: '%s'";
+
+        dlog(1, debug_fmt, args->project, args->board);
+        fprintf(fp, fmt, taskdir, args->project, args->board);
+        return fclose(fp);
+    }
+    return 1;
 }
 
 int tman_pwd_task(tman_arg_t * args)
 {
     FILE *fp;
-    int status;
+    char *taskdir = tmancfg.base.task;
 
-    if ((status = toggle_project_get_curr(tmancfg->base.task, args))) {
-        return status;
+    if ((fp = fopen(PWDFILE, "w"))) {
+        const char *fmt = "%s/%s/%s/%s\n";
+        const char *debug_fmt = "PWD project: '%s', board: '%s', task ID: '%s'";
+
+        dlog(1, debug_fmt, args->project, args->board, args->taskid);
+        fprintf(fp, fmt, taskdir, args->project, args->board, args->taskid);
+        return fclose(fp);
     }
-    if ((status = toggle_board_get_curr(tmancfg->base.task, args))) {
-        return status;
-    }
-    if ((status = toggle_task_get_curr(tmancfg->base.task, args))) {
-        fprintf(stderr, "ererr: %s\n", tman_strerror(status));
-        return status;
-    }
-
-    dlog(1, "tman_pwd: prj: '%s', brd: '%s', id: '%s'", args->project,
-         args->board, args->taskid);
-    if ((fp = fopen(PWDFILE, "w")) == NULL)
-        return 1;
-    fprintf(fp, "%s/%s/%s/%s\n", tmancfg->base.task, args->project, args->board,
-            args->taskid);
-
-    return fclose(fp);
-}
-
-int tman_pwd_project(void)
-{
-    return 1;
-}
-
-int tman_pwd_board(void)
-{
     return 1;
 }
 
@@ -195,8 +298,7 @@ int elog(int status, const char *fmt, ...)
 
 int dlog(int level, const char *fmt, ...)
 {
-    // TODO: add a debug log level
-    if (tmancfg->usedebug == FALSE)
+    if (tmancfg.opts.debug == FALSE)
         return 0;
 
     va_list arg;
@@ -208,37 +310,17 @@ int dlog(int level, const char *fmt, ...)
     return 0;
 }
 
-static builtin_t builtins[] = {
-    {.name = "add",.func = &tman_cli_add,.option = TMAN_SETUP_HARD},
-    {.name = "board",.func = &tman_cli_board,.option = TMAN_SETUP_HARD},
-    {.name = "column",.func = &tman_cli_column,.option = TMAN_SETUP_HARD},
-    {.name = "del",.func = &tman_cli_del,.option = TMAN_SETUP_HARD},
-    {.name = "help",.func = &tman_cli_help,.option = TMAN_SETUP_SOFT},
-    {.name = "init",.func = &tman_cli_init,.option = TMAN_SETUP_SOFT},
-    {.name = "list",.func = &tman_cli_list,.option = TMAN_SETUP_HARD},
-    {.name = "move",.func = &tman_cli_move,.option = TMAN_SETUP_HARD},
-    {.name = "prev",.func = &tman_cli_prev,.option = TMAN_SETUP_HARD},
-    {.name = "project",.func = &tman_cli_project,.option = TMAN_SETUP_HARD},
-    {.name = "set",.func = &tman_cli_set,.option = TMAN_SETUP_HARD},
-    {.name = "show",.func = &tman_cli_show,.option = TMAN_SETUP_HARD},
-    {.name = "sync",.func = &tman_cli_sync,.option = TMAN_SETUP_HARD},
-};
-
 int main(int argc, char **argv)
 {
-    tman_ctx_t ctx;
+    tman_opt_t opts;
     tman_base_t base;
+    builtin_t *builtin;
     int c, i, showhelp;
-    char *cmd, *option, *pgndir, *togfmt;
-    int usecolor, usedebug, usehooks;
-
-    ctx.units = NULL;
-    ctx.column = NULL;
-    ctx.list = NULL;
+    char *cmd, *option, *togfmt;
 
     showhelp = FALSE;
-    usecolor = usedebug = usehooks = NONEBOOL;
-    base.task = pgndir = cmd = option = NULL;
+    opts.color = opts.debug = opts.hook = NONEBOOL;
+    base.pgn = base.task = cmd = option = NULL;
     togfmt = "option `-%c' accepts either 'on' or 'off'";
 
     /* Parse util itself options.  */
@@ -247,21 +329,21 @@ int main(int argc, char **argv)
         case 'h':
             showhelp = TRUE;
         case 'C':
-            if ((usecolor = valid_toggle(optarg)) == -1)
+            if ((opts.color = valid_toggle(optarg)) == -1)
                 return elog(1, togfmt, c);
             break;
         case 'D':
-            if ((usedebug = valid_toggle(optarg)) == -1)
+            if ((opts.debug = valid_toggle(optarg)) == -1)
                 return elog(1, togfmt, c);
             break;
         case 'F':
             return elog(1, "option `-%c' under development", c);
         case 'H':
-            if ((usehooks = valid_toggle(optarg)) == -1)
+            if ((opts.hook = valid_toggle(optarg)) == -1)
                 return elog(1, togfmt, c);
             break;
         case 'P':
-            pgndir = optarg;
+            base.pgn = optarg;
             break;
         case 'T':
             base.task = optarg;
@@ -280,36 +362,20 @@ int main(int argc, char **argv)
     tman_pwd_unset();
 
     if (showhelp == TRUE || (cmd = argv[i]) == NULL)
-        return help_list_commands();
+        cmd = "help";
 
-    if ((tmancfg = myconfig_create()) == NULL)
-        return elog(1, "could not allocate memory for config");
-
-    if (tmancfg_parse(tmancfg))
+    if (tman_config_init(&tmancfg))
+        return elog(1, "could init config file");
+    else if (tman_config_parse(&tmancfg))
         return elog(1, "could parse config file");
+    else if (tman_config_set_base(&base))
+        return elog(1, "could set config base directories");
+    else if (tman_config_set_options(&opts))
+        return elog(1, "could set config options");
 
-    if (base.task != NULL) {
-        free(tmancfg->base.task);
-        tmancfg->base.task = strdup(base.task);
-    }
-    if (pgndir != NULL) {
-        free(tmancfg->pgndir);
-        tmancfg->pgndir = strdup(pgndir);
-    }
-
-    tmancfg->usehooks = usehooks != NONEBOOL ? usehooks : tmancfg->usehooks;
-    tmancfg->usecolor = usecolor != NONEBOOL ? usecolor : tmancfg->usecolor;
-    tmancfg->usedebug = usedebug != NONEBOOL ? usedebug : tmancfg->usedebug;
-
-    if (tman_init(&tmancfg->base) != LIBTMAN_OK)
-        return elog(1, "could not init util: %s", tman_strerror(1));
-
-    for (int idx = 0; idx < ARRAY_SIZE(builtins); ++idx)
-        if (strcmp(cmd, builtins[idx].name) == 0)
-            return run_builtin(argc - 1, argv + 1, &ctx, &builtins[idx]);
-
-    if (ispgn(tmancfg->pgndir, cmd) == TRUE)
-        return run_plugin(argc - 1, argv + 1, &ctx);
-
+    if ((builtin = is_builtin(cmd)) != NULL)
+        return run_builtin(argc - i, argv + i, builtin);
+    else if (is_plugin(tmancfg.base.pgn, cmd) == TRUE)
+        return run_plugin(argc - i, argv + i);
     return elog(1, "'%s': no such command or plugin", cmd);
 }

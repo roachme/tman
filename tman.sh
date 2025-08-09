@@ -5,7 +5,7 @@ function tman()
     local tmanstatus;
     local pwdfile="/tmp/tmanpwd"
 
-    _tmancli "$@"
+    tmancli "$@"
     tmanstatus="$?"
 
     test -s "$pwdfile" && cd "$(cat "$pwdfile")" || return "$tmanstatus"

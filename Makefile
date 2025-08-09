@@ -1,5 +1,5 @@
 MAKE=make
-PROGRAM=_tmancli
+PROGRAM=tmancli
 VERSION=$(shell cat VERSION.txt)
 README=README.md
 SHELLSCRIPT=tman.sh
@@ -81,7 +81,7 @@ release: clean init style check $(PROGRAM) generate
 
 #build:
 #	#gcc -g -Wall lib/*.h lib/*.c -o tman
-#	gcc -g  lib/*.h lib/*.c -o _tmancli
+#	gcc -g  lib/*.h lib/*.c -o $(PROGRAM)
 #
 #prof:
 #	# clean up

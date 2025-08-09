@@ -1,5 +1,5 @@
 define(MACRO_TMANAME, tman)dnl
-define(MACRO_USAGE, `esyscmd(./_tmancli)')dnl
+define(MACRO_USAGE, `esyscmd(./tmancli)')dnl
 define(MACRO_CODE, changequote([,])[changequote([,])```changequote(`,')]changequote(`,'))dnl
 define(MACRO_INLINE_CODE, changequote([,])[changequote([,])`changequote(`,')]changequote(`,'))dnl
 <div align="center">
@@ -49,7 +49,7 @@ make
 MACRO_CODE
 
 ## ⇁  Installation
-1. Once you compiled successfully, put executable MACRO_INLINE_CODE _tmancli MACRO_INLINE_CODE into one of directories defined in env variable MACRO_INLINE_CODE PATH MACRO_INLINE_CODE . I put it in MACRO_INLINE_CODE ~/.local/bin MACRO_INLINE_CODE .
+1. Once you compiled successfully, put executable MACRO_INLINE_CODE tmancli MACRO_INLINE_CODE into one of directories defined in env variable MACRO_INLINE_CODE PATH MACRO_INLINE_CODE . I put it in MACRO_INLINE_CODE ~/.local/bin MACRO_INLINE_CODE .
 2. Copy the content of tman.sh into your shell rc file. It's MACRO_INLINE_CODE ~/.bashrc MACRO_INLINE_CODE , MACRO_INLINE_CODE .zshrc MACRO_INLINE_CODE , etc.
 
 MACRO_CODE bash
@@ -93,7 +93,7 @@ Note: \
 
 ## ⇁  Basic workflow
 1. To initalize util type in MACRO_INLINE_CODE tman init MACRO_INLINE_CODE
-2. Now you're ready to create a project: MACRO_INLINE_CODE tman prj add test MACRO_INLINE_CODE
+2. Now you're ready to create a project: MACRO_INLINE_CODE tman project add test MACRO_INLINE_CODE
 3. Once task project is created you can fill it with tasks: MACRO_INLINE_CODE tman add test1 MACRO_INLINE_CODE
 4. List all your task in current project: MACRO_INLINE_CODE tman list MACRO_INLINE_CODE
 5. Show the content of task: MACRO_INLINE_CODE tman show test1 MACRO_INLINE_CODE

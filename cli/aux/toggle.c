@@ -91,6 +91,11 @@ static char *brd_get_prev(char *base, tman_arg_t * args)
 }
 */
 
+static char *prj_get_prev(char *base, tman_arg_t * args)
+{
+    return _get_toggle(path_prj_toggle(base, args), task_prev, "prev");
+}
+
 static char *task_get_prev(char *base, tman_arg_t * args)
 {
     return _get_toggle(path_task_toggle(base, args), task_prev, "prev");
@@ -108,12 +113,24 @@ static int task_set_prev(char *base, tman_arg_t * args)
 }
 */
 
+/* Toggles: project scope: BEGIN.   */
 int toggle_project_get_curr(char *base, tman_arg_t * args)
 {
     if (!args->project && !(args->project = prj_get_curr(base, args)))
         return 1;
     return 0;
 }
+
+int toggle_project_get_prev(char *base, tman_arg_t * args)
+{
+    if (!args->project && !(args->project = prj_get_prev(base, args))) {
+        elog(1, "sserror '%s'", args->project);
+        return 1;
+    }
+    return 0;
+}
+
+/* Toggles: project scope: END.   */
 
 int toggle_board_get_curr(char *base, tman_arg_t * args)
 {
@@ -136,6 +153,53 @@ int toggle_task_get_prev(char *base, tman_arg_t * args)
     return 0;
 }
 
+int toggle_project_set_curr(char *base, tman_arg_t * args)
+{
+    char *curr, *prev;
+    tman_unit_t *toggles;
+
+    toggles = NULL;
+    curr = args->project;
+    prev = prj_get_curr(base, args);
+
+    toggles = tman_unit_add(toggles, "curr", curr);
+    if (prev)
+        toggles = tman_unit_add(toggles, "prev", prev);
+
+    /* Prevent duplicates in toggles.  */
+    if (prev && strcmp(curr, prev) == 0) {
+        // do nothing
+    } else {
+        tman_unit_save(path_prj_toggle(base, args), toggles);
+    }
+    tman_unit_free(toggles);
+    return 0;
+}
+
+int toggle_board_set_curr(char *base, tman_arg_t * args)
+{
+    char *curr, *prev;
+    tman_unit_t *toggles;
+
+    toggles = NULL;
+    curr = args->board;
+    prev = brd_get_curr(base, args);
+
+    toggles = tman_unit_add(toggles, "curr", curr);
+    if (prev)
+        toggles = tman_unit_add(toggles, "prev", prev);
+
+    /* Prevent duplicates in toggles.  */
+    if (prev && strcmp(curr, prev) == 0) {
+        // do nothing
+    } else {
+        tman_unit_save(path_brd_toggle(base, args), toggles);
+    }
+    tman_unit_free(toggles);
+    return 0;
+
+}
+
 int toggle_task_set_curr(char *base, tman_arg_t * args)
 {
     char *curr, *prev;
@@ -150,24 +214,32 @@ int toggle_task_set_curr(char *base, tman_arg_t * args)
         toggles = tman_unit_add(toggles, "prev", prev);
 
     /* Prevent duplicates in toggles.  */
-    if (prev && strcmp(curr, prev) != 0)
+    if (prev && strcmp(curr, prev) == 0) {
+        // do nothing
+    } else {
         tman_unit_save(path_task_toggle(base, args), toggles);
-
+    }
     tman_unit_free(toggles);
     return 0;
 }
 
-/*
-int toggle_task_del_curr(char *base, tman_arg_t * args)
+int toggle_project_swap(char *base, tman_arg_t * args)
 {
-    return 1;
-}
+    char *curr, *prev;
+    tman_unit_t *toggles;
 
-int toggle_task_del_prev(char *base, tman_arg_t * args)
-{
-    return 1;
+    toggles = NULL;
+    curr = prj_get_curr(base, args);
+    prev = prj_get_prev(base, args);
+
+    if (curr == NULL || prev == NULL)
+        return 1;
+
+    toggles = tman_unit_add(toggles, "curr", prev);
+    toggles = tman_unit_add(toggles, "prev", curr);
+
+    return tman_unit_save(path_prj_toggle(base, args), toggles);
 }
-*/
 
 int toggle_task_swap(char *base, tman_arg_t * args)
 {
