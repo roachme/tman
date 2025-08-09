@@ -131,9 +131,7 @@ tman_unit_t *generate_column(char *colname)
         return NULL;
 
     column = NULL;
-    column = tman_unit_add(column, "mark", builtin_columns[index].mark);
     column = tman_unit_add(column, "name", builtin_columns[index].name);
-    column = tman_unit_add(column, "prio", xstr(index));
     return column;
 }
 

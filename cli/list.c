@@ -205,10 +205,8 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
         if (filter.toggle) {
             show_toggles(ctx, &args);
         } else if (filter.column) {
-            elog(1, "show only task on column '%s'", filter.column);
             show_columns(ctx, &args, ctx->list, quiet);
         } else {
-            elog(1, "show all tasks on all columns");
             show_columns(ctx, &args, ctx->list, quiet);
         }
 
