@@ -324,7 +324,7 @@ int main(int argc, char **argv)
     togfmt = "option `-%c' accepts either 'on' or 'off'";
 
     /* Parse util itself options.  */
-    while ((c = getopt(argc, argv, "+hC:D:F:H:P:T:V")) != -1) {
+    while ((c = getopt(argc, argv, "+:hC:D:F:H:P:T:V")) != -1) {
         switch (c) {
         case 'h':
             showhelp = TRUE;
