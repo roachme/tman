@@ -95,7 +95,7 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
         } else if (!(status = tec_project_exist(teccfg.base.task, &args))) {
             char *project = args.project;
             if (quiet == FALSE)
-                elog(status, errfmt, project, tec_strerror(LIBTEC_PRJ_EXISTS));
+                elog(status, errfmt, project, tec_strerror(LIBTEC_ARG_EXISTS));
             continue;
         }
 
@@ -111,7 +111,7 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
         } else if (!(status = tec_board_exist(teccfg.base.task, &args))) {
             if (quiet == FALSE)
                 elog(status, errfmt_board, args.board,
-                     tec_strerror(LIBTEC_BRD_EXISTS));
+                     tec_strerror(LIBTEC_ARG_EXISTS));
             continue;
         }
 

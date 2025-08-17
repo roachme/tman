@@ -112,7 +112,7 @@ int tec_cli_add(int argc, char **argv, tec_ctx_t * ctx)
             return status;
         } else if (!(status = tec_task_exist(teccfg.base.task, &args))) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.taskid, tec_strerror(status));
+                elog(1, errfmt, args.taskid, tec_strerror(LIBTEC_ARG_EXISTS));
             args.taskid = NULL; /* unset task ID, not to break loop.  */
             continue;
         } else if (generate_units(ctx, args.project, args.taskid)) {

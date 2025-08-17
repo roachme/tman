@@ -71,7 +71,7 @@ static char *get_column_name(tec_ctx_t * ctx, tec_arg_t * args, int quiet)
             elog(status, "'%s': %s one", args->taskid, tec_strerror(status));
     } else if ((colname = tec_unit_key(ctx->column, "name")) == NULL) {
         if (quiet == FALSE)
-            elog(1, "'%s': %s", args->taskid, "description not found");
+            elog(1, "'%s': %s", args->taskid, "column name not found");
     }
     return colname;
 }
