@@ -7,19 +7,19 @@
 #include "toggle.h"
 
 /* TODO:
-    Structure: tman PGN -i -b -p COMMAND [OPTION]... [APRS]
+    Structure: tec PGN -i -b -p COMMAND [OPTION]... [APRS]
     1. Can't use getopt cuz there might be different options for plugins and
        their commads.
     2. Use for/while loop to circle through options and their arguments.
     3. Separate plugin options from plugin command options.
     4. Or maybe it's better to let the plugin to handle plugin options and the rest.
 */
-int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_plugin(int argc, char **argv, tec_ctx_t * ctx)
 {
     int i;
     char *pgn;
     char *option;
-    tman_arg_t args;
+    tec_arg_t args;
     char pgnopts[BUFSIZ + 1] = { 0 };
     char pgnexec[BUFSIZ + 1] = { 0 };
     int status;
@@ -53,26 +53,26 @@ int tman_cli_plugin(int argc, char **argv, tman_ctx_t * ctx)
     }
 
     /* Add default inputs if any. Do NOT check anything. Plugins should do.  */
-    if ((status = toggle_project_get_curr(tmancfg.base.task, &args))) {
+    if ((status = toggle_project_get_curr(teccfg.base.task, &args))) {
         return status;
     }
-    if ((status = toggle_board_get_curr(tmancfg.base.task, &args))) {
+    if ((status = toggle_board_get_curr(teccfg.base.task, &args))) {
         return status;
     }
-    if ((status = toggle_task_get_curr(tmancfg.base.task, &args))) {
+    if ((status = toggle_task_get_curr(teccfg.base.task, &args))) {
         return status;
     }
 
-    strcat(pgnexec, tmancfg.base.pgn);
+    strcat(pgnexec, teccfg.base.pgn);
     strcat(pgnexec, "/");
     strcat(pgnexec, pgn);
     strcat(pgnexec, "/");
     strcat(pgnexec, pgn);
 
     strcat(pgnexec, " -T ");
-    strcat(pgnexec, tmancfg.base.task);
+    strcat(pgnexec, teccfg.base.task);
     strcat(pgnexec, " -P ");
-    strcat(pgnexec, tmancfg.base.pgn);
+    strcat(pgnexec, teccfg.base.pgn);
 
     strcat(pgnexec, " ");
     strcat(pgnexec, pgnopts);

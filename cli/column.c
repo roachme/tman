@@ -4,7 +4,7 @@
 #include "aux/toggle.h"
 #include "aux/config.h"
 
-static int _column_list(int argc, char **argv, tman_ctx_t * ctx)
+static int _column_list(int argc, char **argv, tec_ctx_t * ctx)
 {
     for (int i = 0; i < nbuiltin_column; ++i) {
         column_t columns = builtin_columns[i];
@@ -15,9 +15,9 @@ static int _column_list(int argc, char **argv, tman_ctx_t * ctx)
     return 0;
 }
 
-static int _column_move(int argc, char **argv, tman_ctx_t * ctx)
+static int _column_move(int argc, char **argv, tec_ctx_t * ctx)
 {
-    tman_arg_t args;
+    tec_arg_t args;
     char c, *errfmt, *colname;
     int i, quiet, showhelp, status;
 
@@ -51,11 +51,11 @@ static int _column_move(int argc, char **argv, tman_ctx_t * ctx)
     if (showhelp == TRUE)
         return help_usage("column-move");
 
-    if ((status = toggle_project_get_curr(tmancfg.base.task, &args))) {
+    if ((status = toggle_project_get_curr(teccfg.base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
-    } else if ((status = toggle_board_get_curr(tmancfg.base.task, &args))) {
+    } else if ((status = toggle_board_get_curr(teccfg.base.task, &args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current board");
         return status;
@@ -73,15 +73,15 @@ static int _column_move(int argc, char **argv, tman_ctx_t * ctx)
     do {
         args.taskid = argv[i];
 
-        if ((status = toggle_task_get_curr(tmancfg.base.task, &args))) {
+        if ((status = toggle_task_get_curr(teccfg.base.task, &args))) {
             if (quiet == FALSE)
                 elog(status, errfmt, "NOCURR", "no current task");
             return status;
         } else if (colname
                    && (status =
-                       tman_task_column_set(tmancfg.base.task, &args, ctx))) {
+                       tec_task_column_set(teccfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.taskid, tman_strerror(status));
+                elog(status, errfmt, args.taskid, tec_strerror(status));
             continue;
         } else if (hook_action(&args, "column-move")) {
             if (quiet == FALSE)
@@ -92,9 +92,9 @@ static int _column_move(int argc, char **argv, tman_ctx_t * ctx)
     return status;
 }
 
-static int _column_rename(int argc, char **argv, tman_ctx_t * ctx)
+static int _column_rename(int argc, char **argv, tec_ctx_t * ctx)
 {
-    return elog(1, "under development: rename column in file .tman/column");
+    return elog(1, "under development: rename column in file .tec/column");
 }
 
 static const builtin_t column_commands[] = {
@@ -103,7 +103,7 @@ static const builtin_t column_commands[] = {
     {.name = "rename",.func = &_column_rename},
 };
 
-int tman_cli_column(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_column(int argc, char **argv, tec_ctx_t * ctx)
 {
     char *cmd = argv[1] != NULL ? argv[1] : "list";
 

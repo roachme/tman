@@ -1,5 +1,5 @@
-#ifndef LIBTMAN_COLOR_H
-#define LIBTMAN_COLOR_H
+#ifndef LIBTEC_COLOR_H
+#define LIBTEC_COLOR_H
 
 /*
  * This is free and unencumbered software released into the public domain.

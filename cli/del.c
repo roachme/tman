@@ -3,9 +3,9 @@
 #include "aux/config.h"
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_del(int argc, char **argv, tec_ctx_t * ctx)
 {
-    tman_arg_t args;
+    tec_arg_t args;
     char c, *errfmt;
     int i, choice, quiet, showhelp, autoconfirm, status;
 
@@ -64,9 +64,9 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
             if (quiet == FALSE)
                 elog(1, errfmt, args.taskid, "failed to execute hooks");
             continue;
-        } else if ((status = tman_task_del(tmancfg.base.task, &args, ctx))) {
+        } else if ((status = tec_task_del(teccfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.taskid, tman_strerror(status));
+                elog(status, errfmt, args.taskid, tec_strerror(status));
             continue;
         }
     } while (++i < argc);
@@ -74,5 +74,5 @@ int tman_cli_del(int argc, char **argv, tman_ctx_t * ctx)
     // FIXME: when delete task ID from non-current project,
     // it switches to current task in current project.
     // BUT should not change user's CWD at all.
-    return status == LIBTMAN_OK ? tman_pwd_task(&args) : status;
+    return status == LIBTEC_OK ? tec_pwd_task(&args) : status;
 }

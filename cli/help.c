@@ -33,7 +33,7 @@ struct helpctx helpctx = {
 struct help helptab[] = {
     {
      .tag = SYSTEM,
-     .name = "tman",
+     .name = "tec",
      .synop = "Usage: " PROGRAM " [OPTION]... COMMAND|PLUGIN\n",
      .desc_short = "Terminal project and task manager.\n",
      .desc_long = "\n\
@@ -678,12 +678,12 @@ int help_lookup(const char *cmd)
     return found == TRUE ? 0 : 1;
 }
 
-int tman_cli_help(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_help(int argc, char **argv, tec_ctx_t * ctx)
 {
     char c;
     int i, status;
 
-    status = LIBTMAN_OK;
+    status = LIBTEC_OK;
     while ((c = getopt(argc, argv, ":ds")) != -1) {
         switch (c) {
         case 'd':

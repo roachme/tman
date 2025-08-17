@@ -119,7 +119,7 @@ function make_version_commit()
     git add "$FILEVERSION"
     git add "$FILECHANGELOG"
     git add lib
-    git commit -m "tman: Bump version to $VERSION_NEW"
+    git commit -m "tec: Bump version to $VERSION_NEW"
 }
 
 function update_tags()

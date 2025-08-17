@@ -3,7 +3,7 @@
 
 #include <libconfig.h>
 
-#include "../../lib/src/libtman.h"
+#include "../../lib/src/libtec.h"
 
 #define NUMCONFIG       2
 #define CONFIGSIZ       256
@@ -14,28 +14,28 @@
 #define CONF_MAXBASE    256
 #define CONF_MAXPGNINS  256
 
-typedef struct tman_base {
+typedef struct tec_base {
     char *pgn;                  /* Directory where plugins are stored */
     char *task;                 /* Directory where tasks are stored */
-} tman_base_t;
+} tec_base_t;
 
-typedef struct tman_option {
+typedef struct tec_option {
     int color;                  /* use colors */
     int debug;                  /* output debug info */
     int hook;                   /* execute hooks from config, by default set */
-} tman_opt_t;
+} tec_opt_t;
 
 typedef struct config {
-    tman_opt_t opts;
-    tman_base_t base;
-    struct tman_hook *hooks;
-} tman_cfg_t;
+    tec_opt_t opts;
+    tec_base_t base;
+    struct tec_hook *hooks;
+} tec_cfg_t;
 
-extern tman_cfg_t tmancfg;
+extern tec_cfg_t teccfg;
 
-int tman_config_init(tman_cfg_t * tman_config);
-int tman_config_set_base(tman_base_t * base);
-int tman_config_set_options(tman_opt_t * opts);
-int tman_config_parse(tman_cfg_t * tman_config);
-void tman_config_destroy(tman_cfg_t * tman_config);
+int tec_config_init(tec_cfg_t * tec_config);
+int tec_config_set_base(tec_base_t * base);
+int tec_config_set_options(tec_opt_t * opts);
+int tec_config_parse(tec_cfg_t * tec_config);
+void tec_config_destroy(tec_cfg_t * tec_config);
 #endif

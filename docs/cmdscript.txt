@@ -1,12 +1,12 @@
-# Let's initialize tman
-tman init
+# Let's initialize tec
+tec init
 
 # We create a testing project, name it 'test' and add some tasks
-tman prj add test
-tman add test1
-tman add test2
-tman add test3
-tman add test4
+tec prj add test
+tec add test1
+tec add test2
+tec add test3
+tec add test4
 
 # Let's see those tasks
-tman list
+tec list

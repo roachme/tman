@@ -1,10 +1,10 @@
-define(MACRO_TMANAME, tman)dnl
-define(MACRO_USAGE, `esyscmd(./tmancli)')dnl
+define(MACRO_TECAME, tec)dnl
+define(MACRO_USAGE, `esyscmd(./teccli)')dnl
 define(MACRO_CODE, changequote([,])[changequote([,])```changequote(`,')]changequote(`,'))dnl
 define(MACRO_INLINE_CODE, changequote([,])[changequote([,])`changequote(`,')]changequote(`,'))dnl
 <div align="center">
    <!--<img align="center" width="128px" src="crates/gitbutler-tauri/icons/128x128@2x.png" /> -->
-	<h1 align="center"><b>Tman</b></h1>
+	<h1 align="center"><b>Tec</b></h1>
 	<p align="center">
         Terminal project and task  manager
     <br />
@@ -14,7 +14,7 @@ define(MACRO_INLINE_CODE, changequote([,])[changequote([,])`changequote(`,')]cha
 <br/>
 
 
-![command example](docs/tman.gif)
+![command example](docs/tec.gif)
 
 
 ## ⇁  Problems
@@ -25,14 +25,14 @@ Among them
 3. Often switch between task, which involves context, notes, sketches, and especially Git branches
 
 ## ⇁  Solution
-Tman comes with 3 basic ideas
+Tec comes with 3 basic ideas
 1. Structure your workspace for each task
 2. Get you exactly where you want with fewest keystrokes
 3. Automate stuff that you're tired of during the work. Here plugins are for
 
 ## ⇁  Structure
 - Customize: Adjust the util for your workflow via config file.
-- Extensible: Extend util with predefined or your own plugins. You can get full list of Tman plugins in MACRO_CODE tman-pgn MACRO_CODE.
+- Extensible: Extend util with predefined or your own plugins. You can get full list of Tec plugins in MACRO_CODE tec-pgn MACRO_CODE.
 
 ## ⇁  Dependencies
 Plugins might have dependencies. Take a look at plugins README.md for more info.
@@ -49,20 +49,20 @@ make
 MACRO_CODE
 
 ## ⇁  Installation
-1. Once you compiled successfully, put executable MACRO_INLINE_CODE tmancli MACRO_INLINE_CODE into one of directories defined in env variable MACRO_INLINE_CODE PATH MACRO_INLINE_CODE . I put it in MACRO_INLINE_CODE ~/.local/bin MACRO_INLINE_CODE .
-2. Copy the content of tman.sh into your shell rc file. It's MACRO_INLINE_CODE ~/.bashrc MACRO_INLINE_CODE , MACRO_INLINE_CODE .zshrc MACRO_INLINE_CODE , etc.
+1. Once you compiled successfully, put executable MACRO_INLINE_CODE teccli MACRO_INLINE_CODE into one of directories defined in env variable MACRO_INLINE_CODE PATH MACRO_INLINE_CODE . I put it in MACRO_INLINE_CODE ~/.local/bin MACRO_INLINE_CODE .
+2. Copy the content of tec.sh into your shell rc file. It's MACRO_INLINE_CODE ~/.bashrc MACRO_INLINE_CODE , MACRO_INLINE_CODE .zshrc MACRO_INLINE_CODE , etc.
 
 MACRO_CODE bash
-include(tman.sh)dnl
+include(tec.sh)dnl
 MACRO_CODE
 
-3. Create basic Tman config file. Either in MACRO_INLINE_CODE ~/.tman/tman.cfg MACRO_INLINE_CODE or MACRO_INLINE_CODE ~/.config/tman/tman.cfg MACRO_INLINE_CODE and fill it with content below
+3. Create basic Tec config file. Either in MACRO_INLINE_CODE ~/.tec/tec.cfg MACRO_INLINE_CODE or MACRO_INLINE_CODE ~/.config/tec/tec.cfg MACRO_INLINE_CODE and fill it with content below
 
 MACRO_CODE
-include(templates/tman.cfg)dnl
+include(templates/tec.cfg)dnl
 MACRO_CODE
 
-## ⇁  Tman builtin commands
+## ⇁  Tec builtin commands
 MACRO_CODE
 MACRO_USAGE
 MACRO_CODE
@@ -73,34 +73,34 @@ MACRO_CODE
 There is a MACRO_INLINE_CODE pgm MACRO_INLINE_CODE plugin manager to install plugins.
 
 Here's some plugin to check out \
-MACRO_INLINE_CODE pgm MACRO_INLINE_CODE - [Tman plugin manager](https://github.com/roachme/tman-pgm.git) \
-MACRO_INLINE_CODE gmux MACRO_INLINE_CODE - [Manage bunch of git repos](https://github.com/roachme/tman-gmux.git) \
-MACRO_INLINE_CODE find MACRO_INLINE_CODE - [Find stuff in tasks](https://github.com/roachme/tman-find.git)
+MACRO_INLINE_CODE pgm MACRO_INLINE_CODE - [Tec plugin manager](https://github.com/roachme/tec-pgm.git) \
+MACRO_INLINE_CODE gmux MACRO_INLINE_CODE - [Manage bunch of git repos](https://github.com/roachme/tec-gmux.git) \
+MACRO_INLINE_CODE find MACRO_INLINE_CODE - [Find stuff in tasks](https://github.com/roachme/tec-find.git)
 
 
 ## ⇁  Install plugin manager
 
 To install plugin manager run the code below
 MACRO_CODE
-export PGNDIR="$HOME/.local/lib/tman/pgn"
-git clone https://github.com/roachme/tman-pgm.git "$PGNDIR/pgm"
+export PGNDIR="$HOME/.local/lib/tec/pgn"
+git clone https://github.com/roachme/tec-pgm.git "$PGNDIR/pgm"
 MACRO_CODE
 Note: \
-1. Make sure repo dirname has NO prefix MACRO_INLINE_CODE tman- MACRO_INLINE_CODE. The same goes about any plugin to install \
-2. MACRO_INLINE_CODE "$PGNDIR" MACRO_INLINE_CODE is the path set in MACRO_INLINE_CODE tman.cfg MACRO_INLINE_CODE.
-   Make sure MACRO_INLINE_CODE PGNDIR MACRO_INLINE_CODE is the same as MACRO_INLINE_CODE base.pgn MACRO_INLINE_CODE in MACRO_INLINE_CODE tman.cfg MACRO_INLINE_CODE shown above.
+1. Make sure repo dirname has NO prefix MACRO_INLINE_CODE tec- MACRO_INLINE_CODE. The same goes about any plugin to install \
+2. MACRO_INLINE_CODE "$PGNDIR" MACRO_INLINE_CODE is the path set in MACRO_INLINE_CODE tec.cfg MACRO_INLINE_CODE.
+   Make sure MACRO_INLINE_CODE PGNDIR MACRO_INLINE_CODE is the same as MACRO_INLINE_CODE base.pgn MACRO_INLINE_CODE in MACRO_INLINE_CODE tec.cfg MACRO_INLINE_CODE shown above.
 
 
 ## ⇁  Basic workflow
-1. To initalize util type in MACRO_INLINE_CODE tman init MACRO_INLINE_CODE
-2. Now you're ready to create a project: MACRO_INLINE_CODE tman project add test MACRO_INLINE_CODE
-3. Once task project is created you can fill it with tasks: MACRO_INLINE_CODE tman add test1 MACRO_INLINE_CODE
-4. List all your task in current project: MACRO_INLINE_CODE tman list MACRO_INLINE_CODE
-5. Show the content of task: MACRO_INLINE_CODE tman show test1 MACRO_INLINE_CODE
-6. Sync with current task: MACRO_INLINE_CODE tman sync MACRO_INLINE_CODE
-7. Or quickly switch to previous task: MACRO_INLINE_CODE tman prev MACRO_INLINE_CODE
+1. To initalize util type in MACRO_INLINE_CODE tec init MACRO_INLINE_CODE
+2. Now you're ready to create a project: MACRO_INLINE_CODE tec project add test MACRO_INLINE_CODE
+3. Once task project is created you can fill it with tasks: MACRO_INLINE_CODE tec add test1 MACRO_INLINE_CODE
+4. List all your task in current project: MACRO_INLINE_CODE tec list MACRO_INLINE_CODE
+5. Show the content of task: MACRO_INLINE_CODE tec show test1 MACRO_INLINE_CODE
+6. Sync with current task: MACRO_INLINE_CODE tec sync MACRO_INLINE_CODE
+7. Or quickly switch to previous task: MACRO_INLINE_CODE tec prev MACRO_INLINE_CODE
 
 
 ## ⇁  Tips
-1. Use MACRO_INLINE_CODE tman help MACRO_INLINE_CODE to get list of commands.
-2. Or MACRO_INLINE_CODE tman help COMMAND MACRO_INLINE_CODE to get help on specified command.
+1. Use MACRO_INLINE_CODE tec help MACRO_INLINE_CODE to get list of commands.
+2. Or MACRO_INLINE_CODE tec help COMMAND MACRO_INLINE_CODE to get help on specified command.

@@ -2,9 +2,9 @@
 #include "aux/toggle.h"
 #include "aux/config.h"
 
-int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_sync(int argc, char **argv, tec_ctx_t * ctx)
 {
-    tman_arg_t args;
+    tec_arg_t args;
     char c, *errfmt;
     int i, quiet, showhelp, status;
     int switch_toggle, switch_dir;
@@ -62,10 +62,10 @@ int tman_cli_sync(int argc, char **argv, tman_ctx_t * ctx)
         }
     } while (++i < argc);
 
-    if (status == LIBTMAN_OK && switch_toggle == TRUE) {
-        if (toggle_task_set_curr(tmancfg.base.task, &args) && quiet == FALSE)
+    if (status == LIBTEC_OK && switch_toggle == TRUE) {
+        if (toggle_task_set_curr(teccfg.base.task, &args) && quiet == FALSE)
             status = elog(1, "could not update toggles");
     }
 
-    return status == LIBTMAN_OK && switch_dir ? tman_pwd_task(&args) : status;
+    return status == LIBTEC_OK && switch_dir ? tec_pwd_task(&args) : status;
 }

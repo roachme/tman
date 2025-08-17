@@ -1,9 +1,9 @@
 #!/bin/env bash
 
 # TODO: use `gh release` to upload release to github
-# gh release create v0.0.18 --title "Version v0.0.18" --notes-file CHANGELOG.md artifacts/build/release/tman-linux-x86_64.tar
+# gh release create v0.0.18 --title "Version v0.0.18" --notes-file CHANGELOG.md artifacts/build/release/tec-linux-x86_64.tar
 
-PROGNAME="tman"
+PROGNAME="tec"
 OSNAME="$(uname -s)"
 HWNAME="$(uname -m)"
 BASEDIR="artifacts/build/release"
@@ -43,11 +43,11 @@ make
 mkdir -p "$DIRNAME"
 make_version_changelog > "$RELEASE_NOTE"
 
-cp _tmancli "$DIRNAME"
-cp tman.sh "$DIRNAME"
+cp teccli "$DIRNAME"
+cp tec.sh "$DIRNAME"
 cp README.md "$DIRNAME"
 tar cf "$DIRNAME.tar" "$DIRNAME"
 
 # TODO: Upload it to github once script is ready
-# gh release create v0.0.19 --title "Version v0.0.19" --notes-file "$RELEASE_NOTE" artifacts/build/release/tman-linux-x86_64.tar
+# gh release create v0.0.19 --title "Version v0.0.19" --notes-file "$RELEASE_NOTE" artifacts/build/release/tec-linux-x86_64.tar
 rm -rf "$DIRNAME"

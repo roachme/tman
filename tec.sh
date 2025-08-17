@@ -1,11 +1,9 @@
-changecom()dnl
-define(SHEBANG, `#!/usr/bin/env')dnl
-SHEBANG SHELLNAME
+#!/usr/bin/env bash
 
 function tec()
 {
     local tecstatus;
-    local pwdfile="PWDFILE"
+    local pwdfile="/tmp/tecpwd"
 
     teccli "$@"
     tecstatus="$?"

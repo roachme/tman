@@ -9,21 +9,21 @@
 /* Note: should be static cuz args->task point to it.  */
 static char gentask[IDSIZ + 1];
 
-static int generate_task(tman_arg_t * args)
+static int generate_task(tec_arg_t * args)
 {
     args->taskid = gentask;
     for (register unsigned int i = 1; i < IDLIMIT; ++i) {
         sprintf(gentask, IDFMT, i);
-        if (tman_task_exist(tmancfg.base.task, args) != LIBTMAN_OK)
+        if (tec_task_exist(teccfg.base.task, args) != LIBTEC_OK)
             return 0;
     }
     return 1;
 }
 
-static int generate_units(tman_ctx_t * ctx, char *prj, char *task)
+static int generate_units(tec_ctx_t * ctx, char *prj, char *task)
 {
     char date[BUFSIZ + 1];
-    struct tman_unit *units = NULL;
+    struct tec_unit *units = NULL;
     time_t rawtime = time(NULL);
     const char timefmt[] = "%Y%m%d";
     struct tm *timeinfo = localtime(&rawtime);
@@ -34,15 +34,15 @@ static int generate_units(tman_ctx_t * ctx, char *prj, char *task)
     strftime(date, BUFSIZ, timefmt, timeinfo);
 
     for (int i = 0; i < nunitkey; ++i)
-        units = tman_unit_add(units, unitkeys[i], unitvals[i]);
+        units = tec_unit_add(units, unitkeys[i], unitvals[i]);
     ctx->units = units;
     return 0;
 }
 
-int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_add(int argc, char **argv, tec_ctx_t * ctx)
 {
     char *errfmt;
-    tman_arg_t args;
+    tec_arg_t args;
     char *last_taskid;
     int quiet, showhelp, status, switch_dir, switch_task, i, c;
 
@@ -101,18 +101,18 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
         // TODO: maybe there's no need cuz i use task ID generator
         args.taskid = args.taskid == NULL ? argv[i] : args.taskid;
 
-        if ((status = tman_task_valid(tmancfg.base.task, &args))) {
+        if ((status = tec_task_valid(teccfg.base.task, &args))) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.taskid, tman_strerror(status));
+                elog(status, errfmt, args.taskid, tec_strerror(status));
             args.taskid = NULL; /* unset task ID, not to break loop.  */
             continue;
         } else if (is_valid_length(args.taskid, IDSIZ) == FALSE) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.taskid, "task ID is too long");
             return status;
-        } else if (!(status = tman_task_exist(tmancfg.base.task, &args))) {
+        } else if (!(status = tec_task_exist(teccfg.base.task, &args))) {
             if (quiet == FALSE)
-                elog(1, errfmt, args.taskid, tman_strerror(status));
+                elog(1, errfmt, args.taskid, tec_strerror(status));
             args.taskid = NULL; /* unset task ID, not to break loop.  */
             continue;
         } else if (generate_units(ctx, args.project, args.taskid)) {
@@ -122,15 +122,15 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
             continue;
         }
 
-        if ((status = tman_task_add(tmancfg.base.task, &args, ctx))) {
+        if ((status = tec_task_add(teccfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.taskid, tman_strerror(status));
+                elog(status, errfmt, args.taskid, tec_strerror(status));
         } else if (hook_action(&args, "add")) {
             if (quiet == FALSE)
                 elog(1, errfmt, args.taskid, "failed to execute hooks");
         }
 
-        ctx->units = tman_unit_free(ctx->units);
+        ctx->units = tec_unit_free(ctx->units);
 
         /* TODO: find a better trick.  */
         last_taskid = args.taskid;
@@ -139,12 +139,12 @@ int tman_cli_add(int argc, char **argv, tman_ctx_t * ctx)
 
     args.taskid = last_taskid;
 
-    if ((switch_task && status == LIBTMAN_OK)
-        && toggle_task_set_curr(tmancfg.base.task, &args)) {
+    if ((switch_task && status == LIBTEC_OK)
+        && toggle_task_set_curr(teccfg.base.task, &args)) {
         if (quiet == FALSE)
             elog(status, "could not update toggles");
         return 1;
     }
 
-    return (switch_dir && status == LIBTMAN_OK) ? tman_pwd_task(&args) : status;
+    return (switch_dir && status == LIBTEC_OK) ? tec_pwd_task(&args) : status;
 }

@@ -12,34 +12,34 @@ Priorities:
   low  - when you get time
 
 Bugs:
-+ 1. Command `tman col prev <TASKID>` moves task to column 'prev' even if no current task ID is set.
-  2. Command `tman move` can't move multiple task to another project.
-  3. Command `tman move` cant move 2 task to destination. It simply renames it.
-+ 4. Command `tman set -d 'description'` causes malloc fail, when set longer
++ 1. Command `tec col prev <TASKID>` moves task to column 'prev' even if no current task ID is set.
+  2. Command `tec move` can't move multiple task to another project.
+  3. Command `tec move` cant move 2 task to destination. It simply renames it.
++ 4. Command `tec set -d 'description'` causes malloc fail, when set longer
      description than before.
   5. NULL-termination should follow `strncpy(dst, src, len)`. In case `src`
      is equal to `len` it'll end without '\0'. Checked it with valgrind.
-  6. Command `tman move` does not work after adding new feature to support boards.
+  6. Command `tec move` does not work after adding new feature to support boards.
 
 Ideas:
   1. Replace cat & ls hooks with reading from file. Gonna highly optimize
      command exection.
   2. Add multiple users.
-  3. Add support for plugin to use libtman/tman commands.
+  3. Add support for plugin to use libtec/tec commands.
 + 4. Add support to pass system config values via option to util.
-+ 5. Add option to show task columns in command `tman col`.
-+ 6. Add plugin `note` to take notes. Synopsis: tman note [OPTION]... COMMAND
++ 5. Add option to show task columns in command `tec col`.
++ 6. Add plugin `note` to take notes. Synopsis: tec note [OPTION]... COMMAND
   7. Add plugin workflow to move task from columns to column
-  8. Add libtman NOT as submodule but dependency
+  8. Add libtec NOT as submodule but dependency
   9. Use command `gh` to generate releases
  10. Unify project/board/task's unit and column modules.
  11. Add config option to enable/disable board support in project.
  12. Add commands export/import to move tasks in and out of boards.
- 13. Add short list of exit statuses, other than libtman provides.
- 14. Add support for command 'tman sync -n', to add task to curr column, but not change to task directory
+ 13. Add short list of exit statuses, other than libtec provides.
+ 14. Add support for command 'tec sync -n', to add task to curr column, but not change to task directory
  15. Make ID generatation bigger than the last ID. Might run outta IDs, but just think about it.
- 16. Add support for mark into `tman list`. For builtin and custom columns
- 17. Add task directory option for command `tman init [DIR]`. If nothing's passed use value from config file.
+ 16. Add support for mark into `tec list`. For builtin and custom columns
+ 17. Add task directory option for command `tec init [DIR]`. If nothing's passed use value from config file.
      If nothing found in there then use current directory
  18. Add errstr along with errno. It'l be used to specify invalid input argument or something
  19. Rename module 'unit' to linked list in lib part.
@@ -54,14 +54,14 @@ Prio: high
   5. Add a support for a user to add custom task columns.
 + 6. Add a good manual system.
   7. Plugin gun (for git repos) depends on system unit date. Outta create its own one.
-+ 8. tman_check_prj() does not fail if prj == NULL, tho it should.
++ 8. tec_check_prj() does not fail if prj == NULL, tho it should.
 + 9. Add support to config file to parse $HOME in path. It'll be convient for a user.
  10. Add debug prints to commands. Pro'ly as option -v.
-+11. Maybe it's better to move `tman link` to plugin?
++11. Maybe it's better to move `tec link` to plugin?
  12. Refactor plugin's option and argument parser
- 13. Add tman option -F for config path
-+14. `struct unit` is duplicated in tman.h and unit.h
-+15. Move `tman find` to plugin.
+ 13. Add tec option -F for config path
++14. `struct unit` is duplicated in tec.h and unit.h
++15. Move `tec find` to plugin.
 +16. Move hooks to cli part.
 
 
@@ -70,11 +70,11 @@ Prio: mid
 + 2. Add a style checker.
 + 3. Unify commands list and find.
 + 4. Add case-sensetive option to command list.
-+ 5. Delete function tman_id_find_by_desc(). Use tman_id_list() instead in cli.
-+ 6. Print PWD in /tmp/tmanpwd. Then shell part will it from there.
++ 5. Delete function tec_id_find_by_desc(). Use tec_id_list() instead in cli.
++ 6. Print PWD in /tmp/tecpwd. Then shell part will it from there.
 + 7. In command `add`: if no ID provided then generate task ID.
-+ 8. Why use tman_get_args() if tman_check_arg_id() get default values anyway?
-  9. Delete option `-A' from command `tman list`. Cuz i can use option `-a'
++ 8. Why use tec_get_args() if tec_check_arg_id() get default values anyway?
+  9. Delete option `-A' from command `tec list`. Cuz i can use option `-a'
 +10. Module unit has unit_set() and unit_add(). Delete unit_add() cuz unit_set()
      will check if key exists and change it its value or adds new key-value in the end.
 

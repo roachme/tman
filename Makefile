@@ -1,15 +1,15 @@
 MAKE=make
-PROGRAM=tmancli
+PROGRAM=teccli
 VERSION=$(shell cat VERSION.txt)
 README=README.md
-SHELLSCRIPT=tman.sh
+SHELLSCRIPT=tec.sh
 SHELLNAME=bash
 CC=gcc
 SRCS=$(wildcard cli/*.c cli/aux/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
 CFLAGS=-I lib/src -I cli -Wall -g3  -fbounds-check
 LFLAGS=-lconfig -g
-PWDFILE=/tmp/tmanpwd
+PWDFILE=/tmp/tecpwd
 
 # TODO: add debug mode
 # TODO: add user and developer builds
@@ -36,7 +36,7 @@ init:
 
 $(PROGRAM): $(OBJS)
 	$(MAKE) -C lib lib_static
-	$(CC) -o $@ $^ $(LFLAGS) lib/libtman.a
+	$(CC) -o $@ $^ $(LFLAGS) lib/libtec.a
 
 generate: $(PROGRAM)
 	$(shell m4 -DSHELLNAME=$(SHELLNAME) -DPWDFILE=$(PWDFILE) ./scripts/genshell > $(SHELLSCRIPT))
@@ -80,14 +80,14 @@ release: clean init style check $(PROGRAM) generate
 
 
 #build:
-#	#gcc -g -Wall lib/*.h lib/*.c -o tman
+#	#gcc -g -Wall lib/*.h lib/*.c -o tec
 #	gcc -g  lib/*.h lib/*.c -o $(PROGRAM)
 #
 #prof:
 #	# clean up
-#	rm -rf tman_prof gmon.out prof.txt
-#	gcc -g -Wall -pg lib/*.h lib/*.c -o tman_prof
-#	./tman_prof
-#	gprof ./tman_prof > prof.txt
+#	rm -rf tec_prof gmon.out prof.txt
+#	gcc -g -Wall -pg lib/*.h lib/*.c -o tec_prof
+#	./tec_prof
+#	gprof ./tec_prof > prof.txt
 #
 #

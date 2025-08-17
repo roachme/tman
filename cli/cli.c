@@ -7,7 +7,7 @@
 #include "aux/config.h"
 #include "aux/toggle.h"
 
-struct config tmancfg;
+struct config teccfg;
 char *unitkeys[] = { "prio", "type", "date", "desc", };
 
 unsigned int nunitkey = sizeof(unitkeys) / sizeof(unitkeys[0]);
@@ -23,29 +23,29 @@ unsigned int nbuiltin_column =
     sizeof(builtin_columns) / sizeof(builtin_columns[0]);
 
 static builtin_t builtins[] = {
-    {.name = "add",.func = &tman_cli_add,.option = TMAN_SETUP_HARD},
-    {.name = "board",.func = &tman_cli_board,.option = TMAN_SETUP_HARD},
-    {.name = "column",.func = &tman_cli_column,.option = TMAN_SETUP_HARD},
-    {.name = "del",.func = &tman_cli_del,.option = TMAN_SETUP_HARD},
-    {.name = "help",.func = &tman_cli_help,.option = TMAN_SETUP_SOFT},
-    {.name = "init",.func = &tman_cli_init,.option = TMAN_SETUP_SOFT},
-    {.name = "list",.func = &tman_cli_list,.option = TMAN_SETUP_HARD},
-    {.name = "move",.func = &tman_cli_move,.option = TMAN_SETUP_HARD},
-    {.name = "prev",.func = &tman_cli_prev,.option = TMAN_SETUP_HARD},
-    {.name = "project",.func = &tman_cli_project,.option = TMAN_SETUP_HARD},
-    {.name = "set",.func = &tman_cli_set,.option = TMAN_SETUP_HARD},
-    {.name = "show",.func = &tman_cli_show,.option = TMAN_SETUP_HARD},
-    {.name = "sync",.func = &tman_cli_sync,.option = TMAN_SETUP_HARD},
+    {.name = "add",.func = &tec_cli_add,.option = TEC_SETUP_HARD},
+    {.name = "board",.func = &tec_cli_board,.option = TEC_SETUP_HARD},
+    {.name = "column",.func = &tec_cli_column,.option = TEC_SETUP_HARD},
+    {.name = "del",.func = &tec_cli_del,.option = TEC_SETUP_HARD},
+    {.name = "help",.func = &tec_cli_help,.option = TEC_SETUP_SOFT},
+    {.name = "init",.func = &tec_cli_init,.option = TEC_SETUP_SOFT},
+    {.name = "list",.func = &tec_cli_list,.option = TEC_SETUP_HARD},
+    {.name = "move",.func = &tec_cli_move,.option = TEC_SETUP_HARD},
+    {.name = "prev",.func = &tec_cli_prev,.option = TEC_SETUP_HARD},
+    {.name = "project",.func = &tec_cli_project,.option = TEC_SETUP_HARD},
+    {.name = "set",.func = &tec_cli_set,.option = TEC_SETUP_HARD},
+    {.name = "show",.func = &tec_cli_show,.option = TEC_SETUP_HARD},
+    {.name = "sync",.func = &tec_cli_sync,.option = TEC_SETUP_HARD},
 };
 
-static int tman_setup(int setuplvl)
+static int tec_setup(int setuplvl)
 {
-    int status = LIBTMAN_OK;
+    int status = LIBTEC_OK;
 
-    if (setuplvl == TMAN_SETUP_SOFT)    /* no filesystem check.  */
+    if (setuplvl == TEC_SETUP_SOFT)     /* no filesystem check.  */
         ;
-    else if (setuplvl == TMAN_SETUP_HARD) {     /* check filesystem.  */
-        status = tman_check_db(tmancfg.base.task);
+    else if (setuplvl == TEC_SETUP_HARD) {      /* check filesystem.  */
+        status = tec_check_db(teccfg.base.task);
     }
     return status;
 }
@@ -74,28 +74,28 @@ static int is_plugin(char *pgndir, const char *pgname)
 static int run_builtin(int argc, char **argv, builtin_t * cmd)
 {
     int status;
-    tman_ctx_t ctx = CTX_INIT;
+    tec_ctx_t ctx = CTX_INIT;
 
-    if ((status = tman_setup(cmd->option)) != LIBTMAN_OK)
-        elog(status, "setup failed: %s", tman_strerror(status));
+    if ((status = tec_setup(cmd->option)) != LIBTEC_OK)
+        elog(status, "setup failed: %s", tec_strerror(status));
     else
         status = cmd->func(argc, argv, &ctx);
 
-    tman_config_destroy(&tmancfg);
+    tec_config_destroy(&teccfg);
     return status;
 }
 
 static int run_plugin(int argc, char **argv)
 {
     int status;
-    tman_ctx_t ctx = CTX_INIT;
+    tec_ctx_t ctx = CTX_INIT;
 
-    if ((status = tman_setup(TMAN_SETUP_HARD)) != LIBTMAN_OK)
-        elog(status, "setup failed: %s", tman_strerror(status));
+    if ((status = tec_setup(TEC_SETUP_HARD)) != LIBTEC_OK)
+        elog(status, "setup failed: %s", tec_strerror(status));
     else
-        status = tman_cli_plugin(argc, argv, &ctx);
+        status = tec_cli_plugin(argc, argv, &ctx);
 
-    tman_config_destroy(&tmancfg);
+    tec_config_destroy(&teccfg);
     return status;
 }
 
@@ -121,76 +121,76 @@ int is_valid_length(const char *obj, int len)
     return FALSE;
 }
 
-int check_arg_project(tman_arg_t * args, const char *errfmt, int quiet)
+int check_arg_project(tec_arg_t * args, const char *errfmt, int quiet)
 {
     int status;
 
-    if ((status = toggle_project_get_curr(tmancfg.base.task, args))) {
+    if ((status = toggle_project_get_curr(teccfg.base.task, args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
-    } else if ((status = tman_project_valid(tmancfg.base.task, args))) {
+    } else if ((status = tec_project_valid(teccfg.base.task, args))) {
         if (quiet == FALSE)
-            elog(status, errfmt, args->project, tman_strerror(status));
+            elog(status, errfmt, args->project, tec_strerror(status));
         return status;
     } else if (is_valid_length(args->project, PRJSIZ) == FALSE) {
         status = 1;
         if (quiet == FALSE)
             elog(status, errfmt, args->project, "project name is too long");
         return status;
-    } else if ((status = tman_project_exist(tmancfg.base.task, args))) {
+    } else if ((status = tec_project_exist(teccfg.base.task, args))) {
         if (quiet == FALSE)
-            elog(status, errfmt, args->project, tman_strerror(status));
+            elog(status, errfmt, args->project, tec_strerror(status));
         return status;
     }
     return 0;
 }
 
-int check_arg_board(tman_arg_t * args, const char *errfmt, int quiet)
+int check_arg_board(tec_arg_t * args, const char *errfmt, int quiet)
 {
     int status;
 
-    if ((status = toggle_board_get_curr(tmancfg.base.task, args))) {
+    if ((status = toggle_board_get_curr(teccfg.base.task, args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current board");
         return status;
-    } else if ((status = tman_board_valid(tmancfg.base.task, args))) {
+    } else if ((status = tec_board_valid(teccfg.base.task, args))) {
         if (quiet == FALSE)
-            elog(status, errfmt, args->board, tman_strerror(status));
+            elog(status, errfmt, args->board, tec_strerror(status));
         return status;
     } else if (is_valid_length(args->board, BRDSIZ) == FALSE) {
         status = 1;
         if (quiet == FALSE)
             elog(status, errfmt, args->board, "board name is too long");
         return status;
-    } else if ((status = tman_board_exist(tmancfg.base.task, args))) {
+    } else if ((status = tec_board_exist(teccfg.base.task, args))) {
         if (quiet == FALSE)
-            elog(status, errfmt, args->board, tman_strerror(status));
+            elog(status, errfmt, args->board, tec_strerror(status));
         return status;
     }
     return 0;
 }
 
-int check_arg_task(tman_arg_t * args, const char *errfmt, int quiet)
+int check_arg_task(tec_arg_t * args, const char *errfmt, int quiet)
 {
     int status;
 
-    if ((status = toggle_task_get_curr(tmancfg.base.task, args))) {
+    if ((status = toggle_task_get_curr(teccfg.base.task, args))) {
         if (quiet == FALSE)
             elog(status, errfmt, "NOCURR", "no current task");
         return status;
-    } else if ((status = tman_task_valid(tmancfg.base.task, args))) {
+    } else if ((status = tec_task_valid(teccfg.base.task, args))) {
         if (quiet == FALSE)
-            elog(status, errfmt, args->taskid, tman_strerror(status));
+            elog(status, errfmt, args->taskid, tec_strerror(status));
         return status;
     } else if (is_valid_length(args->taskid, IDSIZ) == FALSE) {
         status = 1;
         if (quiet == FALSE)
             elog(status, errfmt, args->taskid, "task ID is too long");
         return status;
-    } else if ((status = tman_task_exist(tmancfg.base.task, args))) {
+    } else if ((status = tec_task_exist(teccfg.base.task, args))) {
         if (quiet == FALSE)
-            elog(status, errfmt, args->taskid, tman_strerror(status));
+            elog(status, errfmt, args->taskid, tec_strerror(status));
         return status;
     }
     return 0;
@@ -214,23 +214,23 @@ BOOL column_exist(const char *colname)
     return FALSE;
 }
 
-tman_unit_t *generate_column(char *colname)
+tec_unit_t *generate_column(char *colname)
 {
     unsigned int index;
-    tman_unit_t *column;
+    tec_unit_t *column;
 
     if ((index = get_column_index(colname)) == -1)
         return NULL;
 
     column = NULL;
-    column = tman_unit_add(column, "name", builtin_columns[index].name);
+    column = tec_unit_add(column, "name", builtin_columns[index].name);
     return column;
 }
 
-int tman_pwd_project(tman_arg_t * args)
+int tec_pwd_project(tec_arg_t * args)
 {
     FILE *fp;
-    char *taskdir = tmancfg.base.task;
+    char *taskdir = teccfg.base.task;
 
     if ((fp = fopen(PWDFILE, "w"))) {
         const char *fmt = "%s/%s\n";
@@ -244,10 +244,10 @@ int tman_pwd_project(tman_arg_t * args)
 
 }
 
-int tman_pwd_board(tman_arg_t * args)
+int tec_pwd_board(tec_arg_t * args)
 {
     FILE *fp;
-    char *taskdir = tmancfg.base.task;
+    char *taskdir = teccfg.base.task;
 
     if ((fp = fopen(PWDFILE, "w"))) {
         const char *fmt = "%s/%s/%s\n";
@@ -260,10 +260,10 @@ int tman_pwd_board(tman_arg_t * args)
     return 1;
 }
 
-int tman_pwd_task(tman_arg_t * args)
+int tec_pwd_task(tec_arg_t * args)
 {
     FILE *fp;
-    char *taskdir = tmancfg.base.task;
+    char *taskdir = teccfg.base.task;
 
     if ((fp = fopen(PWDFILE, "w"))) {
         const char *fmt = "%s/%s/%s/%s\n";
@@ -276,7 +276,7 @@ int tman_pwd_task(tman_arg_t * args)
     return 1;
 }
 
-int tman_pwd_unset(void)
+int tec_pwd_unset(void)
 {
     FILE *fp;
 
@@ -298,7 +298,7 @@ int elog(int status, const char *fmt, ...)
 
 int dlog(int level, const char *fmt, ...)
 {
-    if (tmancfg.opts.debug == FALSE)
+    if (teccfg.opts.debug == FALSE)
         return 0;
 
     va_list arg;
@@ -312,8 +312,8 @@ int dlog(int level, const char *fmt, ...)
 
 int main(int argc, char **argv)
 {
-    tman_opt_t opts;
-    tman_base_t base;
+    tec_opt_t opts;
+    tec_base_t base;
     builtin_t *builtin;
     int c, i, showhelp;
     char *cmd, *option, *togfmt;
@@ -359,23 +359,23 @@ int main(int argc, char **argv)
 
     i = optind;
     optind = 0;                 /* Unset option index cuz subcommands use getopt too.  */
-    tman_pwd_unset();
+    tec_pwd_unset();
 
     if (showhelp == TRUE || (cmd = argv[i]) == NULL)
         cmd = "help";
 
-    if (tman_config_init(&tmancfg))
+    if (tec_config_init(&teccfg))
         return elog(1, "could init config file");
-    else if (tman_config_parse(&tmancfg))
+    else if (tec_config_parse(&teccfg))
         return elog(1, "could parse config file");
-    else if (tman_config_set_base(&base))
+    else if (tec_config_set_base(&base))
         return elog(1, "could set config base directories");
-    else if (tman_config_set_options(&opts))
+    else if (tec_config_set_options(&opts))
         return elog(1, "could set config options");
 
     if ((builtin = is_builtin(cmd)) != NULL)
         return run_builtin(argc - i, argv + i, builtin);
-    else if (is_plugin(tmancfg.base.pgn, cmd) == TRUE)
+    else if (is_plugin(teccfg.base.pgn, cmd) == TRUE)
         return run_plugin(argc - i, argv + i);
     return elog(1, "'%s': no such command or plugin", cmd);
 }

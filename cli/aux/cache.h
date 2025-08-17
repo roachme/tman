@@ -1,5 +1,5 @@
-#ifndef LIBTMAN_CACHE_H
-#define LIBTMAN_CACHE_H
+#ifndef LIBTEC_CACHE_H
+#define LIBTEC_CACHE_H
 
 #include "../cli.h"
 

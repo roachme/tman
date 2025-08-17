@@ -31,7 +31,7 @@ static struct list_filter filter = {
     .column = NULL,
 };
 
-// TODO: tman list -aT - fails. is that a bug?
+// TODO: tec list -aT - fails. is that a bug?
 // roachme: refactor this shit
 static int check_filters(int quiet)
 {
@@ -44,39 +44,39 @@ static int check_filters(int quiet)
 }
 
 // TODO: remove parameter 'quiet', return status, and let the caller to
-static char *get_unit_desc(tman_ctx_t * ctx, tman_arg_t * args, int quiet)
+static char *get_unit_desc(tec_ctx_t * ctx, tec_arg_t * args, int quiet)
 {
     int status;
     char *desc;
 
     desc = NULL;
-    if ((status = tman_task_get(tmancfg.base.task, args, ctx))) {
+    if ((status = tec_task_get(teccfg.base.task, args, ctx))) {
         if (quiet == FALSE)
-            elog(status, "'%s': %s one", args->taskid, tman_strerror(status));
-    } else if ((desc = tman_unit_key(ctx->units, "desc")) == NULL) {
+            elog(status, "'%s': %s one", args->taskid, tec_strerror(status));
+    } else if ((desc = tec_unit_key(ctx->units, "desc")) == NULL) {
         if (quiet == FALSE)
             elog(1, "'%s': %s", args->taskid, "description not found");
     }
     return desc;
 }
 
-static char *get_column_name(tman_ctx_t * ctx, tman_arg_t * args, int quiet)
+static char *get_column_name(tec_ctx_t * ctx, tec_arg_t * args, int quiet)
 {
     int status;
     char *colname;
 
     colname = NULL;
-    if ((status = tman_task_column_get(tmancfg.base.task, args, ctx))) {
+    if ((status = tec_task_column_get(teccfg.base.task, args, ctx))) {
         if (quiet == FALSE)
-            elog(status, "'%s': %s one", args->taskid, tman_strerror(status));
-    } else if ((colname = tman_unit_key(ctx->column, "name")) == NULL) {
+            elog(status, "'%s': %s one", args->taskid, tec_strerror(status));
+    } else if ((colname = tec_unit_key(ctx->column, "name")) == NULL) {
         if (quiet == FALSE)
             elog(1, "'%s': %s", args->taskid, "description not found");
     }
     return colname;
 }
 
-static void show_column(tman_ctx_t * ctx, tman_arg_t * args, tman_list_t * obj,
+static void show_column(tec_ctx_t * ctx, tec_arg_t * args, tec_list_t * obj,
                         int quiet)
 {
     if (obj != NULL) {
@@ -89,38 +89,38 @@ static void show_column(tman_ctx_t * ctx, tman_arg_t * args, tman_list_t * obj,
         else if ((colname = get_column_name(ctx, args, quiet)) == NULL)
             return;
         LIST_TASK_UNITS(colname, obj->name, desc);
-        ctx->units = tman_unit_free(ctx->units);
-        ctx->column = tman_unit_free(ctx->column);
+        ctx->units = tec_unit_free(ctx->units);
+        ctx->column = tec_unit_free(ctx->column);
     }
 }
 
-static int show_toggles(tman_ctx_t * ctx, tman_arg_t * args)
+static int show_toggles(tec_ctx_t * ctx, tec_arg_t * args)
 {
     int status;
-    tman_list_t obj;
+    tec_list_t obj;
 
     args->taskid = NULL;
-    if ((status = toggle_task_get_curr(tmancfg.base.task, args)) == 0) {
+    if ((status = toggle_task_get_curr(teccfg.base.task, args)) == 0) {
         obj.next = NULL;
-        obj.status = LIBTMAN_OK;
+        obj.status = LIBTEC_OK;
         obj.name = args->taskid;
         show_column(ctx, args, &obj, FALSE);
     }
 
     args->taskid = NULL;
-    if ((status = toggle_task_get_prev(tmancfg.base.task, args)) == 0) {
+    if ((status = toggle_task_get_prev(teccfg.base.task, args)) == 0) {
         obj.next = NULL;
-        obj.status = LIBTMAN_OK;
+        obj.status = LIBTEC_OK;
         obj.name = args->taskid;
         show_column(ctx, args, &obj, FALSE);
     }
     return status;
 }
 
-static void show_columns(tman_ctx_t * ctx, tman_arg_t * args,
-                         tman_list_t * list, int quiet)
+static void show_columns(tec_ctx_t * ctx, tec_arg_t * args,
+                         tec_list_t * list, int quiet)
 {
-    tman_list_t *obj;
+    tec_list_t *obj;
 
     for (obj = list; obj != NULL; obj = obj->next) {
         show_column(ctx, args, obj, quiet);
@@ -128,10 +128,10 @@ static void show_columns(tman_ctx_t * ctx, tman_arg_t * args,
 }
 
 // TODO: Find a good error message in case option fails.  */
-int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_list(int argc, char **argv, tec_ctx_t * ctx)
 {
     char c;
-    tman_arg_t args;
+    tec_arg_t args;
     int i, quiet, show_headers, status;
 
     quiet = show_headers = FALSE;
@@ -175,9 +175,9 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
             continue;
         else if ((status = check_arg_board(&args, errfmt, quiet)))
             continue;
-        else if ((status = tman_task_list(tmancfg.base.task, &args, ctx))) {
+        else if ((status = tec_task_list(teccfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.project, tman_strerror(status));
+                elog(status, errfmt, args.project, tec_strerror(status));
             continue;
         }
 
@@ -196,7 +196,7 @@ int tman_cli_list(int argc, char **argv, tman_ctx_t * ctx)
             show_columns(ctx, &args, ctx->list, quiet);
         }
 
-        ctx->list = tman_list_free(ctx->list);
+        ctx->list = tec_list_free(ctx->list);
 
         // HOTFIX: cuz I've no clue how to sync board feature into projects.
         args.board = NULL;

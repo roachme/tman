@@ -4,24 +4,24 @@
 
 #include "hook.h"
 #include "config.h"
-#include "../../lib/src/libtman.h"
+#include "../../lib/src/libtec.h"
 
 static char pathname[PATH_MAX + 1];
 
-static char *path_pgn(tman_arg_t * args, char *name, char *cmd)
+static char *path_pgn(tec_arg_t * args, char *name, char *cmd)
 {
     const char *fmt = "%s/%s/%s -T %s -P %s %s -p %s -b %s -i %s";
-    sprintf(pathname, fmt, tmancfg.base.pgn, name, name, tmancfg.base.task,
-            tmancfg.base.pgn, cmd, args->project, args->board, args->taskid);
+    sprintf(pathname, fmt, teccfg.base.pgn, name, name, teccfg.base.task,
+            teccfg.base.pgn, cmd, args->project, args->board, args->taskid);
     return pathname;
 }
 
-int hook_action(tman_arg_t * args, char *cmd)
+int hook_action(tec_arg_t * args, char *cmd)
 {
-    struct tman_hook *hooks = tmancfg.hooks;
+    struct tec_hook *hooks = teccfg.hooks;
 
     /* Execute hooks only if they are enabled.  */
-    if (tmancfg.opts.hook == FALSE)
+    if (teccfg.opts.hook == FALSE)
         return 0;
 
     for (; hooks; hooks = hooks->next)
@@ -30,14 +30,14 @@ int hook_action(tman_arg_t * args, char *cmd)
     return 0;
 }
 
-int hook_show(tman_unit_t ** units, tman_arg_t * args, char *cmd)
+int hook_show(tec_unit_t ** units, tec_arg_t * args, char *cmd)
 {
     FILE *pipe;
     char line[BUFSIZ + 1] = { 0 };
-    struct tman_hook *hooks = tmancfg.hooks;
+    struct tec_hook *hooks = teccfg.hooks;
 
     /* Execute hooks only if they are enabled.  */
-    if (tmancfg.opts.hook == FALSE)
+    if (teccfg.opts.hook == FALSE)
         return 0;
 
     for (; hooks; hooks = hooks->next) {
@@ -49,21 +49,21 @@ int hook_show(tman_unit_t ** units, tman_arg_t * args, char *cmd)
             continue;
         }
         while (fgets(line, BUFSIZ, pipe))
-            *units = tman_unit_parse(*units, line);
+            *units = tec_unit_parse(*units, line);
         pclose(pipe);
     }
     return 0;
 }
 
 /*
-char *hook_list(struct tman_hook *hooks, char *pgnout, char *project, char *task)
+char *hook_list(struct tec_hook *hooks, char *pgnout, char *project, char *task)
 {
     FILE *pipe;
     char *prefix = "  ";
     char line[BUFSIZ + 1] = { 0 };
 
     // Execute hooks only if they are enabled.
-    if (tmancfg.opts.hook == TRUE)
+    if (teccfg.opts.hook == TRUE)
         return 0;
 
     for (; hooks; hooks = hooks->next) {
@@ -89,7 +89,7 @@ char *hook_list(struct tman_hook *hooks, char *pgnout, char *project, char *task
         pgnout[1] = '[';
         strcat(pgnout, "]");
     }
-    //return LIBTMAN_OK;
+    //return LIBTEC_OK;
     return pgnout;
 }
 */

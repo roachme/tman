@@ -1,12 +1,12 @@
 artifacts
-_tmancli
-tmancli
+teccli
+teccli
 gmon.out
 prof.txt
-tman_prof
+tec_prof
 *.o
 *.a
 *.so
-.tman/
+.tec/
 repos/
 trash/

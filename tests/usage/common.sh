@@ -2,22 +2,22 @@
 
 HOOKTOG="off"
 DEBUGTOG="off"
-TASKDIR="/tmp/tmantask-test"
-PWDFILE="/tmp/tmanpwd" # TODO: use m4 to generate path
+TASKDIR="/tmp/tectask-test"
+PWDFILE="/tmp/tecpwd" # TODO: use m4 to generate path
 
-TMANCLI="_tmancli -H $HOOKTOG -D $DEBUGTOG -T $TASKDIR"
+TECCLI="teccli -H $HOOKTOG -D $DEBUGTOG -T $TASKDIR"
 
-function tman_cleanup()
+function tec_cleanup()
 {
-    tman_deinit
+    tec_deinit
 }
 
-function tman_init()
+function tec_init()
 {
-    eval "$TMANCLI" init
+    eval "$TECCLI" init
 }
 
-function tman_deinit()
+function tec_deinit()
 {
     rm -rf "$TASKDIR"
 }

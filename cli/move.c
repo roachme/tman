@@ -3,7 +3,7 @@
 
 /*
 
-Usage: tman move SRC DST
+Usage: tec move SRC DST
 
 SRC: ././task1 ././task11   -> rename task1 to task11 in current project and current board
 SRC: task1 task11           -> rename task1 to task11 in current project and current board
@@ -15,11 +15,11 @@ Notes:
 '.' in arguments can be omited so use current arg by default.
 */
 
-int tman_cli_move(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_move(int argc, char **argv, tec_ctx_t * ctx)
 {
     char c;
     int i, showhelp, status;
-    tman_arg_t dst, src;
+    tec_arg_t dst, src;
 
     showhelp = FALSE;
     src.project = src.board = src.taskid = NULL;
@@ -53,16 +53,16 @@ int tman_cli_move(int argc, char **argv, tman_ctx_t * ctx)
     if ((argc - i) == 2) {
         src.taskid = argv[i];
         dst.taskid = argv[i + 1];
-        if ((status = tman_task_move(tmancfg.base.task, &src, &dst, ctx))) {
+        if ((status = tec_task_move(teccfg.base.task, &src, &dst, ctx))) {
             return elog(status, "could not (re)move '%s': %s", src.taskid,
-                        tman_strerror(status));
+                        tec_strerror(status));
         }
     } else {
         do {
             src.taskid = dst.taskid = argv[i];
-            if ((status = tman_task_move(tmancfg.base.task, &src, &dst, ctx))) {
+            if ((status = tec_task_move(teccfg.base.task, &src, &dst, ctx))) {
                 elog(status, "could not move '%s': %s", src.taskid,
-                     tman_strerror(status));
+                     tec_strerror(status));
             }
         } while (++i < argc);
     }

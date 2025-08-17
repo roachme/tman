@@ -2,19 +2,19 @@
 
 set -e
 
-PROGRAM="_tmancli"
+PROGRAM="teccli"
 
-DIR_TMANCONF="$HOME/.config/tman"
-DIR_PLUGIN="$HOME/.local/lib/tman"
+DIR_TECCONF="$HOME/.config/tec"
+DIR_PLUGIN="$HOME/.local/lib/tec"
 DIR_BIN="$HOME/.local/bin"
-FILE_CONFIG="$DIR_TMANCONF/tman.cfg"
+FILE_CONFIG="$DIR_TECCONF/tec.cfg"
 
-mkdir -p "$DIR_TMANCONF"
+mkdir -p "$DIR_TECCONF"
 mkdir -p "$DIR_BIN"
 mkdir -p "$DIR_PLUGIN"
 
 
-cp templates/tman.cfg "$FILE_CONFIG"
+cp templates/tec.cfg "$FILE_CONFIG"
 rm -rf "$DIR_PLUGIN" && cp -r pgn "$DIR_PLUGIN"
 
 cp "$PROGRAM" "$DIR_BIN"

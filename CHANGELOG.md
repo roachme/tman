@@ -1,4 +1,10 @@
-## [0.1.2] - (2025-08-06)
+## [Unreleased]
+
+### Changed
+
+- `tec`: Rename project to `tec`
+
+
 ## [0.1.2] - (2025-08-06)
 
 ### Added

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 FILESCRIPT="docs/cmdscript.txt"
-TMUX_SESSION="tman-video"       # To get it use <PREFIX>s
+TMUX_SESSION="tec-video"       # To get it use <PREFIX>s
 TMUX_WINDOW_ID="1"              # To get it use <PREFIX>w
 TMUX_PANE_ID="0"                # To get it use <PREFIX>q
-FILECAST="tman.cast"
+FILECAST="tec.cast"
 
 set -e
 

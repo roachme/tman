@@ -1,4 +1,4 @@
-function _comp_tman()
+function _comp_tec()
 {
     local cur
     declare -A CMD_DESC=(
@@ -41,4 +41,4 @@ function _comp_tman()
     return 0;
 }
 
-complete -F _comp_tman tman
+complete -F _comp_tec tec

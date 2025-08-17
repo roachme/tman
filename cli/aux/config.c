@@ -24,45 +24,45 @@ static void resolve_env_var_home(char *dst, const char *src)
     }
 }
 
-static int tman_config_set_default_base(tman_cfg_t * tman_config)
+static int tec_config_set_default_base(tec_cfg_t * tec_config)
 {
     char pathname[PATH_MAX + 1] = { 0 };
 
-    if (tman_config->base.task == NULL) {
-        resolve_env_var_home(pathname, "$HOME/tmantask");
-        tman_config->base.task = strdup(pathname);
+    if (tec_config->base.task == NULL) {
+        resolve_env_var_home(pathname, "$HOME/tectask");
+        tec_config->base.task = strdup(pathname);
     }
-    if (tman_config->base.pgn == NULL) {
-        resolve_env_var_home(pathname, "$HOME/.local/lib/tman/pgn");
-        tman_config->base.pgn = strdup(pathname);
+    if (tec_config->base.pgn == NULL) {
+        resolve_env_var_home(pathname, "$HOME/.local/lib/tec/pgn");
+        tec_config->base.pgn = strdup(pathname);
     }
     return 0;
 }
 
-static int tman_config_set_default_config(tman_cfg_t * tman_config)
+static int tec_config_set_default_config(tec_cfg_t * tec_config)
 {
-    tman_config_set_default_base(tman_config);
+    tec_config_set_default_base(tec_config);
     return 0;
 }
 
-static struct tman_hook *make_hook()
+static struct tec_hook *make_hook()
 {
-    struct tman_hook *hook;
+    struct tec_hook *hook;
 
-    if ((hook = malloc(sizeof(struct tman_hook))) == NULL)
+    if ((hook = malloc(sizeof(struct tec_hook))) == NULL)
         return NULL;
-    memset(hook, 0, sizeof(struct tman_hook));
+    memset(hook, 0, sizeof(struct tec_hook));
     return hook;
 }
 
-static int tman_config_get_hooks(config_t * cfg, tman_cfg_t * tman_config)
+static int tec_config_get_hooks(config_t * cfg, tec_cfg_t * tec_config)
 {
     config_setting_t *setting;
 
     if ((setting = config_lookup(cfg, "hooks.show")) != NULL) {
         unsigned int count = config_setting_length(setting);
         for (unsigned int i = 0; i < count; ++i) {
-            struct tman_hook *hook;
+            struct tec_hook *hook;
             const char *bincmd, *pgname, *pgncmd;
             config_setting_t *hook_conf = config_setting_get_elem(setting, i);
 
@@ -79,8 +79,8 @@ static int tman_config_get_hooks(config_t * cfg, tman_cfg_t * tman_config)
                 strcpy(hook->cmd, bincmd);
                 strcpy(hook->pgname, pgname);
                 strcpy(hook->pgncmd, pgncmd);
-                hook->next = tman_config->hooks;
-                tman_config->hooks = hook;
+                hook->next = tec_config->hooks;
+                tec_config->hooks = hook;
             }
         }
     }
@@ -88,7 +88,7 @@ static int tman_config_get_hooks(config_t * cfg, tman_cfg_t * tman_config)
     if ((setting = config_lookup(cfg, "hooks.action")) != NULL) {
         unsigned int count = config_setting_length(setting);
         for (unsigned int i = 0; i < count; ++i) {
-            struct tman_hook *hook;
+            struct tec_hook *hook;
             const char *bincmd, *pgname, *pgncmd;
             config_setting_t *hook_conf = config_setting_get_elem(setting, i);
 
@@ -105,15 +105,15 @@ static int tman_config_get_hooks(config_t * cfg, tman_cfg_t * tman_config)
                 strcpy(hook->cmd, bincmd);
                 strcpy(hook->pgname, pgname);
                 strcpy(hook->pgncmd, pgncmd);
-                hook->next = tman_config->hooks;
-                tman_config->hooks = hook;
+                hook->next = tec_config->hooks;
+                tec_config->hooks = hook;
             }
         }
     }
     return 0;
 }
 
-static int tman_config_get_base(config_t * cfg, tman_cfg_t * tman_config)
+static int tec_config_get_base(config_t * cfg, tec_cfg_t * tec_config)
 {
     const char *task, *pgn;
     config_setting_t *setting;
@@ -124,34 +124,34 @@ static int tman_config_get_base(config_t * cfg, tman_cfg_t * tman_config)
         if (config_setting_lookup_string(setting, "task", &task)) {
             pathname[0] = '\0'; /* unset pathname value */
             resolve_env_var_home(pathname, task);
-            tman_config->base.task = strdup(pathname);
+            tec_config->base.task = strdup(pathname);
         }
         if (config_setting_lookup_string(setting, "pgn", &pgn)) {
             pathname[0] = '\0'; /* unset pathname value */
             resolve_env_var_home(pathname, pgn);
-            tman_config->base.pgn = strdup(pathname);
+            tec_config->base.pgn = strdup(pathname);
         }
     }
-    return tman_config_set_default_base(tman_config);
+    return tec_config_set_default_base(tec_config);
 }
 
-static int tman_config_get_options(config_t * cfg, tman_cfg_t * tman_config)
+static int tec_config_get_options(config_t * cfg, tec_cfg_t * tec_config)
 {
     config_setting_t *setting;
-    tman_config->opts.color = FALSE;
-    tman_config->opts.debug = FALSE;
-    tman_config->opts.hook = FALSE;
+    tec_config->opts.color = FALSE;
+    tec_config->opts.debug = FALSE;
+    tec_config->opts.hook = FALSE;
 
     if ((setting = config_lookup(cfg, "options")) == NULL)
         return 0;
 
-    config_setting_lookup_bool(setting, "hook", &tman_config->opts.hook);
-    config_setting_lookup_bool(setting, "color", &tman_config->opts.color);
-    config_setting_lookup_bool(setting, "debug", &tman_config->opts.debug);
+    config_setting_lookup_bool(setting, "hook", &tec_config->opts.hook);
+    config_setting_lookup_bool(setting, "color", &tec_config->opts.color);
+    config_setting_lookup_bool(setting, "debug", &tec_config->opts.debug);
     return 0;
 }
 
-static int parseconf(tman_cfg_t * tman_config, const char *fname)
+static int parseconf(tec_cfg_t * tec_config, const char *fname)
 {
     config_t cfg;
 
@@ -161,26 +161,26 @@ static int parseconf(tman_cfg_t * tman_config, const char *fname)
                     config_error_line(&cfg), config_error_text(&cfg));
     }
 
-    if (tman_config_get_base(&cfg, tman_config))
-        elog(1, "tman_config_get_base: FAILED\n");
-    else if (tman_config_get_options(&cfg, tman_config))
-        elog(1, "tman_config_get_options: FAILED\n");
-    else if (tman_config_get_hooks(&cfg, tman_config))
-        elog(1, "tman_config_get_hooks: FAILED\n");
+    if (tec_config_get_base(&cfg, tec_config))
+        elog(1, "tec_config_get_base: FAILED\n");
+    else if (tec_config_get_options(&cfg, tec_config))
+        elog(1, "tec_config_get_options: FAILED\n");
+    else if (tec_config_get_hooks(&cfg, tec_config))
+        elog(1, "tec_config_get_hooks: FAILED\n");
 
     config_destroy(&cfg);
     return 0;
 }
 
-int tman_config_init(tman_cfg_t * tman_config)
+int tec_config_init(tec_cfg_t * tec_config)
 {
-    tman_config->opts.color = NONEBOOL;
-    tman_config->opts.debug = NONEBOOL;
-    tman_config->opts.hook = NONEBOOL;
+    tec_config->opts.color = NONEBOOL;
+    tec_config->opts.debug = NONEBOOL;
+    tec_config->opts.hook = NONEBOOL;
     return 0;
 }
 
-int tman_config_parse(tman_cfg_t * tman_config)
+int tec_config_parse(tec_cfg_t * tec_config)
 {
     char cfgfile[CONFIGSIZ + 1];
     char *homedir = getenv("HOME");
@@ -192,43 +192,43 @@ int tman_config_parse(tman_cfg_t * tman_config)
     for (int i = 0; i < NUMCONFIG; ++i) {
         sprintf(cfgfile, cfgfmts[i], homedir, PROGRAM, PROGRAM);
         if (ISFILE(cfgfile))
-            return parseconf(tman_config, cfgfile);
+            return parseconf(tec_config, cfgfile);
     }
-    return tman_config_set_default_config(tman_config);
+    return tec_config_set_default_config(tec_config);
 }
 
-int tman_config_set_base(tman_base_t * base)
+int tec_config_set_base(tec_base_t * base)
 {
     if (base->task != NULL) {
-        free(tmancfg.base.task);
-        tmancfg.base.task = strdup(base->task);
+        free(teccfg.base.task);
+        teccfg.base.task = strdup(base->task);
     }
     if (base->pgn != NULL) {
-        free(tmancfg.base.pgn);
-        tmancfg.base.pgn = strdup(base->pgn);
+        free(teccfg.base.pgn);
+        teccfg.base.pgn = strdup(base->pgn);
     }
     return 0;
 }
 
-int tman_config_set_options(tman_opt_t * opts)
+int tec_config_set_options(tec_opt_t * opts)
 {
-    tmancfg.opts.hook = opts->hook != NONEBOOL ? opts->hook : tmancfg.opts.hook;
-    tmancfg.opts.color =
-        opts->color != NONEBOOL ? opts->color : tmancfg.opts.color;
-    tmancfg.opts.debug =
-        opts->debug != NONEBOOL ? opts->debug : tmancfg.opts.debug;
+    teccfg.opts.hook = opts->hook != NONEBOOL ? opts->hook : teccfg.opts.hook;
+    teccfg.opts.color =
+        opts->color != NONEBOOL ? opts->color : teccfg.opts.color;
+    teccfg.opts.debug =
+        opts->debug != NONEBOOL ? opts->debug : teccfg.opts.debug;
     return 0;
 }
 
-void tman_config_destroy(tman_cfg_t * tman_config)
+void tec_config_destroy(tec_cfg_t * tec_config)
 {
-    struct tman_hook *head;
+    struct tec_hook *head;
 
-    for (head = tman_config->hooks; head != NULL;) {
-        struct tman_hook *tmp = head;
+    for (head = tec_config->hooks; head != NULL;) {
+        struct tec_hook *tmp = head;
         head = head->next;
         free(tmp);
     }
-    free(tman_config->base.task);
-    free(tman_config->base.pgn);
+    free(tec_config->base.task);
+    free(tec_config->base.pgn);
 }

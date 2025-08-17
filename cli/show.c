@@ -8,7 +8,7 @@
 
 static const char *errfmt = "cannot show units '%s': %s";
 
-static int valid_unitkeys(tman_unit_t * units)
+static int valid_unitkeys(tec_unit_t * units)
 {
     for (int i = 0; units && i < nunitkey; units = units->next) {
         if (strcmp(units->key, unitkeys[i]) != 0)
@@ -18,10 +18,10 @@ static int valid_unitkeys(tman_unit_t * units)
     return 0;
 }
 
-static int show_key(char *task, tman_unit_t * unitbin, tman_unit_t * unitpgn,
+static int show_key(char *task, tec_unit_t * unitbin, tec_unit_t * unitpgn,
                     char *key)
 {
-    struct tman_unit *units;
+    struct tec_unit *units;
 
     if (strcmp(key, "id") == 0) {
         printf("%s\n", task);
@@ -43,9 +43,9 @@ static int show_key(char *task, tman_unit_t * unitbin, tman_unit_t * unitpgn,
     return 1;
 }
 
-static int show_keys(char *task, tman_unit_t * unitbin, tman_unit_t * unitpgn)
+static int show_keys(char *task, tec_unit_t * unitbin, tec_unit_t * unitpgn)
 {
-    struct tman_unit *units;
+    struct tec_unit *units;
     const char *fmt = "%-" xstr(PADDING_UNIT) "s : %s\n";
 
     printf(fmt, "id", task);
@@ -59,12 +59,12 @@ static int show_keys(char *task, tman_unit_t * unitbin, tman_unit_t * unitpgn)
     return 0;
 }
 
-int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
+int tec_cli_show(int argc, char **argv, tec_ctx_t * ctx)
 {
     char c;
     char *key;
-    tman_arg_t args;
-    tman_unit_t *unitpgn;
+    tec_arg_t args;
+    tec_unit_t *unitpgn;
     int i, quiet, showhelp, status;
 
     key = NULL;
@@ -109,9 +109,9 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
 
         if ((status = check_arg_task(&args, errfmt, quiet)))
             continue;
-        else if ((status = tman_task_get(tmancfg.base.task, &args, ctx))) {
+        else if ((status = tec_task_get(teccfg.base.task, &args, ctx))) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.taskid, tman_strerror(status));
+                elog(status, errfmt, args.taskid, tec_strerror(status));
             continue;
         } else if (valid_unitkeys(ctx->units)) {
             if (quiet == FALSE)
@@ -130,8 +130,8 @@ int tman_cli_show(int argc, char **argv, tman_ctx_t * ctx)
         } else
             show_keys(args.taskid, ctx->units, unitpgn);
 
-        unitpgn = tman_unit_free(unitpgn);
-        ctx->units = tman_unit_free(ctx->units);
+        unitpgn = tec_unit_free(unitpgn);
+        ctx->units = tec_unit_free(ctx->units);
     }
     while (++i < argc);
     return status;
