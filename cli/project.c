@@ -32,13 +32,16 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
 {
     char c;
     tec_arg_t args;
-    const char *errfmt = "cannot add project '%s': %s";
+    int switch_dir, switch_project;
     int i, quiet, showhelp, status;
+    const char *errfmt = "cannot add project '%s': %s";
+    const char *errfmt_board = "cannot add board '%s': %s";
 
     status = LIBTEC_OK;
     showhelp = quiet = FALSE;
+    switch_dir = switch_project = TRUE;
     args.project = args.board = args.taskid = NULL;
-    while ((c = getopt(argc, argv, ":b:hnq")) != -1) {
+    while ((c = getopt(argc, argv, ":b:hnqN")) != -1) {
         switch (c) {
         case 'b':
             args.board = optarg;
@@ -47,10 +50,14 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
             showhelp = TRUE;
             break;
         case 'n':
-            //opt.project_switch = FALSE;
+            switch_project = FALSE;
             break;
         case 'q':
             quiet = TRUE;
+            break;
+        case 'N':
+            switch_dir = FALSE;
+            switch_project = FALSE;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -77,32 +84,34 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
     for (i = optind; i < argc; ++i) {
         args.project = argv[i];
 
-        if ((status = toggle_project_get_curr(teccfg.base.task, &args))) {
-            if (quiet == FALSE)
-                elog(status, errfmt, "NOCURR", "no current project");
-            continue;
-        } else if (is_valid_length(args.project, PRJSIZ) == FALSE) {
+        if (is_valid_length(args.project, PRJSIZ) == FALSE) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.project, "project name is too long");
             continue;
         } else if ((status = tec_project_valid(teccfg.base.task, &args))) {
             if (quiet == FALSE)
                 elog(status, errfmt, args.project, tec_strerror(status));
-            elog(1, "tetet");
+            continue;
+        } else if (!(status = tec_project_exist(teccfg.base.task, &args))) {
+            char *project = args.project;
+            if (quiet == FALSE)
+                elog(status, errfmt, project, tec_strerror(LIBTEC_PRJ_EXISTS));
             continue;
         }
 
-        if ((status = toggle_board_get_curr(teccfg.base.task, &args))) {
+        if ((status = tec_board_valid(teccfg.base.task, &args))) {
             if (quiet == FALSE)
-                elog(status, errfmt, "NOCURR", "no current board");
-            continue;
-        } else if ((status = tec_board_valid(teccfg.base.task, &args))) {
-            if (quiet == FALSE)
-                elog(status, errfmt, args.board, tec_strerror(status));
+                elog(status, errfmt_board, args.board, tec_strerror(status));
             continue;
         } else if (is_valid_length(args.board, BRDSIZ) == FALSE) {
             if (quiet == FALSE)
-                elog(status, errfmt, args.board, "board name is too long");
+                elog(status, errfmt_board, args.board,
+                     "board name is too long");
+            continue;
+        } else if (!(status = tec_board_exist(teccfg.base.task, &args))) {
+            if (quiet == FALSE)
+                elog(status, errfmt_board, args.board,
+                     tec_strerror(LIBTEC_BRD_EXISTS));
             continue;
         }
 
@@ -126,9 +135,20 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
 
     ctx->column = tec_unit_free(ctx->column);
 
-    //return opt.project_switch && status == LIBTEC_OK ? tec_pwd_project(&args) : status;
-    //return status == LIBTEC_OK ? tec_pwd_project(&args) : status;
-    return 0;
+    if ((switch_project && status == LIBTEC_OK)
+        && toggle_project_set_curr(teccfg.base.task, &args)) {
+        if (quiet == FALSE)
+            elog(status, "could not update project toggles");
+        return 1;
+    } else if ((switch_project && status == LIBTEC_OK)
+               && toggle_board_set_curr(teccfg.base.task, &args)) {
+        if (quiet == FALSE)
+            elog(status, "could not update board toggles");
+        return 1;
+    }
+
+    return (switch_dir
+            && status == LIBTEC_OK) ? tec_pwd_project(&args) : status;
 }
 
 static int _project_del(int argc, char **argv, tec_ctx_t * ctx)
