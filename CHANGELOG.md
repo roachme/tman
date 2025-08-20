@@ -7,6 +7,10 @@
 - `tec`: Rename main file from `cli` to `tec`
 - `tec`: Change version output and CLI option
 
+### Fixed
+
+- `cli/tec`: Fix padding for objects
+
 
 ## [0.1.2] - (2025-08-06)
 

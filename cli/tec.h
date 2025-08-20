@@ -38,14 +38,14 @@
 /* TODO: add a plugin output too */
 #define LIST_PROJECT_UNITS(_mark, _id, _desc) {\
     color_print_str("%-" xstr(COLSIZ) "s ", (_mark), BGRN); \
-    color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
+    color_print_str("%-" xstr(PRJSIZ) "s ", (_id), BMAG); \
     color_print_str("%s\n", (_desc), BWHT); \
 }\
 
 /* TODO: add a plugin output too */
 #define LIST_BOARD_UNITS(_mark, _id, _desc) {\
     color_print_str("%-" xstr(COLSIZ) "s ", (_mark), BGRN); \
-    color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
+    color_print_str("%-" xstr(BRDSIZ) "s ", (_id), BMAG); \
     color_print_str("%s\n", (_desc), BWHT); \
 }\
 
