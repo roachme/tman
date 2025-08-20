@@ -66,9 +66,9 @@ static int is_plugin(char *pgndir, const char *pgname)
     sprintf(path, "%s/%s/%s", pgndir, pgname, pgname);
 
     if ((fp = fopen(path, "r")) == NULL)
-        return FALSE;
+        return false;
     fclose(fp);
-    return TRUE;
+    return true;
 }
 
 static int run_builtin(int argc, char **argv, builtin_t * cmd)
@@ -102,9 +102,9 @@ static int run_plugin(int argc, char **argv)
 static int valid_toggle(char *tog)
 {
     if (strcmp(tog, "on") == 0)
-        return TRUE;
+        return true;
     else if (strcmp(tog, "off") == 0)
-        return FALSE;
+        return false;
     return -1;
 }
 
@@ -117,8 +117,8 @@ static int show_version()
 int is_valid_length(const char *obj, int len)
 {
     if (strlen(obj) <= len)
-        return TRUE;
-    return FALSE;
+        return true;
+    return false;
 }
 
 int check_arg_project(tec_arg_t * args, const char *errfmt, int quiet)
@@ -126,20 +126,20 @@ int check_arg_project(tec_arg_t * args, const char *errfmt, int quiet)
     int status;
 
     if ((status = toggle_project_get_curr(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
     } else if ((status = tec_project_valid(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->project, tec_strerror(status));
         return status;
-    } else if (is_valid_length(args->project, PRJSIZ) == FALSE) {
+    } else if (is_valid_length(args->project, PRJSIZ) == false) {
         status = 1;
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->project, "project name is too long");
         return status;
     } else if ((status = tec_project_exist(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->project, tec_strerror(status));
         return status;
     }
@@ -151,20 +151,20 @@ int check_arg_board(tec_arg_t * args, const char *errfmt, int quiet)
     int status;
 
     if ((status = toggle_board_get_curr(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, "NOCURR", "no current board");
         return status;
     } else if ((status = tec_board_valid(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->board, tec_strerror(status));
         return status;
-    } else if (is_valid_length(args->board, BRDSIZ) == FALSE) {
+    } else if (is_valid_length(args->board, BRDSIZ) == false) {
         status = 1;
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->board, "board name is too long");
         return status;
     } else if ((status = tec_board_exist(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->board, tec_strerror(status));
         return status;
     }
@@ -176,20 +176,20 @@ int check_arg_task(tec_arg_t * args, const char *errfmt, int quiet)
     int status;
 
     if ((status = toggle_task_get_curr(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, "NOCURR", "no current task");
         return status;
     } else if ((status = tec_task_valid(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->taskid, tec_strerror(status));
         return status;
-    } else if (is_valid_length(args->taskid, IDSIZ) == FALSE) {
+    } else if (is_valid_length(args->taskid, IDSIZ) == false) {
         status = 1;
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->taskid, "task ID is too long");
         return status;
     } else if ((status = tec_task_exist(teccfg.base.task, args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args->taskid, tec_strerror(status));
         return status;
     }
@@ -204,14 +204,14 @@ int get_column_index(char *colname)
     return -1;
 }
 
-BOOL column_exist(const char *colname)
+bool column_exist(const char *colname)
 {
     for (int i = 0; i < nbuiltin_column; ++i)
         if (strcmp(colname, builtin_columns[i].name) == 0)
-            return TRUE;
+            return true;
     // TODO: check user defined columns as well
 
-    return FALSE;
+    return false;
 }
 
 tec_unit_t *generate_column(char *colname)
@@ -298,7 +298,7 @@ int elog(int status, const char *fmt, ...)
 
 int dlog(int level, const char *fmt, ...)
 {
-    if (teccfg.opts.debug == FALSE)
+    if (teccfg.opts.debug == false)
         return 0;
 
     va_list arg;
@@ -318,7 +318,7 @@ int main(int argc, char **argv)
     int c, i, showhelp;
     char *cmd, *option, *togfmt;
 
-    showhelp = FALSE;
+    showhelp = false;
     opts.color = opts.debug = opts.hook = NONEBOOL;
     base.pgn = base.task = cmd = option = NULL;
     togfmt = "option `-%c' accepts either 'on' or 'off'";
@@ -327,7 +327,7 @@ int main(int argc, char **argv)
     while ((c = getopt(argc, argv, "+:hC:D:F:H:P:T:V")) != -1) {
         switch (c) {
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
         case 'C':
             if ((opts.color = valid_toggle(optarg)) == -1)
                 return elog(1, togfmt, c);
@@ -361,7 +361,7 @@ int main(int argc, char **argv)
     optind = 0;                 /* Unset option index cuz subcommands use getopt too.  */
     tec_pwd_unset();
 
-    if (showhelp == TRUE || (cmd = argv[i]) == NULL)
+    if (showhelp == true || (cmd = argv[i]) == NULL)
         cmd = "help";
 
     if (tec_config_init(&teccfg))
@@ -375,7 +375,7 @@ int main(int argc, char **argv)
 
     if ((builtin = is_builtin(cmd)) != NULL)
         return run_builtin(argc - i, argv + i, builtin);
-    else if (is_plugin(teccfg.base.pgn, cmd) == TRUE)
+    else if (is_plugin(teccfg.base.pgn, cmd) == true)
         return run_plugin(argc - i, argv + i);
     return elog(1, "'%s': no such command or plugin", cmd);
 }

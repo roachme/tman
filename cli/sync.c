@@ -9,8 +9,8 @@ int tec_cli_sync(int argc, char **argv, tec_ctx_t * ctx)
     int i, quiet, showhelp, status;
     int switch_toggle, switch_dir;
 
-    quiet = showhelp = FALSE;
-    switch_toggle = switch_dir = TRUE;
+    quiet = showhelp = false;
+    switch_toggle = switch_dir = true;
     errfmt = "cannot sync (with) '%s': %s";
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hnp:qN")) != -1) {
@@ -19,20 +19,20 @@ int tec_cli_sync(int argc, char **argv, tec_ctx_t * ctx)
             args.board = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'n':
-            switch_toggle = FALSE;
+            switch_toggle = false;
             break;
         case 'p':
             args.project = optarg;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case 'N':
-            switch_dir = FALSE;
-            switch_toggle = FALSE;
+            switch_dir = false;
+            switch_toggle = false;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -41,7 +41,7 @@ int tec_cli_sync(int argc, char **argv, tec_ctx_t * ctx)
         }
     }
 
-    if (showhelp == TRUE)
+    if (showhelp == true)
         return help_usage("sync");
 
     if ((status = check_arg_project(&args, errfmt, quiet)))
@@ -56,14 +56,14 @@ int tec_cli_sync(int argc, char **argv, tec_ctx_t * ctx)
         if ((status = check_arg_task(&args, errfmt, quiet)))
             continue;
         else if (hook_action(&args, "sync")) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, "failed to execute hooks");
             continue;
         }
     } while (++i < argc);
 
-    if (status == LIBTEC_OK && switch_toggle == TRUE) {
-        if (toggle_task_set_curr(teccfg.base.task, &args) && quiet == FALSE)
+    if (status == LIBTEC_OK && switch_toggle == true) {
+        if (toggle_task_set_curr(teccfg.base.task, &args) && quiet == false)
             status = elog(1, "could not update toggles");
     }
 

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <stdbool.h>
 
 #include "hook.h"
 #include "config.h"
@@ -21,7 +22,7 @@ int hook_action(tec_arg_t * args, char *cmd)
     struct tec_hook *hooks = teccfg.hooks;
 
     /* Execute hooks only if they are enabled.  */
-    if (teccfg.opts.hook == FALSE)
+    if (teccfg.opts.hook == false)
         return 0;
 
     for (; hooks; hooks = hooks->next)
@@ -37,7 +38,7 @@ int hook_show(tec_unit_t ** units, tec_arg_t * args, char *cmd)
     struct tec_hook *hooks = teccfg.hooks;
 
     /* Execute hooks only if they are enabled.  */
-    if (teccfg.opts.hook == FALSE)
+    if (teccfg.opts.hook == false)
         return 0;
 
     for (; hooks; hooks = hooks->next) {
@@ -63,7 +64,7 @@ char *hook_list(struct tec_hook *hooks, char *pgnout, char *project, char *task)
     char line[BUFSIZ + 1] = { 0 };
 
     // Execute hooks only if they are enabled.
-    if (teccfg.opts.hook == TRUE)
+    if (teccfg.opts.hook == true)
         return 0;
 
     for (; hooks; hooks = hooks->next) {

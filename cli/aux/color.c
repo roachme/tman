@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
+
 #include "color.h"
 #include "config.h"
 
@@ -37,20 +39,20 @@ static void pr_sgr_end(char const *s)
 
 void color_print_str(const char *fmt, char *str, char *color)
 {
-    if (isatty(STDOUT_FILENO) && teccfg.opts.color == TRUE)
+    if (isatty(STDOUT_FILENO) && teccfg.opts.color == true)
         pr_sgr_start(color);
     printf(fmt, str);
-    if (isatty(STDOUT_FILENO) && teccfg.opts.color == TRUE)
+    if (isatty(STDOUT_FILENO) && teccfg.opts.color == true)
         pr_sgr_end(CRESET);
 }
 
 /*
 void color_print_char(const char *fmt, char c, char *color)
 {
-    if (isatty(STDOUT_FILENO) && teccfg.opts.color == TRUE)
+    if (isatty(STDOUT_FILENO) && teccfg.opts.color == true)
         pr_sgr_start(color);
     printf(fmt, c);
-    if (isatty(STDOUT_FILENO) && teccfg.opts.color == TRUE)
+    if (isatty(STDOUT_FILENO) && teccfg.opts.color == true)
         pr_sgr_end(CRESET);
 }
 */

@@ -69,7 +69,7 @@ int tec_cli_show(int argc, char **argv, tec_ctx_t * ctx)
 
     key = NULL;
     unitpgn = NULL;
-    quiet = showhelp = FALSE;
+    quiet = showhelp = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hk:p:q")) != -1) {
         switch (c) {
@@ -77,7 +77,7 @@ int tec_cli_show(int argc, char **argv, tec_ctx_t * ctx)
             args.board = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'k':
             key = optarg;
@@ -86,7 +86,7 @@ int tec_cli_show(int argc, char **argv, tec_ctx_t * ctx)
             args.project = optarg;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -95,7 +95,7 @@ int tec_cli_show(int argc, char **argv, tec_ctx_t * ctx)
         }
     }
 
-    if (showhelp == TRUE)
+    if (showhelp == true)
         return help_usage("show");
 
     if ((status = check_arg_project(&args, errfmt, quiet)))
@@ -110,22 +110,22 @@ int tec_cli_show(int argc, char **argv, tec_ctx_t * ctx)
         if ((status = check_arg_task(&args, errfmt, quiet)))
             continue;
         else if ((status = tec_task_get(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, tec_strerror(status));
             continue;
         } else if (valid_unitkeys(ctx->units)) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, "invalid unit keys");
             continue;
         } else if (hook_show(&unitpgn, &args, "show")) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, "failed to execute hooks");
             continue;
         }
 
         if (key != NULL) {
             if ((status = show_key(args.taskid, ctx->units, unitpgn, key))
-                && quiet == FALSE)
+                && quiet == false)
                 elog(1, "cannot show key '%s': no such key", key);
         } else
             show_keys(args.taskid, ctx->units, unitpgn);

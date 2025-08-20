@@ -22,7 +22,7 @@ static int _column_move(int argc, char **argv, tec_ctx_t * ctx)
     int i, quiet, showhelp, status;
 
     colname = "todo";           /* Default column to move task to.  */
-    quiet = showhelp = FALSE;
+    quiet = showhelp = false;
     errfmt = "cannot move task to column '%s': %s";
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:c:hp:q")) != -1) {
@@ -34,13 +34,13 @@ static int _column_move(int argc, char **argv, tec_ctx_t * ctx)
             colname = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'p':
             args.project = optarg;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -48,23 +48,23 @@ static int _column_move(int argc, char **argv, tec_ctx_t * ctx)
             return elog(1, "invalid option `-%c'", optopt);
         }
     }
-    if (showhelp == TRUE)
+    if (showhelp == true)
         return help_usage("column-move");
 
     if ((status = toggle_project_get_curr(teccfg.base.task, &args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
     } else if ((status = toggle_board_get_curr(teccfg.base.task, &args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, "NOCURR", "no current board");
         return status;
-    } else if (column_exist(colname) == FALSE) {
-        if (quiet == FALSE)
+    } else if (column_exist(colname) == false) {
+        if (quiet == false)
             elog(1, "'%s': no such column", colname);
         return 1;
     } else if ((ctx->column = generate_column(colname)) == NULL) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "could not generate column");
         return 1;
     }
@@ -74,17 +74,17 @@ static int _column_move(int argc, char **argv, tec_ctx_t * ctx)
         args.taskid = argv[i];
 
         if ((status = toggle_task_get_curr(teccfg.base.task, &args))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, "NOCURR", "no current task");
             return status;
         } else if (colname
                    && (status =
                        tec_task_column_set(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, tec_strerror(status));
             continue;
         } else if (hook_action(&args, "column-move")) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, "failed to execute hooks");
             continue;
         }

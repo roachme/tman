@@ -23,8 +23,8 @@ static int valid_prio(const char *val)
 
     for (int i = 0; i < size; ++i)
         if (strncmp(val, prios[i], 10) == 0)
-            return TRUE;
-    return FALSE;
+            return true;
+    return false;
 }
 
 /* roachme: replace all types if user specifies any in config file */
@@ -35,18 +35,18 @@ static int valid_type(const char *val)
 
     for (int i = 0; i < size; ++i) {
         if (strncmp(val, types[i], 10) == 0)
-            return TRUE;
+            return true;
     }
-    return FALSE;
+    return false;
 }
 
 static int valid_desc(const char *val)
 {
     if (!isalnum(*val++))
-        return FALSE;
+        return false;
     for (; *val; ++val)
         if (!(isalnum(*val) || isspace(*val) || *val == '_' || *val == '-'))
-            return FALSE;
+            return false;
     return isalnum(*--val) != 0;
 }
 
@@ -59,9 +59,9 @@ int tec_cli_set(int argc, char **argv, tec_ctx_t * ctx)
     int atleast_one_key_set;
     const char *errfmt = "cannot set task units '%s': %s";
 
-    quiet = FALSE;
+    quiet = false;
     args.project = args.board = args.taskid = NULL;
-    atleast_one_key_set = FALSE;
+    atleast_one_key_set = false;
     while ((c = getopt(argc, argv, ":b:d:p:qt:P:")) != -1) {
         // TODO: add a protection for duplicates, use map data structure
         switch (c) {
@@ -72,33 +72,33 @@ int tec_cli_set(int argc, char **argv, tec_ctx_t * ctx)
             args.project = optarg;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case 't':
-            if (valid_type(optarg) == FALSE) {
+            if (valid_type(optarg) == false) {
                 elog(1, "invalid priority '%s'", optarg);
                 help_usage("set");
                 return 1;
             }
-            atleast_one_key_set = TRUE;
+            atleast_one_key_set = true;
             ctx->units = tec_unit_add(ctx->units, "type", optarg);
             break;
         case 'd':
-            if (valid_desc(optarg) == FALSE) {
+            if (valid_desc(optarg) == false) {
                 elog(1, "invalid description '%s'", optarg);
                 help_usage("set");
                 return 1;
             }
-            atleast_one_key_set = TRUE;
+            atleast_one_key_set = true;
             ctx->units = tec_unit_add(ctx->units, "desc", optarg);
             break;
         case 'P':
-            if (valid_prio(optarg) == FALSE) {
+            if (valid_prio(optarg) == false) {
                 elog(1, "invalid priority '%s'", optarg);
                 help_usage("set");
                 return 1;
             }
-            atleast_one_key_set = TRUE;
+            atleast_one_key_set = true;
             ctx->units = tec_unit_add(ctx->units, "prio", optarg);
             break;
         case ':':
@@ -108,7 +108,7 @@ int tec_cli_set(int argc, char **argv, tec_ctx_t * ctx)
         }
     }
 
-    if (atleast_one_key_set == FALSE) {
+    if (atleast_one_key_set == false) {
         elog(1, "gotta supply one of the options");
         help_usage("set");
         return 1;
@@ -127,11 +127,11 @@ int tec_cli_set(int argc, char **argv, tec_ctx_t * ctx)
             continue;
         else if ((status = tec_task_set(teccfg.base.task, &args, ctx))) {
             args.taskid = args.taskid ? args.taskid : "NOCURR";
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, tec_strerror(status));
             continue;
         } else if (hook_action(&args, "set")) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, args.taskid, "failed to execute hooks");
         }
         ctx->units = tec_unit_free(ctx->units);

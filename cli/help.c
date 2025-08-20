@@ -25,9 +25,9 @@ struct helpctx {
 };
 
 struct helpctx helpctx = {
-    .synop = FALSE,
-    .desc_short = FALSE,
-    .desc_long = FALSE,
+    .synop = false,
+    .desc_short = false,
+    .desc_long = false,
 };
 
 struct help helptab[] = {
@@ -656,10 +656,10 @@ int help_lookup(const char *cmd)
 {
     int i, found;
 
-    found = FALSE;
+    found = false;
     for (i = 0; i < ARRAY_SIZE(helptab); ++i) {
         if (strcmp(helptab[i].name, cmd) == 0) {
-            found = TRUE;
+            found = true;
             if (helpctx.synop) {
                 printf("%s", helptab[i].synop);
                 continue;
@@ -675,7 +675,7 @@ int help_lookup(const char *cmd)
             break;
         }
     }
-    return found == TRUE ? 0 : 1;
+    return found == true ? 0 : 1;
 }
 
 int tec_cli_help(int argc, char **argv, tec_ctx_t * ctx)
@@ -687,14 +687,14 @@ int tec_cli_help(int argc, char **argv, tec_ctx_t * ctx)
     while ((c = getopt(argc, argv, ":ds")) != -1) {
         switch (c) {
         case 'd':
-            helpctx.desc_short = TRUE;
-            helpctx.synop = FALSE;
-            helpctx.desc_long = FALSE;
+            helpctx.desc_short = true;
+            helpctx.synop = false;
+            helpctx.desc_long = false;
             break;
         case 's':
-            helpctx.synop = TRUE;
-            helpctx.desc_short = FALSE;
-            helpctx.desc_long = FALSE;
+            helpctx.synop = true;
+            helpctx.desc_short = false;
+            helpctx.desc_long = false;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);

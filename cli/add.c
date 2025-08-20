@@ -47,8 +47,8 @@ int tec_cli_add(int argc, char **argv, tec_ctx_t * ctx)
     int quiet, showhelp, status, switch_dir, switch_task, i, c;
 
     last_taskid = NULL;
-    quiet = showhelp = FALSE;
-    switch_dir = switch_task = TRUE;
+    quiet = showhelp = false;
+    switch_dir = switch_task = true;
     args.project = args.board = args.taskid = NULL;
     errfmt = "cannot create task '%s': %s";
     while ((c = getopt(argc, argv, ":b:np:hqN")) != -1) {
@@ -60,17 +60,17 @@ int tec_cli_add(int argc, char **argv, tec_ctx_t * ctx)
             args.project = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'n':
-            switch_task = FALSE;
+            switch_task = false;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case 'N':
-            switch_dir = FALSE;
-            switch_task = FALSE;
+            switch_dir = false;
+            switch_task = false;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -79,7 +79,7 @@ int tec_cli_add(int argc, char **argv, tec_ctx_t * ctx)
         }
     }
 
-    if (showhelp == TRUE)
+    if (showhelp == true)
         return help_usage("add");
 
     if ((status = check_arg_project(&args, errfmt, quiet)))
@@ -87,11 +87,11 @@ int tec_cli_add(int argc, char **argv, tec_ctx_t * ctx)
     else if ((status = check_arg_board(&args, errfmt, quiet)))
         return status;
     else if (optind == argc && generate_task(&args)) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "could not generate task ID: limit is %d", IDLIMIT);
         return 1;
     } else if ((ctx->column = generate_column("todo")) == NULL) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "could not generate column");
         return 1;
     }
@@ -102,31 +102,31 @@ int tec_cli_add(int argc, char **argv, tec_ctx_t * ctx)
         args.taskid = args.taskid == NULL ? argv[i] : args.taskid;
 
         if ((status = tec_task_valid(teccfg.base.task, &args))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, tec_strerror(status));
             args.taskid = NULL; /* unset task ID, not to break loop.  */
             continue;
-        } else if (is_valid_length(args.taskid, IDSIZ) == FALSE) {
-            if (quiet == FALSE)
+        } else if (is_valid_length(args.taskid, IDSIZ) == false) {
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, "task ID is too long");
             return status;
         } else if (!(status = tec_task_exist(teccfg.base.task, &args))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, args.taskid, tec_strerror(LIBTEC_ARG_EXISTS));
             args.taskid = NULL; /* unset task ID, not to break loop.  */
             continue;
         } else if (generate_units(ctx, args.project, args.taskid)) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, args.taskid, "unit generation failed");
             args.taskid = NULL; /* unset task ID, not to break loop.  */
             continue;
         }
 
         if ((status = tec_task_add(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, tec_strerror(status));
         } else if (hook_action(&args, "add")) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, args.taskid, "failed to execute hooks");
         }
 
@@ -141,7 +141,7 @@ int tec_cli_add(int argc, char **argv, tec_ctx_t * ctx)
 
     if ((switch_task && status == LIBTEC_OK)
         && toggle_task_set_curr(teccfg.base.task, &args)) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, "could not update toggles");
         return 1;
     }

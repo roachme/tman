@@ -9,7 +9,7 @@ int tec_cli_del(int argc, char **argv, tec_ctx_t * ctx)
     char c, *errfmt;
     int i, choice, quiet, showhelp, autoconfirm, status;
 
-    autoconfirm = quiet = showhelp = FALSE;
+    autoconfirm = quiet = showhelp = false;
     args.project = args.board = args.taskid = NULL;
     errfmt = "cannot delete task '%s': %s";
     while ((c = getopt(argc, argv, ":b:hp:qy")) != -1) {
@@ -18,16 +18,16 @@ int tec_cli_del(int argc, char **argv, tec_ctx_t * ctx)
             args.board = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'p':
             args.project = optarg;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case 'y':
-            autoconfirm = TRUE;
+            autoconfirm = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -36,7 +36,7 @@ int tec_cli_del(int argc, char **argv, tec_ctx_t * ctx)
         }
     }
 
-    if (showhelp == TRUE)
+    if (showhelp == true)
         return help_usage("del");
 
     if ((status = check_arg_project(&args, errfmt, quiet)))
@@ -54,18 +54,18 @@ int tec_cli_del(int argc, char **argv, tec_ctx_t * ctx)
          * cases when hooks get exectude before the main action.  */
         if ((status = check_arg_task(&args, errfmt, quiet))) {
             continue;
-        } else if (autoconfirm == FALSE) {
+        } else if (autoconfirm == false) {
             printf("Are you sure to delete task '%s'? [y/N] ", args.taskid);
             if ((choice = getchar()) != 'y' && choice != 'Y')
                 continue;
         }
 
         if (hook_action(&args, "del")) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, args.taskid, "failed to execute hooks");
             continue;
         } else if ((status = tec_task_del(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.taskid, tec_strerror(status));
             continue;
         }

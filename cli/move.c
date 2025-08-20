@@ -21,7 +21,7 @@ int tec_cli_move(int argc, char **argv, tec_ctx_t * ctx)
     int i, showhelp, status;
     tec_arg_t dst, src;
 
-    showhelp = FALSE;
+    showhelp = false;
     src.project = src.board = src.taskid = NULL;
     dst.project = dst.board = dst.taskid = NULL;
     // TODO: add support for boards
@@ -31,7 +31,7 @@ int tec_cli_move(int argc, char **argv, tec_ctx_t * ctx)
             dst.project = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 's':
             src.project = optarg;

@@ -3,12 +3,16 @@
 
 #include <stdio.h>
 #include <getopt.h>
+#include <stdbool.h>
 
 #include "aux/hook.h"
 #include "aux/color.h"
 #include "../lib/src/libtec.h"
 
 #define PROGRAM     "tec"
+
+// TODO: Get rid of it (set options with default boolean values)
+#define NONEBOOL        -1      /* Not yet set boolean value */
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -83,7 +87,7 @@ int check_arg_project(tec_arg_t * args, const char *errfmt, int quiet);
 int check_arg_board(tec_arg_t * args, const char *errfmt, int quiet);
 int check_arg_task(tec_arg_t * args, const char *errfmt, int quiet);
 
-BOOL column_exist(const char *colname);
+bool column_exist(const char *colname);
 tec_unit_t *generate_column(char *colname);
 
 int help_list_commands(void);

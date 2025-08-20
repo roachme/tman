@@ -9,10 +9,10 @@
 static int valid_desc(const char *val)
 {
     if (!isalnum(*val++))
-        return FALSE;
+        return false;
     for (; *val; ++val)
         if (!(isalnum(*val) || isspace(*val) || *val == '_' || *val == '-'))
-            return FALSE;
+            return false;
     return isalnum(*--val) != 0;
 }
 
@@ -36,21 +36,21 @@ static int _board_add(int argc, char **argv, tec_ctx_t * ctx)
     int i, quiet, showhelp, status;
 
     status = LIBTEC_OK;
-    showhelp = quiet = FALSE;
+    showhelp = quiet = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":hnp:q")) != -1) {
         switch (c) {
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'n':
-            //opt.board_switch = FALSE;
+            //opt.board_switch = false;
             break;
         case 'p':
             args.project = optarg;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -65,7 +65,7 @@ static int _board_add(int argc, char **argv, tec_ctx_t * ctx)
     if (optind == argc)
         return elog(1, "board name required");
     else if ((ctx->column = generate_column("todo")) == NULL) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "could not generate column");
         return 1;
     }
@@ -78,12 +78,12 @@ static int _board_add(int argc, char **argv, tec_ctx_t * ctx)
         args.board = argv[i];
 
         if (generate_units(ctx, args.board)) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, args.project, "unit generation failed");
             continue;
         }
         if ((status = tec_board_add(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, argv[i], tec_strerror(status));
             ctx->units = tec_unit_free(ctx->units);
             continue;
@@ -104,20 +104,20 @@ static int _board_del(int argc, char **argv, tec_ctx_t * ctx)
     const char *errfmt = "cannot delete: %s";
     int i, choice, quiet, showhelp, showprompt, status;
 
-    showprompt = TRUE;
+    showprompt = true;
     status = LIBTEC_OK;
-    choice = quiet = showhelp = FALSE;
+    choice = quiet = showhelp = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":hnq")) != -1) {
         switch (c) {
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'n':
-            showprompt = FALSE;
+            showprompt = false;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -141,7 +141,7 @@ static int _board_del(int argc, char **argv, tec_ctx_t * ctx)
         }
 
         if ((status = tec_board_del(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, argv[i], tec_strerror(status));
         }
     } while (++i < argc);
@@ -157,11 +157,11 @@ static int _board_list(int argc, char **argv, tec_ctx_t * ctx)
     int c, i, quiet, status;
     const char *errfmt = "cannot list board(s) '%s': %s";
 
-    quiet = FALSE;
+    quiet = false;
     while ((c = getopt(argc, argv, ":q")) != -1) {
         switch (c) {
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -171,11 +171,11 @@ static int _board_list(int argc, char **argv, tec_ctx_t * ctx)
     }
 
     if ((status = toggle_project_get_curr(teccfg.base.task, &args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
     } else if ((status = tec_project_valid(teccfg.base.task, &args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, args.board, tec_strerror(status));
         return status;
     }
@@ -187,7 +187,7 @@ static int _board_list(int argc, char **argv, tec_ctx_t * ctx)
         if (check_arg_board(&args, errfmt, quiet))
             continue;
         if ((status = tec_board_list(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.board, tec_strerror(status));
             continue;
         }
@@ -217,25 +217,25 @@ static int _board_set(int argc, char **argv, tec_ctx_t * ctx)
     int c, i, quiet, showhelp;
     const char *errfmt = "could not set board unit value '%s': %s";
 
-    quiet = showhelp = FALSE;
-    atleast_one_key_set = FALSE;
+    quiet = showhelp = false;
+    atleast_one_key_set = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":d:hq")) != -1) {
         switch (c) {
         case 'd':
-            if (valid_desc(optarg) == FALSE) {
+            if (valid_desc(optarg) == false) {
                 elog(1, "invalid description '%s'", optarg);
                 help_usage("board-set");
                 return 1;
             }
-            atleast_one_key_set = TRUE;
+            atleast_one_key_set = true;
             ctx->units = tec_unit_add(ctx->units, "desc", optarg);
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -246,7 +246,7 @@ static int _board_set(int argc, char **argv, tec_ctx_t * ctx)
 
     if (showhelp)
         return help_usage("board-set");
-    if (atleast_one_key_set == FALSE) {
+    if (atleast_one_key_set == false) {
         elog(1, "gotta supply one of the options");
         help_usage("board-set");
         return 1;
@@ -258,7 +258,7 @@ static int _board_set(int argc, char **argv, tec_ctx_t * ctx)
         args.board = argv[i];
 
         if ((status = tec_board_set(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, argv[i], tec_strerror(status));
         }
     } while (++i < argc);
@@ -275,15 +275,15 @@ static int _board_show(int argc, char **argv, tec_ctx_t * ctx)
     const char *errfmt = "cannot show project units '%s': %s";
 
     units = unitpgn = NULL;
-    quiet = showhelp = FALSE;
+    quiet = showhelp = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -299,7 +299,7 @@ static int _board_show(int argc, char **argv, tec_ctx_t * ctx)
     do {
         args.board = argv[i];
         if ((status = tec_board_get(teccfg.base.task, &args, ctx)) != LIBTEC_OK) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, argv[i], tec_strerror(status));
             continue;
         }
@@ -321,26 +321,26 @@ static int _board_sync(int argc, char **argv, tec_ctx_t * ctx)
     const char *errfmt = "cannot switch to '%s': %s";
     int switch_toggle, switch_dir;
 
-    quiet = showhelp = FALSE;
-    switch_toggle = switch_dir = TRUE;
+    quiet = showhelp = false;
+    switch_toggle = switch_dir = true;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":hnp:qN")) != -1) {
         switch (c) {
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'n':
-            switch_toggle = FALSE;
+            switch_toggle = false;
             break;
         case 'p':
             args.project = optarg;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case 'N':
-            switch_dir = FALSE;
-            switch_toggle = FALSE;
+            switch_dir = false;
+            switch_toggle = false;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -362,8 +362,8 @@ static int _board_sync(int argc, char **argv, tec_ctx_t * ctx)
             return status;
     } while (++i < argc);
 
-    if (status == LIBTEC_OK && switch_toggle == TRUE) {
-        if (toggle_board_set_curr(teccfg.base.task, &args) && quiet == FALSE)
+    if (status == LIBTEC_OK && switch_toggle == true) {
+        if (toggle_board_set_curr(teccfg.base.task, &args) && quiet == false)
             status = elog(1, "could not update board toggles");
     }
 

@@ -20,10 +20,10 @@ static int generate_units(tec_ctx_t * ctx, char *project)
 static int valid_desc(const char *val)
 {
     if (!isalnum(*val++))
-        return FALSE;
+        return false;
     for (; *val; ++val)
         if (!(isalnum(*val) || isspace(*val) || *val == '_' || *val == '-'))
-            return FALSE;
+            return false;
     return isalnum(*--val) != 0;
 }
 
@@ -38,8 +38,8 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
     const char *errfmt_board = "cannot add board '%s': %s";
 
     status = LIBTEC_OK;
-    showhelp = quiet = FALSE;
-    switch_dir = switch_project = TRUE;
+    showhelp = quiet = false;
+    switch_dir = switch_project = true;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hnqN")) != -1) {
         switch (c) {
@@ -47,17 +47,17 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
             args.board = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'n':
-            switch_project = FALSE;
+            switch_project = false;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case 'N':
-            switch_dir = FALSE;
-            switch_project = FALSE;
+            switch_dir = false;
+            switch_project = false;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -72,7 +72,7 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
     if (optind == argc)
         return elog(1, "project name required");
     else if ((ctx->column = generate_column("todo")) == NULL) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "could not generate column");
         return 1;
     }
@@ -84,49 +84,49 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
     for (i = optind; i < argc; ++i) {
         args.project = argv[i];
 
-        if (is_valid_length(args.project, PRJSIZ) == FALSE) {
-            if (quiet == FALSE)
+        if (is_valid_length(args.project, PRJSIZ) == false) {
+            if (quiet == false)
                 elog(status, errfmt, args.project, "project name is too long");
             continue;
         } else if ((status = tec_project_valid(teccfg.base.task, &args))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.project, tec_strerror(status));
             continue;
         } else if (!(status = tec_project_exist(teccfg.base.task, &args))) {
             char *project = args.project;
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, project, tec_strerror(LIBTEC_ARG_EXISTS));
             continue;
         }
 
         if ((status = tec_board_valid(teccfg.base.task, &args))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt_board, args.board, tec_strerror(status));
             continue;
-        } else if (is_valid_length(args.board, BRDSIZ) == FALSE) {
-            if (quiet == FALSE)
+        } else if (is_valid_length(args.board, BRDSIZ) == false) {
+            if (quiet == false)
                 elog(status, errfmt_board, args.board,
                      "board name is too long");
             continue;
         } else if (!(status = tec_board_exist(teccfg.base.task, &args))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt_board, args.board,
                      tec_strerror(LIBTEC_ARG_EXISTS));
             continue;
         }
 
         if (generate_units(ctx, args.project)) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, args.project, "unit generation failed");
             continue;
         }
 
         if ((status = tec_project_add(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, argv[i], tec_strerror(status));
             continue;
         } else if ((status = tec_board_add(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(1, errfmt, argv[i], tec_strerror(status));
             continue;
         }
@@ -137,12 +137,12 @@ static int _project_add(int argc, char **argv, tec_ctx_t * ctx)
 
     if ((switch_project && status == LIBTEC_OK)
         && toggle_project_set_curr(teccfg.base.task, &args)) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, "could not update project toggles");
         return 1;
     } else if ((switch_project && status == LIBTEC_OK)
                && toggle_board_set_curr(teccfg.base.task, &args)) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, "could not update board toggles");
         return 1;
     }
@@ -158,8 +158,8 @@ static int _project_del(int argc, char **argv, tec_ctx_t * ctx)
     const char *errfmt = "cannot delete project: %s";
     int i, choice, quiet, showhelp, showprompt, status;
 
-    showprompt = TRUE;
-    choice = quiet = showhelp = FALSE;
+    showprompt = true;
+    choice = quiet = showhelp = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hnq")) != -1) {
         switch (c) {
@@ -167,13 +167,13 @@ static int _project_del(int argc, char **argv, tec_ctx_t * ctx)
             args.board = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'n':
-            showprompt = FALSE;
+            showprompt = false;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -198,7 +198,7 @@ static int _project_del(int argc, char **argv, tec_ctx_t * ctx)
         args.project = argv[i];
         if ((status =
              tec_project_del(teccfg.base.task, &args, ctx)) != LIBTEC_OK) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, argv[i], tec_strerror(status));
         }
     } while (++i < argc);
@@ -212,12 +212,12 @@ static int _project_list(int argc, char **argv, tec_ctx_t * ctx)
     int c, quiet, status;
     tec_arg_t args;
 
-    quiet = FALSE;
+    quiet = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":q")) != -1) {
         switch (c) {
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -227,7 +227,7 @@ static int _project_list(int argc, char **argv, tec_ctx_t * ctx)
     }
 
     if ((status = tec_project_list(teccfg.base.task, &args, ctx))) {
-        if (quiet == FALSE) {
+        if (quiet == false) {
             const char *errfmt = "cannot list project(s) '%s': %s";
             elog(status, errfmt, "PRJ", tec_strerror(status));
             return status;
@@ -247,16 +247,16 @@ static int _project_prev(int argc, char **argv, tec_ctx_t * ctx)
     char c, *errfmt;
     int quiet, showhelp, status;
 
-    quiet = showhelp = FALSE;
+    quiet = showhelp = false;
     args.project = args.board = args.taskid = NULL;
     errfmt = "cannot switch to previous project '%s': %s";
     while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -265,21 +265,21 @@ static int _project_prev(int argc, char **argv, tec_ctx_t * ctx)
         }
     }
 
-    if (showhelp == TRUE)
+    if (showhelp == true)
         return help_usage("project-prev");
 
     if ((status = toggle_project_get_prev(teccfg.base.task, &args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, "NOPREV", "no previous project");
         return status;
     } else if ((status = toggle_project_get_curr(teccfg.base.task, &args))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, "NOCURR", "no current project");
         return status;
     }
 
     if (toggle_project_swap(teccfg.base.task, &args)) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "could not update toggle");
         return 1;
     }
@@ -293,17 +293,17 @@ static int _project_rename(int argc, char **argv, tec_ctx_t * ctx)
     tec_arg_t src, dst;
     int c, quiet, showhelp, status;
 
-    quiet = showhelp = FALSE;
+    quiet = showhelp = false;
     errfmt = "could not rename project: %s";
     src.project = src.board = src.taskid = NULL;
     dst.project = dst.board = dst.taskid = NULL;
     while ((c = getopt(argc, argv, ":hq")) != -1) {
         switch (c) {
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         default:
             return elog(1, "invalid option `-%c'", optopt);
@@ -326,13 +326,13 @@ static int _project_rename(int argc, char **argv, tec_ctx_t * ctx)
     else if ((status = check_arg_project(&src, errfmt, quiet)))
         return status;
     else if (tec_project_exist(teccfg.base.task, &dst)) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "'%s': destination project exists\n", dst.project);
         return status;
     }
 
     if ((status = tec_project_rename(teccfg.base.task, &src, &dst, NULL))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, errfmt, tec_strerror(status));
         return status;
     }
@@ -346,8 +346,8 @@ static int _project_set(int argc, char **argv, tec_ctx_t * ctx)
     int c, i, quiet, showhelp;
     const char *errfmt = "could not set project unit value '%s': %s";
 
-    quiet = showhelp = FALSE;
-    atleast_one_key_set = FALSE;
+    quiet = showhelp = false;
+    atleast_one_key_set = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:d:hq")) != -1) {
         switch (c) {
@@ -355,19 +355,19 @@ static int _project_set(int argc, char **argv, tec_ctx_t * ctx)
             args.board = optarg;
             break;
         case 'd':
-            if (valid_desc(optarg) == FALSE) {
+            if (valid_desc(optarg) == false) {
                 elog(1, "invalid description '%s'", optarg);
                 help_usage("project-set");
                 return 1;
             }
-            atleast_one_key_set = TRUE;
+            atleast_one_key_set = true;
             ctx->units = tec_unit_add(ctx->units, "desc", optarg);
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -378,7 +378,7 @@ static int _project_set(int argc, char **argv, tec_ctx_t * ctx)
 
     if (showhelp)
         return help_usage("project-set");
-    if (atleast_one_key_set == FALSE) {
+    if (atleast_one_key_set == false) {
         elog(1, "gotta supply one of the options");
         help_usage("project-set");
         return 1;
@@ -390,7 +390,7 @@ static int _project_set(int argc, char **argv, tec_ctx_t * ctx)
         args.project = argv[i];
 
         if ((status = tec_project_set(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, argv[i], tec_strerror(status));
         }
     } while (++i < argc);
@@ -408,7 +408,7 @@ static int _project_show(int argc, char **argv, tec_ctx_t * ctx)
     const char *errfmt = "cannot show project units '%s': %s";
 
     unitbin = unitpgn = NULL;
-    quiet = showhelp = FALSE;
+    quiet = showhelp = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hq")) != -1) {
         switch (c) {
@@ -416,10 +416,10 @@ static int _project_show(int argc, char **argv, tec_ctx_t * ctx)
             args.board = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -435,7 +435,7 @@ static int _project_show(int argc, char **argv, tec_ctx_t * ctx)
     do {
         args.project = argv[i];
         if ((status = tec_project_get(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, argv[i], tec_strerror(status));
             continue;
         }
@@ -457,8 +457,8 @@ static int _project_sync(int argc, char **argv, tec_ctx_t * ctx)
     const char *errfmt = "cannot switch to '%s': %s";
     int switch_toggle, switch_dir;
 
-    quiet = showhelp = FALSE;
-    switch_toggle = switch_dir = TRUE;
+    quiet = showhelp = false;
+    switch_toggle = switch_dir = true;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:hnqN")) != -1) {
         switch (c) {
@@ -466,17 +466,17 @@ static int _project_sync(int argc, char **argv, tec_ctx_t * ctx)
             args.board = optarg;
             break;
         case 'h':
-            showhelp = TRUE;
+            showhelp = true;
             break;
         case 'n':
-            switch_toggle = FALSE;
+            switch_toggle = false;
             break;
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case 'N':
-            switch_dir = FALSE;
-            switch_toggle = FALSE;
+            switch_dir = false;
+            switch_toggle = false;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -496,9 +496,9 @@ static int _project_sync(int argc, char **argv, tec_ctx_t * ctx)
             continue;
     } while (++i < argc);
 
-    if (status == LIBTEC_OK && switch_toggle == TRUE) {
+    if (status == LIBTEC_OK && switch_toggle == true) {
         if (toggle_project_set_curr(teccfg.base.task, &args)
-            && quiet == FALSE)
+            && quiet == false)
             status = elog(1, "could not update project toggles");
     }
 

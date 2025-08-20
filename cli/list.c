@@ -27,7 +27,7 @@ struct list_filter {
 };
 
 static struct list_filter filter = {
-    .toggle = FALSE,
+    .toggle = false,
     .column = NULL,
 };
 
@@ -38,7 +38,7 @@ static int check_filters(int quiet)
     if (filter.toggle) {
         filter.column = NULL;
     } else if (filter.column) {
-        filter.toggle = FALSE;
+        filter.toggle = false;
     }
     return 0;
 }
@@ -51,10 +51,10 @@ static char *get_unit_desc(tec_ctx_t * ctx, tec_arg_t * args, int quiet)
 
     desc = NULL;
     if ((status = tec_task_get(teccfg.base.task, args, ctx))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, "'%s': %s one", args->taskid, tec_strerror(status));
     } else if ((desc = tec_unit_key(ctx->units, "desc")) == NULL) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "'%s': %s", args->taskid, "description not found");
     }
     return desc;
@@ -67,10 +67,10 @@ static char *get_column_name(tec_ctx_t * ctx, tec_arg_t * args, int quiet)
 
     colname = NULL;
     if ((status = tec_task_column_get(teccfg.base.task, args, ctx))) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(status, "'%s': %s one", args->taskid, tec_strerror(status));
     } else if ((colname = tec_unit_key(ctx->column, "name")) == NULL) {
-        if (quiet == FALSE)
+        if (quiet == false)
             elog(1, "'%s': %s", args->taskid, "column name not found");
     }
     return colname;
@@ -104,7 +104,7 @@ static int show_toggles(tec_ctx_t * ctx, tec_arg_t * args)
         obj.next = NULL;
         obj.status = LIBTEC_OK;
         obj.name = args->taskid;
-        show_column(ctx, args, &obj, FALSE);
+        show_column(ctx, args, &obj, false);
     }
 
     args->taskid = NULL;
@@ -112,7 +112,7 @@ static int show_toggles(tec_ctx_t * ctx, tec_arg_t * args)
         obj.next = NULL;
         obj.status = LIBTEC_OK;
         obj.name = args->taskid;
-        show_column(ctx, args, &obj, FALSE);
+        show_column(ctx, args, &obj, false);
     }
     return status;
 }
@@ -134,7 +134,7 @@ int tec_cli_list(int argc, char **argv, tec_ctx_t * ctx)
     tec_arg_t args;
     int i, quiet, show_headers, status;
 
-    quiet = show_headers = FALSE;
+    quiet = show_headers = false;
     args.project = args.board = args.taskid = NULL;
     while ((c = getopt(argc, argv, ":b:c:hqvtH")) != -1) {
         switch (c) {
@@ -147,15 +147,15 @@ int tec_cli_list(int argc, char **argv, tec_ctx_t * ctx)
         case 'h':
             return help_usage("list");
         case 'q':
-            quiet = TRUE;
+            quiet = true;
             break;
         case 'v':
             return elog(1, "option `-%c' under development", c);
         case 't':
-            filter.toggle = TRUE;
+            filter.toggle = true;
             break;
         case 'H':
-            show_headers = TRUE;
+            show_headers = true;
             break;
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
@@ -176,12 +176,12 @@ int tec_cli_list(int argc, char **argv, tec_ctx_t * ctx)
         else if ((status = check_arg_board(&args, errfmt, quiet)))
             continue;
         else if ((status = tec_task_list(teccfg.base.task, &args, ctx))) {
-            if (quiet == FALSE)
+            if (quiet == false)
                 elog(status, errfmt, args.project, tec_strerror(status));
             continue;
         }
 
-        if (show_headers == TRUE)
+        if (show_headers == true)
             printf("Project: %s\n", args.project);
 
         // TODO: add hooks

@@ -3,6 +3,7 @@
 ### Changed
 
 - `tec`: Rename project to `tec`
+- `cli`: Use C standard boolean header
 
 
 ## [0.1.2] - (2025-08-06)

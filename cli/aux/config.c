@@ -138,9 +138,9 @@ static int tec_config_get_base(config_t * cfg, tec_cfg_t * tec_config)
 static int tec_config_get_options(config_t * cfg, tec_cfg_t * tec_config)
 {
     config_setting_t *setting;
-    tec_config->opts.color = FALSE;
-    tec_config->opts.debug = FALSE;
-    tec_config->opts.hook = FALSE;
+    tec_config->opts.color = false;
+    tec_config->opts.debug = false;
+    tec_config->opts.hook = false;
 
     if ((setting = config_lookup(cfg, "options")) == NULL)
         return 0;
