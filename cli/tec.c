@@ -36,6 +36,7 @@ static builtin_t builtins[] = {
     {.name = "set",.func = &tec_cli_set,.option = TEC_SETUP_HARD},
     {.name = "show",.func = &tec_cli_show,.option = TEC_SETUP_HARD},
     {.name = "sync",.func = &tec_cli_sync,.option = TEC_SETUP_HARD},
+    {.name = "version",.func = &tec_cli_version,.option = TEC_SETUP_HARD},
 };
 
 static int tec_setup(int setuplvl)
@@ -108,9 +109,9 @@ static int valid_toggle(char *tog)
     return -1;
 }
 
-static int show_version()
+int tec_cli_version(int argc, char **argv, tec_ctx_t * ctx)
 {
-    printf("%s: %s\n", PROGRAM, VERSION);
+    printf("%s version %s\n", PROGRAM, VERSION);
     return 0;
 }
 
@@ -315,19 +316,23 @@ int main(int argc, char **argv)
     tec_opt_t opts;
     tec_base_t base;
     builtin_t *builtin;
-    int c, i, showhelp;
+    int c, i, showhelp, showversion;
     char *cmd, *option, *togfmt;
 
-    showhelp = false;
+    showhelp = showversion = false;
     opts.color = opts.debug = opts.hook = NONEBOOL;
     base.pgn = base.task = cmd = option = NULL;
     togfmt = "option `-%c' accepts either 'on' or 'off'";
 
     /* Parse util itself options.  */
-    while ((c = getopt(argc, argv, "+:hC:D:F:H:P:T:V")) != -1) {
+    while ((c = getopt(argc, argv, "+:hvC:D:F:H:P:T:")) != -1) {
         switch (c) {
         case 'h':
             showhelp = true;
+            break;
+        case 'v':
+            showversion = true;
+            break;
         case 'C':
             if ((opts.color = valid_toggle(optarg)) == -1)
                 return elog(1, togfmt, c);
@@ -348,8 +353,6 @@ int main(int argc, char **argv)
         case 'T':
             base.task = optarg;
             break;
-        case 'V':
-            return show_version();
         case ':':
             return elog(1, "option `-%c' requires an argument", optopt);
         default:
@@ -361,8 +364,17 @@ int main(int argc, char **argv)
     optind = 0;                 /* Unset option index cuz subcommands use getopt too.  */
     tec_pwd_unset();
 
-    if (showhelp == true || (cmd = argv[i]) == NULL)
+    cmd = argv[i];
+
+    if (showhelp == true)
         cmd = "help";
+    else if (showversion == true)
+        cmd = "version";
+    else if (cmd == NULL) {
+        /* The user didn't specify a command; give them help */
+        help_list_commands();
+        exit(1);
+    }
 
     if (tec_config_init(&teccfg))
         return elog(1, "could init config file");

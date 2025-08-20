@@ -38,14 +38,14 @@ struct help helptab[] = {
      .desc_short = "Terminal project and task manager.\n",
      .desc_long = "\n\
     Options:\n\
+      -h      show this help and exit\n\
+      -v      show version and exit\n\
       -C TOG  enbale colors (default: disabled)\n\
       -D TOG  enbale debug mode (default: disabled)\n\
-      -h      show this help and exit\n\
       -F DIR  path to the config file (under development)\n\
       -H TOG  enbale hooks (default: disabled)\n\
       -P DIR  directory where plugins are stored\n\
       -T DIR  directory where tasks are stored\n\
-      -V      show version and exit\n\
     \n\
     Arguments:\n\
       DIR     path to directory\n\
@@ -79,6 +79,14 @@ struct help helptab[] = {
      .name = "init",
      .synop = "Usage: " PROGRAM " init\n",
      .desc_short = "Init directory structure.\n",
+     .desc_long = "\n\
+    Exit status:\n\
+    Under development\n"},
+    {
+     .tag = TAGSYSTEM,
+     .name = "version",
+     .synop = "Usage: " PROGRAM " version\n",
+     .desc_short = "Show program version.\n",
      .desc_long = "\n\
     Exit status:\n\
     Under development\n"},

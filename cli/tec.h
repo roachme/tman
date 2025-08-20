@@ -119,5 +119,6 @@ int tec_cli_project(int argc, char **argv, tec_ctx_t * ctx);
 int tec_cli_set(int argc, char **argv, tec_ctx_t * ctx);
 int tec_cli_show(int argc, char **argv, tec_ctx_t * ctx);
 int tec_cli_sync(int argc, char **argv, tec_ctx_t * ctx);
+int tec_cli_version(int argc, char **argv, tec_ctx_t * ctx);
 
 #endif

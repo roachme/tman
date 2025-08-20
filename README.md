@@ -98,6 +98,7 @@ Usage: tec [OPTION]... COMMAND|PLUGIN
     System:
       help       - Show help for commands.
       init       - Init directory structure.
+      version    - Show program version.
 
     Basic:
       add        - Add a new task to project.

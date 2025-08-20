@@ -1,6 +1,6 @@
 MAKE=make
 PROGRAM=teccli
-VERSION=$(shell cat VERSION.txt)
+VERSION=$(shell cat VERSION)
 README=README.md
 SHELLSCRIPT=tec.sh
 SHELLNAME=bash
