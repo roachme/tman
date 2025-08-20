@@ -1,4 +1,4 @@
-#include "cli.h"
+#include "tec.h"
 #include "aux/config.h"
 
 int tec_cli_init(int argc, char **argv, tec_ctx_t * ctx)

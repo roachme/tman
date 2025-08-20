@@ -2,7 +2,7 @@
 #include <string.h>
 #include <dirent.h>
 
-#include "cli.h"
+#include "tec.h"
 #include "aux/config.h"
 #include "aux/toggle.h"
 

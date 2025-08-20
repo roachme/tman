@@ -1,4 +1,4 @@
-#include "cli.h"
+#include "tec.h"
 #include "aux/toggle.h"
 #include "aux/config.h"
 

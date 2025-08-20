@@ -2,7 +2,7 @@
 #include <string.h>
 #include <limits.h>
 
-#include "../cli.h"
+#include "../tec.h"
 
 static char prj_curr[PRJSIZ + 1];
 //static char prj_prev[PRJSIZ + 1];

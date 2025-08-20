@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include "cli.h"
+#include "tec.h"
 #include "aux/config.h"
 #include "aux/toggle.h"
 

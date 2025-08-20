@@ -6,7 +6,7 @@
 
 #include "../../lib/src/osdep.h"
 #include "config.h"
-#include "../cli.h"
+#include "../tec.h"
 
 // TODO: gotta define default columns: curr, prev, blog
 // TODO: gotta add config checker so a program doesn't fail.

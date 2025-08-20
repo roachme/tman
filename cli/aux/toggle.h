@@ -1,7 +1,7 @@
 #ifndef TEC_TOGGLE_H
 #define TEC_TOGGLE_H
 
-#include "../cli.h"
+#include "../tec.h"
 
 int toggle_project_swap(char *base, tec_arg_t * args);
 int toggle_project_get_curr(char *base, tec_arg_t * args);

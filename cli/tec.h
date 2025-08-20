@@ -1,5 +1,5 @@
-#ifndef LIBTEC_CLI_H
-#define LIBTEC_CLI_H
+#ifndef LIBTEC_TEC_H
+#define LIBTEC_TEC_H
 
 #include <stdio.h>
 #include <getopt.h>

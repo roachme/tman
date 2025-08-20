@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "cli.h"
+#include "tec.h"
 
 #define PADDING     "    "
 #define SYSTEM      "system"
