@@ -5,9 +5,9 @@ README=README.md
 SHELLSCRIPT=tec.sh
 SHELLNAME=bash
 CC=gcc
-SRCS=$(wildcard cli/*.c cli/aux/*.c)
+SRCS=$(wildcard lib/*.c cli/*.c cli/aux/*.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
-CFLAGS=-I lib/src -I cli -Wall -g3  -fbounds-check
+CFLAGS=-I cli -Wall -g3  -fbounds-check
 LFLAGS=-lconfig -g
 PWDFILE=/tmp/tecpwd
 
@@ -35,8 +35,7 @@ init:
 	$(CC) -c -o $@ $< $(CFLAGS) -DVERSION=\"$(VERSION)\" -DPWDFILE=\"$(PWDFILE)\"
 
 $(PROGRAM): $(OBJS)
-	$(MAKE) -C lib lib_static
-	$(CC) -o $@ $^ $(LFLAGS) lib/libtec.a
+	$(CC) -o $@ $^ $(LFLAGS)
 
 generate: $(PROGRAM)
 	$(shell m4 -DSHELLNAME=$(SHELLNAME) -DPWDFILE=$(PWDFILE) ./scripts/genshell > $(SHELLSCRIPT))
@@ -45,7 +44,6 @@ generate: $(PROGRAM)
 clean:
 	rm -rf artifacts build
 	rm -rf $(PROGRAM) $(OBJS)
-	$(MAKE) -C lib lib_clean
 
 check:
 	cppcheck --std=c89 --enable=all --language=c $(SRCS)

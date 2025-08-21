@@ -5,7 +5,7 @@
 
 #include "hook.h"
 #include "config.h"
-#include "../../lib/src/libtec.h"
+#include "../../lib/libtec.h"
 
 static char pathname[PATH_MAX + 1];
 

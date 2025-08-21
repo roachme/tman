@@ -7,7 +7,7 @@
 
 #include "aux/hook.h"
 #include "aux/color.h"
-#include "../lib/src/libtec.h"
+#include "../lib/libtec.h"
 
 #define PROGRAM     "tec"
 

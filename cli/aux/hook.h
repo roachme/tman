@@ -1,7 +1,7 @@
 #ifndef TEC_HOOK_H
 #define TEC_HOOK_H
 
-#include "../../lib/src/libtec.h"
+#include "../../lib/libtec.h"
 
 // FIXME: get rid of magic numbers. Might cause buffer overflow
 struct tec_hook {

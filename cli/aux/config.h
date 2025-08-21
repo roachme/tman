@@ -3,7 +3,7 @@
 
 #include <libconfig.h>
 
-#include "../../lib/src/libtec.h"
+#include "../../lib/libtec.h"
 
 #define NUMCONFIG       2
 #define CONFIGSIZ       256

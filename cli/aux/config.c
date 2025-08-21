@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <libconfig.h>
 
-#include "../../lib/src/osdep.h"
+#include "../../lib/osdep.h"
 #include "config.h"
 #include "../tec.h"
 
