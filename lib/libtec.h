@@ -1,7 +1,7 @@
 #ifndef LIBTEC_H
 #define LIBTEC_H
 
-#define ERRMSGSIZ   100
+#define TEC_ERRMSGSIZ   100
 
 typedef struct tec_arg tec_arg_t;
 typedef struct tec_unit tec_unit_t;
@@ -65,7 +65,7 @@ enum tec_errno {
 
 struct tec_err_codes {
     enum tec_errno err;
-    char desc[ERRMSGSIZ + 1];
+    char desc[TEC_ERRMSGSIZ + 1];
 };
 
 /* Core functions.  */

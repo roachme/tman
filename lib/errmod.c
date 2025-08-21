@@ -43,9 +43,9 @@ int emod_set(int err)
 
 char *emod_strerror(int errnum)
 {
-    static char errmsg[ERRMSGSIZ + 1];
+    static char errmsg[TEC_ERRMSGSIZ + 1];
 
     if (errnum < 0 || errnum > __LIBTEC_STATUS_LAST)
-        return strncpy(errmsg, "internal unknown error", ERRMSGSIZ);
-    return strncpy(errmsg, errcodes[errnum], ERRMSGSIZ);
+        return strncpy(errmsg, "internal unknown error", TEC_ERRMSGSIZ);
+    return strncpy(errmsg, errcodes[errnum], TEC_ERRMSGSIZ);
 }

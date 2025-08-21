@@ -11,6 +11,7 @@
 ### Fixed
 
 - `cli/tec`: Fix padding for objects
+- `lib`: Fix API MACRO name
 
 
 ## [0.1.2] - (2025-08-06)
