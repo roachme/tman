@@ -193,7 +193,7 @@ static int _board_list(int argc, char **argv, tec_ctx_t * ctx)
         }
 
         for (tec_list_t * obj = ctx->list; obj != NULL; obj = obj->next) {
-            LIST_BOARD_UNITS("mark", obj->name, "some board description");
+            LIST_OBJ_UNITS("mark", obj->name, "", "some board description");
         }
         ctx->list = tec_list_free(ctx->list);
     } while (++i < argc);

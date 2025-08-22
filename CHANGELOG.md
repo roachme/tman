@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `cli`: Add skeleton for plugin output
+
 ### Changed
 
 - `tec`: Rename project to `tec`

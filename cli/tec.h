@@ -35,25 +35,11 @@
 #define IDFMT       "%0" xstr(IDSIZ) "u"
 #define PADDING_UNIT     6
 
-/* TODO: add a plugin output too */
-#define LIST_PROJECT_UNITS(_mark, _id, _desc) {\
-    color_print_str("%-" xstr(COLSIZ) "s ", (_mark), BGRN); \
-    color_print_str("%-" xstr(PRJSIZ) "s ", (_id), BMAG); \
-    color_print_str("%s\n", (_desc), BWHT); \
-}\
-
-/* TODO: add a plugin output too */
-#define LIST_BOARD_UNITS(_mark, _id, _desc) {\
-    color_print_str("%-" xstr(COLSIZ) "s ", (_mark), BGRN); \
-    color_print_str("%-" xstr(BRDSIZ) "s ", (_id), BMAG); \
-    color_print_str("%s\n", (_desc), BWHT); \
-}\
-
-/* TODO: add a plugin output too */
-#define LIST_TASK_UNITS(_mark, _id, _desc) {\
-    color_print_str("%-" xstr(COLSIZ) "s ", (_mark), BGRN); \
-    color_print_str("%-" xstr(IDSIZ) "s ", (_id), BMAG); \
-    color_print_str("%s\n", (_desc), BWHT); \
+#define LIST_OBJ_UNITS(_mark, _obj, _pgnout, _desc) {\
+    color_print_str("%-" xstr(COLSIZ) "s ", (_mark), YEL); \
+    color_print_str("%-" xstr(IDSIZ) "s ", (_obj), BBLU); \
+    color_print_str("%s ", (_pgnout), WHT); \
+    color_print_str("%s\n", (_desc), WHT); \
 }\
 
 #define CTX_INIT { .column = NULL, .units = NULL, .list = NULL }

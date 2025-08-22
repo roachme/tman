@@ -88,7 +88,7 @@ static void show_column(tec_ctx_t * ctx, tec_arg_t * args, tec_list_t * obj,
             return;
         else if ((colname = get_column_name(ctx, args, quiet)) == NULL)
             return;
-        LIST_TASK_UNITS(colname, obj->name, desc);
+        LIST_OBJ_UNITS(colname, obj->name, "", desc);
         ctx->units = tec_unit_free(ctx->units);
         ctx->column = tec_unit_free(ctx->column);
     }

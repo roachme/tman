@@ -235,7 +235,7 @@ static int _project_list(int argc, char **argv, tec_ctx_t * ctx)
     }
 
     for (tec_list_t * obj = ctx->list; obj != NULL; obj = obj->next) {
-        LIST_PROJECT_UNITS("mark", obj->name, "some project description");
+        LIST_OBJ_UNITS("mark", obj->name, "", "some project description");
     }
     ctx->list = tec_list_free(ctx->list);
     return status;
