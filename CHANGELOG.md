@@ -11,6 +11,7 @@
 - `tec`: Rename main file from `cli` to `tec`
 - `tec`: Change version output and CLI option
 - `lib`: Make libtec part of the main project
+- `cli/plugin`: Let the plugin to find current arguments
 
 ### Fixed
 
