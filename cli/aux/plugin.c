@@ -54,13 +54,13 @@ int tec_cli_plugin(int argc, char **argv, tec_ctx_t * ctx)
 
     /* Add default inputs if any. Do NOT check anything. Plugins should do.  */
     if ((status = toggle_project_get_curr(teccfg.base.task, &args))) {
-        return status;
+        return elog(status, "no current project");
     }
     if ((status = toggle_board_get_curr(teccfg.base.task, &args))) {
-        return status;
+        return elog(status, "no current board");
     }
     if ((status = toggle_task_get_curr(teccfg.base.task, &args))) {
-        return status;
+        return elog(status, "no current task ID");
     }
 
     strcat(pgnexec, teccfg.base.pgn);
